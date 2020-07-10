@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/precache-manifest.f010dd99e4255b845957a98773942269.js"
+  "/tamim-medicine-corner/precache-manifest.6299ea6b3b7c7311fe2bc548f44174db.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "tamim-medicine-corner"});
