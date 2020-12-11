@@ -1,7 +1,7 @@
 {
-  "name": "Portfolio",
-  "short_name": "Portfolio",
-  "description": "## Build Setup",
+  "name": "shibbir_portfolio",
+  "short_name": "shibbir_portfolio",
+  "description": "I am a web and android apps developer from Mymensingh, Bangladesh. Contact me for web design, development &amp; android apps services.",
   "icons": [
     {
       "src": "/_nuxt/icons/icon_64x64.f01ba6.png",
