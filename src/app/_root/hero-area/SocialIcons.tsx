@@ -3,7 +3,7 @@ import { socialLinks } from './contents';
 
 export default function SocialIcons() {
     return (
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center justify-center gap-4 select-none">
             {socialLinks.map(({ Icon, href, socialColorClassNames }) => (
                 <a
                     key={href}
