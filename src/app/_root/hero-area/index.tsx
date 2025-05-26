@@ -1,8 +1,3 @@
-import DownIcon from '@/components/icons/down';
-import GithubIcon from '@/components/icons/github';
-import LinkedinIcon from '@/components/icons/linkedin';
-import { socialLinks } from './contents';
-import { cn } from '@/utils/cn';
 import SocialIcons from './SocialIcons';
 
 export default function HeroArea() {
