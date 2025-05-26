@@ -5,7 +5,7 @@ export default function Home() {
         <div>
             <HeroArea />
 
-            <div
+            {/* <div
                 id="about"
                 className="flex h-screen flex-col items-center justify-center"
             >
@@ -14,7 +14,7 @@ export default function Home() {
                     applications that are both functional and aesthetically
                     pleasing.
                 </p>
-            </div>
+            </div> */}
         </div>
     );
 }

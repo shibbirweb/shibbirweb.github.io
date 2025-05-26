@@ -17,12 +17,12 @@ export default function HeroArea() {
                 </div>
                 <SocialIcons />
             </div>
-            <a
+            {/* <a
                 href="#about"
                 className="animate-bounce py-10 text-black duration-300 dark:text-white"
             >
                 <DownIcon className="size-7" />
-            </a>
+            </a> */}
         </div>
     );
 }
