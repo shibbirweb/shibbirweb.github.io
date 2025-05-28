@@ -4,7 +4,7 @@ import FacebookIcon from '@/components/icons/facebook';
 import GithubIcon from '@/components/icons/github';
 import LinkedinIcon from '@/components/icons/linkedin';
 import MediumIcon from '@/components/icons/medium';
-import PatreonIcon from '@/components/icons/patreon';
+// import PatreonIcon from '@/components/icons/patreon';
 import XIcon from '@/components/icons/x';
 
 export const socialLinks: {
@@ -47,9 +47,9 @@ export const socialLinks: {
         href: 'https://dev.to/shibbirweb',
         socialColorClassNames: 'hover:text-[#000000] dark:hover:text-white',
     },
-    {
+    /* {
         Icon: PatreonIcon,
         href: 'https://www.patreon.com/shibbirweb',
         socialColorClassNames: 'hover:text-[#FF5900]',
-    },
+    }, */
 ];
