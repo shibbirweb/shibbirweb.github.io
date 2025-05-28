@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Geist_Mono, Zain } from 'next/font/google';
+import { /* Geist_Mono, */ Zain } from 'next/font/google';
 import './globals.css';
 
 const zainSansSerif = Zain({
@@ -8,10 +8,10 @@ const zainSansSerif = Zain({
     weight: ['400', '700'],
 });
 
-const geistMono = Geist_Mono({
+/* const geistMono = Geist_Mono({
     variable: '--font-geist-mono',
     subsets: ['latin'],
-});
+}); */
 
 export const metadata: Metadata = {
     title: 'Shibbir Ahmed',
@@ -29,7 +29,7 @@ export default function RootLayout({
             className="scroll-smooth"
         >
             <body
-                className={`${zainSansSerif.variable} ${geistMono.variable} bg-background flex min-h-screen flex-col antialiased`}
+                className={`${zainSansSerif.variable} bg-background flex min-h-[100svh] flex-col antialiased`}
             >
                 {children}
             </body>
