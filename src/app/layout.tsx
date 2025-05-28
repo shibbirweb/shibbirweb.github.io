@@ -28,6 +28,24 @@ export default function RootLayout({
             lang="en"
             className="scroll-smooth"
         >
+            <head>
+                <link
+                    rel="manifest"
+                    href="/manifest.json"
+                />
+                <link
+                    rel="icon"
+                    href="/icons/icon-192x192.png"
+                />
+                <meta
+                    name="theme-color"
+                    content="#ffffff"
+                />
+                <meta
+                    name="apple-mobile-web-app-title"
+                    content="Shibbir Ahmed"
+                />
+            </head>
             <body
                 className={`${zainSansSerif.variable} bg-background flex min-h-[100svh] flex-col antialiased`}
             >
