@@ -9,11 +9,21 @@ const zainSansSerif = Zain({
 });
 
 export const metadata: Metadata = {
+    metadataBase: new URL('https://shibbirweb.github.io'),
     title: {
         default: 'Shibbir Ahmed',
         template: '%s | Shibbir Ahmed',
     },
     description: "Shibbir Ahmed's Portfolio",
+    openGraph: {
+        title: 'Shibbir Ahmed',
+        description: "Shibbir Ahmed's Portfolio",
+        url: 'https://shibbir.com',
+        siteName: 'Shibbir Ahmed',
+        locale: 'en_US',
+        type: 'website',
+        images: '/opengraph-image.png',
+    },
     twitter: {
         card: 'summary_large_image',
         title: 'Shibbir Ahmed',
