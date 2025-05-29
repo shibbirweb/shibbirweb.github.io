@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { /* Geist_Mono, */ Zain } from 'next/font/google';
+import { Zain } from 'next/font/google';
 import './globals.css';
 
 const zainSansSerif = Zain({
@@ -8,14 +8,18 @@ const zainSansSerif = Zain({
     weight: ['400', '700'],
 });
 
-/* const geistMono = Geist_Mono({
-    variable: '--font-geist-mono',
-    subsets: ['latin'],
-}); */
-
 export const metadata: Metadata = {
-    title: 'Shibbir Ahmed',
+    title: {
+        default: 'Shibbir Ahmed',
+        template: '%s | Shibbir Ahmed',
+    },
     description: "Shibbir Ahmed's Portfolio",
+    twitter: {
+        card: 'summary_large_image',
+        title: 'Shibbir Ahmed',
+        description: "Shibbir Ahmed's Portfolio",
+        creator: '@shibbirweb',
+    },
 };
 
 export default function RootLayout({
