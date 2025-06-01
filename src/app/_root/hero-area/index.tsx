@@ -25,7 +25,12 @@ export default function HeroArea() {
             </a> */}
                 </div>
             </div>
-            <GridBackgroundComponent />
+            <GridBackgroundComponent
+                className="motion-safe:animate-pulse"
+                style={{
+                    animationDuration: '5s',
+                }}
+            />
         </div>
     );
 }
