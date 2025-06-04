@@ -9,6 +9,7 @@ import {
     siteKeywords,
     siteLocale,
     siteName,
+    siteThumbnail,
     siteURL,
     twitterUsername,
 } from '@/config/constants';
@@ -77,6 +78,9 @@ export const metadata: Metadata = {
     },
     pinterest: {
         richPin: true,
+    },
+    other: {
+        thumbnail: siteThumbnail,
     },
 };
 

@@ -29,3 +29,4 @@ export const siteKeywords: string[] = [
 ];
 export const siteAuthor: string = 'Shibbir Ahmed';
 export const siteAuthorEmail: string = 'shibbirweb@gmail.com';
+export const siteThumbnail: string = `${siteURL}/shibbir-ahmed.jpg`;
