@@ -1,10 +1,16 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Zain } from 'next/font/google';
 import './globals.css';
 import {
     facebookPageId,
     googleTagManagerId,
+    siteAuthor,
+    siteDescription,
+    siteKeywords,
+    siteLocale,
+    siteName,
     siteURL,
+    twitterUsername,
 } from '@/config/constants';
 import { GoogleTagManager } from '@next/third-parties/google';
 
@@ -17,25 +23,65 @@ const zainSansSerif = Zain({
 export const metadata: Metadata = {
     metadataBase: new URL(siteURL),
     title: {
-        default: 'Shibbir Ahmed',
-        template: '%s | Shibbir Ahmed',
+        default: siteAuthor,
+        template: '%s | ' + siteAuthor,
     },
-    description: "Shibbir Ahmed's Portfolio",
+    description: siteDescription,
     openGraph: {
-        title: 'Shibbir Ahmed',
-        description: "Shibbir Ahmed's Portfolio",
+        title: siteName,
+        description: siteDescription,
         url: siteURL,
-        siteName: 'Shibbir Ahmed',
-        locale: 'en_US',
+        siteName: siteName,
+        locale: siteLocale,
         type: 'website',
         images: '/opengraph-image.png',
     },
     twitter: {
         card: 'summary_large_image',
-        title: 'Shibbir Ahmed',
-        description: "Shibbir Ahmed's Portfolio",
-        creator: '@shibbirweb',
+        title: siteName,
+        description: siteDescription,
+        creator: twitterUsername,
+        siteId: twitterUsername,
     },
+    keywords: siteKeywords,
+    authors: [
+        {
+            name: siteAuthor,
+            url: siteURL,
+        },
+    ],
+    creator: siteAuthor,
+    applicationName: siteName,
+    publisher: siteAuthor,
+    robots: {
+        index: true,
+        follow: true,
+        nocache: false,
+        googleBot: {
+            index: true,
+            follow: true,
+            'max-video-preview': -1,
+            'max-image-preview': 'large',
+            'max-snippet': -1,
+        },
+    },
+    icons: {
+        icon: '/shibbir-logo-192x192.png',
+        apple: '/shibbir-logo-192x192.png',
+        shortcut: '/shibbir-logo-192x192.png',
+    },
+    manifest: '/manifest.json',
+    category: 'portfolio',
+    facebook: {
+        admins: [facebookPageId],
+    },
+    pinterest: {
+        richPin: true,
+    },
+};
+
+export const viewport: Viewport = {
+    themeColor: 'white',
 };
 
 export default function RootLayout({
@@ -49,21 +95,9 @@ export default function RootLayout({
             className="scroll-smooth"
         >
             <head>
-                <link
-                    rel="manifest"
-                    href="/manifest.json"
-                />
-                <link
-                    rel="icon"
-                    href="/shibbir-logo-192x192.png"
-                />
-                <meta
-                    name="theme-color"
-                    content="#ffffff"
-                />
                 <meta
                     name="apple-mobile-web-app-title"
-                    content="Shibbir Ahmed"
+                    content={siteName}
                 />
                 <meta
                     property="fb:pages"
