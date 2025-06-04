@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     openGraph: {
         title: 'Shibbir Ahmed',
         description: "Shibbir Ahmed's Portfolio",
-        url: 'https://shibbir.com',
+        url: 'https://shibbir.me',
         siteName: 'Shibbir Ahmed',
         locale: 'en_US',
         type: 'website',
