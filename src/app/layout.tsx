@@ -1,7 +1,12 @@
 import type { Metadata } from 'next';
 import { Zain } from 'next/font/google';
 import './globals.css';
-import { facebookPageId } from '@/config/constants';
+import {
+    facebookPageId,
+    googleTagManagerId,
+    siteURL,
+} from '@/config/constants';
+import { GoogleTagManager } from '@next/third-parties/google';
 
 const zainSansSerif = Zain({
     variable: '--font-zain-sans-serif',
@@ -10,7 +15,7 @@ const zainSansSerif = Zain({
 });
 
 export const metadata: Metadata = {
-    metadataBase: new URL('https://shibbir.me'),
+    metadataBase: new URL(siteURL),
     title: {
         default: 'Shibbir Ahmed',
         template: '%s | Shibbir Ahmed',
@@ -19,7 +24,7 @@ export const metadata: Metadata = {
     openGraph: {
         title: 'Shibbir Ahmed',
         description: "Shibbir Ahmed's Portfolio",
-        url: 'https://shibbir.me',
+        url: siteURL,
         siteName: 'Shibbir Ahmed',
         locale: 'en_US',
         type: 'website',
@@ -65,6 +70,7 @@ export default function RootLayout({
                     content={facebookPageId}
                 ></meta>
             </head>
+            <GoogleTagManager gtmId={googleTagManagerId} />
             <body
                 className={`${zainSansSerif.variable} bg-background flex min-h-[100svh] flex-col antialiased`}
             >
