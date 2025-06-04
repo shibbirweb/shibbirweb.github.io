@@ -9,7 +9,7 @@ const zainSansSerif = Zain({
 });
 
 export const metadata: Metadata = {
-    metadataBase: new URL('https://shibbirweb.github.io'),
+    metadataBase: new URL('https://shibbir.me'),
     title: {
         default: 'Shibbir Ahmed',
         template: '%s | Shibbir Ahmed',
