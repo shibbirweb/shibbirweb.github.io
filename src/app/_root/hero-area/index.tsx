@@ -1,9 +1,9 @@
-import GridBackgroundComponent from '@/components/utils/GridBackgroundComponent';
 import SocialIcons from './SocialIcons';
+import WithGridAnimatedBackgroundWrapper from '@/components/wrappers/WithGridAnimatedBackgroundWrapper';
 
 export default function HeroArea() {
     return (
-        <div className="relative">
+        <WithGridAnimatedBackgroundWrapper>
             <div className="container mx-auto">
                 <div className="flex min-h-[100svh] flex-col items-center">
                     <div className="flex w-full grow flex-col items-center justify-center gap-y-8 py-6 sm:gap-y-0">
@@ -17,20 +17,8 @@ export default function HeroArea() {
                         </div>
                         <SocialIcons />
                     </div>
-                    {/* <a
-                href="#about"
-                className="animate-bounce py-10 text-black duration-300 dark:text-white"
-            >
-                <DownIcon className="size-7" />
-            </a> */}
                 </div>
             </div>
-            <GridBackgroundComponent
-                className="motion-safe:animate-pulse"
-                style={{
-                    animationDuration: '5s',
-                }}
-            />
-        </div>
+        </WithGridAnimatedBackgroundWrapper>
     );
 }
