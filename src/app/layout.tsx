@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Zain } from 'next/font/google';
 import './globals.css';
+import { facebookPageId } from '@/config/constants';
 
 const zainSansSerif = Zain({
     variable: '--font-zain-sans-serif',
@@ -59,6 +60,10 @@ export default function RootLayout({
                     name="apple-mobile-web-app-title"
                     content="Shibbir Ahmed"
                 />
+                <meta
+                    property="fb:pages"
+                    content={facebookPageId}
+                ></meta>
             </head>
             <body
                 className={`${zainSansSerif.variable} bg-background flex min-h-[100svh] flex-col antialiased`}
