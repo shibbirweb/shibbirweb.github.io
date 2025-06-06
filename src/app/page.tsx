@@ -1,8 +1,12 @@
+import { JsonLdScriptComponent } from '@/components/utils/JsonLdScriptComponent';
 import HeroArea from './_root/hero-area';
 
 export default function Home() {
     return (
-        <div>
+        <section>
+            {process.env.NODE_ENV === 'production' ? (
+                <JsonLdScriptComponent />
+            ) : null}
             <HeroArea />
 
             {/* <div
@@ -15,6 +19,6 @@ export default function Home() {
                     pleasing.
                 </p>
             </div> */}
-        </div>
+        </section>
     );
 }
