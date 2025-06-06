@@ -14,6 +14,7 @@ import {
     twitterUsername,
 } from '@/config/constants';
 import { GoogleTagManager } from '@next/third-parties/google';
+import { JsonLdScriptComponent } from '@/components/utils/JsonLdScriptComponent';
 
 const zainSansSerif = Zain({
     variable: '--font-zain-sans-serif',
@@ -107,6 +108,9 @@ export default function RootLayout({
                     property="fb:pages"
                     content={facebookPageId}
                 ></meta>
+                {process.env.NODE_ENV === 'production' ? (
+                    <JsonLdScriptComponent />
+                ) : null}
             </head>
             {process.env.NODE_ENV === 'production' && (
                 <GoogleTagManager gtmId={googleTagManagerId} />
