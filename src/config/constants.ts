@@ -30,3 +30,21 @@ export const siteKeywords: string[] = [
 export const siteAuthor: string = 'Shibbir Ahmed';
 export const siteAuthorEmail: string = 'shibbirweb@gmail.com';
 export const siteThumbnail: string = `${siteURL}/shibbir-ahmed.jpg`;
+
+// workplace
+export const currentJobTitle: string = 'Senior Software Engineer (Full Stack)';
+export const currentWorkplace: string = 'RoBenDevs';
+export const currentWorkplaceURL: string = 'https://robendevs.com';
+export const careerExperience: number = new Date().getFullYear() - 2019;
+
+// education
+export const education: string = 'Bachelor of Science in Mathematics';
+export const educationURL: string = 'https://www.nu.ac.bd';
+
+// social links
+export const linkedInURL: string = 'https://www.linkedin.com/in/shibbirweb';
+export const githubURL: string = 'https://github.com/shibbirweb';
+export const facebookURL: string = 'https://www.facebook.com/shibbirweb';
+export const twitterURL: string = 'https://x.com/shibbirweb';
+
+export const jsonLdDescription: string = `${siteName} is a passionate and experienced Full-Stack Software Engineer with over ${careerExperience} years of expertise in building scalable, high-performance web applications. He specializes in modern JavaScript frameworks, Laravel, RESTful APIs, and DevOps tools like Docker. Currently working at ${currentWorkplace}, he is committed to delivering clean, maintainable code and crafting seamless user experiences across platforms.`;

@@ -108,7 +108,9 @@ export default function RootLayout({
                     content={facebookPageId}
                 ></meta>
             </head>
-            <GoogleTagManager gtmId={googleTagManagerId} />
+            {process.env.NODE_ENV === 'production' && (
+                <GoogleTagManager gtmId={googleTagManagerId} />
+            )}
             <body
                 className={`${zainSansSerif.variable} bg-background flex min-h-[100svh] flex-col antialiased`}
             >
