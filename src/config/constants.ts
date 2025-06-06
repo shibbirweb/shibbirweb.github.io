@@ -47,4 +47,22 @@ export const githubURL: string = 'https://github.com/shibbirweb';
 export const facebookURL: string = 'https://www.facebook.com/shibbirweb';
 export const twitterURL: string = 'https://x.com/shibbirweb';
 
+// json-ld
+export const jsonLdAlternateName: string = 'shibbirweb';
+export const jsonLdKnowsAbout: string[] = [
+    'Web Development',
+    'PHP',
+    'Laravel',
+    'MySQL',
+    'PostgreSQL',
+    'Docker',
+    'Git',
+    'Next.js',
+    'React',
+    'TypeScript',
+    'JavaScript',
+    'HTML',
+    'CSS',
+    'Tailwind CSS',
+];
 export const jsonLdDescription: string = `${siteName} is a passionate and experienced Full-Stack Software Engineer with over ${careerExperience} years of expertise in building scalable, high-performance web applications. He specializes in modern JavaScript frameworks, Laravel, RESTful APIs, and DevOps tools like Docker. Currently working at ${currentWorkplace}, he is committed to delivering clean, maintainable code and crafting seamless user experiences across platforms.`;
