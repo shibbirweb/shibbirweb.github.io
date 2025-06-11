@@ -5,6 +5,7 @@
         "titleBar.activeForeground": "#FEFCFE"
     },
     "editor.formatOnSave": true,
-    "editor.formatOnPaste": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.formatOnPaste": false,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "cSpell.words": ["Shibbir"]
 }
