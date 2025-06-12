@@ -1,7 +1,7 @@
 export default function AboutMeArea() {
     return (
-        <div className="relative my-20 flex min-h-svh grow">
-            <div className="container mx-auto flex flex-col items-center justify-center px-4">
+        <div className="relative flex min-h-[120svh] bg-gradient-to-b from-[var(--background)] to-[var(--background)] to-100% dark:via-[#0d1116]">
+            <div className="container mx-auto flex grow flex-col items-center justify-center px-4">
                 <div className="leading-normal sm:text-justify">
                     <p>
                         I&apos;m <strong>MD. Shibbir Ahmed</strong>, a{' '}
