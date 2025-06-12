@@ -2,7 +2,7 @@ export default function AboutMeArea() {
     return (
         <div className="relative my-20 flex min-h-svh grow">
             <div className="container mx-auto flex flex-col items-center justify-center px-4">
-                <div className="leading-relaxed sm:text-justify lg:leading-loose">
+                <div className="leading-normal sm:text-justify">
                     <p>
                         I&apos;m <strong>MD. Shibbir Ahmed</strong>, a{' '}
                         <strong>Full Stack Developer</strong> committed to
