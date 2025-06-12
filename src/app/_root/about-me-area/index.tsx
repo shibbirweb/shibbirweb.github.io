@@ -37,11 +37,9 @@ export default function AboutMeArea() {
                             system design
                         </strong>
                         , and delivering solutions that create meaningful
-                        impact. Coding is not merely my profession, but a
-                        dedicated pursuit through which I continuously seek to
-                        advance technology and drive innovation.
+                        impact.
                     </p>
-                    <p>
+                    <p className="mt-2">
                         Coding is not merely my profession, but a dedicated
                         pursuit through which I continuously seek to advance
                         technology and drive innovation.
