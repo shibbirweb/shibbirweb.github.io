@@ -116,7 +116,7 @@ export default function RootLayout({
                 <GoogleTagManager gtmId={googleTagManagerId} />
             )}
             <body
-                className={`${zainSansSerif.variable} bg-background flex min-h-[100svh] flex-col antialiased`}
+                className={`${zainSansSerif.variable} bg-background flex min-h-svh flex-col text-3xl antialiased`}
             >
                 {children}
             </body>
