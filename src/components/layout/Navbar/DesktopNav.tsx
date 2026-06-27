@@ -1,7 +1,6 @@
-import Link from 'next/link';
-import Shibbir from '@/components/icons/shibbir';
 import { cn } from '@/utils/cn';
 import NavItem from './NavItem';
+import NavLogo from './NavLogo';
 import type { NavItemData } from './contents';
 
 interface DesktopNavProps {
@@ -29,13 +28,7 @@ export default function DesktopNav({
         >
             <ul className="border-foreground/10 bg-background/60 flex items-center gap-1 rounded-full border px-2 py-1.5 shadow-lg shadow-black/5 backdrop-blur-lg">
                 <li>
-                    <Link
-                        href="/#hero"
-                        aria-label="Home"
-                        className="text-foreground/80 hover:text-foreground block px-2 py-1.5 transition-colors"
-                    >
-                        <Shibbir className="h-5 w-auto" />
-                    </Link>
+                    <NavLogo className="text-foreground/80 hover:text-foreground block px-2 py-1.5 transition-colors" />
                 </li>
                 <li
                     aria-hidden="true"

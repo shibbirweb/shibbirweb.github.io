@@ -1,7 +1,6 @@
-import Link from 'next/link';
-import Shibbir from '@/components/icons/shibbir';
 import { cn } from '@/utils/cn';
 import NavItem from './NavItem';
+import NavLogo from './NavLogo';
 import type { NavItemData } from './contents';
 
 interface MobileMenuPanelProps {
@@ -29,14 +28,10 @@ export default function MobileMenuPanel({
                     : 'pointer-events-none invisible scale-95 opacity-0'
             )}
         >
-            <Link
-                href="/#hero"
-                aria-label="Home"
-                onClick={onNavigate}
+            <NavLogo
+                onNavigate={onNavigate}
                 className="text-foreground/80 hover:text-foreground hover:bg-foreground/5 flex items-center rounded-xl px-4 py-3 transition-colors"
-            >
-                <Shibbir className="h-5 w-auto" />
-            </Link>
+            />
             <div
                 aria-hidden="true"
                 className="bg-foreground/10 my-1 h-px"
