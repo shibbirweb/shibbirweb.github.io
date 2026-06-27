@@ -74,3 +74,82 @@
 .content :global(.gist-embed--fallback) a {
     text-decoration: underline;
 }
+
+/* GitHub's gist-embed stylesheet ships only a light palette (chrome via tokens,
+   syntax via hardcoded github-light hex). In dark mode we repaint the gist with
+   GitHub's github-dark colors so it matches the site theme. Selectors are kept
+   specific enough to win over GitHub's linked stylesheet. */
+@media (prefers-color-scheme: dark) {
+    .content :global(.gist-embed .gist-file) {
+        border-color: #30363d;
+    }
+    .content :global(.gist-embed .gist-data) {
+        background-color: #0d1117;
+        border-bottom-color: #30363d;
+    }
+    .content :global(.gist-embed .highlight) {
+        background: #0d1117;
+    }
+    .content :global(.gist-embed .blob-num) {
+        color: #6e7681;
+        background-color: #0d1117;
+    }
+    .content :global(.gist-embed .blob-code-inner) {
+        color: #e6edf3;
+    }
+    .content :global(.gist-embed .gist-meta) {
+        background-color: #161b22;
+    }
+    .content :global(.gist-embed .gist-meta a) {
+        color: #8b949e;
+    }
+
+    /* github-dark syntax palette (mirrors GitHub's grouped selectors) */
+    .content :global(.gist-embed .pl-c),
+    .content :global(.gist-embed .pl-ba) {
+        color: #8b949e;
+    }
+    .content :global(.gist-embed .pl-sg) {
+        color: #6e7681;
+    }
+    .content :global(.gist-embed .pl-k) {
+        color: #ff7b72;
+    }
+    .content :global(.gist-embed .pl-c1),
+    .content :global(.gist-embed .pl-s .pl-v),
+    .content :global(.gist-embed .pl-mh),
+    .content :global(.gist-embed .pl-ms) {
+        color: #79c0ff;
+    }
+    .content :global(.gist-embed .pl-e),
+    .content :global(.gist-embed .pl-en),
+    .content :global(.gist-embed .pl-mdr) {
+        color: #d2a8ff;
+    }
+    .content :global(.gist-embed .pl-ent),
+    .content :global(.gist-embed .pl-mi1) {
+        color: #7ee787;
+    }
+    .content :global(.gist-embed .pl-v),
+    .content :global(.gist-embed .pl-smw) {
+        color: #ffa657;
+    }
+    .content :global(.gist-embed .pl-s),
+    .content :global(.gist-embed .pl-pds),
+    .content :global(.gist-embed .pl-sr),
+    .content :global(.gist-embed .pl-sr .pl-sra),
+    .content :global(.gist-embed .pl-corl) {
+        color: #a5d6ff;
+    }
+    .content :global(.gist-embed .pl-smi),
+    .content :global(.gist-embed .pl-s .pl-s1) {
+        color: #c9d1d9;
+    }
+    .content :global(.gist-embed .pl-ml) {
+        color: #f2cc60;
+    }
+    .content :global(.gist-embed .pl-bu),
+    .content :global(.gist-embed .pl-md) {
+        color: #f85149;
+    }
+}
