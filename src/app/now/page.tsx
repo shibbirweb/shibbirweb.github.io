@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import SectionHeading from '@/components/pages/common/SectionHeading';
 import NowSection from './NowSection';
-import NowNav from './NowNav';
 import { nowMeta, nowQuote, nowSections } from './contents';
 import { siteName } from '@/config/constants';
 
@@ -45,8 +44,6 @@ export default function NowPage() {
             <blockquote className="text-foreground/80 mt-16 border-l-4 border-emerald-500 pl-6 text-3xl font-semibold italic">
                 {nowQuote}
             </blockquote>
-
-            <NowNav />
         </main>
     );
 }

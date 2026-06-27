@@ -174,13 +174,3 @@ export const nowSections: NowSectionData[] = [
 ];
 
 export const nowQuote = 'The best engineers never stop learning.';
-
-export const nowNav: {
-    label: string;
-    href: string;
-    direction: 'back' | 'forward';
-}[] = [
-    { label: 'Uses', href: '/uses', direction: 'back' },
-    { label: 'Projects', href: '/#work', direction: 'forward' },
-    { label: 'Contact', href: '/#contact', direction: 'forward' },
-];
