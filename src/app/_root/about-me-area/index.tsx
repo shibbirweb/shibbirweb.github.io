@@ -1,5 +1,6 @@
 import AnimatedUnderline from '@/components/animations/AnimatedUnderline';
 import SectionHeading from '@/components/pages/common/SectionHeading';
+import { careerExperience } from '@/config/constants';
 
 export default function AboutMeArea() {
     return (
@@ -24,70 +25,78 @@ export default function AboutMeArea() {
                         className="size-44 shrink-0 self-center rounded-2xl object-cover sm:size-56 sm:self-start"
                     />
 
-                    <div className="text-2xl leading-normal sm:text-justify">
+                    <div className="space-y-6 text-2xl leading-normal sm:text-justify">
                         <p>
                             I&apos;m <strong>MD. Shibbir Ahmed</strong>, a{' '}
-                            <strong>Full Stack Developer</strong> committed to
-                            building scalable and maintainable web applications.
-                            I specialize in{' '}
+                            <strong>Senior Full-Stack Software Engineer</strong>{' '}
+                            with {careerExperience}+ years building scalable web
+                            applications and the backend systems behind them.
+                            I&apos;ve shipped across healthcare, e-commerce, and
+                            the public sector — designing{' '}
                             <AnimatedUnderline
                                 variant="draw-right"
-                                color="var(--color-yellow-500)"
+                                color="var(--color-blue-500)"
                                 delayMs={0}
                             >
-                                JavaScript
+                                REST APIs
                             </AnimatedUnderline>
-                            ,{' '}
-                            <AnimatedUnderline
-                                variant="draw-left"
-                                color="var(--color-blue-500)"
-                                delayMs={120}
-                            >
-                                PHP
-                            </AnimatedUnderline>
-                            , and{' '}
-                            <AnimatedUnderline
-                                variant="center"
-                                color="var(--color-emerald-500)"
-                                delayMs={240}
-                            >
-                                Node.js
-                            </AnimatedUnderline>
-                            , leveraging{' '}
+                            , architecting backend services, optimizing
+                            databases, and shipping to production with{' '}
                             <AnimatedUnderline
                                 variant="highlight"
                                 color="var(--color-indigo-500)"
-                                delayMs={360}
+                                delayMs={120}
                             >
                                 Docker
                             </AnimatedUnderline>{' '}
-                            for containerization and implementing{' '}
+                            and{' '}
                             <AnimatedUnderline
                                 variant="rise"
                                 color="var(--color-red-500)"
-                                delayMs={480}
+                                delayMs={240}
                             >
                                 CI/CD
+                            </AnimatedUnderline>
+                            .
+                        </p>
+                        <p>
+                            More recently I&apos;ve focused on{' '}
+                            <AnimatedUnderline
+                                variant="center"
+                                color="var(--color-emerald-500)"
+                                delayMs={360}
+                            >
+                                AI engineering
                             </AnimatedUnderline>{' '}
-                            pipelines to ensure efficient and reliable
-                            deployments. I focus on{' '}
+                            — building applications on{' '}
+                            <AnimatedUnderline
+                                variant="draw-left"
+                                color="var(--color-yellow-500)"
+                                delayMs={480}
+                            >
+                                LLMs
+                            </AnimatedUnderline>
+                            , RAG, embeddings, and{' '}
                             <AnimatedUnderline
                                 variant="bounce"
                                 color="var(--color-orange-500)"
                                 delayMs={600}
                             >
-                                clean code
+                                vector search
                             </AnimatedUnderline>
-                            , robust{' '}
+                            , preferring to understand how these systems work
+                            over simply calling their APIs. Outside of work I run
+                            my own{' '}
                             <AnimatedUnderline
                                 variant="glow"
                                 color="var(--color-rose-500)"
                                 delayMs={720}
                             >
-                                system design
-                            </AnimatedUnderline>
-                            , and delivering solutions that create meaningful
-                            impact.
+                                self-hosted infrastructure
+                            </AnimatedUnderline>{' '}
+                            on Proxmox and Docker — staying close to networking,
+                            automation, and what it takes to keep software
+                            running.
                         </p>
                     </div>
                 </div>

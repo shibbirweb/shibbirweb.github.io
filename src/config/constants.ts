@@ -26,6 +26,15 @@ export const siteKeywords: string[] = [
     'Next.js',
     'Nuxt.js',
     'Tailwind CSS',
+    'Senior Software Engineer',
+    'TypeScript',
+    'Docker',
+    'PostgreSQL',
+    'REST API',
+    'AI Engineer',
+    'LLM',
+    'RAG',
+    'Vector Database',
 ];
 export const siteAuthor: string = 'Shibbir Ahmed';
 export const siteAuthorEmail: string = 'shibbirweb@gmail.com';
@@ -65,5 +74,14 @@ export const jsonLdKnowsAbout: string[] = [
     'HTML',
     'CSS',
     'Tailwind CSS',
+    'Node.js',
+    'Express.js',
+    'REST APIs',
+    'Redis',
+    'Linux',
+    'System Design',
+    'Large Language Models',
+    'Retrieval-Augmented Generation',
+    'Vector Databases',
 ];
 export const jsonLdDescription: string = `${siteName} is a passionate and experienced Full-Stack Software Engineer with over ${careerExperience} years of expertise in building scalable, high-performance web applications. He specializes in modern JavaScript frameworks, Laravel, RESTful APIs, and DevOps tools like Docker. Currently working at ${currentWorkplace}, he is committed to delivering clean, maintainable code and crafting seamless user experiences across platforms.`;
