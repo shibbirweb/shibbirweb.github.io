@@ -53,39 +53,51 @@ export default async function ArticlePage({
     const article = await getArticle(slug);
     if (!article) notFound();
 
-    const related = getRelatedArticles(slug, 2);
+    const related = getRelatedArticles(slug, 4);
+
+    const header = (
+        <header>
+            <p className="text-foreground/60 text-base">
+                <time dateTime={article.date}>{formatDate(article.date)}</time>
+                {' · '}
+                {article.readingMinutes} min read
+            </p>
+            <h1 className="mt-3 text-4xl font-bold sm:text-5xl">
+                {article.title}
+            </h1>
+            <ul className="mt-6 flex flex-wrap gap-2">
+                {article.tags.map((tag) => (
+                    <TagLink
+                        key={tag}
+                        tag={tag}
+                        className="px-3 py-1 text-base"
+                    />
+                ))}
+            </ul>
+            {article.description && (
+                <p className="text-foreground/80 mt-6 text-2xl leading-relaxed">
+                    {article.description}
+                </p>
+            )}
+        </header>
+    );
 
     return (
         <main className="container mx-auto px-4 py-20 sm:py-28">
-            <article className="mx-auto max-w-3xl">
-                <header>
-                    <p className="text-foreground/60 text-base">
-                        <time dateTime={article.date}>
-                            {formatDate(article.date)}
-                        </time>
-                        {' · '}
-                        {article.readingMinutes} min read
-                    </p>
-                    <h1 className="mt-3 text-4xl font-bold sm:text-5xl">
-                        {article.title}
-                    </h1>
-                    <ul className="mt-6 flex flex-wrap gap-2">
-                        {article.tags.map((tag) => (
-                            <TagLink
-                                key={tag}
-                                tag={tag}
-                                className="px-3 py-1 text-base"
-                            />
-                        ))}
-                    </ul>
-                </header>
-
-                {article.cover && (
-                    <ArticleCover
-                        src={article.cover}
-                        className="mt-10 rounded-2xl"
-                    />
+            <article>
+                {article.cover ? (
+                    <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
+                        <ArticleCover
+                            src={article.cover}
+                            className="h-auto rounded-2xl"
+                        />
+                        {header}
+                    </div>
+                ) : (
+                    header
                 )}
+
+                <div className="via-foreground/50 mt-12 h-px bg-linear-to-r from-transparent to-transparent" />
 
                 <ArticleContent html={article.html} />
 
@@ -102,14 +114,15 @@ export default async function ArticlePage({
             {related.length > 0 && (
                 <aside
                     aria-label="Related articles"
-                    className="border-foreground/10 mx-auto mt-20 max-w-3xl border-t pt-12"
+                    className="border-foreground/10 mt-20 border-t pt-12"
                 >
                     <h2 className="text-2xl font-bold sm:text-3xl">
                         Related articles
                     </h2>
                     <ArticleGrid
                         articles={related}
-                        className="mt-10"
+                        compact
+                        className="mt-10 lg:grid-cols-4"
                     />
                 </aside>
             )}

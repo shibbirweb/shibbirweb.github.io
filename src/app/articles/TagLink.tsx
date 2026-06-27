@@ -10,7 +10,7 @@ export default function TagLink({
     className?: string;
 }) {
     return (
-        <li>
+        <li className="flex">
             <Link
                 href={`/articles?tag=${encodeURIComponent(tag)}`}
                 className={cn(

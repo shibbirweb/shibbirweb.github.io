@@ -5,9 +5,11 @@ import type { ArticleSummary } from '@/lib/posts';
 export default function ArticleGrid({
     articles,
     className,
+    compact = false,
 }: {
     articles: ArticleSummary[];
     className?: string;
+    compact?: boolean;
 }) {
     return (
         <ul
@@ -20,6 +22,7 @@ export default function ArticleGrid({
                 <ArticleCard
                     key={article.slug}
                     article={article}
+                    compact={compact}
                 />
             ))}
         </ul>

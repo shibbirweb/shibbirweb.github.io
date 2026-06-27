@@ -21,10 +21,7 @@ export default function ArticleCover({
             width={1200}
             height={630}
             unoptimized
-            className={cn(
-                'bg-foreground/5 aspect-video w-full object-cover',
-                className
-            )}
+            className={cn('bg-foreground/5 w-full object-cover', className)}
         />
     );
 }
