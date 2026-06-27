@@ -3,13 +3,16 @@
 import { cn } from '@/utils/cn';
 import MobileMenuButton from './MobileMenuButton';
 import MobileMenuPanel from './MobileMenuPanel';
+import MobileWordmark from './MobileWordmark';
 import type { NavItemData } from './contents';
 import { useDisclosure } from './hooks/useDisclosure';
 import { useCloseOnEscape } from './hooks/useCloseOnEscape';
 import { useCloseOnRouteChange } from './hooks/useCloseOnRouteChange';
+import { useScrolledToTop } from './hooks/useScrolledToTop';
 
 interface MobileNavProps {
     visible: boolean;
+    isHome: boolean;
     sectionItems: NavItemData[];
     pageItems: NavItemData[];
     isActive: (item: NavItemData) => boolean;
@@ -17,6 +20,7 @@ interface MobileNavProps {
 
 export default function MobileNav({
     visible,
+    isHome,
     sectionItems,
     pageItems,
     isActive,
@@ -24,34 +28,52 @@ export default function MobileNav({
     const { open, toggle, close } = useDisclosure();
     useCloseOnEscape(open, close);
     useCloseOnRouteChange(close);
+    const atTop = useScrolledToTop();
+
+    // Fill the otherwise empty top-left of inner pages with the wordmark while
+    // the reader is at the top. The home page carries its name in the hero (and
+    // hides this navbar at the top), so it never needs the wordmark. The
+    // wordmark also tucks away once the menu opens, where it leads the panel.
+    const wordmarkRevealed = !isHome && atTop && !open;
 
     return (
-        <div
-            className={cn(
-                'fixed top-4 right-4 z-50 transition-all duration-500 ease-out motion-reduce:transition-none md:hidden',
-                visible
-                    ? 'visible translate-y-0 opacity-100'
-                    : 'pointer-events-none invisible -translate-y-24 opacity-0'
-            )}
-        >
-            {open && (
-                <div
-                    aria-hidden="true"
-                    onClick={close}
-                    className="fixed inset-0"
-                />
-            )}
-            <MobileMenuButton
-                open={open}
-                onToggle={toggle}
-            />
-            <MobileMenuPanel
-                open={open}
-                sectionItems={sectionItems}
-                pageItems={pageItems}
-                isActive={isActive}
+        <>
+            {/*
+             * Rendered as a sibling of (not inside) the menu container below: that
+             * container carries a transform for its show/hide, which would become
+             * the containing block for the wordmark's `fixed` and break centering.
+             */}
+            <MobileWordmark
+                revealed={wordmarkRevealed}
                 onNavigate={close}
             />
-        </div>
+            <div
+                className={cn(
+                    'fixed top-4 right-4 z-50 transition-all duration-500 ease-out motion-reduce:transition-none md:hidden',
+                    visible
+                        ? 'visible translate-y-0 opacity-100'
+                        : 'pointer-events-none invisible -translate-y-24 opacity-0'
+                )}
+            >
+                {open && (
+                    <div
+                        aria-hidden="true"
+                        onClick={close}
+                        className="fixed inset-0"
+                    />
+                )}
+                <MobileMenuButton
+                    open={open}
+                    onToggle={toggle}
+                />
+                <MobileMenuPanel
+                    open={open}
+                    sectionItems={sectionItems}
+                    pageItems={pageItems}
+                    isActive={isActive}
+                    onNavigate={close}
+                />
+            </div>
+        </>
     );
 }
