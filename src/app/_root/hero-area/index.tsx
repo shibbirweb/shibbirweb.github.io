@@ -12,16 +12,16 @@ export default function HeroArea() {
                     <div className="flex w-full grow flex-col items-center justify-center gap-y-8 py-6 sm:gap-y-0">
                         <div className="flex flex-col px-4 lg:items-end lg:justify-center">
                             <ShinyTextAnimation>
-                                <h1 className="flex flex-wrap items-center justify-center gap-x-8 text-8xl leading-16 font-bold min-[22.25rem]:text-9xl min-[22.25rem]:leading-20 sm:text-8xl sm:leading-10 md:gap-x-12 md:text-9xl md:leading-12">
-                                    <span className="sm:text-box-trim-trim-both sm:text-box-edge-cap-alphabetic py-2 sm:py-1">
+                                <h1 className="flex flex-wrap items-center justify-center gap-x-8 text-[length:clamp(2.75rem,14vw,6rem)] leading-none font-bold sm:text-8xl sm:leading-10 md:gap-x-12 md:text-9xl md:leading-12">
+                                    <span className="text-box-trim-trim-both text-box-edge-cap-alphabetic py-1">
                                         Shibbir
                                     </span>
-                                    <span className="sm:text-box-trim-trim-both sm:text-box-edge-cap-alphabetic py-2 sm:py-1">
+                                    <span className="text-box-trim-trim-both text-box-edge-cap-alphabetic py-1">
                                         Ahmed
                                     </span>
                                 </h1>
                             </ShinyTextAnimation>
-                            <p className="self-center text-2xl leading-2 sm:leading-5 lg:self-end lg:pr-[5px]">
+                            <p className="self-center text-center text-2xl leading-tight sm:leading-5 lg:self-end lg:pr-[5px]">
                                 {professionalTitle}
                             </p>
                         </div>
