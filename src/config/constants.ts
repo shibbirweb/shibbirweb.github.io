@@ -53,6 +53,9 @@ export const careerExperience: number = new Date().getFullYear() - 2019;
 export const education: string = 'Bachelor of Science in Mathematics';
 export const educationURL: string = 'https://www.nu.ac.bd';
 
+// location
+export const addressCountry: string = 'Bangladesh';
+
 // social links
 export const linkedInURL: string = 'https://www.linkedin.com/in/shibbirweb';
 export const githubURL: string = 'https://github.com/shibbirweb';
