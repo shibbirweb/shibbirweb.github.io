@@ -1,6 +1,6 @@
 # Personal Portfolio Website
 
-Personal portfolio and personal-brand site for **MD. Shibbir Ahmed** — Senior Full-Stack Software Engineer. Built with Next.js (App Router), statically exported, and deployed to GitHub Pages on a custom domain.
+Personal portfolio and personal-brand site for **MD. Shibbir Ahmed**, Senior Full-Stack Software Engineer. Built with Next.js (App Router), statically exported, and deployed to GitHub Pages on a custom domain.
 
 ## 🔧 Tech Stack
 
@@ -12,8 +12,8 @@ Personal portfolio and personal-brand site for **MD. Shibbir Ahmed** — Senior 
 ## 📁 Sections & Features
 
 - Hero with an animated name and grid background
-- About me — bio, experience, and education
-- **Featured Projects** — curated developer tools & full-stack projects
+- About me: bio, experience, and education
+- **Featured Projects**: curated developer tools & full-stack projects
 - Skills & tech stack
 - Contact via email and social profiles
 - Responsive, mobile-friendly, system dark-mode aware

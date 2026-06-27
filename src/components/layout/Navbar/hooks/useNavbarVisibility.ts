@@ -21,7 +21,7 @@ export function useNavbarVisibility(isHome: boolean, heroId: string): boolean {
         const observer = new IntersectionObserver(
             ([entry]) => setVisible(!entry.isIntersecting),
             // Shrink the root to the bottom half of the viewport so the hero
-            // "leaves" — and the navbar appears — once it is scrolled ~50% out.
+            // "leaves" (and the navbar appears) once it is scrolled ~50% out.
             { rootMargin: '-50% 0px 0px 0px' }
         );
         observer.observe(hero);

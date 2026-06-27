@@ -60,11 +60,11 @@ export const usesSections: UsesSectionData[] = [
                 specs: [
                     {
                         label: 'Primary',
-                        value: 'LG 24GN65R-B — 23.8" IPS, 144Hz',
+                        value: 'LG 24GN65R-B, 23.8" IPS, 144Hz',
                     },
                     {
                         label: 'Secondary',
-                        value: 'Xiaomi Redmi 1A — 23.8" IPS, 100Hz',
+                        value: 'Xiaomi Redmi 1A, 23.8" IPS, 100Hz',
                     },
                 ],
             },
@@ -121,7 +121,7 @@ export const usesSections: UsesSectionData[] = [
     {
         title: 'Home Lab',
         emoji: '🏠',
-        intro: 'One of my favorite projects is my self-hosted home lab — where I experiment with infrastructure, networking, virtualization, automation, and self-hosting technologies.',
+        intro: 'One of my favorite projects is my self-hosted home lab, where I experiment with infrastructure, networking, virtualization, automation, and self-hosting technologies.',
         blocks: [
             {
                 kind: 'specs',
