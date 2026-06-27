@@ -10,6 +10,18 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
+    {
+        // Build output and generated artifacts: never lint these.
+        // (Next 16 removed `next lint`, which used to scope this implicitly.)
+        ignores: [
+            '.next/**',
+            'out/**',
+            'build/**',
+            'next-env.d.ts',
+            '**/nextImageExportOptimizer/**',
+            '**/next-image-export-optimizer-hashes.json',
+        ],
+    },
     ...compat.extends('next/core-web-vitals', 'next/typescript', 'prettier'),
 ];
 

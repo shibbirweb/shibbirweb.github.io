@@ -7,7 +7,7 @@
         "dev:https": "next dev --experimental-https",
         "build": "next build && next-image-export-optimizer",
         "start": "next start",
-        "lint": "next lint"
+        "lint": "eslint"
     },
     "dependencies": {
         "@next/third-parties": "^15.3.3",
