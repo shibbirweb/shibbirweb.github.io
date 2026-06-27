@@ -20,6 +20,7 @@ import {
 import { GoogleTagManager } from '@next/third-parties/google';
 import { JsonLdScriptComponent } from '@/components/utils/JsonLdScriptComponent';
 import Navbar from '@/components/layout/Navbar';
+import Footer from '@/components/layout/Footer';
 import { hasArticles } from '@/lib/posts';
 
 const zainSansSerif = Zain({
@@ -131,7 +132,8 @@ export default function RootLayout({
                 className={`${zainSansSerif.variable} ${jetBrainsMono.variable} bg-background flex min-h-svh flex-col text-3xl antialiased`}
             >
                 <Navbar hasArticles={hasArticles()} />
-                {children}
+                <div className="flex grow flex-col">{children}</div>
+                <Footer />
             </body>
         </html>
     );
