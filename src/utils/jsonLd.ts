@@ -20,6 +20,7 @@ import {
     jsonLdKnowsAbout,
     personGivenName,
     personFamilyName,
+    addressCountry,
 } from '@/config/constants';
 
 export const jsonLd: WithContext<ProfilePage> = {
@@ -39,6 +40,10 @@ export const jsonLd: WithContext<ProfilePage> = {
         url: siteURL,
         image: siteThumbnail,
         jobTitle: currentJobTitle,
+        address: {
+            '@type': 'PostalAddress',
+            addressCountry,
+        },
         identifier: [
             {
                 '@type': 'PropertyValue',
