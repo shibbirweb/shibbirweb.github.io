@@ -2,10 +2,11 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Tag from '@/components/pages/common/Tag';
+import ArticleGrid from '../ArticleGrid';
 import { JsonLd } from '@/components/utils/JsonLd';
 import { buildArticleJsonLd } from '@/utils/articleJsonLd';
 import { formatDate } from '@/utils/formatDate';
-import { getAllArticles, getArticle } from '@/lib/posts';
+import { getAllArticles, getArticle, getRelatedArticles } from '@/lib/posts';
 
 export const dynamicParams = false;
 
@@ -50,6 +51,8 @@ export default async function ArticlePage({
     const article = getArticle(slug);
     if (!article) notFound();
 
+    const related = getRelatedArticles(slug, 3);
+
     return (
         <main className="container mx-auto px-4 py-20 sm:py-28">
             <article className="mx-auto max-w-3xl">
@@ -90,6 +93,21 @@ export default async function ArticlePage({
                     </Link>
                 </div>
             </article>
+
+            {related.length > 0 && (
+                <aside
+                    aria-label="Related articles"
+                    className="border-foreground/10 mx-auto mt-20 max-w-5xl border-t pt-12"
+                >
+                    <h2 className="text-2xl font-bold sm:text-3xl">
+                        Related articles
+                    </h2>
+                    <ArticleGrid
+                        articles={related}
+                        className="mt-10 lg:grid-cols-3"
+                    />
+                </aside>
+            )}
 
             {process.env.NODE_ENV === 'production' && (
                 <JsonLd data={buildArticleJsonLd(article)} />

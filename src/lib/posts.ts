@@ -106,3 +106,20 @@ export function getArticle(slug: string): Article | null {
     const html = marked.parse(article.content, { async: false }) as string;
     return { ...toSummary(article), html };
 }
+
+/** Up to `limit` other articles, ranked by shared tags then recency. */
+export function getRelatedArticles(slug: string, limit = 3): ArticleSummary[] {
+    const all = getAllArticles();
+    const current = all.find((article) => article.slug === slug);
+    if (!current) return [];
+    const currentTags = new Set(current.tags);
+    return all
+        .filter((article) => article.slug !== slug)
+        .map((article) => ({
+            article,
+            shared: article.tags.filter((tag) => currentTags.has(tag)).length,
+        }))
+        .sort((a, b) => b.shared - a.shared)
+        .slice(0, limit)
+        .map((entry) => entry.article);
+}
