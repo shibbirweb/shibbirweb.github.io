@@ -15,6 +15,7 @@ import {
     siteName,
     siteThumbnail,
     siteURL,
+    siteDatePublished,
     jsonLdAlternateName,
     jsonLdKnowsAbout,
 } from '@/config/constants';
@@ -23,8 +24,9 @@ export const jsonLd: WithContext<ProfilePage> = {
     '@context': 'https://schema.org',
     '@type': 'ProfilePage',
     url: siteURL,
-    dateCreated: new Date().toISOString(),
-    datePublished: new Date().toISOString(),
+    dateCreated: siteDatePublished,
+    datePublished: siteDatePublished,
+    dateModified: new Date().toISOString(),
     mainEntity: {
         '@type': 'Person',
         '@id': `${siteURL}#person`,
@@ -75,31 +77,6 @@ export const jsonLd: WithContext<ProfilePage> = {
             url: educationURL,
         },
         description: jsonLdDescription,
-        interactionStatistic: [
-            {
-                '@type': 'InteractionCounter',
-                interactionType: {
-                    '@type': 'FollowAction',
-                },
-                userInteractionCount: 15,
-            },
-            {
-                '@type': 'InteractionCounter',
-                interactionType: {
-                    '@type': 'LikeAction',
-                },
-                userInteractionCount: 205,
-            },
-        ],
-        agentInteractionStatistic: [
-            {
-                '@type': 'InteractionCounter',
-                interactionType: {
-                    '@type': 'WriteAction',
-                },
-                userInteractionCount: 66,
-            },
-        ],
         knowsAbout: jsonLdKnowsAbout,
     },
 };

@@ -18,16 +18,31 @@ export default function manifest(): MetadataRoute.Manifest {
                 src: '/shibbir-logo-144x144.png',
                 sizes: '144x144',
                 type: 'image/png',
+                purpose: 'any',
             },
             {
                 src: '/shibbir-logo-192x192.png',
                 sizes: '192x192',
                 type: 'image/png',
+                purpose: 'any',
             },
             {
                 src: '/shibbir-logo-512x512.png',
                 sizes: '512x512',
                 type: 'image/png',
+                purpose: 'any',
+            },
+            {
+                src: '/shibbir-logo-192x192.png',
+                sizes: '192x192',
+                type: 'image/png',
+                purpose: 'maskable',
+            },
+            {
+                src: '/shibbir-logo-512x512.png',
+                sizes: '512x512',
+                type: 'image/png',
+                purpose: 'maskable',
             },
         ],
         screenshots: [
