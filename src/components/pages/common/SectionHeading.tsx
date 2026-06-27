@@ -15,7 +15,10 @@ export default function SectionHeading({
 }: SectionHeadingProps) {
     return (
         <Heading
-            className={cn('text-5xl font-bold sm:text-6xl', className)}
+            className={cn(
+                'text-4xl font-bold sm:text-5xl md:text-6xl',
+                className
+            )}
             {...rest}
         >
             <span

@@ -4,7 +4,7 @@ import UsesBlock from './UsesBlock';
 export default function UsesSection({ section }: { section: UsesSectionData }) {
     return (
         <section>
-            <h2 className="text-3xl font-bold sm:text-4xl">
+            <h2 className="text-2xl font-bold sm:text-3xl md:text-4xl">
                 <span
                     aria-hidden="true"
                     className="mr-3"
