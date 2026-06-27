@@ -1,13 +1,5 @@
 import AnimatedUnderline from '@/components/animations/AnimatedUnderline';
 import SectionHeading from '@/components/pages/common/SectionHeading';
-import {
-    careerExperience,
-    currentJobTitle,
-    currentWorkplace,
-    currentWorkplaceURL,
-    education,
-    educationURL,
-} from '@/config/constants';
 
 export default function AboutMeArea() {
     return (
@@ -96,32 +88,6 @@ export default function AboutMeArea() {
                             </AnimatedUnderline>
                             , and delivering solutions that create meaningful
                             impact.
-                        </p>
-                        <p className="mt-4">
-                            Coding is not merely my profession, but a dedicated
-                            pursuit through which I continuously seek to advance
-                            technology and drive innovation.
-                        </p>
-                        <p className="mt-6 text-foreground/70">
-                            Currently a {currentJobTitle} at{' '}
-                            <a
-                                href={currentWorkplaceURL}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="underline decoration-emerald-500 underline-offset-4"
-                            >
-                                {currentWorkplace}
-                            </a>{' '}
-                            with {careerExperience}+ years of experience.{' '}
-                            <a
-                                href={educationURL}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="underline decoration-blue-500 underline-offset-4"
-                            >
-                                {education}
-                            </a>
-                            .
                         </p>
                     </div>
                 </div>
