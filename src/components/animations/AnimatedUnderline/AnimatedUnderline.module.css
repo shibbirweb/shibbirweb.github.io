@@ -1,0 +1,92 @@
+/* Animated skill underlines (issue #39).
+   Each variant draws a gradient underline in a unique way when scrolled into
+   view. Resting state is a full, visible underline, so with JS off or reduced
+   motion it degrades to a plain static underline.
+   Keyframes live in this module so CSS Modules can scope them alongside the
+   `animation` declarations that reference them. */
+
+.au {
+    --au-color: var(--au-c, currentColor);
+    background-image: linear-gradient(var(--au-color), var(--au-color));
+    background-repeat: no-repeat;
+    background-position: var(--au-pos, 0 100%);
+    background-size: var(--au-shown, 100% 0.1em);
+    padding-bottom: 0.06em;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+}
+
+/* per-variant geometry (direction / axis / shape) */
+.draw-right {
+    --au-pos: 0 100%;
+    --au-from: 0% 0.1em;
+    --au-shown: 100% 0.1em;
+}
+.draw-left {
+    --au-pos: 100% 100%;
+    --au-from: 0% 0.1em;
+    --au-shown: 100% 0.1em;
+}
+.center {
+    --au-pos: 50% 100%;
+    --au-from: 0% 0.1em;
+    --au-shown: 100% 0.1em;
+}
+.rise {
+    --au-pos: 0 100%;
+    --au-from: 100% 0%;
+    --au-shown: 100% 0.12em;
+}
+.bounce {
+    --au-pos: 0 100%;
+    --au-from: 0% 0.12em;
+    --au-shown: 100% 0.12em;
+    --au-ease: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.glow {
+    --au-pos: 0 100%;
+    --au-from: 0% 0.1em;
+    --au-shown: 100% 0.1em;
+}
+.highlight {
+    --au-color: color-mix(in srgb, var(--au-c, currentColor) 26%, transparent);
+    --au-pos: 0 55%;
+    --au-from: 0% 1.05em;
+    --au-shown: 100% 1.05em;
+    border-radius: 0.15em;
+    padding-inline: 0.12em;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .au[data-au='idle'] {
+        background-size: var(--au-from);
+    }
+    .au[data-au='run'] {
+        animation: au-grow 0.6s var(--au-ease, ease-out) var(--au-delay, 0ms)
+            both;
+    }
+    .glow[data-au='run'] {
+        animation:
+            au-grow 0.6s ease-out var(--au-delay, 0ms) both,
+            au-glow 1.4s ease-in-out var(--au-delay, 0ms);
+    }
+}
+
+@keyframes au-grow {
+    from {
+        background-size: var(--au-from);
+    }
+    to {
+        background-size: var(--au-shown);
+    }
+}
+
+@keyframes au-glow {
+    0%,
+    100% {
+        filter: drop-shadow(0 0 0 transparent);
+    }
+    50% {
+        filter: drop-shadow(0 1px 6px var(--au-c, currentColor));
+    }
+}
