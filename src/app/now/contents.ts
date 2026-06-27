@@ -1,0 +1,186 @@
+export type NowBlockData =
+    | { kind: 'tags'; tags: string[] }
+    | { kind: 'list'; items: string[] }
+    | { kind: 'text'; text: string }
+    | {
+          kind: 'subgroups';
+          subgroups: { title: string; intro?: string; tags: string[] }[];
+      };
+
+export type NowSectionData = {
+    title: string;
+    emoji: string;
+    intro?: string;
+    outro?: string;
+    blocks: NowBlockData[];
+};
+
+export const nowMeta = {
+    title: "What I'm Doing Now",
+    subtitle:
+        "A snapshot of what I'm currently building, learning, and focusing on.",
+    lastUpdated: 'June 2026',
+};
+
+export const nowSections: NowSectionData[] = [
+    {
+        title: 'Work',
+        emoji: '👨‍💻',
+        intro: 'Currently working as a Senior Software Engineer, building scalable web applications and backend systems. My daily work focuses on:',
+        blocks: [
+            {
+                kind: 'tags',
+                tags: [
+                    'Backend architecture',
+                    'API development',
+                    'Database optimization',
+                    'Performance improvements',
+                    'Code quality',
+                    'Solving challenging engineering problems',
+                ],
+            },
+        ],
+    },
+    {
+        title: 'Building',
+        emoji: '🤖',
+        intro: "These are the projects I'm actively working on.",
+        blocks: [
+            {
+                kind: 'subgroups',
+                subgroups: [
+                    {
+                        title: 'Personal Portfolio',
+                        intro: 'Building a modern portfolio with:',
+                        tags: [
+                            'Next.js',
+                            'TypeScript',
+                            'Tailwind CSS',
+                            'AI-powered "Ask Shibbir" assistant',
+                            'Interactive storytelling pages',
+                            'Developer blog',
+                        ],
+                    },
+                    {
+                        title: 'AI',
+                        intro: 'Exploring practical AI applications. Current interests:',
+                        tags: [
+                            'Large Language Models (LLMs)',
+                            'Agentic AI',
+                            'Retrieval-Augmented Generation (RAG)',
+                            'Model Context Protocol (MCP)',
+                            'Prompt Engineering',
+                            'Embeddings',
+                            'AI-assisted development',
+                        ],
+                    },
+                ],
+            },
+        ],
+    },
+    {
+        title: 'Learning',
+        emoji: '📚',
+        intro: "I'm currently investing time in becoming a stronger backend engineer. Topics I'm studying:",
+        blocks: [
+            {
+                kind: 'tags',
+                tags: [
+                    'System Design',
+                    'Distributed Systems',
+                    'PostgreSQL Performance',
+                    'Kubernetes',
+                    'Event-Driven Architecture',
+                    'Software Architecture',
+                    'Scalable Backend Systems',
+                ],
+            },
+        ],
+    },
+    {
+        title: 'Home Lab',
+        emoji: '🏠',
+        intro: "I'm constantly experimenting with my self-hosted infrastructure. Current playground:",
+        outro: 'I enjoy building infrastructure almost as much as building applications.',
+        blocks: [
+            {
+                kind: 'tags',
+                tags: [
+                    'Proxmox',
+                    'Docker',
+                    'LXC Containers',
+                    'Networking',
+                    'WireGuard',
+                    'Reverse Proxies',
+                    'Cloud Infrastructure',
+                ],
+            },
+        ],
+    },
+    {
+        title: 'Writing',
+        emoji: '📝',
+        intro: 'Working on documenting what I learn. Topics I want to write about:',
+        blocks: [
+            {
+                kind: 'tags',
+                tags: [
+                    'Backend Engineering',
+                    'AI Development',
+                    'Docker',
+                    'Home Lab',
+                    'Laravel',
+                    'Next.js',
+                    'System Design',
+                    'Lessons learned from real-world projects',
+                ],
+            },
+        ],
+    },
+    {
+        title: 'Reading',
+        emoji: '📖',
+        intro: 'Books currently on my reading list:',
+        blocks: [
+            {
+                kind: 'list',
+                items: [
+                    'Designing Data-Intensive Applications',
+                    'Clean Architecture',
+                    'System Design Interview',
+                    'Refactoring',
+                ],
+            },
+        ],
+    },
+    {
+        title: 'Goals',
+        emoji: '🎯',
+        intro: 'Current goals include:',
+        blocks: [
+            {
+                kind: 'list',
+                items: [
+                    'Become a world-class backend engineer',
+                    'Master system design',
+                    'Build production-ready AI applications',
+                    'Contribute more to open source',
+                    'Write consistently',
+                    'Keep learning every day',
+                ],
+            },
+        ],
+    },
+];
+
+export const nowQuote = 'The best engineers never stop learning.';
+
+export const nowNav: {
+    label: string;
+    href: string;
+    direction: 'back' | 'forward';
+}[] = [
+    { label: 'Uses', href: '/uses', direction: 'back' },
+    { label: 'Projects', href: '/#work', direction: 'forward' },
+    { label: 'Contact', href: '/#contact', direction: 'forward' },
+];

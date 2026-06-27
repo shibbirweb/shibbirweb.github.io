@@ -3,16 +3,18 @@ import { HTMLAttributes } from 'react';
 
 interface SectionHeadingProps extends HTMLAttributes<HTMLHeadingElement> {
     accentClassName?: string;
+    as?: 'h1' | 'h2' | 'h3';
 }
 
 export default function SectionHeading({
     children,
     className,
     accentClassName,
+    as: Heading = 'h2',
     ...rest
 }: SectionHeadingProps) {
     return (
-        <h2
+        <Heading
             className={cn('text-5xl font-bold sm:text-6xl', className)}
             {...rest}
         >
@@ -24,6 +26,6 @@ export default function SectionHeading({
             >
                 {children}
             </span>
-        </h2>
+        </Heading>
     );
 }
