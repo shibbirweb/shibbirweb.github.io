@@ -10,12 +10,11 @@ export default function ProjectsArea() {
         >
             <div className="container mx-auto px-4">
                 <SectionHeading accentClassName="decoration-blue-500">
-                    Selected Work
+                    Featured Projects
                 </SectionHeading>
 
                 <p className="mt-6 max-w-3xl text-2xl leading-normal text-foreground/70">
-                    A few things I&apos;ve built and maintain — mostly developer
-                    tools and full-stack experiments.
+                    A few things I&apos;ve built.
                 </p>
 
                 <ul className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2">

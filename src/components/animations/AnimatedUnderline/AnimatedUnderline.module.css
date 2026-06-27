@@ -45,8 +45,16 @@
 }
 .glow {
     --au-pos: 0 100%;
-    --au-from: 0% 0.1em;
-    --au-shown: 100% 0.1em;
+    --au-from: 0% 0.12em;
+    --au-shown: 100% 0.12em;
+    /* glossy underline: brighter centre reads as a built-in highlight,
+       so the "glow" lives in the underline itself, not a text halo */
+    background-image: linear-gradient(
+        90deg,
+        var(--au-c, currentColor),
+        color-mix(in srgb, var(--au-c, currentColor) 55%, white),
+        var(--au-c, currentColor)
+    );
 }
 .highlight {
     --au-color: color-mix(in srgb, var(--au-c, currentColor) 26%, transparent);
@@ -86,7 +94,9 @@
     100% {
         filter: drop-shadow(0 0 0 transparent);
     }
-    50% {
-        filter: drop-shadow(0 1px 6px var(--au-c, currentColor));
+    55% {
+        filter: drop-shadow(
+            0 0 5px color-mix(in srgb, var(--au-c, currentColor) 45%, transparent)
+        );
     }
 }

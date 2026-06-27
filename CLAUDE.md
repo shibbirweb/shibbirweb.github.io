@@ -34,7 +34,7 @@ Site-wide config (URLs for `siteURL`, sitemap) is exposed through `publicRuntime
 `src/app/page.tsx` composes the page sections (inside a single `<main>`), each a folder under `src/app/_root/` (the `_` prefix makes it a route-excluded colocation directory):
 - `hero-area/` — name + title + social icons over an animated grid background; scroll-down cue links to `#about`
 - `about-me-area/` — heading, photo, bio, experience/education (anchor `#about`)
-- `projects-area/` — "Selected Work" card grid driven by `contents.ts` (anchor `#work`)
+- `projects-area/` — "Featured Projects" card grid driven by `contents.ts` (anchor `#work`)
 - `skills-area/` — grouped skill tags driven by `contents.ts` (anchor `#skills`)
 - `contact-area/` — mailto CTA + reused `SocialIcons` (anchor `#contact`)
 - `footer-area/` — bottom SVG logo

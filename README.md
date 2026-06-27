@@ -13,7 +13,7 @@ Personal portfolio and personal-brand site for **MD. Shibbir Ahmed** — Senior 
 
 - Hero with an animated name and grid background
 - About me — bio, experience, and education
-- **Selected Work** — curated developer tools & full-stack projects
+- **Featured Projects** — curated developer tools & full-stack projects
 - Skills & tech stack
 - Contact via email and social profiles
 - Responsive, mobile-friendly, system dark-mode aware
