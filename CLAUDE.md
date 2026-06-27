@@ -43,11 +43,12 @@ Section folders may carry their own `contents.ts` (e.g. `hero-area/contents.ts` 
 
 ### Component conventions
 
-- Prefer small, single-responsibility, reusable components. Do **not** put multiple components — or large inline JSX blocks — in one file; extract repeated markup (cards, tags, list rows, links) into their own components.
+- Prefer small, single-responsibility, reusable components. Do **not** put multiple components — or large inline JSX blocks — in one file; extract repeated markup (cards, tags, list rows, links) into their own components. When a component grows large or juggles several concerns, **split it into smaller subcomponents** rather than letting it become a monolith.
 - Cross-section/shared UI primitives live in `src/components/pages/common/` (e.g. `SectionHeading`, `Tag`). Section-specific subcomponents are colocated in the section folder next to its `contents.ts` (e.g. `projects-area/ProjectCard.tsx`, `projects-area/ProjectLink.tsx`, `skills-area/SkillGroup.tsx`).
 - Keep each section's `index.tsx` thin: section wrapper + `SectionHeading` + a `.map()` over a subcomponent. Data lives in `contents.ts`, not inline.
 - Reuse the shared `cn()` helper and existing primitives before creating new ones; avoid premature abstraction for genuinely one-off markup.
 - A component that spans more than one file (e.g. a co-located CSS Module, subcomponents, or its own `contents.ts`) gets its **own folder** with the entry point as `index.tsx` and its files beside it — e.g. `components/animations/AnimatedUnderline/index.tsx` + `AnimatedUnderline.module.css`. Keep genuinely single-file components as a single `.tsx`.
+- Put stateful and side-effecting logic (`useEffect`, IntersectionObservers, event listeners, disclosure/toggle state) in **named custom hooks** (`useXxx`) instead of inlining it in components. Colocate them in a `hooks/` folder beside the component (e.g. `components/layout/Navbar/hooks/useScrollSpy.ts`) and keep generic ones (`useDisclosure`, `useCloseOnEscape`, `useScrollSpy`) reusable. A component should read top-down — call hooks, then return JSX.
 
 ### Naming conventions
 
