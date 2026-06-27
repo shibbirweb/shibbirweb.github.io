@@ -48,6 +48,7 @@ export const facebookURL: string = 'https://www.facebook.com/shibbirweb';
 export const twitterURL: string = 'https://x.com/shibbirweb';
 
 // json-ld
+export const siteDatePublished: string = '2018-12-20T15:28:28+06:00';
 export const jsonLdAlternateName: string = 'shibbirweb';
 export const jsonLdKnowsAbout: string[] = [
     'Web Development',

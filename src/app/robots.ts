@@ -1,16 +1,14 @@
 import type { MetadataRoute } from 'next';
-import getConfig from 'next/config';
+import { siteURL } from '@/config/constants';
 
 export const dynamic = 'force-static';
 
 export default function robots(): MetadataRoute.Robots {
-    const { publicRuntimeConfig } = getConfig();
     return {
         rules: {
             userAgent: '*',
             allow: '/',
-            disallow: '/private/',
         },
-        sitemap: publicRuntimeConfig.sitemapURL,
+        sitemap: `${siteURL}/sitemap.xml`,
     };
 }

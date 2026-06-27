@@ -72,7 +72,6 @@ export const metadata: Metadata = {
         apple: '/shibbir-logo-192x192.png',
         shortcut: '/shibbir-logo-192x192.png',
     },
-    manifest: '/manifest.json',
     category: 'portfolio',
     facebook: {
         admins: [facebookPageId],

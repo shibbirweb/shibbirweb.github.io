@@ -1,27 +1,37 @@
 # Personal Portfolio Website
 
-This is my personal portfolio website built to showcase my skills, experience, and featured projects as a full-stack web developer. The site includes sections such as About Me, Skills, Projects, Resume, and Contact. It serves as an online resume and a platform for potential clients, collaborators, and employers to learn more about me and get in touch.
+Personal portfolio and personal-brand site for **MD. Shibbir Ahmed** — Senior Full-Stack Software Engineer. Built with Next.js (App Router), statically exported, and deployed to GitHub Pages on a custom domain.
 
 ## 🔧 Tech Stack
 
-- Frontend: Next.js
-- Hosting: GitHub Pages
+- **Framework:** Next.js (App Router, static export)
+- **UI:** React 19 + Tailwind CSS v4
+- **Language:** TypeScript
+- **Hosting:** GitHub Pages (custom domain)
 
-## 📁 Features
+## 📁 Sections & Features
 
-- Responsive and mobile-friendly design
-- Smooth animations and transitions
-- Interactive project showcase
-- Downloadable resume
-- Contact form / links to social profiles
+- Hero with an animated name and grid background
+- About me — bio, experience, and education
+- **Selected Work** — curated developer tools & full-stack projects
+- Skills & tech stack
+- Contact via email and social profiles
+- Responsive, mobile-friendly, system dark-mode aware
+- SEO: Metadata API, Open Graph & Twitter cards, JSON-LD (schema.org `Person`/`ProfilePage`), sitemap, robots
+- PWA web app manifest
 
-## 🌐 Live Demo
+## 🗺️ Roadmap
 
-[https://shibbirweb.github.io](https://shibbirweb.github.io)
+- Technical writing / blog (own-domain MDX, with canonical syndication to Dev.to & Medium)
+- `/uses` and `/now` pages
+
+## 🌐 Live
+
+[https://shibbir.me](https://shibbir.me)
 
 ## 📬 Contact
 
-Feel free to reach out via shibbirweb@gmail.com or connect on [LinkedIn](https://www.linkedin.com/in/shibbirweb).
+Reach out at shibbirweb@gmail.com or connect on [LinkedIn](https://www.linkedin.com/in/shibbirweb).
 
 ---
 

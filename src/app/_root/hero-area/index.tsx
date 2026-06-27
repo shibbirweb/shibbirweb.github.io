@@ -1,4 +1,5 @@
 import ShinyTextAnimation from '@/components/animations/ShinyTextAnimation';
+import DownIcon from '@/components/icons/down';
 import SocialIcons from './SocialIcons';
 import WithGridAnimatedBackgroundWrapper from '@/components/wrappers/WithGridAnimatedBackgroundWrapper';
 
@@ -25,6 +26,16 @@ export default function HeroArea() {
                         </div>
                         <SocialIcons />
                     </div>
+                    <a
+                        href="#about"
+                        aria-label="Scroll to the about section"
+                        className="mb-6 text-foreground/40 transition-colors hover:text-foreground/70 motion-safe:animate-bounce sm:mb-10"
+                    >
+                        <DownIcon
+                            className="size-8"
+                            aria-hidden="true"
+                        />
+                    </a>
                 </div>
             </div>
         </WithGridAnimatedBackgroundWrapper>

@@ -11,6 +11,7 @@ export default function SocialIcons() {
                     target="_blank"
                     rel="noopener noreferrer"
                     title={name}
+                    aria-label={name}
                     className={cn(
                         'p-2 transition-all duration-300 hover:scale-110',
                         socialColorClassNames
@@ -18,7 +19,6 @@ export default function SocialIcons() {
                 >
                     <Icon
                         className="size-5 sm:size-6"
-                        aria-label={name}
                         aria-hidden="true"
                     />
                 </a>
