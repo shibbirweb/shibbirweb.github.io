@@ -11,11 +11,15 @@
     },
     "dependencies": {
         "@next/third-parties": "^15.3.3",
+        "@tailwindcss/typography": "^0.5.20",
         "clsx": "^2.1.1",
+        "gray-matter": "^4.0.3",
+        "marked": "^18.0.5",
         "next": "16.1.5",
         "next-image-export-optimizer": "^1.20.1",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
+        "shiki": "^4.3.0",
         "tailwind-merge": "^3.3.0"
     },
     "devDependencies": {

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Zain } from 'next/font/google';
+import { Zain, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import {
     facebookPageId,
@@ -20,11 +20,17 @@ import {
 import { GoogleTagManager } from '@next/third-parties/google';
 import { JsonLdScriptComponent } from '@/components/utils/JsonLdScriptComponent';
 import Navbar from '@/components/layout/Navbar';
+import { hasArticles } from '@/lib/posts';
 
 const zainSansSerif = Zain({
     variable: '--font-zain-sans-serif',
     subsets: ['latin'],
     weight: ['400', '700'],
+});
+
+const jetBrainsMono = JetBrains_Mono({
+    variable: '--font-jetbrains-mono',
+    subsets: ['latin'],
 });
 
 export const metadata: Metadata = {
@@ -122,9 +128,9 @@ export default function RootLayout({
                 <GoogleTagManager gtmId={googleTagManagerId} />
             )}
             <body
-                className={`${zainSansSerif.variable} bg-background flex min-h-svh flex-col text-3xl antialiased`}
+                className={`${zainSansSerif.variable} ${jetBrainsMono.variable} bg-background flex min-h-svh flex-col text-3xl antialiased`}
             >
-                <Navbar />
+                <Navbar hasArticles={hasArticles()} />
                 {children}
             </body>
         </html>

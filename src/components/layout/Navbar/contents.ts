@@ -8,6 +8,11 @@ export const sectionItems: NavItemData[] = [
     { label: 'Contact', href: '/#contact', sectionId: 'contact' },
 ];
 
+export const articlesItem: NavItemData = {
+    label: 'Articles',
+    href: '/articles',
+};
+
 export const pageItems: NavItemData[] = [
     { label: 'Uses', href: '/uses' },
     { label: 'Now', href: '/now' },
