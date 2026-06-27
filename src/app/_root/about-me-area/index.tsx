@@ -7,7 +7,7 @@ export default function AboutMeArea() {
     return (
         <section
             id="about"
-            className="relative bg-gradient-to-b from-[var(--background)] to-[var(--background)] to-100% dark:via-[#0d1116]"
+            className="relative"
         >
             <div className="container mx-auto flex min-h-svh flex-col justify-center gap-12 px-4 py-20 sm:py-28">
                 <SectionHeading accentClassName="decoration-indigo-500">
