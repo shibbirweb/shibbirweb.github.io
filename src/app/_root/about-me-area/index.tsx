@@ -1,3 +1,4 @@
+import ExportedImage from 'next-image-export-optimizer';
 import AnimatedUnderline from '@/components/animations/AnimatedUnderline';
 import SectionHeading from '@/components/pages/common/SectionHeading';
 import { careerExperience } from '@/config/constants';
@@ -14,14 +15,11 @@ export default function AboutMeArea() {
                 </SectionHeading>
 
                 <div className="flex flex-col gap-10 sm:flex-row sm:items-start sm:gap-14">
-                    {/* eslint-disable-next-line @next/next/no-img-element -- static headshot; no image-optimization server on a GitHub Pages export */}
-                    <img
-                        src="/shibbir-ahmed.jpg"
+                    <ExportedImage
+                        src="images/shibbir-ahmed.jpg"
                         alt="Portrait of MD. Shibbir Ahmed"
                         width={224}
                         height={224}
-                        loading="lazy"
-                        decoding="async"
                         className="size-44 shrink-0 self-center rounded-2xl object-cover sm:size-56 sm:self-start"
                     />
 
@@ -85,8 +83,8 @@ export default function AboutMeArea() {
                                 vector search
                             </AnimatedUnderline>
                             , preferring to understand how these systems work
-                            over simply calling their APIs. Outside of work I run
-                            my own{' '}
+                            over simply calling their APIs. Outside of work I
+                            run my own{' '}
                             <AnimatedUnderline
                                 variant="glow"
                                 color="var(--color-rose-500)"

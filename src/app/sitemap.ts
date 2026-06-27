@@ -10,7 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
             lastModified: new Date(),
             changeFrequency: 'daily',
             priority: 1,
-            images: [`${siteURL}/shibbir-ahmed.jpg`],
+            images: [`${siteURL}/images/shibbir-ahmed.jpg`],
         },
     ];
 }
