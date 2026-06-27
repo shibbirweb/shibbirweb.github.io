@@ -8,6 +8,13 @@ import Shibbir from '@/components/icons/shibbir';
 interface NavLogoProps {
     className?: string;
     onNavigate?: () => void;
+    /**
+     * Collapse the wordmark to just "SHIBBIR" below the lg breakpoint and reveal
+     * the full "SHIBBIR AHMED" at lg and up. The desktop bar uses this: the full
+     * wordmark would otherwise push the pill wider than the viewport between the
+     * md and lg breakpoints (around 768 to 1023px).
+     */
+    collapsible?: boolean;
 }
 
 /**
@@ -17,7 +24,11 @@ interface NavLogoProps {
  * skips hash scrolling when the target is already partly in view, so a "#hero"
  * link does nothing while the hero is still on screen.
  */
-export default function NavLogo({ className, onNavigate }: NavLogoProps) {
+export default function NavLogo({
+    className,
+    onNavigate,
+    collapsible = false,
+}: NavLogoProps) {
     const pathname = usePathname();
 
     const scrollToTop = (event: MouseEvent<HTMLAnchorElement>) => {
@@ -39,7 +50,17 @@ export default function NavLogo({ className, onNavigate }: NavLogoProps) {
             onClick={scrollToTop}
             className={className}
         >
-            <Shibbir className="h-5 w-auto" />
+            {collapsible ? (
+                // The wordmark (viewBox 588.6 x 82.601) is ~8.91rem wide at h-5;
+                // "SHIBBIR" ends near x 316 (~4.8rem). The wrapper clips the SVG
+                // and animates its width, so "AHMED" slides in from the right
+                // toward the divider when the viewport crosses lg.
+                <span className="block h-5 w-[4.8rem] overflow-hidden transition-[width] duration-500 ease-out motion-reduce:transition-none lg:w-[8.92rem]">
+                    <Shibbir className="block h-5 w-[8.92rem] max-w-none" />
+                </span>
+            ) : (
+                <Shibbir className="h-5 w-auto" />
+            )}
         </Link>
     );
 }
