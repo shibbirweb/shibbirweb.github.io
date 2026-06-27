@@ -14,13 +14,13 @@ export default function AboutMeArea() {
                     About me
                 </SectionHeading>
 
-                <div className="flex flex-col gap-10 sm:flex-row sm:items-start sm:gap-14">
+                <div className="flex flex-col gap-10 lg:flex-row lg:items-start lg:gap-14">
                     <ExportedImage
                         src="images/shibbir-ahmed.jpg"
                         alt="Portrait of MD. Shibbir Ahmed"
                         width={224}
                         height={224}
-                        className="size-44 shrink-0 self-center rounded-2xl object-cover sm:size-56 sm:self-start"
+                        className="size-44 shrink-0 self-center rounded-2xl object-cover sm:size-56 lg:self-start"
                     />
 
                     <div className="space-y-6 text-2xl leading-normal sm:text-justify">
