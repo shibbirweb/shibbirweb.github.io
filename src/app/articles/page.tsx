@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import ArticlesIndex from './ArticlesIndex';
-import { getAllArticles } from '@/lib/posts';
+import { getAllArticles, getAllTags } from '@/lib/posts';
 import { siteName } from '@/config/constants';
 
 const description =
@@ -20,5 +20,10 @@ export const metadata: Metadata = {
 };
 
 export default function ArticlesPage() {
-    return <ArticlesIndex articles={getAllArticles()} />;
+    return (
+        <ArticlesIndex
+            articles={getAllArticles()}
+            tags={getAllTags()}
+        />
+    );
 }

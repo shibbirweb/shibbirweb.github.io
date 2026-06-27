@@ -1,7 +1,12 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import matter from 'gray-matter';
-import { marked } from 'marked';
+import {
+    marked,
+    type Tokens,
+    type TokenizerAndRendererExtension,
+} from 'marked';
+import { codeToHtml } from 'shiki';
 
 const ARTICLES_DIRECTORY = path.join(process.cwd(), 'content/articles');
 
@@ -99,11 +104,121 @@ export function getArticlesForPage(page: number): ArticleSummary[] {
     return getAllArticles().slice(start, start + ARTICLES_PER_PAGE);
 }
 
+function escapeHtml(text: string): string {
+    return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+}
+
+// A standalone GitHub gist URL on its own line becomes an embedded gist,
+// fetched and inlined at build time by renderGist below.
+const GIST_PATTERN =
+    /^(https:\/\/gist\.github\.com\/[\w.-]+\/[0-9a-f]+)(?:\.js)?[ \t]*(?:\n+|$)/;
+
+type GistToken = Tokens.Generic & { url?: string; html?: string };
+
+// GitHub serves an embeddable HTML fragment plus a stylesheet for each gist via
+// its .json endpoint. We fetch and inline both at build time, so the gist is
+// fully styled in the static HTML with no iframe and no client JS. If the fetch
+// fails (offline build, deleted gist) we fall back to a link, never the build.
+async function renderGist(url: string): Promise<string> {
+    try {
+        const response = await fetch(`${url}.json`);
+        if (!response.ok) throw new Error(`gist responded ${response.status}`);
+        const data = (await response.json()) as {
+            div?: string;
+            stylesheet?: string;
+        };
+        if (!data.div) throw new Error('gist response missing markup');
+        let stylesheet = data.stylesheet ?? '';
+        if (stylesheet.startsWith('//')) stylesheet = `https:${stylesheet}`;
+        const link = stylesheet
+            ? `<link rel="stylesheet" href="${stylesheet}" />`
+            : '';
+        return (
+            `<div class="not-prose gist-embed" data-color-mode="light" ` +
+            `data-light-theme="light">${link}${data.div}</div>`
+        );
+    } catch {
+        return (
+            `<p class="gist-embed gist-embed--fallback">` +
+            `<a href="${url}" target="_blank" rel="noopener noreferrer">` +
+            `View this gist on GitHub</a></p>`
+        );
+    }
+}
+
+const gistExtension: TokenizerAndRendererExtension = {
+    name: 'gist',
+    level: 'block',
+    start(src) {
+        const index = src.indexOf('https://gist.github.com/');
+        return index < 0 ? undefined : index;
+    },
+    tokenizer(src) {
+        const match = GIST_PATTERN.exec(src);
+        if (!match) return undefined;
+        return { type: 'gist', raw: match[0], url: match[1] };
+    },
+    renderer(token) {
+        const gistToken = token as GistToken;
+        return typeof gistToken.html === 'string' ? gistToken.html : '';
+    },
+};
+
+// Build-time syntax highlighting with two themes; globals.css picks the dark
+// palette under prefers-color-scheme so code matches the site theme.
+type CodeToken = Tokens.Code & { highlighted?: string };
+const CODE_THEMES = { light: 'github-light', dark: 'github-dark' } as const;
+
+async function highlightCode(code: string, lang: string): Promise<string> {
+    try {
+        return await codeToHtml(code, {
+            lang,
+            themes: CODE_THEMES,
+            defaultColor: false,
+        });
+    } catch {
+        return await codeToHtml(code, {
+            lang: 'text',
+            themes: CODE_THEMES,
+            defaultColor: false,
+        });
+    }
+}
+
+marked.use({
+    async: true,
+    extensions: [gistExtension],
+    async walkTokens(token) {
+        if (token.type === 'code') {
+            const codeToken = token as CodeToken;
+            const lang =
+                (codeToken.lang ?? '').trim().split(/\s+/)[0] || 'text';
+            codeToken.highlighted = await highlightCode(codeToken.text, lang);
+        }
+        if (token.type === 'gist') {
+            const gistToken = token as GistToken;
+            if (typeof gistToken.url === 'string') {
+                gistToken.html = await renderGist(gistToken.url);
+            }
+        }
+    },
+    renderer: {
+        code(token) {
+            const codeToken = token as CodeToken;
+            if (codeToken.highlighted) return codeToken.highlighted;
+            return `<pre><code>${escapeHtml(codeToken.text)}</code></pre>`;
+        },
+    },
+});
+
 /** A single rendered article, or null if the slug is missing or a draft. */
-export function getArticle(slug: string): Article | null {
+export async function getArticle(slug: string): Promise<Article | null> {
     const article = readArticleFiles().find((item) => item.slug === slug);
     if (!article || article.data.draft === true) return null;
-    const html = marked.parse(article.content, { async: false }) as string;
+    const html = await marked.parse(article.content);
     return { ...toSummary(article), html };
 }
 
@@ -122,4 +237,17 @@ export function getRelatedArticles(slug: string, limit = 3): ArticleSummary[] {
         .sort((a, b) => b.shared - a.shared)
         .slice(0, limit)
         .map((entry) => entry.article);
+}
+
+/** Every tag used across published articles, most frequent first. */
+export function getAllTags(): string[] {
+    const counts = new Map<string, number>();
+    for (const article of getAllArticles()) {
+        for (const tag of article.tags) {
+            counts.set(tag, (counts.get(tag) ?? 0) + 1);
+        }
+    }
+    return [...counts.entries()]
+        .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+        .map(([tag]) => tag);
 }

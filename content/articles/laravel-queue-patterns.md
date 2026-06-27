@@ -3,6 +3,7 @@ title: 'Laravel Queue Patterns for Reliable Background Jobs'
 description: 'Idempotency, retries, backoff, and batching: the patterns that keep Laravel queues dependable under real production load.'
 date: '2026-05-28'
 tags: ['Laravel', 'PHP', 'Backend']
+cover: '/images/articles/laravel-queue-patterns.svg'
 ---
 
 Background jobs fail. Networks blip, third-party APIs time out, and workers restart mid-task. The goal is not to avoid failure but to make jobs safe to retry.

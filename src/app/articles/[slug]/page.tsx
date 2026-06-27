@@ -1,8 +1,10 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import Tag from '@/components/pages/common/Tag';
+import ArticleContent from '../ArticleContent';
+import ArticleCover from '../ArticleCover';
 import ArticleGrid from '../ArticleGrid';
+import TagLink from '../TagLink';
 import { JsonLd } from '@/components/utils/JsonLd';
 import { buildArticleJsonLd } from '@/utils/articleJsonLd';
 import { formatDate } from '@/utils/formatDate';
@@ -24,7 +26,7 @@ export async function generateMetadata({
     params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
     const { slug } = await params;
-    const article = getArticle(slug);
+    const article = await getArticle(slug);
     if (!article) return {};
     return {
         title: article.title,
@@ -48,10 +50,10 @@ export default async function ArticlePage({
     params: Promise<{ slug: string }>;
 }) {
     const { slug } = await params;
-    const article = getArticle(slug);
+    const article = await getArticle(slug);
     if (!article) notFound();
 
-    const related = getRelatedArticles(slug, 3);
+    const related = getRelatedArticles(slug, 2);
 
     return (
         <main className="container mx-auto px-4 py-20 sm:py-28">
@@ -69,20 +71,23 @@ export default async function ArticlePage({
                     </h1>
                     <ul className="mt-6 flex flex-wrap gap-2">
                         {article.tags.map((tag) => (
-                            <Tag
+                            <TagLink
                                 key={tag}
-                                className="text-foreground/70 px-3 py-1 text-base"
-                            >
-                                {tag}
-                            </Tag>
+                                tag={tag}
+                                className="px-3 py-1 text-base"
+                            />
                         ))}
                     </ul>
                 </header>
 
-                <div
-                    className="prose prose-lg dark:prose-invert mt-10 max-w-none"
-                    dangerouslySetInnerHTML={{ __html: article.html }}
-                />
+                {article.cover && (
+                    <ArticleCover
+                        src={article.cover}
+                        className="mt-10 rounded-2xl"
+                    />
+                )}
+
+                <ArticleContent html={article.html} />
 
                 <div className="mt-14">
                     <Link
@@ -97,14 +102,14 @@ export default async function ArticlePage({
             {related.length > 0 && (
                 <aside
                     aria-label="Related articles"
-                    className="border-foreground/10 mx-auto mt-20 max-w-5xl border-t pt-12"
+                    className="border-foreground/10 mx-auto mt-20 max-w-3xl border-t pt-12"
                 >
                     <h2 className="text-2xl font-bold sm:text-3xl">
                         Related articles
                     </h2>
                     <ArticleGrid
                         articles={related}
-                        className="mt-10 lg:grid-cols-3"
+                        className="mt-10"
                     />
                 </aside>
             )}

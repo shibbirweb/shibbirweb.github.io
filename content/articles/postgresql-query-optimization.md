@@ -3,6 +3,7 @@ title: 'PostgreSQL Query Optimization: Indexes That Matter'
 description: 'Reading EXPLAIN ANALYZE, choosing the right index, and avoiding the sequential scans that quietly slow your app down.'
 date: '2026-03-18'
 tags: ['PostgreSQL', 'Databases', 'Performance']
+cover: '/images/articles/postgresql-query-optimization.svg'
 ---
 
 Most slow queries are not slow because of the database. They are slow because of a missing index or a query the planner cannot use one for.

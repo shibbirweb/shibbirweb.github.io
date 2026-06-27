@@ -3,6 +3,7 @@ title: 'Dockerizing a Next.js App for Production'
 description: 'A lean multi-stage Dockerfile for Next.js: smaller images, faster builds, and a non-root runtime that is ready to deploy.'
 date: '2026-05-10'
 tags: ['Docker', 'Next.js', 'DevOps']
+cover: '/images/articles/dockerizing-nextjs-production.svg'
 ---
 
 A good Next.js image is small, reproducible, and runs as a non-root user. A multi-stage build gets you there.

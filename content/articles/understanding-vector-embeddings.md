@@ -3,6 +3,7 @@ title: 'Understanding Vector Embeddings for Search'
 description: 'What embeddings actually are, why cosine similarity works, and how semantic search beats keyword matching for real questions.'
 date: '2026-04-05'
 tags: ['AI', 'Embeddings', 'Search']
+cover: '/images/articles/understanding-vector-embeddings.svg'
 ---
 
 An embedding turns text into a list of numbers that captures meaning. Similar ideas land close together in that space, which is what makes semantic search possible.

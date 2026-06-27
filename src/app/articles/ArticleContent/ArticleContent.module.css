@@ -1,0 +1,76 @@
+/* Styles for rendered article markdown: inline code, Shiki code blocks, and
+   embedded GitHub gists. Scoped to the article body via .content. The Shiki and
+   gist class names come from the generated HTML, hence :global(). */
+
+/* Inline code: JetBrains Mono, without Typography's backtick quotes. */
+.content :where(code):not(:where(pre *)) {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-weight: 500;
+}
+.content :where(code):not(:where(pre *))::before,
+.content :where(code):not(:where(pre *))::after {
+    content: none;
+}
+
+/* Shiki code blocks. Shiki emits per-token --shiki-light / --shiki-dark custom
+   properties; we apply the light palette by default and the dark palette under
+   prefers-color-scheme so code matches the site theme in both modes. */
+.content :global(.shiki) {
+    background-color: var(--shiki-light-bg);
+}
+.content :global(.shiki),
+.content :global(.shiki) span {
+    color: var(--shiki-light);
+}
+.content pre:global(.shiki) {
+    margin: 1.6em 0;
+    padding: 1.1em 1.3em;
+    border: 1px solid color-mix(in srgb, var(--foreground) 12%, transparent);
+    border-radius: 0.75rem;
+    overflow-x: auto;
+    font-size: 0.9em;
+    line-height: 1.6;
+}
+.content pre:global(.shiki) code {
+    background: transparent;
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-weight: 400;
+}
+@media (prefers-color-scheme: dark) {
+    .content :global(.shiki) {
+        background-color: var(--shiki-dark-bg);
+    }
+    .content :global(.shiki),
+    .content :global(.shiki) span {
+        color: var(--shiki-dark);
+    }
+}
+
+/* Embedded GitHub gists. GitHub's gist-embed stylesheet references Primer
+   design tokens it does not itself define (they live in GitHub's global CSS).
+   Without them the code inherits the page font size (far too large) and loses
+   its border, radius, and monospace font, so we supply the base size/spacing
+   tokens here; the color tokens resolve from the stylesheet via the
+   data-color-mode attributes on the wrapper. */
+.content :global(.gist-embed) {
+    --base-size-4: 4px;
+    --base-size-8: 8px;
+    --base-size-16: 16px;
+    --base-size-24: 24px;
+    --text-body-size-small: 0.75rem;
+    --text-title-size-small: 0.875rem;
+    --borderRadius-medium: 6px;
+    --borderWidth-thin: 1px;
+    --base-text-weight-normal: 400;
+    --base-text-weight-semibold: 600;
+    --fontStack-monospace:
+        ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas,
+        'Liberation Mono', monospace;
+    --fontStack-system:
+        -apple-system, 'BlinkMacSystemFont', 'Segoe UI', Helvetica, Arial,
+        sans-serif;
+    margin: 1.6em 0;
+}
+.content :global(.gist-embed--fallback) a {
+    text-decoration: underline;
+}

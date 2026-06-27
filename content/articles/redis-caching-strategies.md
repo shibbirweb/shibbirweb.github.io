@@ -3,6 +3,7 @@ title: 'Caching Strategies with Redis'
 description: 'Cache-aside, write-through, TTLs, and invalidation: choosing a Redis caching strategy that fits your read and write patterns.'
 date: '2025-12-15'
 tags: ['Redis', 'Backend', 'Performance']
+cover: '/images/articles/redis-caching-strategies.svg'
 ---
 
 Caching is the fastest way to make a read-heavy app feel instant, and the fastest way to serve stale data if you get invalidation wrong.

@@ -3,6 +3,7 @@ title: 'Structuring a Scalable REST API'
 description: 'Consistent resources, sane status codes, pagination, and versioning: the structure that lets an API grow without breaking clients.'
 date: '2026-02-27'
 tags: ['Backend', 'API', 'Architecture']
+cover: '/images/articles/scalable-rest-api-structure.svg'
 ---
 
 A REST API is a contract. The more predictable it is, the less your clients have to think, and the longer it survives without breaking changes.
