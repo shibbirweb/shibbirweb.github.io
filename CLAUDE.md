@@ -49,6 +49,13 @@ Section folders may carry their own `contents.ts` (e.g. `hero-area/contents.ts` 
 - Reuse the shared `cn()` helper and existing primitives before creating new ones; avoid premature abstraction for genuinely one-off markup.
 - A component that spans more than one file (e.g. a co-located CSS Module, subcomponents, or its own `contents.ts`) gets its **own folder** with the entry point as `index.tsx` and its files beside it — e.g. `components/animations/AnimatedUnderline/index.tsx` + `AnimatedUnderline.module.css`. Keep genuinely single-file components as a single `.tsx`.
 
+### Naming conventions
+
+- Names must be **readable in context** — prefer clarity over brevity. A variable, function, prop, or CSS custom property should convey what it holds without the reader having to trace its declaration.
+- Avoid cryptic abbreviations and one/two-letter identifiers (e.g. `--au-c`, `d`, `tmp`); spell out the intent (`underlineColor`, `delayMs`, `sectionRef`).
+- Short, idiomatic names are still fine where they are unambiguous: a loop `i`, the shared `cn()` helper, a mapped `item`/`group`.
+- This applies project-wide — **TypeScript identifiers and CSS variable/class names alike**.
+
 ### Commit conventions
 
 - Do **not** add Claude/AI co-author trailers (`Co-Authored-By: Claude …`) or other AI attribution to commits or PRs. This is enforced by `attribution: { "commit": "", "pr": "" }` in `.claude/settings.json` (project-level, so it travels with the repo).

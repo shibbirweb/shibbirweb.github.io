@@ -34,24 +34,27 @@ export default function AnimatedUnderline({
     color,
     delayMs = 0,
 }: AnimatedUnderlineProps) {
-    const ref = useRef<HTMLElement>(null);
-    const [state, setState] = useState<'static' | 'idle' | 'run'>('static');
+    const underlineRef = useRef<HTMLElement>(null);
+    const [animationState, setAnimationState] = useState<
+        'static' | 'idle' | 'run'
+    >('static');
 
     useEffect(() => {
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
             return; // keep the static, fully-drawn underline
         }
-        const el = ref.current;
-        if (!el || !('IntersectionObserver' in window)) {
-            setState('run');
+        const element = underlineRef.current;
+        if (!element || !('IntersectionObserver' in window)) {
+            setAnimationState('run');
             return;
         }
-        setState('idle'); // collapse first (happens off-screen, no flash)
+        // collapse first (happens off-screen, so there is no visible flash)
+        setAnimationState('idle');
         const observer = new IntersectionObserver(
             (entries) => {
                 for (const entry of entries) {
                     if (entry.isIntersecting) {
-                        setState('run');
+                        setAnimationState('run');
                         observer.disconnect();
                         break;
                     }
@@ -59,19 +62,21 @@ export default function AnimatedUnderline({
             },
             { threshold: 0.5 }
         );
-        observer.observe(el);
+        observer.observe(element);
         return () => observer.disconnect();
     }, []);
 
     return (
         <strong
-            ref={ref}
-            className={cn(styles.au, styles[variant])}
-            data-au={state === 'static' ? undefined : state}
+            ref={underlineRef}
+            className={cn(styles.underline, styles[variant])}
+            data-underline-state={
+                animationState === 'static' ? undefined : animationState
+            }
             style={
                 {
-                    '--au-c': color,
-                    '--au-delay': `${delayMs}ms`,
+                    '--underline-color': color,
+                    '--underline-delay': `${delayMs}ms`,
                 } as React.CSSProperties
             }
         >

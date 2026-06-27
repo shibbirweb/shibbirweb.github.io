@@ -1,30 +1,26 @@
 export const skillGroups: { title: string; items: string[] }[] = [
     {
         title: 'Languages',
-        items: ['JavaScript', 'TypeScript', 'PHP'],
-    },
-    {
-        title: 'Frontend',
-        items: [
-            'React',
-            'Next.js',
-            'Vue.js',
-            'Nuxt.js',
-            'Tailwind CSS',
-            'HTML',
-            'CSS',
-        ],
+        items: ['TypeScript', 'JavaScript', 'PHP'],
     },
     {
         title: 'Backend',
-        items: ['Node.js', 'Express.js', 'Laravel'],
+        items: ['Laravel', 'Node.js', 'Express.js', 'REST APIs'],
+    },
+    {
+        title: 'Frontend',
+        items: ['React', 'Next.js', 'Vue.js', 'Nuxt.js', 'Tailwind CSS'],
     },
     {
         title: 'Databases',
-        items: ['MySQL', 'PostgreSQL'],
+        items: ['PostgreSQL', 'MySQL', 'Redis', 'Qdrant'],
     },
     {
-        title: 'DevOps & Tools',
-        items: ['Docker', 'Git', 'CI/CD'],
+        title: 'AI Engineering',
+        items: ['LLMs', 'RAG', 'Embeddings', 'Vector Search'],
+    },
+    {
+        title: 'Infrastructure & DevOps',
+        items: ['Docker', 'Linux', 'Proxmox', 'Nginx', 'Cloudflare', 'CI/CD'],
     },
 ];
