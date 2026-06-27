@@ -3,6 +3,10 @@
 :root {
     --background: #ededed;
     --foreground: #171717;
+    --section-swell-indigo: #e9e9f0;
+    --section-swell-blue: #e7ebf2;
+    --section-swell-yellow: #f0eee4;
+    --section-swell-teal: #e6f1ef;
 }
 
 @theme inline {
@@ -29,6 +33,10 @@
     :root {
         --background: #0a0a0a;
         --foreground: #ededed;
+        --section-swell-indigo: #0d0c16;
+        --section-swell-blue: #0a0d17;
+        --section-swell-yellow: #11100a;
+        --section-swell-teal: #0a1413;
     }
 }
 
@@ -36,6 +44,43 @@ body {
     background: var(--background);
     color: var(--foreground);
     font-family: var(--font-zain-sans-serif), Arial, Helvetica, sans-serif;
+}
+
+/* Smooth gradient background for homepage content sections (issue #13).
+   Each direct section of the homepage main swells from the base background
+   to a faint wash of its own accent and back, so consecutive sections share
+   the exact base color at their edges and blend with no seam. The accent
+   tints cycle (indigo, blue, yellow, teal) by section order, so any section
+   added to the homepage is tinted automatically. Each section is at least one
+   viewport tall with its content centered, so the swell always has room to
+   spread and a short section (such as the contact block) blends as gently as
+   a tall one. Scoped to .home-sections so /uses and /now stay unaffected. */
+@layer base {
+    main.home-sections > section {
+        display: flex;
+        min-height: 100svh;
+        flex-direction: column;
+        justify-content: center;
+        background-image: linear-gradient(
+            to bottom,
+            var(--background) 0%,
+            var(--section-swell, var(--section-swell-indigo)) 50%,
+            var(--background) 100%
+        );
+    }
+
+    main.home-sections > section:nth-of-type(4n + 1) {
+        --section-swell: var(--section-swell-indigo);
+    }
+    main.home-sections > section:nth-of-type(4n + 2) {
+        --section-swell: var(--section-swell-blue);
+    }
+    main.home-sections > section:nth-of-type(4n + 3) {
+        --section-swell: var(--section-swell-yellow);
+    }
+    main.home-sections > section:nth-of-type(4n + 4) {
+        --section-swell: var(--section-swell-teal);
+    }
 }
 
 @utility text-box-trim-* {

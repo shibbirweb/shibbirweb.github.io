@@ -7,7 +7,7 @@ import SkillsArea from './_root/skills-area';
 
 export default function Home() {
     return (
-        <main>
+        <main className="home-sections">
             <HeroArea />
 
             <AboutMeArea />
