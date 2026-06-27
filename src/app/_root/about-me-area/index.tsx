@@ -14,13 +14,13 @@ export default function AboutMeArea() {
                     About me
                 </SectionHeading>
 
-                <div className="flex flex-col gap-10 sm:flex-row sm:items-start sm:gap-14">
+                <div className="flex flex-col gap-10 lg:flex-row lg:items-start lg:gap-14">
                     <ExportedImage
                         src="images/shibbir-ahmed.jpg"
                         alt="Portrait of MD. Shibbir Ahmed"
                         width={224}
                         height={224}
-                        className="size-44 shrink-0 self-center rounded-2xl object-cover sm:size-56 sm:self-start"
+                        className="size-44 shrink-0 self-center rounded-2xl object-cover sm:size-56 lg:self-start"
                     />
 
                     <div className="space-y-6 text-2xl leading-normal sm:text-justify">
@@ -28,9 +28,8 @@ export default function AboutMeArea() {
                             I&apos;m <strong>MD. Shibbir Ahmed</strong>, a{' '}
                             <strong>Senior Full-Stack Software Engineer</strong>{' '}
                             with {careerExperience}+ years building scalable web
-                            applications and the backend systems behind them.
-                            I&apos;ve shipped across healthcare, e-commerce, and
-                            the public sector — designing{' '}
+                            apps and the systems behind them across healthcare,
+                            e-commerce, and the public sector. I design{' '}
                             <AnimatedUnderline
                                 variant="draw-right"
                                 color="var(--color-blue-500)"
@@ -38,8 +37,7 @@ export default function AboutMeArea() {
                             >
                                 REST APIs
                             </AnimatedUnderline>
-                            , architecting backend services, optimizing
-                            databases, and shipping to production with{' '}
+                            , architect backend services, and ship with{' '}
                             <AnimatedUnderline
                                 variant="highlight"
                                 color="var(--color-indigo-500)"
@@ -58,15 +56,15 @@ export default function AboutMeArea() {
                             .
                         </p>
                         <p>
-                            More recently I&apos;ve focused on{' '}
+                            Lately I&apos;ve focused on{' '}
                             <AnimatedUnderline
                                 variant="center"
                                 color="var(--color-emerald-500)"
                                 delayMs={360}
                             >
                                 AI engineering
-                            </AnimatedUnderline>{' '}
-                            — building applications on{' '}
+                            </AnimatedUnderline>
+                            :{' '}
                             <AnimatedUnderline
                                 variant="draw-left"
                                 color="var(--color-yellow-500)"
@@ -82,9 +80,9 @@ export default function AboutMeArea() {
                             >
                                 vector search
                             </AnimatedUnderline>
-                            , preferring to understand how these systems work
-                            over simply calling their APIs. Outside of work I
-                            run my own{' '}
+                            . I prefer to understand how these systems work over
+                            simply calling their APIs. Outside work, I run my
+                            own{' '}
                             <AnimatedUnderline
                                 variant="glow"
                                 color="var(--color-rose-500)"
@@ -92,9 +90,7 @@ export default function AboutMeArea() {
                             >
                                 self-hosted infrastructure
                             </AnimatedUnderline>{' '}
-                            on Proxmox and Docker — staying close to networking,
-                            automation, and what it takes to keep software
-                            running.
+                            on Proxmox and Docker.
                         </p>
                     </div>
                 </div>

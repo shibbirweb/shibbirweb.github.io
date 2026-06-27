@@ -6,8 +6,8 @@ import { Project } from './contents';
 
 export default function ProjectCard({ project }: { project: Project }) {
     return (
-        <li className="flex flex-col rounded-2xl border border-foreground/10 p-6 transition-all duration-300 hover:border-foreground/30 hover:shadow-lg sm:p-8">
-            <p className="text-base font-bold tracking-wide text-foreground/60 uppercase">
+        <li className="border-foreground/10 hover:border-foreground/30 flex flex-col rounded-2xl border p-6 transition-all duration-300 hover:shadow-lg sm:p-8">
+            <p className="text-foreground/60 text-base font-bold tracking-wide uppercase">
                 {project.category}
             </p>
             <h3 className="mt-2 text-3xl font-bold">
@@ -17,7 +17,7 @@ export default function ProjectCard({ project }: { project: Project }) {
                     {project.name}
                 </span>
             </h3>
-            <p className="mt-4 grow text-xl leading-normal text-foreground/70">
+            <p className="text-foreground/70 mt-4 grow text-xl leading-normal">
                 {project.description}
             </p>
 
@@ -25,7 +25,7 @@ export default function ProjectCard({ project }: { project: Project }) {
                 {project.tech.map((tech) => (
                     <Tag
                         key={tech}
-                        className="px-3 py-1 text-base text-foreground/70"
+                        className="text-foreground/70 px-3 py-1 text-base"
                     >
                         {tech}
                     </Tag>
@@ -43,7 +43,7 @@ export default function ProjectCard({ project }: { project: Project }) {
                     <ProjectLink
                         href={project.liveURL}
                         label={project.liveLabel ?? 'Live'}
-                        ariaLabel={`${project.name} — ${project.liveLabel ?? 'Live'}`}
+                        ariaLabel={`${project.name}, ${project.liveLabel ?? 'Live'}`}
                         Icon={ExternalLinkIcon}
                     />
                 ) : null}

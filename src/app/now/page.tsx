@@ -5,7 +5,7 @@ import NowNav from './NowNav';
 import { nowMeta, nowQuote, nowSections } from './contents';
 import { siteName } from '@/config/constants';
 
-const description = `What ${siteName} is focused on right now — current work, what he's building and learning, home-lab experiments, reading, and goals.`;
+const description = `What ${siteName} is focused on right now: current work, what he's building and learning, home-lab experiments, reading, and goals.`;
 
 export const metadata: Metadata = {
     title: 'Now',

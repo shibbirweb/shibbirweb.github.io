@@ -10,9 +10,9 @@ export default function HeroArea() {
             <div className="container mx-auto">
                 <div className="flex min-h-[100svh] flex-col items-center">
                     <div className="flex w-full grow flex-col items-center justify-center gap-y-8 py-6 sm:gap-y-0">
-                        <div className="flex flex-col px-4 md:items-end md:justify-center">
+                        <div className="flex flex-col px-4 lg:items-end lg:justify-center">
                             <ShinyTextAnimation>
-                                <h1 className="flex flex-wrap items-center justify-center gap-x-4 text-8xl leading-16 font-bold min-[22.25rem]:text-9xl min-[22.25rem]:leading-20 sm:text-8xl sm:leading-10 md:text-9xl md:leading-12">
+                                <h1 className="flex flex-wrap items-center justify-center gap-x-8 text-8xl leading-16 font-bold min-[22.25rem]:text-9xl min-[22.25rem]:leading-20 sm:text-8xl sm:leading-10 md:gap-x-12 md:text-9xl md:leading-12">
                                     <span className="sm:text-box-trim-trim-both sm:text-box-edge-cap-alphabetic py-2 sm:py-1">
                                         Shibbir
                                     </span>
@@ -21,7 +21,7 @@ export default function HeroArea() {
                                     </span>
                                 </h1>
                             </ShinyTextAnimation>
-                            <p className="self-center text-2xl leading-2 sm:self-end sm:pr-[5px] sm:leading-5">
+                            <p className="self-center text-2xl leading-2 sm:leading-5 lg:self-end lg:pr-[5px]">
                                 {professionalTitle}
                             </p>
                         </div>

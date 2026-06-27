@@ -33,7 +33,7 @@ export const metadata: Metadata = {
         canonical: '/',
     },
     title: {
-        default: `${siteAuthor} — ${professionalTitle}`,
+        default: `${siteAuthor} | ${professionalTitle}`,
         template: '%s | ' + siteAuthor,
     },
     description: siteDescription,
