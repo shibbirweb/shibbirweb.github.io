@@ -9,8 +9,8 @@ export default function HeroArea() {
         <WithGridAnimatedBackgroundWrapper id="hero">
             <div className="container mx-auto">
                 <div className="flex min-h-[100svh] flex-col items-center">
-                    <div className="flex w-full grow flex-col items-center justify-center gap-y-8 py-6 sm:gap-y-0">
-                        <div className="flex flex-col px-4 lg:items-end lg:justify-center">
+                    <div className="flex w-full grow flex-col items-center justify-center py-6">
+                        <div className="flex flex-col gap-y-2 px-4 sm:gap-y-3 md:gap-y-4 lg:items-end lg:justify-center">
                             <ShinyTextAnimation>
                                 <h1 className="flex flex-wrap items-center justify-center gap-x-8 text-[length:clamp(2.75rem,14vw,6rem)] leading-none font-bold sm:text-8xl sm:leading-10 md:gap-x-12 md:text-9xl md:leading-12">
                                     <span className="text-box-trim-trim-both text-box-edge-cap-alphabetic py-1">
