@@ -18,6 +18,8 @@ import {
     siteDatePublished,
     jsonLdAlternateName,
     jsonLdKnowsAbout,
+    personGivenName,
+    personFamilyName,
 } from '@/config/constants';
 
 export const jsonLd: WithContext<ProfilePage> = {
@@ -31,6 +33,8 @@ export const jsonLd: WithContext<ProfilePage> = {
         '@type': 'Person',
         '@id': `${siteURL}#person`,
         name: siteName,
+        givenName: personGivenName,
+        familyName: personFamilyName,
         alternateName: jsonLdAlternateName,
         url: siteURL,
         image: siteThumbnail,
