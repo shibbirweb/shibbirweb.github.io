@@ -1,0 +1,38 @@
+import TagGroup from '@/components/pages/common/TagGroup';
+import type { NowBlockData } from './contents';
+import BulletList from './BulletList';
+
+export default function NowBlock({ block }: { block: NowBlockData }) {
+    switch (block.kind) {
+        case 'tags':
+            return <TagGroup tags={block.tags} />;
+        case 'list':
+            return <BulletList items={block.items} />;
+        case 'text':
+            return (
+                <p className="text-foreground/80 max-w-3xl text-2xl leading-normal">
+                    {block.text}
+                </p>
+            );
+        case 'subgroups':
+            return (
+                <div className="flex flex-col gap-8">
+                    {block.subgroups.map((subgroup) => (
+                        <div key={subgroup.title}>
+                            <h3 className="text-2xl font-semibold">
+                                {subgroup.title}
+                            </h3>
+                            {subgroup.intro && (
+                                <p className="text-foreground/70 mt-2 max-w-3xl text-xl leading-normal">
+                                    {subgroup.intro}
+                                </p>
+                            )}
+                            <div className="mt-4">
+                                <TagGroup tags={subgroup.tags} />
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            );
+    }
+}

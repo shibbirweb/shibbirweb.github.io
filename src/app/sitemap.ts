@@ -12,5 +12,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
             priority: 1,
             images: [`${siteURL}/images/shibbir-ahmed.jpg`],
         },
+        {
+            url: `${siteURL}/uses`,
+            lastModified: new Date(),
+            changeFrequency: 'monthly',
+            priority: 0.7,
+        },
+        {
+            url: `${siteURL}/now`,
+            lastModified: new Date(),
+            changeFrequency: 'monthly',
+            priority: 0.7,
+        },
     ];
 }

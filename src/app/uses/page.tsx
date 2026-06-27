@@ -1,0 +1,39 @@
+import type { Metadata } from 'next';
+import SectionHeading from '@/components/pages/common/SectionHeading';
+import UsesSection from './UsesSection';
+import { usesSections } from './contents';
+import { siteName } from '@/config/constants';
+
+const description = `The gear, software, developer tools, and home-lab setup ${siteName} uses day to day for software development, AI, and self-hosting.`;
+
+export const metadata: Metadata = {
+    title: 'Uses',
+    description,
+    alternates: { canonical: '/uses' },
+    openGraph: {
+        title: `Uses | ${siteName}`,
+        description,
+        url: '/uses',
+        type: 'website',
+    },
+};
+
+export default function UsesPage() {
+    return (
+        <main className="container mx-auto px-4 py-20 sm:py-28">
+            <SectionHeading as="h1">Uses</SectionHeading>
+            <p className="text-foreground/70 mt-6 max-w-3xl text-2xl leading-normal">
+                The gear, software, and self-hosted setup I use day to day.
+            </p>
+
+            <div className="mt-12 flex flex-col gap-12 sm:gap-16">
+                {usesSections.map((section) => (
+                    <UsesSection
+                        key={section.title}
+                        section={section}
+                    />
+                ))}
+            </div>
+        </main>
+    );
+}
