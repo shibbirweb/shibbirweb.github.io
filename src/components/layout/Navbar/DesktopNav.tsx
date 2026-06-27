@@ -28,7 +28,10 @@ export default function DesktopNav({
         >
             <ul className="border-foreground/10 bg-background/60 flex items-center gap-1 rounded-full border px-2 py-1.5 shadow-lg shadow-black/5 backdrop-blur-lg">
                 <li>
-                    <NavLogo className="text-foreground/80 hover:text-foreground block px-2 py-1.5 transition-colors" />
+                    <NavLogo
+                        collapsible
+                        className="text-foreground/80 hover:text-foreground block px-2 py-1.5 transition-colors"
+                    />
                 </li>
                 <li
                     aria-hidden="true"
