@@ -2,5 +2,9 @@
   "enabledPlugins": {
     "ui5-modernization@claude-plugins-official": true,
     "code-review@claude-plugins-official": true
+  },
+  "attribution": {
+    "commit": "",
+    "pr": ""
   }
 }
