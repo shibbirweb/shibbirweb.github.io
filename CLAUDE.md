@@ -60,6 +60,11 @@ Section folders may carry their own `contents.ts` (e.g. `hero-area/contents.ts` 
 
 - Do **not** add Claude/AI co-author trailers (`Co-Authored-By: Claude …`) or other AI attribution to commits or PRs. This is enforced by `attribution: { "commit": "", "pr": "" }` in `.claude/settings.json` (project-level, so it travels with the repo).
 
+### Git workflow
+
+- **Do not commit without explicit approval.** Apply changes to the working tree and let the maintainer review them first; only run `git commit` when explicitly asked to.
+- **Do not push or open PRs.** The maintainer pushes their own branches and opens pull requests — do not run `git push` (or create/merge PRs) unless explicitly asked to.
+
 ### SEO & structured data
 This is a major focus of the codebase. `layout.tsx` defines the full Next.js `Metadata` (OpenGraph, Twitter, robots, icons, manifest). `src/utils/jsonLd.ts` builds a `schema.org` `ProfilePage`/`Person` JSON-LD object (typed with `schema-dts`), rendered via `JsonLdScriptComponent`. **Both JSON-LD injection and Google Tag Manager are gated on `process.env.NODE_ENV === 'production'`** (see `layout.tsx`) — they do not appear in dev.
 
