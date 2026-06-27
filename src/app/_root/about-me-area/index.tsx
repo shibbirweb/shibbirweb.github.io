@@ -1,3 +1,4 @@
+import AnimatedUnderline from '@/components/animations/AnimatedUnderline';
 import SectionHeading from '@/components/pages/common/SectionHeading';
 import {
     careerExperience,
@@ -37,34 +38,62 @@ export default function AboutMeArea() {
                             <strong>Full Stack Developer</strong> committed to
                             building scalable and maintainable web applications.
                             I specialize in{' '}
-                            <strong className="underline decoration-yellow-500">
+                            <AnimatedUnderline
+                                variant="draw-right"
+                                color="var(--color-yellow-500)"
+                                delayMs={0}
+                            >
                                 JavaScript
-                            </strong>
+                            </AnimatedUnderline>
                             ,{' '}
-                            <strong className="underline decoration-blue-500">
+                            <AnimatedUnderline
+                                variant="draw-left"
+                                color="var(--color-blue-500)"
+                                delayMs={120}
+                            >
                                 PHP
-                            </strong>
+                            </AnimatedUnderline>
                             , and{' '}
-                            <strong className="underline decoration-emerald-500">
+                            <AnimatedUnderline
+                                variant="center"
+                                color="var(--color-emerald-500)"
+                                delayMs={240}
+                            >
                                 Node.js
-                            </strong>
+                            </AnimatedUnderline>
                             , leveraging{' '}
-                            <strong className="underline decoration-indigo-500">
+                            <AnimatedUnderline
+                                variant="highlight"
+                                color="var(--color-indigo-500)"
+                                delayMs={360}
+                            >
                                 Docker
-                            </strong>{' '}
+                            </AnimatedUnderline>{' '}
                             for containerization and implementing{' '}
-                            <strong className="underline decoration-red-500">
+                            <AnimatedUnderline
+                                variant="rise"
+                                color="var(--color-red-500)"
+                                delayMs={480}
+                            >
                                 CI/CD
-                            </strong>{' '}
+                            </AnimatedUnderline>{' '}
                             pipelines to ensure efficient and reliable
                             deployments. I focus on{' '}
-                            <strong className="underline decoration-orange-500">
+                            <AnimatedUnderline
+                                variant="bounce"
+                                color="var(--color-orange-500)"
+                                delayMs={600}
+                            >
                                 clean code
-                            </strong>
+                            </AnimatedUnderline>
                             , robust{' '}
-                            <strong className="underline decoration-rose-500">
+                            <AnimatedUnderline
+                                variant="glow"
+                                color="var(--color-rose-500)"
+                                delayMs={720}
+                            >
                                 system design
-                            </strong>
+                            </AnimatedUnderline>
                             , and delivering solutions that create meaningful
                             impact.
                         </p>

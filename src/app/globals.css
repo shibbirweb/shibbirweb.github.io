@@ -23,16 +23,6 @@
     --text-box-edge-text-alphabetic: text alphabetic;
     --text-box-edge-cap-alphabetic: cap alphabetic;
     --text-box-edge-ex-text: ex text;
-
-    --animate-shine: shine 5s linear infinite;
-    @keyframes shine {
-        0% {
-            background-position: 100%;
-        }
-        100% {
-            background-position: -100%;
-        }
-    }
 }
 
 @media (prefers-color-scheme: dark) {
