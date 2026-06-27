@@ -19,6 +19,7 @@ import {
 } from '@/config/constants';
 import { GoogleTagManager } from '@next/third-parties/google';
 import { JsonLdScriptComponent } from '@/components/utils/JsonLdScriptComponent';
+import Navbar from '@/components/layout/Navbar';
 
 const zainSansSerif = Zain({
     variable: '--font-zain-sans-serif',
@@ -123,6 +124,7 @@ export default function RootLayout({
             <body
                 className={`${zainSansSerif.variable} bg-background flex min-h-svh flex-col text-3xl antialiased`}
             >
+                <Navbar />
                 {children}
             </body>
         </html>

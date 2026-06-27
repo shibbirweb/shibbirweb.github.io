@@ -6,7 +6,7 @@ import { professionalTitle } from '@/config/constants';
 
 export default function HeroArea() {
     return (
-        <WithGridAnimatedBackgroundWrapper>
+        <WithGridAnimatedBackgroundWrapper id="hero">
             <div className="container mx-auto">
                 <div className="flex min-h-[100svh] flex-col items-center">
                     <div className="flex w-full grow flex-col items-center justify-center gap-y-8 py-6 sm:gap-y-0">
