@@ -54,8 +54,12 @@ export default function NavLogo({
                 // The wordmark (viewBox 588.6 x 82.601) is ~8.91rem wide at h-5;
                 // "SHIBBIR" ends near x 316 (~4.8rem). The wrapper clips the SVG
                 // and animates its width, so "AHMED" slides in from the right
-                // toward the divider when the viewport crosses lg.
-                <span className="block h-5 w-[4.8rem] overflow-hidden transition-[width] duration-500 ease-out motion-reduce:transition-none lg:w-[8.92rem]">
+                // toward the divider when the viewport crosses lg. We use
+                // overflow-clip with a 2px clip margin rather than overflow-hidden
+                // so the glyphs' 1px non-scaling stroke can render just past the
+                // box edge: that keeps the "S" and "D" rounded edges intact while
+                // still hiding "AHMED", which sits well beyond the margin.
+                <span className="block h-5 w-[4.8rem] overflow-clip [overflow-clip-margin:2px] transition-[width] duration-500 ease-out motion-reduce:transition-none lg:w-[8.92rem]">
                     <Shibbir className="block h-5 w-[8.92rem] max-w-none" />
                 </span>
             ) : (

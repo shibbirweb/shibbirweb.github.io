@@ -5,8 +5,13 @@ export default function Shibbir({
     ...rest
 }: React.SVGProps<SVGSVGElement>) {
     return (
+        // overflow-visible: the glyph outlines sit flush against the viewBox
+        // edges and carry a 1px non-scaling stroke, so the outer half of that
+        // stroke falls outside the viewBox. Without this the "S" (at x 0) and
+        // "D" (at x 588.6) lose their leading and trailing rounded edges to the
+        // default viewBox clip.
         <svg
-            className={cn('', className)}
+            className={cn('overflow-visible', className)}
             {...rest}
             viewBox="0 0 588.6 82.601"
             xmlns="http://www.w3.org/2000/svg"
