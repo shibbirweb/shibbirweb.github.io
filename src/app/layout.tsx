@@ -4,6 +4,10 @@ import './globals.css';
 import {
     facebookPageId,
     googleTagManagerId,
+    jsonLdAlternateName,
+    personFamilyName,
+    personGivenName,
+    professionalTitle,
     siteAuthor,
     siteDescription,
     siteKeywords,
@@ -24,8 +28,11 @@ const zainSansSerif = Zain({
 
 export const metadata: Metadata = {
     metadataBase: new URL(siteURL),
+    alternates: {
+        canonical: '/',
+    },
     title: {
-        default: siteAuthor,
+        default: `${siteAuthor} — ${professionalTitle}`,
         template: '%s | ' + siteAuthor,
     },
     description: siteDescription,
@@ -35,7 +42,10 @@ export const metadata: Metadata = {
         url: siteURL,
         siteName: siteName,
         locale: siteLocale,
-        type: 'website',
+        type: 'profile',
+        firstName: personGivenName,
+        lastName: personFamilyName,
+        username: jsonLdAlternateName,
         images: '/opengraph-image.png',
     },
     twitter: {
@@ -44,6 +54,7 @@ export const metadata: Metadata = {
         description: siteDescription,
         creator: twitterUsername,
         siteId: twitterUsername,
+        images: '/opengraph-image.png',
     },
     keywords: siteKeywords,
     authors: [
@@ -66,11 +77,6 @@ export const metadata: Metadata = {
             'max-image-preview': 'large',
             'max-snippet': -1,
         },
-    },
-    icons: {
-        icon: '/shibbir-logo-192x192.png',
-        apple: '/shibbir-logo-192x192.png',
-        shortcut: '/shibbir-logo-192x192.png',
     },
     category: 'portfolio',
     facebook: {

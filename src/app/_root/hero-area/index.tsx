@@ -2,6 +2,7 @@ import ShinyTextAnimation from '@/components/animations/ShinyTextAnimation';
 import DownIcon from '@/components/icons/down';
 import SocialIcons from './SocialIcons';
 import WithGridAnimatedBackgroundWrapper from '@/components/wrappers/WithGridAnimatedBackgroundWrapper';
+import { professionalTitle } from '@/config/constants';
 
 export default function HeroArea() {
     return (
@@ -21,7 +22,7 @@ export default function HeroArea() {
                                 </h1>
                             </ShinyTextAnimation>
                             <p className="self-center text-2xl leading-2 sm:self-end sm:pr-[5px] sm:leading-5">
-                                Full Stack Developer
+                                {professionalTitle}
                             </p>
                         </div>
                         <SocialIcons />
@@ -29,7 +30,7 @@ export default function HeroArea() {
                     <a
                         href="#about"
                         aria-label="Scroll to the about section"
-                        className="mb-6 text-foreground/40 transition-colors hover:text-foreground/70 motion-safe:animate-bounce sm:mb-10"
+                        className="text-foreground/40 hover:text-foreground/70 mb-6 transition-colors motion-safe:animate-bounce sm:mb-10"
                     >
                         <DownIcon
                             className="size-8"

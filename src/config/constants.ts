@@ -3,8 +3,11 @@ export const facebookPageId: string = '123805794398882';
 export const googleTagManagerId: string = 'GTM-W4DC9Z6';
 
 export const siteName: string = 'Shibbir Ahmed';
+export const professionalTitle: string = 'Senior Full-Stack & AI Engineer';
+export const personGivenName: string = 'Shibbir';
+export const personFamilyName: string = 'Ahmed';
 export const siteDescription: string =
-    'Results-driven Full Stack Developer with a strong track record of delivering robust, user-focused web applications. Expert in end-to-end development, from intuitive UI/UX to efficient backend systems. Passionate about clean code, performance optimization, and scalable architecture';
+    'Senior Full-Stack Software Engineer building scalable web applications and backend systems, now focused on AI engineering with LLMs, RAG, and vector search.';
 export const twitterUsername: string = '@shibbirweb';
 export const siteLocale: string = 'en_US';
 export const siteKeywords: string[] = [
@@ -84,4 +87,4 @@ export const jsonLdKnowsAbout: string[] = [
     'Retrieval-Augmented Generation',
     'Vector Databases',
 ];
-export const jsonLdDescription: string = `${siteName} is a passionate and experienced Full-Stack Software Engineer with over ${careerExperience} years of expertise in building scalable, high-performance web applications. He specializes in modern JavaScript frameworks, Laravel, RESTful APIs, and DevOps tools like Docker. Currently working at ${currentWorkplace}, he is committed to delivering clean, maintainable code and crafting seamless user experiences across platforms.`;
+export const jsonLdDescription: string = `${siteName} is a Senior Full-Stack Software Engineer with over ${careerExperience} years of experience building scalable, high-performance web applications and backend systems. He works across modern JavaScript and TypeScript, Laravel, and RESTful APIs, ships with Docker and CI/CD, and is increasingly focused on AI engineering — large language models, retrieval-augmented generation (RAG), embeddings, and vector search. Currently at ${currentWorkplace}, he is committed to clean, maintainable code and reliable systems.`;
