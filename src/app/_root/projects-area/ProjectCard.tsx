@@ -10,7 +10,7 @@ export default function ProjectCard({ project }: { project: Project }) {
             <p className="text-foreground/60 text-base font-bold tracking-wide uppercase">
                 {project.category}
             </p>
-            <h3 className="mt-2 text-3xl font-bold">
+            <h3 className="mt-2 text-2xl font-bold sm:text-3xl">
                 <span
                     className={`underline decoration-2 underline-offset-4 ${project.accentClassName}`}
                 >
