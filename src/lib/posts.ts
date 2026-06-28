@@ -172,9 +172,62 @@ const gistExtension: TokenizerAndRendererExtension = {
 type CodeToken = Tokens.Code & { highlighted?: string };
 const CODE_THEMES = { light: 'github-light', dark: 'github-dark' } as const;
 
-/** First word of a fenced block's info string (its language), defaulting to text. */
-function codeLang(token: CodeToken): string {
-    return (token.lang ?? '').trim().split(/\s+/)[0] || 'text';
+interface CodeMeta {
+    lang: string;
+    filePath?: string;
+}
+
+/**
+ * Parses a fenced block's info string into a language plus an optional file path
+ * (where the snippet belongs). Supports `lang path/to/file.ext` and
+ * `lang title="path/to/file.ext"`.
+ */
+function parseCodeMeta(token: CodeToken): CodeMeta {
+    const info = (token.lang ?? '').trim();
+    if (!info) return { lang: 'text' };
+    const [lang, ...rest] = info.split(/\s+/);
+    const titled = info.match(/title="([^"]+)"/);
+    const remainder = rest.join(' ').trim();
+    const filePath = titled
+        ? titled[1]
+        : remainder && !remainder.includes('=')
+          ? remainder
+          : undefined;
+    return { lang: lang || 'text', filePath };
+}
+
+/** Header label: the file extension when a path is given, else the language. */
+function codeLabel(lang: string, filePath?: string): string {
+    if (!filePath) return lang;
+    const name = filePath.split('/').pop() ?? filePath;
+    const dot = name.lastIndexOf('.');
+    return dot > 0 ? name.slice(dot + 1) : lang;
+}
+
+/**
+ * Wraps highlighted code in a header (language/extension badge + optional file
+ * path) with a copy-button slot the client fills in (see CodeBlock).
+ */
+function renderCodeBlock(
+    highlighted: string,
+    lang: string,
+    filePath?: string
+): string {
+    const pathHtml = filePath
+        ? `<span class="code-block__path">${escapeHtml(filePath)}</span>`
+        : '';
+    return (
+        `<figure class="code-block not-prose">` +
+        `<figcaption class="code-block__bar">` +
+        `<span class="code-block__meta">` +
+        `<span class="code-block__lang">${escapeHtml(codeLabel(lang, filePath))}</span>` +
+        pathHtml +
+        `</span>` +
+        `<span class="code-block__copy" data-code-copy></span>` +
+        `</figcaption>` +
+        highlighted +
+        `</figure>`
+    );
 }
 
 async function highlightCode(code: string, lang: string): Promise<string> {
@@ -199,13 +252,11 @@ marked.use({
     async walkTokens(token) {
         if (token.type === 'code') {
             const codeToken = token as CodeToken;
+            const { lang } = parseCodeMeta(codeToken);
             // Mermaid blocks render to SVG in the browser (see MermaidRenderer),
             // so skip Shiki and let the code renderer emit a <pre class="mermaid">.
-            if (codeLang(codeToken) === 'mermaid') return;
-            codeToken.highlighted = await highlightCode(
-                codeToken.text,
-                codeLang(codeToken)
-            );
+            if (lang === 'mermaid') return;
+            codeToken.highlighted = await highlightCode(codeToken.text, lang);
         }
         if (token.type === 'gist') {
             const gistToken = token as GistToken;
@@ -217,13 +268,16 @@ marked.use({
     renderer: {
         code(token) {
             const codeToken = token as CodeToken;
-            if (codeLang(codeToken) === 'mermaid') {
+            const { lang, filePath } = parseCodeMeta(codeToken);
+            if (lang === 'mermaid') {
                 return `<pre class="mermaid not-prose">${escapeHtml(
                     codeToken.text
                 )}</pre>`;
             }
-            if (codeToken.highlighted) return codeToken.highlighted;
-            return `<pre><code>${escapeHtml(codeToken.text)}</code></pre>`;
+            const highlighted =
+                codeToken.highlighted ??
+                `<pre><code>${escapeHtml(codeToken.text)}</code></pre>`;
+            return renderCodeBlock(highlighted, lang, filePath);
         },
     },
 });

@@ -17,7 +17,7 @@ Retrieval-augmented generation (RAG) grounds a language model in your own data, 
 
 
 1. **Build the Docker Image**: Use the `Dockerfile` to build the Docker image for the Express application.
-   ```
+   ```sh
    docker build -t express-lb .
    ```
 
@@ -39,7 +39,7 @@ graph TD;
 
 Qdrant returns the nearest neighbours for a query embedding in milliseconds:
 
-```ts
+```ts src/lib/foo.ts
 const hits = await client.search('articles', {
     vector: queryEmbedding,
     limit: 5,

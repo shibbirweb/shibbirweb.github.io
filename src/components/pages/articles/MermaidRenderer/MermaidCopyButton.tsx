@@ -3,7 +3,7 @@
 import CheckIcon from '@/components/icons/check';
 import CopyIcon from '@/components/icons/copy';
 import MermaidIconButton from '@/components/pages/articles/MermaidRenderer/MermaidIconButton';
-import { useCopyToClipboard } from '@/components/pages/articles/MermaidRenderer/hooks/useCopyToClipboard';
+import { useCopyToClipboard } from '@/components/pages/articles/hooks/useCopyToClipboard';
 import { cn } from '@/utils/cn';
 
 /**
