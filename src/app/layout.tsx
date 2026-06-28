@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Zain, JetBrains_Mono } from 'next/font/google';
+import { Zain } from 'next/font/google';
 import '@/app/globals.css';
 import {
     facebookPageId,
@@ -27,11 +27,6 @@ const zainSansSerif = Zain({
     variable: '--font-zain-sans-serif',
     subsets: ['latin'],
     weight: ['400', '700'],
-});
-
-const jetBrainsMono = JetBrains_Mono({
-    variable: '--font-jetbrains-mono',
-    subsets: ['latin'],
 });
 
 export const metadata: Metadata = {
@@ -129,7 +124,7 @@ export default function RootLayout({
                 <GoogleTagManager gtmId={googleTagManagerId} />
             )}
             <body
-                className={`${zainSansSerif.variable} ${jetBrainsMono.variable} bg-background flex min-h-svh flex-col text-3xl antialiased`}
+                className={`${zainSansSerif.variable} bg-background flex min-h-svh flex-col text-3xl antialiased`}
             >
                 <Navbar hasArticles={hasArticles()} />
                 <div className="flex grow flex-col">{children}</div>
