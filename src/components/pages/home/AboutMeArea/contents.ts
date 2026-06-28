@@ -20,7 +20,7 @@ export type Facet = {
 export const facets: Facet[] = [
     {
         title: 'Craft',
-        text: 'I care about clean, maintainable code and reliable systems.',
+        text: 'I turn complex problems into simple, maintainable software that teams can confidently build on for years.',
         accent: 'var(--color-blue-500)',
         placementClassName: 'lg:col-start-1 lg:row-start-1',
         line: { x: 16, y: 18 },
@@ -28,7 +28,7 @@ export const facets: Facet[] = [
     },
     {
         title: 'Range',
-        text: `${careerExperience}+ years shipping across healthcare, e-commerce, and the public sector.`,
+        text: `${careerExperience}+ years delivering production software across healthcare, e-commerce, SaaS, and the public sector.`,
         accent: 'var(--color-emerald-500)',
         placementClassName: 'lg:col-start-3 lg:row-start-1',
         line: { x: 84, y: 18 },
@@ -36,7 +36,7 @@ export const facets: Facet[] = [
     },
     {
         title: 'Now',
-        text: 'Lately, going deep on AI engineering.',
+        text: 'Currently exploring AI agents, RAG, MCP, and developer tooling for AI-assisted software engineering.',
         accent: 'var(--color-orange-500)',
         placementClassName: 'lg:col-start-1 lg:row-start-3',
         line: { x: 16, y: 82 },
@@ -44,7 +44,7 @@ export const facets: Facet[] = [
     },
     {
         title: 'End to end',
-        text: 'Comfortable across the full stack, from database to UI to deploy.',
+        text: 'From architecture to self-hosted infrastructure, I enjoy owning the entire product lifecycle and shipping complete systems.',
         accent: 'var(--color-rose-500)',
         placementClassName: 'lg:col-start-3 lg:row-start-3',
         line: { x: 84, y: 82 },

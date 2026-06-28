@@ -12,7 +12,8 @@ export default function AboutMeArea() {
                 <div className="space-y-3 text-center">
                     <SectionHeading>About me</SectionHeading>
                     <p className="text-foreground/60 mx-auto max-w-xl">
-                        A few things that shape how I build.
+                        The mindset, experience, and curiosity behind the
+                        software I build.
                     </p>
                 </div>
 
