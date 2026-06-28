@@ -1,0 +1,54 @@
+/* Footer signature cursor spotlight: the glyphs change color only inside a soft
+   circle that follows the pointer, fading back to the dim watermark away from
+   it. The reveal layer is a brighter copy of the same SVG, masked to the circle,
+   so it only ever paints letters (never a visible disk or box edge). The pointer
+   vars are written by usePointerSpotlight; hover and reduced-motion are pure CSS,
+   so the pointer path never re-renders React. */
+
+.spotlight {
+    /* Size the spotlight from the signature's own width so the circle keeps the
+       same proportion at every breakpoint instead of swallowing a narrow logo.
+       container-type makes this element a size container, so 1cqw below is 1% of
+       its width; 72cqw matches the radius that looked right on desktop. */
+    container-type: inline-size;
+    --pointer-x: 50%;
+    --pointer-y: 50%;
+    --spotlight-radius: 72cqw;
+    --spotlight-edge: 80%;
+    --spotlight-color: #a3a3a3; /* neutral-400 (light): one step up from the neutral-300 base */
+}
+
+@media (prefers-color-scheme: dark) {
+    .spotlight {
+        --spotlight-color: #525252; /* neutral-600 (dark): one step up from the neutral-900 base */
+    }
+}
+
+.reveal {
+    color: var(--spotlight-color);
+    opacity: 0;
+    -webkit-mask-image: radial-gradient(
+        circle var(--spotlight-radius) at var(--pointer-x) var(--pointer-y),
+        #000 0%,
+        rgba(0, 0, 0, 0.5) 50%,
+        transparent var(--spotlight-edge)
+    );
+    mask-image: radial-gradient(
+        circle var(--spotlight-radius) at var(--pointer-x) var(--pointer-y),
+        #000 0%,
+        rgba(0, 0, 0, 0.5) 50%,
+        transparent var(--spotlight-edge)
+    );
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .spotlight:hover .reveal {
+        opacity: 0.3;
+    }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .reveal {
+        transition: opacity 220ms ease-out;
+    }
+}
