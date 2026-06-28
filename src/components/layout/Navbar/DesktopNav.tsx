@@ -26,7 +26,7 @@ export default function DesktopNav({
                     : 'pointer-events-none invisible -translate-y-24 opacity-0'
             )}
         >
-            <ul className="border-foreground/10 bg-background/60 flex items-center gap-1 rounded-full border px-2 py-1.5 shadow-lg shadow-black/5 backdrop-blur-lg">
+            <ul className="border-foreground/10 bg-background/60 flex items-center gap-0.5 rounded-full border px-2 py-1.5 shadow-lg shadow-black/5 backdrop-blur-lg">
                 <li>
                     <NavLogo
                         collapsible
@@ -35,7 +35,7 @@ export default function DesktopNav({
                 </li>
                 <li
                     aria-hidden="true"
-                    className="bg-foreground/15 mx-1 h-5 w-px"
+                    className="bg-foreground/15 mx-0.5 h-5 w-px"
                 />
                 {sectionItems.map((item) => (
                     <NavItem
@@ -46,7 +46,7 @@ export default function DesktopNav({
                 ))}
                 <li
                     aria-hidden="true"
-                    className="bg-foreground/15 mx-1 h-5 w-px"
+                    className="bg-foreground/15 mx-0.5 h-5 w-px"
                 />
                 {pageItems.map((item) => (
                     <NavItem

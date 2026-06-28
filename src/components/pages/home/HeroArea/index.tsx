@@ -3,11 +3,13 @@ import ScrollDownCue from '@/components/pages/home/HeroArea/ScrollDownCue';
 import SocialIcons from '@/components/pages/home/HeroArea/SocialIcons';
 import WithGridAnimatedBackgroundWrapper from '@/components/wrappers/WithGridAnimatedBackgroundWrapper';
 import { professionalTitle } from '@/config/constants';
+import { zain } from '@/config/fonts';
+import { cn } from '@/utils/cn';
 
 export default function HeroArea() {
     return (
         <WithGridAnimatedBackgroundWrapper id="hero">
-            <div className="container mx-auto">
+            <div className={cn(zain.variable, 'font-display container mx-auto')}>
                 <div className="flex min-h-[100svh] flex-col items-center">
                     <div className="flex w-full grow flex-col items-center justify-center py-6">
                         <div className="flex flex-col gap-y-2 px-4 sm:gap-y-3 md:gap-y-4 lg:items-end lg:justify-center">

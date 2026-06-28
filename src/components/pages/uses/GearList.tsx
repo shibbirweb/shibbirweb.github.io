@@ -7,8 +7,8 @@ export default function GearList({ gear }: GearListProps) {
         <ul className="flex flex-col gap-5">
             {gear.map((item) => (
                 <li key={item.name}>
-                    <h3 className="text-2xl font-semibold">{item.name}</h3>
-                    <p className="text-foreground/70 mt-1 max-w-3xl text-xl leading-normal">
+                    <h3 className="text-lg font-semibold">{item.name}</h3>
+                    <p className="text-foreground/70 mt-1 max-w-3xl text-base leading-relaxed">
                         {item.description}
                     </p>
                 </li>

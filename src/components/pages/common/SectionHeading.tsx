@@ -16,7 +16,7 @@ export default function SectionHeading({
     return (
         <Heading
             className={cn(
-                'text-4xl font-bold sm:text-5xl md:text-6xl',
+                'text-3xl font-bold sm:text-4xl',
                 className
             )}
             {...rest}

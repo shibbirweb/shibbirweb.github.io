@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { cn } from '@/utils/cn';
 
 const base =
-    'inline-flex items-center rounded-full border px-4 py-1.5 text-lg transition-colors';
+    'inline-flex items-center rounded-full border px-3 py-1.5 text-sm transition-colors';
 const inactive =
     'border-foreground/15 text-foreground/70 hover:border-foreground/50 hover:text-foreground';
 const activeClasses = 'border-foreground bg-foreground text-background';

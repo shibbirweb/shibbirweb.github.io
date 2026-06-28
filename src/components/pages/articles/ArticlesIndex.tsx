@@ -28,7 +28,7 @@ export default function ArticlesIndex({
             >
                 Articles
             </SectionHeading>
-            <p className="text-foreground/70 mt-6 max-w-3xl text-2xl leading-normal">
+            <p className="text-foreground/70 mt-6 max-w-3xl text-lg leading-relaxed">
                 Notes on backend engineering, AI, and self-hosted
                 infrastructure.
             </p>

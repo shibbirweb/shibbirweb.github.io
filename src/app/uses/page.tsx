@@ -24,7 +24,7 @@ export default function UsesPage() {
         <main className="container mx-auto px-4 py-20 sm:py-28">
             <Breadcrumb />
             <SectionHeading as="h1">Uses</SectionHeading>
-            <p className="text-foreground/70 mt-6 max-w-3xl text-2xl leading-normal">
+            <p className="text-foreground/70 mt-6 max-w-3xl text-lg leading-relaxed">
                 The gear, software, and self-hosted setup I use day to day.
             </p>
 

@@ -14,15 +14,15 @@ export default function TagGroup({ label, tags }: TagGroupProps) {
     return (
         <div>
             {label && (
-                <h3 className="text-foreground/60 text-xl font-bold">
+                <h3 className="text-foreground/60 text-base font-bold">
                     {label}
                 </h3>
             )}
-            <ul className={cn('flex flex-wrap gap-3', label && 'mt-3')}>
+            <ul className={cn('flex flex-wrap gap-2.5', label && 'mt-3')}>
                 {tags.map((tag) => (
                     <Tag
                         key={tag}
-                        className="hover:border-foreground/40 px-5 py-2 text-xl"
+                        className="hover:border-foreground/40 px-4 py-1.5 text-sm"
                     >
                         {tag}
                     </Tag>

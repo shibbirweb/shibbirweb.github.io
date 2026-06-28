@@ -23,7 +23,7 @@ export default function AboutMeArea() {
                         className="size-44 shrink-0 self-center rounded-2xl object-cover sm:size-56 lg:self-start"
                     />
 
-                    <div className="space-y-6 text-2xl leading-normal sm:text-justify">
+                    <div className="space-y-5 text-lg leading-relaxed sm:text-justify">
                         <p>
                             I&apos;m <strong>MD. Shibbir Ahmed</strong>, a{' '}
                             <strong>Senior Full-Stack Software Engineer</strong>{' '}

@@ -33,7 +33,7 @@ export default function ArticleCard({
                     <p
                         className={cn(
                             'text-foreground/60',
-                            compact ? 'text-sm' : 'text-base'
+                            compact ? 'text-xs' : 'text-sm'
                         )}
                     >
                         <time dateTime={article.date}>
@@ -45,17 +45,15 @@ export default function ArticleCard({
                     <h3
                         className={cn(
                             'mt-2 font-bold',
-                            compact
-                                ? 'text-lg sm:text-xl'
-                                : 'text-2xl sm:text-3xl'
+                            compact ? 'text-base sm:text-lg' : 'text-lg sm:text-xl'
                         )}
                     >
                         {article.title}
                     </h3>
                     <p
                         className={cn(
-                            'text-foreground/70 mt-3 grow leading-normal',
-                            compact ? 'text-base' : 'text-xl'
+                            'text-foreground/70 mt-3 grow leading-relaxed',
+                            compact ? 'text-sm' : 'text-base'
                         )}
                     >
                         {article.description}
@@ -73,8 +71,8 @@ export default function ArticleCard({
                             tag={tag}
                             className={
                                 compact
-                                    ? 'px-2.5 py-0.5 text-sm'
-                                    : 'px-3 py-1 text-base'
+                                    ? 'px-2.5 py-0.5 text-xs'
+                                    : 'px-3 py-1 text-sm'
                             }
                         />
                     ))}
