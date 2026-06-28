@@ -14,7 +14,6 @@ export type Project = {
     repoURL: string;
     liveURL?: string;
     liveLabel?: string;
-    accentClassName: string;
 };
 
 export const projects: Project[] = [
@@ -26,7 +25,6 @@ export const projects: Project[] = [
         tech: ['TypeScript', 'VS Code API'],
         repoURL:
             'https://github.com/shibbirweb/vs-code-extra-cursor-caret-height',
-        accentClassName: 'decoration-blue-500',
     },
     {
         name: 'CKEditor 5 Image Remove Callback',
@@ -36,7 +34,6 @@ export const projects: Project[] = [
         tech: ['JavaScript', 'CKEditor 5'],
         repoURL:
             'https://github.com/shibbirweb/ckeditor5-image-remove-event-callback-plugin',
-        accentClassName: 'decoration-yellow-500',
     },
     {
         name: 'Nuxt 3 + Laravel Sanctum Auth',
@@ -46,7 +43,6 @@ export const projects: Project[] = [
         tech: ['Nuxt.js', 'Laravel', 'PHP', 'Vue.js'],
         repoURL:
             'https://github.com/shibbirweb/demo-nuxt-3-laravel-sanctum-authentication',
-        accentClassName: 'decoration-emerald-500',
     },
     {
         name: 'Nginx Load Balancer',
@@ -55,7 +51,6 @@ export const projects: Project[] = [
             'An nginx-based load-balancing setup exploring traffic distribution across multiple upstream application instances.',
         tech: ['Nginx', 'JavaScript', 'Docker'],
         repoURL: 'https://github.com/shibbirweb/p-nginx-load-balancer',
-        accentClassName: 'decoration-indigo-500',
     },
     {
         name: 'DNS Manager',
@@ -63,7 +58,6 @@ export const projects: Project[] = [
         description: 'A PHP utility for managing DNS records programmatically.',
         tech: ['PHP'],
         repoURL: 'https://github.com/shibbirweb/dns-manager',
-        accentClassName: 'decoration-rose-500',
     },
     {
         name: 'Shibbir CLI',
@@ -72,6 +66,5 @@ export const projects: Project[] = [
             'A personal Node.js command-line tool that packages frequently used developer workflows.',
         tech: ['Node.js', 'JavaScript'],
         repoURL: 'https://github.com/shibbirweb/shibbir-cli',
-        accentClassName: 'decoration-orange-500',
     },
 ];
