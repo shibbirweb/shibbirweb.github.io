@@ -1,0 +1,59 @@
+@reference "tailwindcss";
+
+/* Soft, multi-colour aurora glow revealed on project-card hover (#work), anchored
+   in the top-left corner. Three translucent radial washes are layered on a
+   ::before behind the card content (the card is `relative isolate`, so the negative
+   z-index keeps the wash under the text).
+
+   The three hues (--glow-a/b/c) are generated per card from its index in
+   ProjectCard (golden-angle spaced), so every card has a different gradient and any
+   project added to contents.ts gets its own automatically. This file owns only the
+   placement, softness, and theme handling. Deliberately barely noticeable: low
+   per-hue strength with a wide, diffuse falloff, stepped up a touch in dark mode.
+   Utility-mappable rules use @apply; only the gradient stack and its strength
+   variable are raw CSS. */
+.card {
+    --glow-strength: 5%;
+}
+
+@media (prefers-color-scheme: dark) {
+    .card {
+        --glow-strength: 6%;
+    }
+}
+
+.card::before {
+    @apply pointer-events-none absolute inset-0 z-[-1] rounded-[inherit] opacity-0 content-[''] motion-safe:transition-opacity motion-safe:duration-300;
+    background-image:
+        radial-gradient(
+            80% 85% at 0% 0%,
+            color-mix(
+                in oklab,
+                var(--glow-a, var(--foreground)) var(--glow-strength),
+                transparent
+            ),
+            transparent 78%
+        ),
+        radial-gradient(
+            70% 75% at 20% 4%,
+            color-mix(
+                in oklab,
+                var(--glow-b, var(--foreground)) var(--glow-strength),
+                transparent
+            ),
+            transparent 75%
+        ),
+        radial-gradient(
+            65% 70% at 2% 24%,
+            color-mix(
+                in oklab,
+                var(--glow-c, var(--foreground)) var(--glow-strength),
+                transparent
+            ),
+            transparent 72%
+        );
+}
+
+.card:hover::before {
+    @apply opacity-100;
+}
