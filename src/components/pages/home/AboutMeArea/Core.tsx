@@ -1,5 +1,6 @@
 import ExportedImage from 'next-image-export-optimizer';
 import styles from '@/components/pages/home/AboutMeArea/Core.module.css';
+import { cn } from '@/utils/cn';
 
 // The central node of the diagram: the portrait with a soft, slowly pulsing
 // accent glow. No name/title/quote, the portrait itself is the hub the facets
@@ -18,7 +19,10 @@ export default function Core() {
                     width={224}
                     height={224}
                     draggable={false}
-                    className="ring-background relative size-40 rounded-full object-cover shadow-xl ring-4 select-none [-webkit-user-drag:none] sm:size-48"
+                    className={cn(
+                        styles.photo,
+                        'ring-background relative size-40 rounded-full object-cover shadow-xl ring-4 sm:size-48'
+                    )}
                 />
             </div>
         </div>
