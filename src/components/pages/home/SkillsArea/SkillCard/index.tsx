@@ -24,7 +24,7 @@ export default function SkillCard({ skill }: { skill: Skill }) {
             }
             className={cn(
                 styles.tile,
-                'group border-foreground/10 hover:border-foreground/25 relative isolate flex aspect-square w-24 cursor-pointer flex-col items-center justify-center gap-2.5 rounded-xl border p-2 text-center transition-all duration-300 hover:shadow-sm sm:w-28 lg:w-32'
+                'group border-foreground/10 hover:border-foreground/25 relative isolate flex aspect-square w-20 cursor-pointer flex-col items-center justify-center gap-2.5 rounded-xl border p-2 text-center transition-all duration-300 hover:shadow-sm sm:w-24 lg:w-28'
             )}
         >
             <Icon
