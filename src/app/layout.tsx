@@ -20,6 +20,7 @@ import { GoogleTagManager } from '@next/third-parties/google';
 import { JsonLdScript } from '@/components/seo/JsonLdScript';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
+import PageGradientBackground from '@/components/backgrounds/PageGradientBackground';
 import { hasArticles } from '@/lib/posts';
 import { hasResume } from '@/lib/resume';
 import { notoSans } from '@/config/fonts';
@@ -119,8 +120,9 @@ export default function RootLayout({
                 <GoogleTagManager gtmId={googleTagManagerId} />
             )}
             <body
-                className={`${notoSans.variable} bg-background flex min-h-svh flex-col text-base antialiased`}
+                className={`${notoSans.variable} bg-background relative flex min-h-svh flex-col text-base antialiased`}
             >
+                <PageGradientBackground />
                 <Navbar
                     hasArticles={hasArticles()}
                     hasResume={hasResume()}
