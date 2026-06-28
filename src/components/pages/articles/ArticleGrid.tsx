@@ -14,7 +14,7 @@ export default function ArticleGrid({
     return (
         <ul
             className={cn(
-                'mt-12 grid grid-cols-1 gap-6 md:grid-cols-2',
+                'mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3',
                 className
             )}
         >

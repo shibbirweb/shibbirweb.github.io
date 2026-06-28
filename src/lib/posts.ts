@@ -12,7 +12,7 @@ import { generatedCoverPath } from '@/utils/generateArticleCover';
 const ARTICLES_DIRECTORY = path.join(process.cwd(), 'content/articles');
 
 /** How many articles are listed per page on the /articles index. */
-export const ARTICLES_PER_PAGE = 6;
+export const ARTICLES_PER_PAGE = 9;
 
 interface Frontmatter {
     title?: string;
@@ -51,7 +51,10 @@ function readArticleFiles(): ParsedArticle[] {
         .readdirSync(ARTICLES_DIRECTORY)
         .filter((name) => name.endsWith('.md') || name.endsWith('.mdx'))
         .map((name) => {
-            const slug = name.replace(/\.mdx?$/, '');
+            // Filenames carry a zero-padded ordering prefix (e.g. `01-`) so the
+            // newest article is obvious on disk; it is stripped from the slug so
+            // URLs stay clean (`/articles/redis-caching-strategies`).
+            const slug = name.replace(/\.mdx?$/, '').replace(/^\d+-/, '');
             const raw = fs.readFileSync(
                 path.join(ARTICLES_DIRECTORY, name),
                 'utf8'
