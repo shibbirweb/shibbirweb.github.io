@@ -5,6 +5,7 @@ import type { NavItemData } from './contents';
 
 interface MobileMenuPanelProps {
     open: boolean;
+    isHome: boolean;
     sectionItems: NavItemData[];
     pageItems: NavItemData[];
     isActive: (item: NavItemData) => boolean;
@@ -13,6 +14,7 @@ interface MobileMenuPanelProps {
 
 export default function MobileMenuPanel({
     open,
+    isHome,
     sectionItems,
     pageItems,
     isActive,
@@ -28,10 +30,23 @@ export default function MobileMenuPanel({
                     : 'pointer-events-none invisible scale-95 opacity-0'
             )}
         >
-            <NavLogo
-                onNavigate={onNavigate}
-                className="text-foreground/80 hover:text-foreground hover:bg-foreground/5 flex items-center rounded-xl px-4 py-3 transition-colors"
-            />
+            {isHome ? (
+                // Home keeps the logo as a plain, static menu item: the hero
+                // already shows the name, so there is no centered wordmark to
+                // travel in, and the logo simply lives in the menu.
+                <NavLogo
+                    onNavigate={onNavigate}
+                    className="text-foreground/80 hover:text-foreground hover:bg-foreground/5 flex items-center rounded-xl px-4 py-3 transition-colors"
+                />
+            ) : (
+                // Inner pages reserve the slot the shared wordmark animates into
+                // (see MobileWordmark); the height matches that logo row
+                // (py-3 + h-5 glyph = h-11).
+                <div
+                    aria-hidden="true"
+                    className="h-11"
+                />
+            )}
             <div
                 aria-hidden="true"
                 className="bg-foreground/10 my-1 h-px"

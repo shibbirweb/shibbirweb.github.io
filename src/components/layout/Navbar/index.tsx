@@ -40,6 +40,7 @@ export default function Navbar({
             />
             <MobileNav
                 visible={visible}
+                isHome={isHome}
                 sectionItems={sectionItems}
                 pageItems={pages}
                 isActive={isActive}
