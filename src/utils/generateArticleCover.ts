@@ -18,6 +18,26 @@ const COVER_GRADIENTS: ReadonlyArray<readonly [string, string]> = [
     ['#7c3aed', '#c026d3'], // violet -> fuchsia
     ['#d97706', '#dc2626'], // amber -> red (warm sunset)
     ['#0891b2', '#2563eb'], // cyan -> blue
+    ['#e11d48', '#db2777'], // rose -> pink
+    ['#c026d3', '#9333ea'], // fuchsia -> purple
+    ['#9333ea', '#4f46e5'], // purple -> indigo
+    ['#65a30d', '#16a34a'], // lime -> green
+    ['#16a34a', '#059669'], // green -> emerald
+    ['#ea580c', '#d97706'], // orange -> amber
+    ['#ca8a04', '#ea580c'], // yellow -> orange
+    ['#0284c7', '#0891b2'], // sky -> cyan
+    ['#2563eb', '#0284c7'], // blue -> sky
+    ['#4f46e5', '#2563eb'], // indigo -> blue
+    ['#0d9488', '#059669'], // teal -> emerald
+    ['#e11d48', '#dc2626'], // rose -> red
+    ['#c026d3', '#db2777'], // fuchsia -> pink
+    ['#7c3aed', '#9333ea'], // violet -> purple
+    ['#0891b2', '#0d9488'], // cyan -> teal
+    ['#ea580c', '#dc2626'], // orange -> red
+    ['#059669', '#16a34a'], // emerald -> green
+    ['#db2777', '#e11d48'], // pink -> rose
+    ['#6366f1', '#8b5cf6'], // indigo -> violet (soft)
+    ['#0ea5e9', '#6366f1'], // sky -> indigo
 ];
 
 /** Title block geometry, matching the hand-authored covers. */
