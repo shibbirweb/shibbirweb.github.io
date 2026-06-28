@@ -18,6 +18,7 @@ import {
 } from '@/config/constants';
 import { GoogleTagManager } from '@next/third-parties/google';
 import { JsonLdScript } from '@/components/seo/JsonLdScript';
+import HashScroll from '@/components/layout/HashScroll';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import PageGradientBackground from '@/components/backgrounds/PageGradientBackground';
@@ -123,6 +124,7 @@ export default function RootLayout({
                 className={`${notoSans.variable} bg-background relative flex min-h-svh flex-col text-base antialiased`}
             >
                 <PageGradientBackground />
+                <HashScroll />
                 <Navbar
                     hasArticles={hasArticles()}
                     hasResume={hasResume()}
