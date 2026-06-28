@@ -1,0 +1,36 @@
+@reference "tailwindcss";
+
+/* Glow hues are aligned to the connector corners so each line leaves a glow of
+   its own colour: blue (top-left, Craft), emerald (top-right, Range), rose
+   (bottom-right, End to end), orange (bottom-left, Now). It breathes with a slow
+   pulse, and holds steady for anyone who prefers reduced motion. The gradient is
+   the only part Tailwind cannot express, so it stays raw. */
+.glow {
+    @apply pointer-events-none absolute -inset-2 rounded-full opacity-60 blur-xl motion-safe:animate-[glow-pulse_5.5s_ease-in-out_infinite];
+    background: conic-gradient(
+        from -45deg,
+        var(--color-blue-500),
+        var(--color-emerald-500),
+        var(--color-rose-500),
+        var(--color-orange-500),
+        var(--color-blue-500)
+    );
+}
+
+@keyframes glow-pulse {
+    0%,
+    100% {
+        opacity: 0.4;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.7;
+        transform: scale(1.04);
+    }
+}
+
+/* Stop the portrait being dragged or long-press-saved: draggable={false} covers
+   mouse drag, these cover touch (long-press callout/drag) on mobile. */
+.photo {
+    @apply [-webkit-touch-callout:none] [-webkit-user-drag:none] select-none;
+}
