@@ -81,6 +81,7 @@ Section folders carry their own component-wise `contents.ts` (e.g. `HeroArea/con
 ### Git workflow
 
 - **Do not commit without explicit approval.** Apply changes to the working tree and let the maintainer review them first; only run `git commit` when explicitly asked to.
+- **Never commit directly to `master` (the default branch).** When a commit is approved, create a new branch first (`feat/...`, `fix/...`, `chore/...` as appropriate) and commit there. `master` only advances through merged pull requests, so if you are on `master` when asked to commit, branch first, then commit.
 - **Do not push or open PRs.** The maintainer pushes their own branches and opens pull requests; do not run `git push` (or create/merge PRs) unless explicitly asked to.
 
 ### SEO & structured data
