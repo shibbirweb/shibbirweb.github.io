@@ -13,14 +13,14 @@ export default function ContactArea() {
                     Let&apos;s connect
                 </SectionHeading>
 
-                <p className="text-foreground/70 mt-6 max-w-2xl text-2xl leading-normal">
+                <p className="text-foreground/70 mt-4 max-w-2xl text-lg leading-relaxed">
                     Have an idea, a question, or just want to say hi? Reach out
                     over email or find me on any of these platforms.
                 </p>
 
                 <a
                     href={`mailto:${siteAuthorEmail}`}
-                    className="border-foreground/20 hover:border-foreground/50 mt-10 inline-block rounded-full border px-8 py-3 text-2xl transition-all duration-300 hover:scale-105"
+                    className="border-foreground/20 hover:border-foreground/50 mt-10 inline-block rounded-full border px-6 py-3 text-base transition-all duration-300 hover:scale-105"
                 >
                     {siteAuthorEmail}
                 </a>

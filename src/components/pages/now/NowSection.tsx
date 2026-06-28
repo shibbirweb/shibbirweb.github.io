@@ -4,7 +4,7 @@ import NowBlock from '@/components/pages/now/NowBlock';
 export default function NowSection({ section }: { section: NowSectionData }) {
     return (
         <section>
-            <h2 className="text-2xl font-bold sm:text-3xl md:text-4xl">
+            <h2 className="text-xl font-bold sm:text-2xl">
                 <span
                     aria-hidden="true"
                     className="mr-3"
@@ -15,7 +15,7 @@ export default function NowSection({ section }: { section: NowSectionData }) {
             </h2>
 
             {section.intro && (
-                <p className="text-foreground/70 mt-3 max-w-3xl text-2xl leading-normal">
+                <p className="text-foreground/70 mt-3 max-w-3xl text-base leading-relaxed">
                     {section.intro}
                 </p>
             )}
@@ -30,7 +30,7 @@ export default function NowSection({ section }: { section: NowSectionData }) {
             </div>
 
             {section.outro && (
-                <p className="text-foreground/70 mt-6 max-w-3xl text-2xl leading-normal">
+                <p className="text-foreground/70 mt-6 max-w-3xl text-base leading-relaxed">
                     {section.outro}
                 </p>
             )}

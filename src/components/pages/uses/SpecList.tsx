@@ -10,7 +10,7 @@ export default function SpecList({ label, specs }: SpecListProps) {
     return (
         <div>
             {label && (
-                <h3 className="text-foreground/60 text-xl font-bold">
+                <h3 className="text-foreground/60 text-base font-bold">
                     {label}
                 </h3>
             )}
@@ -22,10 +22,10 @@ export default function SpecList({ label, specs }: SpecListProps) {
             >
                 {specs.map((spec) => (
                     <Fragment key={spec.label}>
-                        <dt className="text-foreground/60 text-xl font-semibold">
+                        <dt className="text-foreground/60 text-sm font-semibold">
                             {spec.label}
                         </dt>
-                        <dd className="text-xl">{spec.value}</dd>
+                        <dd className="text-sm">{spec.value}</dd>
                     </Fragment>
                 ))}
             </dl>

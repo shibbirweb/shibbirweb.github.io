@@ -38,7 +38,7 @@ export default function ArticlesList({
                 active={activeTag}
             />
             {filtered.length === 0 ? (
-                <p className="text-foreground/70 mt-12 text-xl">
+                <p className="text-foreground/70 mt-12 text-base">
                     No articles found for this tag.
                 </p>
             ) : (

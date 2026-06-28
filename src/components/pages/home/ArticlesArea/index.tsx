@@ -16,7 +16,7 @@ export default function ArticlesArea() {
                 <SectionHeading accentClassName="decoration-emerald-500">
                     Latest Articles
                 </SectionHeading>
-                <p className="text-foreground/70 mt-6 max-w-3xl text-2xl leading-normal">
+                <p className="text-foreground/70 mt-4 max-w-3xl text-lg leading-relaxed">
                     Writing on backend engineering, AI, and self-hosted
                     infrastructure.
                 </p>
@@ -33,7 +33,7 @@ export default function ArticlesArea() {
                 <div className="mt-10">
                     <Link
                         href="/articles"
-                        className="border-foreground/20 hover:border-foreground/50 inline-block rounded-full border px-8 py-3 text-xl transition-all duration-300 hover:scale-105"
+                        className="border-foreground/20 hover:border-foreground/50 inline-block rounded-full border px-6 py-2.5 text-sm transition-all duration-300 hover:scale-105"
                     >
                         View all articles
                     </Link>

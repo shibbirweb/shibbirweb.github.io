@@ -10,7 +10,7 @@ export default function NowBlock({ block }: { block: NowBlockData }) {
             return <BulletList items={block.items} />;
         case 'text':
             return (
-                <p className="text-foreground/80 max-w-3xl text-2xl leading-normal">
+                <p className="text-foreground/80 max-w-3xl text-base leading-relaxed">
                     {block.text}
                 </p>
             );
@@ -19,11 +19,11 @@ export default function NowBlock({ block }: { block: NowBlockData }) {
                 <div className="flex flex-col gap-8">
                     {block.subgroups.map((subgroup) => (
                         <div key={subgroup.title}>
-                            <h3 className="text-2xl font-semibold">
+                            <h3 className="text-lg font-semibold">
                                 {subgroup.title}
                             </h3>
                             {subgroup.intro && (
-                                <p className="text-foreground/70 mt-2 max-w-3xl text-xl leading-normal">
+                                <p className="text-foreground/70 mt-2 max-w-3xl text-base leading-relaxed">
                                     {subgroup.intro}
                                 </p>
                             )}

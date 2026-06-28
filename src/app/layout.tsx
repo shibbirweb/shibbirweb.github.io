@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from 'next';
-import { Zain } from 'next/font/google';
 import '@/app/globals.css';
 import {
     facebookPageId,
@@ -22,12 +21,8 @@ import { JsonLdScript } from '@/components/seo/JsonLdScript';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { hasArticles } from '@/lib/posts';
-
-const zainSansSerif = Zain({
-    variable: '--font-zain-sans-serif',
-    subsets: ['latin'],
-    weight: ['400', '700'],
-});
+import { hasResume } from '@/lib/resume';
+import { notoSans } from '@/config/fonts';
 
 export const metadata: Metadata = {
     metadataBase: new URL(siteURL),
@@ -124,9 +119,12 @@ export default function RootLayout({
                 <GoogleTagManager gtmId={googleTagManagerId} />
             )}
             <body
-                className={`${zainSansSerif.variable} bg-background flex min-h-svh flex-col text-3xl antialiased`}
+                className={`${notoSans.variable} bg-background flex min-h-svh flex-col text-base antialiased`}
             >
-                <Navbar hasArticles={hasArticles()} />
+                <Navbar
+                    hasArticles={hasArticles()}
+                    hasResume={hasResume()}
+                />
                 <div className="flex grow flex-col">{children}</div>
                 <Footer />
             </body>

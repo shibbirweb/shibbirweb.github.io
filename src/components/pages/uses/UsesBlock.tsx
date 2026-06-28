@@ -23,7 +23,7 @@ export default function UsesBlock({ block }: { block: UsesBlockData }) {
             return <GearList gear={block.gear} />;
         case 'text':
             return (
-                <p className="text-foreground/70 max-w-3xl text-xl leading-normal">
+                <p className="text-foreground/70 max-w-3xl text-base leading-relaxed">
                     {block.text}
                 </p>
             );

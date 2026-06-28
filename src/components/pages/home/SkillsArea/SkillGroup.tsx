@@ -8,12 +8,12 @@ interface SkillGroupProps {
 export default function SkillGroup({ title, items }: SkillGroupProps) {
     return (
         <div>
-            <h3 className="text-foreground/60 text-2xl font-bold">{title}</h3>
-            <ul className="mt-4 flex flex-wrap gap-3">
+            <h3 className="text-foreground/60 text-lg font-bold">{title}</h3>
+            <ul className="mt-4 flex flex-wrap gap-2.5">
                 {items.map((item) => (
                     <Tag
                         key={item}
-                        className="hover:border-foreground/40 px-5 py-2 text-xl"
+                        className="hover:border-foreground/40 px-4 py-1.5 text-sm"
                     >
                         {item}
                     </Tag>

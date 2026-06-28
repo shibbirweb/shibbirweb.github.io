@@ -60,12 +60,12 @@ export default async function ArticlePage({
 
     const header = (
         <header>
-            <p className="text-foreground/60 text-base">
+            <p className="text-foreground/60 text-sm">
                 <time dateTime={article.date}>{formatDate(article.date)}</time>
                 {' · '}
                 {article.readingMinutes} min read
             </p>
-            <h1 className="mt-3 text-4xl font-bold sm:text-5xl">
+            <h1 className="mt-3 text-3xl font-bold sm:text-4xl">
                 {article.title}
             </h1>
             <ul className="mt-6 flex flex-wrap gap-2">
@@ -73,12 +73,12 @@ export default async function ArticlePage({
                     <TagLink
                         key={tag}
                         tag={tag}
-                        className="px-3 py-1 text-base"
+                        className="px-3 py-1 text-sm"
                     />
                 ))}
             </ul>
             {article.description && (
-                <p className="text-foreground/80 mt-6 text-2xl leading-relaxed">
+                <p className="text-foreground/80 mt-6 text-lg leading-relaxed">
                     {article.description}
                 </p>
             )}
@@ -108,7 +108,7 @@ export default async function ArticlePage({
                 <div className="mt-14">
                     <Link
                         href="/articles"
-                        className="text-foreground/70 hover:text-foreground text-lg transition-colors"
+                        className="text-foreground/70 hover:text-foreground text-sm transition-colors"
                     >
                         Back to all articles
                     </Link>
@@ -120,7 +120,7 @@ export default async function ArticlePage({
                     aria-label="Related articles"
                     className="border-foreground/10 mt-20 border-t pt-12"
                 >
-                    <h2 className="text-2xl font-bold sm:text-3xl">
+                    <h2 className="text-xl font-bold sm:text-2xl">
                         Related articles
                     </h2>
                     <ArticleGrid

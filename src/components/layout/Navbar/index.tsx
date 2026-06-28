@@ -7,6 +7,7 @@ import {
     articlesItem,
     heroId,
     pageItems,
+    resumeItem,
     sectionIds,
     sectionItems,
     type NavItemData,
@@ -16,14 +17,20 @@ import { useScrollSpy } from '@/components/layout/Navbar/hooks/useScrollSpy';
 
 export default function Navbar({
     hasArticles = false,
+    hasResume = false,
 }: {
     hasArticles?: boolean;
+    hasResume?: boolean;
 }) {
     const pathname = usePathname();
     const isHome = pathname === '/';
     const visible = useNavbarVisibility(isHome, heroId);
     const activeSection = useScrollSpy(sectionIds, isHome);
-    const pages = hasArticles ? [articlesItem, ...pageItems] : pageItems;
+    const pages = [
+        ...(hasArticles ? [articlesItem] : []),
+        ...pageItems,
+        ...(hasResume ? [resumeItem] : []),
+    ];
 
     const isActive = (item: NavItemData) =>
         item.sectionId

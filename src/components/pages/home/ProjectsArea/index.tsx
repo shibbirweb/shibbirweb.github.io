@@ -13,7 +13,7 @@ export default function ProjectsArea() {
                     Featured Projects
                 </SectionHeading>
 
-                <p className="text-foreground/70 mt-6 max-w-3xl text-2xl leading-normal">
+                <p className="text-foreground/70 mt-4 max-w-3xl text-lg leading-relaxed">
                     A few things I&apos;ve built.
                 </p>
 
