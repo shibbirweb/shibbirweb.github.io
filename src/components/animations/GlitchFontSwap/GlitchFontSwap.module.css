@@ -1,0 +1,26 @@
+/* Hero name glitch font swap (issue #12).
+   This ONLY swaps the font-family, so the ShinyTextAnimation gradient shimmer on
+   the name is fully preserved (nothing recolours or repositions the text). Each
+   word carries the active face via .fontDisplay / .fontSans, and the hook
+   rapidly flickers the face during a brief glitch before settling on the next
+   face. Negative tracking on the wider Noto Sans keeps the flicker from
+   re-wrapping the name. Reduced motion keeps the static Zain name (the hook does
+   not run, so the face never leaves .fontDisplay).
+
+   These reference the next/font variables DIRECTLY (--font-zain-sans-serif /
+   --font-noto-sans), not the Tailwind theme tokens (--font-display /
+   --font-sans). The theme tokens are declared with `@theme inline` as
+   `--font-sans: var(--font-noto-sans)` on :root, but the next/font variable they
+   point at is only defined on the elements that apply next/font's `.variable`
+   class (the hero wrapper / body), not on :root, so the theme token resolves to
+   empty here and the font would silently fall back to the inherited Zain. The
+   underlying next/font variables are defined on this element's inherited chain,
+   so they resolve correctly. */
+
+.fontDisplay {
+    font-family: var(--font-zain-sans-serif);
+}
+.fontSans {
+    font-family: var(--font-noto-sans);
+    letter-spacing: -0.02em;
+}

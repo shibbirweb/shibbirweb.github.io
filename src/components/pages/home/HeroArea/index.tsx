@@ -1,8 +1,13 @@
+import GlitchFontSwap from '@/components/animations/GlitchFontSwap';
 import ShinyTextAnimation from '@/components/animations/ShinyTextAnimation';
 import ScrollDownCue from '@/components/pages/home/HeroArea/ScrollDownCue';
 import SocialIcons from '@/components/pages/home/HeroArea/SocialIcons';
 import WithGridAnimatedBackgroundWrapper from '@/components/wrappers/WithGridAnimatedBackgroundWrapper';
-import { professionalTitle } from '@/config/constants';
+import {
+    personFamilyName,
+    personGivenName,
+    professionalTitle,
+} from '@/config/constants';
 import { zain } from '@/config/fonts';
 import { cn } from '@/utils/cn';
 
@@ -15,12 +20,12 @@ export default function HeroArea() {
                         <div className="flex flex-col gap-y-2 px-4 sm:gap-y-3 md:gap-y-4 lg:items-end lg:justify-center">
                             <ShinyTextAnimation>
                                 <h1 className="flex flex-wrap items-center justify-center gap-x-8 text-[length:clamp(2.75rem,14vw,6rem)] leading-none font-bold sm:text-8xl sm:leading-10 md:gap-x-12 md:text-9xl md:leading-12">
-                                    <span className="text-box-trim-trim-both text-box-edge-cap-alphabetic py-1">
-                                        Shibbir
-                                    </span>
-                                    <span className="text-box-trim-trim-both text-box-edge-cap-alphabetic py-1">
-                                        Ahmed
-                                    </span>
+                                    <GlitchFontSwap
+                                        words={[
+                                            personGivenName,
+                                            personFamilyName,
+                                        ]}
+                                    />
                                 </h1>
                             </ShinyTextAnimation>
                             <p className="self-center text-center text-2xl leading-tight sm:leading-5 lg:self-end lg:pr-[5px]">

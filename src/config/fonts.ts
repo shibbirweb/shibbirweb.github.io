@@ -1,4 +1,4 @@
-import { JetBrains_Mono, Noto_Sans, Zain } from 'next/font/google';
+import { Noto_Sans, Zain } from 'next/font/google';
 
 // Noto Sans is the site's default body font (applied globally in the root
 // layout). It is a neutral, standard-proportioned sans, so type sizes read at
@@ -17,10 +17,6 @@ export const zain = Zain({
     weight: ['400', '700'],
 });
 
-// Shared so the monospace font is defined once and ships only on the pages that
-// opt in by applying `jetBrainsMono.variable` (the single article page and the
-// terminal-path breadcrumb), instead of loading globally from the root layout.
-export const jetBrainsMono = JetBrains_Mono({
-    variable: '--font-jetbrains-mono',
-    subsets: ['latin'],
-});
+// JetBrains Mono is intentionally NOT defined here. It lives in its own module
+// (@/config/monoFont) so importing this file from the root layout and the home
+// hero does not pull the monospace font onto every route. See that file for why.

@@ -1,4 +1,4 @@
-import { jetBrainsMono } from '@/config/fonts';
+import { jetBrainsMono } from '@/config/monoFont';
 import { cn } from '@/utils/cn';
 import styles from '@/components/pages/articles/ArticleContent/ArticleContent.module.css';
 
