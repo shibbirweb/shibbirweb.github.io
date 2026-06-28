@@ -46,7 +46,13 @@ export type Skill = {
  */
 export const skills: Skill[] = [
     { name: 'TypeScript', Icon: TypeScriptIcon, color: '#3178C6' },
-    { name: 'JavaScript', Icon: JavaScriptIcon, color: '#F7DF1E' },
+    {
+        name: 'JavaScript',
+        Icon: JavaScriptIcon,
+        // Brand yellow washes out on the light background, so use a deeper gold
+        // in light mode and the bright brand yellow in dark mode.
+        color: 'light-dark(#CA8A04, #F7DF1E)',
+    },
     { name: 'PHP', Icon: PhpIcon, color: '#777BB4' },
     { name: 'Laravel', Icon: LaravelIcon, color: '#FF2D20' },
     { name: 'Node.js', Icon: NodeJsIcon, color: '#5FA04E' },
@@ -66,7 +72,12 @@ export const skills: Skill[] = [
     { name: 'Embeddings', Icon: EmbeddingsIcon, color: '#EC4899' },
     { name: 'Vector Search', Icon: VectorSearchIcon, color: '#0EA5E9' },
     { name: 'Docker', Icon: DockerIcon, color: '#2496ED' },
-    { name: 'Linux', Icon: LinuxIcon, color: '#FCC624' },
+    {
+        name: 'Linux',
+        Icon: LinuxIcon,
+        // Same as JavaScript: a deeper gold in light mode, bright brand gold in dark.
+        color: 'light-dark(#D08A00, #FCC624)',
+    },
     { name: 'Proxmox', Icon: ProxmoxIcon, color: '#E57000' },
     { name: 'Nginx', Icon: NginxIcon, color: '#009639' },
     { name: 'Cloudflare', Icon: CloudflareIcon, color: '#F38020' },

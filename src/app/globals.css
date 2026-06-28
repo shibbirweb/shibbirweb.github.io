@@ -2,6 +2,11 @@
 @plugin "@tailwindcss/typography";
 
 :root {
+    /* Follow the system light/dark preference (matches the prefers-color-scheme
+       approach used throughout). Also enables the CSS light-dark() function, used
+       for per-theme brand colours on the skill tiles. */
+    color-scheme: light dark;
+
     --background: #ededed;
     --foreground: #171717;
     --section-swell-indigo: #e9e9f0;
