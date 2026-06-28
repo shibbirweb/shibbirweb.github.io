@@ -6,6 +6,7 @@ import ArticleCover from '@/components/pages/articles/ArticleCover';
 import ArticleGrid from '@/components/pages/articles/ArticleGrid';
 import TagLink from '@/components/pages/articles/TagLink';
 import MermaidRenderer from '@/components/pages/articles/MermaidRenderer';
+import CodeBlockCopy from '@/components/pages/articles/CodeBlock';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { buildArticleJsonLd } from '@/utils/articleJsonLd';
 import { formatDate } from '@/utils/formatDate';
@@ -103,6 +104,8 @@ export default async function ArticlePage({
                 <ArticleContent html={article.html} />
 
                 <MermaidRenderer />
+
+                <CodeBlockCopy />
 
                 <div className="mt-14">
                     <Link

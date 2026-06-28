@@ -23,10 +23,8 @@
     color: var(--shiki-light);
 }
 .content pre:global(.shiki) {
-    margin: 1.6em 0;
+    margin: 0;
     padding: 1.1em 1.3em;
-    border: 1px solid color-mix(in srgb, var(--foreground) 12%, transparent);
-    border-radius: 0.75rem;
     overflow-x: auto;
     font-size: 0.9em;
     line-height: 1.6;
@@ -36,6 +34,47 @@
     font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
     font-weight: 400;
 }
+
+/* Code block wrapper: a header bar (language/extension badge + optional file
+   path + copy button) sits above the Shiki body. */
+.content :global(.code-block) {
+    margin: 1.6em 0;
+    border: 1px solid color-mix(in srgb, var(--foreground) 12%, transparent);
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background-color: var(--shiki-light-bg);
+}
+.content :global(.code-block__bar) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.4rem 0.5rem 0.4rem 0.9rem;
+    border-bottom: 1px solid
+        color-mix(in srgb, var(--foreground) 12%, transparent);
+}
+.content :global(.code-block__meta) {
+    display: flex;
+    min-width: 0;
+    align-items: baseline;
+    gap: 0.6rem;
+}
+.content :global(.code-block__lang) {
+    flex: none;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--foreground) 55%, transparent);
+}
+.content :global(.code-block__path) {
+    overflow: hidden;
+    font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+    font-size: 0.8rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: color-mix(in srgb, var(--foreground) 80%, transparent);
+}
 @media (prefers-color-scheme: dark) {
     .content :global(.shiki) {
         background-color: var(--shiki-dark-bg);
@@ -43,6 +82,9 @@
     .content :global(.shiki),
     .content :global(.shiki) span {
         color: var(--shiki-dark);
+    }
+    .content :global(.code-block) {
+        background-color: var(--shiki-dark-bg);
     }
 }
 
