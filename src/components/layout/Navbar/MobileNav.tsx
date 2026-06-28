@@ -8,7 +8,6 @@ import type { NavItemData } from './contents';
 import { useDisclosure } from './hooks/useDisclosure';
 import { useCloseOnEscape } from './hooks/useCloseOnEscape';
 import { useCloseOnRouteChange } from './hooks/useCloseOnRouteChange';
-import { useScrolledToTop } from './hooks/useScrolledToTop';
 
 interface MobileNavProps {
     visible: boolean;
@@ -28,25 +27,9 @@ export default function MobileNav({
     const { open, toggle, close } = useDisclosure();
     useCloseOnEscape(open, close);
     useCloseOnRouteChange(close);
-    const atTop = useScrolledToTop();
-
-    // Fill the otherwise empty top-left of inner pages with the wordmark while
-    // the reader is at the top. The home page carries its name in the hero (and
-    // hides this navbar at the top), so it never needs the wordmark. The
-    // wordmark also tucks away once the menu opens, where it leads the panel.
-    const wordmarkRevealed = !isHome && atTop && !open;
 
     return (
         <>
-            {/*
-             * Rendered as a sibling of (not inside) the menu container below: that
-             * container carries a transform for its show/hide, which would become
-             * the containing block for the wordmark's `fixed` and break centering.
-             */}
-            <MobileWordmark
-                revealed={wordmarkRevealed}
-                onNavigate={close}
-            />
             <div
                 className={cn(
                     'fixed top-4 right-4 z-50 transition-all duration-500 ease-out motion-reduce:transition-none md:hidden',
@@ -68,12 +51,28 @@ export default function MobileNav({
                 />
                 <MobileMenuPanel
                     open={open}
+                    isHome={isHome}
                     sectionItems={sectionItems}
                     pageItems={pageItems}
                     isActive={isActive}
                     onNavigate={close}
                 />
             </div>
+            {/*
+             * Inner pages only: home keeps the logo as a static item inside the
+             * panel (MobileMenuPanel), with no centered wordmark and no travel.
+             * Rendered as a sibling of (not inside) the menu container above, for
+             * two reasons: that container carries a transform for its show/hide,
+             * which would become the containing block for the wordmark's `fixed`
+             * and break its centering; and being later in the DOM keeps it above
+             * the panel so the logo reads on top when it lands in the slot.
+             */}
+            {!isHome && (
+                <MobileWordmark
+                    open={open}
+                    onNavigate={close}
+                />
+            )}
         </>
     );
 }
