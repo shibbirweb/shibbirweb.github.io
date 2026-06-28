@@ -1,5 +1,13 @@
+import { JetBrains_Mono } from 'next/font/google';
 import { cn } from '@/utils/cn';
 import styles from '@/components/pages/articles/ArticleContent/ArticleContent.module.css';
+
+// Colocated with the only consumer so the monospace font ships solely on the
+// single article page, instead of loading globally from the root layout.
+const jetBrainsMono = JetBrains_Mono({
+    variable: '--font-jetbrains-mono',
+    subsets: ['latin'],
+});
 
 /**
  * Renders an article's pre-built HTML (Markdown rendered with Shiki code
@@ -10,6 +18,7 @@ export default function ArticleContent({ html }: { html: string }) {
     return (
         <div
             className={cn(
+                jetBrainsMono.variable,
                 'prose prose-lg dark:prose-invert mt-10 max-w-none',
                 styles.content
             )}
