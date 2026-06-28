@@ -22,6 +22,7 @@ import { JsonLdScript } from '@/components/seo/JsonLdScript';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { hasArticles } from '@/lib/posts';
+import { hasResume } from '@/lib/resume';
 
 const zainSansSerif = Zain({
     variable: '--font-zain-sans-serif',
@@ -126,7 +127,10 @@ export default function RootLayout({
             <body
                 className={`${zainSansSerif.variable} bg-background flex min-h-svh flex-col text-3xl antialiased`}
             >
-                <Navbar hasArticles={hasArticles()} />
+                <Navbar
+                    hasArticles={hasArticles()}
+                    hasResume={hasResume()}
+                />
                 <div className="flex grow flex-col">{children}</div>
                 <Footer />
             </body>

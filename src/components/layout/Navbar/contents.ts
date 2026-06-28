@@ -1,4 +1,10 @@
-export type NavItemData = { label: string; href: string; sectionId?: string };
+export type NavItemData = {
+    label: string;
+    href: string;
+    sectionId?: string;
+    /** Open in a new tab via a plain anchor (e.g. the resume PDF file). */
+    external?: boolean;
+};
 
 // In-page section anchors (homepage) and standalone page links.
 export const sectionItems: NavItemData[] = [
@@ -17,6 +23,14 @@ export const pageItems: NavItemData[] = [
     { label: 'Uses', href: '/uses' },
     { label: 'Now', href: '/now' },
 ];
+
+export const resumeItem: NavItemData = {
+    label: 'Resume',
+    // The served copy of the content/resume PDF (matches resumePdfPublicPath in
+    // @/lib/resume); the nav item opens the file directly in a new tab.
+    href: '/resume-shibbir-ahmed.pdf',
+    external: true,
+};
 
 export const sectionIds = sectionItems.map((item) => item.sectionId as string);
 
