@@ -18,10 +18,11 @@ export default function ProjectsArea() {
                 </p>
 
                 <ul className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2">
-                    {projects.map((project) => (
+                    {projects.map((project, index) => (
                         <ProjectCard
                             key={project.repoURL}
                             project={project}
+                            index={index}
                         />
                     ))}
                 </ul>
