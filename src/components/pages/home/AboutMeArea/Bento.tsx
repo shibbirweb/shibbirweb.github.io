@@ -14,7 +14,7 @@ export default function Bento() {
                     <FacetCard
                         key={facet.title}
                         facet={facet}
-                        glow
+                        persistent
                         className="p-4"
                     />
                 ))}

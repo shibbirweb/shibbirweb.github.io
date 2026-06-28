@@ -1,33 +1,41 @@
+import type { CSSProperties } from 'react';
 import { Facet } from '@/components/pages/home/AboutMeArea/contents';
+import styles from '@/components/pages/home/AboutMeArea/FacetCard.module.css';
 import { cn } from '@/utils/cn';
 
-// One facet card: an accent-dotted title and a one-line statement. Opaque so the
-// desktop connector line tucks behind it; with `glow` it grows a soft accent
-// corner wash (the project-card glow language) for the bento layout.
+// One facet card: an accent-dotted title and a one-line statement. On hover a
+// soft accent gradient grows in from the corner the connector line attaches to,
+// matching the line's colour and direction. `persistent` keeps a faint tint for
+// the bento tiles, which can't be hovered on touch.
 export default function FacetCard({
     facet,
     className,
-    glow = false,
+    persistent = false,
 }: {
     facet: Facet;
     className?: string;
-    glow?: boolean;
+    persistent?: boolean;
 }) {
     return (
         <div
             className={cn(
-                'border-foreground/10 bg-background relative z-10 overflow-hidden rounded-2xl border p-5 shadow-sm',
+                styles.card,
+                persistent && styles.persistent,
+                'border-foreground/10 bg-background z-10 rounded-2xl border p-5 shadow-sm',
                 facet.placementClassName,
                 className
             )}
+            style={
+                {
+                    '--facet-accent': facet.accent,
+                    '--facet-origin': facet.origin,
+                } as CSSProperties
+            }
         >
-            {glow ? (
-                <span
-                    aria-hidden
-                    className="pointer-events-none absolute -top-6 -right-6 size-20 rounded-full opacity-25 blur-2xl"
-                    style={{ backgroundColor: facet.accent }}
-                />
-            ) : null}
+            <span
+                aria-hidden
+                className={styles.glow}
+            />
 
             <div className="relative">
                 <div className="flex items-center gap-2">

@@ -1,0 +1,46 @@
+@reference "tailwindcss";
+
+.card {
+    @apply relative overflow-hidden;
+}
+
+/* A soft accent gradient that grows in from the corner where the connector line
+   attaches (--facet-origin), tinted with that line's colour (--facet-accent).
+   Hidden until hover; held a touch stronger in dark mode. */
+.glow {
+    @apply pointer-events-none absolute inset-0 opacity-0;
+    transform-origin: var(--facet-origin);
+    background: radial-gradient(
+        120% 120% at var(--facet-origin),
+        color-mix(in oklab, var(--facet-accent) 20%, transparent) 0%,
+        transparent 62%
+    );
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .glow {
+        @apply scale-90;
+        transition:
+            opacity 450ms ease,
+            transform 450ms ease;
+    }
+}
+
+.card:hover .glow {
+    @apply scale-100 opacity-100;
+}
+
+/* For the bento tiles (no hover on touch), keep a faint always-on tint. */
+.persistent .glow {
+    @apply opacity-60;
+}
+
+@media (prefers-color-scheme: dark) {
+    .glow {
+        background: radial-gradient(
+            120% 120% at var(--facet-origin),
+            color-mix(in oklab, var(--facet-accent) 32%, transparent) 0%,
+            transparent 64%
+        );
+    }
+}

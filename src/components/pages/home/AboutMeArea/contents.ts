@@ -9,6 +9,9 @@ export type Facet = {
     placementClassName: string;
     /** Connector endpoint, as a percentage of the diagram box (the core is 50,50). */
     line: { x: number; y: number };
+    /** CSS position of the inner corner where the line attaches: the origin of
+     *  the hover gradient, so it grows from the same direction as the line. */
+    origin: string;
 };
 
 // What shapes how Shibbir works, told as facets of the person rather than a
@@ -21,6 +24,7 @@ export const facets: Facet[] = [
         accent: 'var(--color-blue-500)',
         placementClassName: 'lg:col-start-1 lg:row-start-1',
         line: { x: 16, y: 18 },
+        origin: '100% 100%',
     },
     {
         title: 'Range',
@@ -28,6 +32,7 @@ export const facets: Facet[] = [
         accent: 'var(--color-emerald-500)',
         placementClassName: 'lg:col-start-3 lg:row-start-1',
         line: { x: 84, y: 18 },
+        origin: '0% 100%',
     },
     {
         title: 'Now',
@@ -35,6 +40,7 @@ export const facets: Facet[] = [
         accent: 'var(--color-orange-500)',
         placementClassName: 'lg:col-start-1 lg:row-start-3',
         line: { x: 16, y: 82 },
+        origin: '100% 0%',
     },
     {
         title: 'End to end',
@@ -42,5 +48,6 @@ export const facets: Facet[] = [
         accent: 'var(--color-rose-500)',
         placementClassName: 'lg:col-start-3 lg:row-start-3',
         line: { x: 84, y: 82 },
+        origin: '0% 0%',
     },
 ];
