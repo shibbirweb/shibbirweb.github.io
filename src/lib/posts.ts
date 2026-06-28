@@ -7,9 +7,13 @@ import {
     type TokenizerAndRendererExtension,
 } from 'marked';
 import { codeToHtml } from 'shiki';
-import { generatedCoverPath } from '@/utils/generateArticleCover';
+import {
+    coverGradientForSlug,
+    generatedCoverPath,
+} from '@/utils/generateArticleCover';
 
 const ARTICLES_DIRECTORY = path.join(process.cwd(), 'content/articles');
+const PUBLIC_DIRECTORY = path.join(process.cwd(), 'public');
 
 /** How many articles are listed per page on the /articles index. */
 export const ARTICLES_PER_PAGE = 9;
@@ -32,6 +36,8 @@ export interface ArticleSummary {
     updated?: string;
     tags: string[];
     cover: string;
+    /** The cover's two dominant colours, used to tint the card to match it. */
+    coverColors: readonly [string, string];
     readingMinutes: number;
 }
 
@@ -69,8 +75,34 @@ function estimateReadingMinutes(content: string): number {
     return Math.max(1, Math.round(words / 200));
 }
 
+/**
+ * The two dominant colours of an article's cover, so the card can tint itself to
+ * match its thumbnail. Generated covers reuse the same gradient pair the SVG is
+ * built from; author-provided covers are read from disk and their first two
+ * gradient stops parsed. Falls back to the deterministic pair if the file is
+ * missing or has no stops (e.g. during the cover pre-generation pass).
+ */
+function resolveCoverColors(
+    cover: string,
+    slug: string
+): readonly [string, string] {
+    if (cover === generatedCoverPath(slug)) return coverGradientForSlug(slug);
+    try {
+        const svg = fs.readFileSync(path.join(PUBLIC_DIRECTORY, cover), 'utf8');
+        const stops = [
+            ...svg.matchAll(/stop-color="(#[0-9a-fA-F]{3,8})"/g),
+        ].map((match) => match[1]);
+        if (stops.length >= 2) return [stops[0], stops[1]];
+        if (stops.length === 1) return [stops[0], stops[0]];
+    } catch {
+        // fall through to the deterministic pair below
+    }
+    return coverGradientForSlug(slug);
+}
+
 function toSummary(article: ParsedArticle): ArticleSummary {
     const { slug, data, content } = article;
+    const cover = data.cover ?? generatedCoverPath(slug);
     return {
         slug,
         title: data.title ?? slug,
@@ -78,7 +110,8 @@ function toSummary(article: ParsedArticle): ArticleSummary {
         date: data.date ?? '',
         updated: data.updated,
         tags: Array.isArray(data.tags) ? data.tags : [],
-        cover: data.cover ?? generatedCoverPath(slug),
+        cover,
+        coverColors: resolveCoverColors(cover, slug),
         readingMinutes: estimateReadingMinutes(content),
     };
 }

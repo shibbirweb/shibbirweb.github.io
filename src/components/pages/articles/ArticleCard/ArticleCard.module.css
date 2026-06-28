@@ -1,0 +1,45 @@
+@reference "tailwindcss";
+
+/* Soft, top-to-bottom glow revealed on article-card hover (#articles / #work),
+   coloured to match the card's cover thumbnail. A ::before layer behind the card
+   content (the card is `relative isolate`, so z-index keeps it under the image and
+   text) holds a vertical gradient built from the cover's two colours (--cover-from
+   / --cover-to, set inline per card) fading out downward. It glows in slowly on
+   hover via a long opacity transition. Deliberately very soft, and softer still in
+   dark mode. @apply covers the utility-mappable rules; the gradient is raw CSS. */
+.card {
+    --tint-strength: 8%;
+}
+
+@media (prefers-color-scheme: dark) {
+    .card {
+        /* A translucent colour over near-black reads much dimmer than over the
+           light background, so dark mode needs a higher mix to stay visible
+           while still feeling soft. */
+        --tint-strength: 14%;
+    }
+}
+
+.card::before {
+    @apply pointer-events-none absolute inset-0 z-[-1] opacity-0 content-[''] motion-safe:transition-opacity motion-safe:duration-700;
+    background-image: linear-gradient(
+        to bottom,
+        color-mix(
+                in oklab,
+                var(--cover-from, var(--foreground)) var(--tint-strength),
+                transparent
+            )
+            0%,
+        color-mix(
+                in oklab,
+                var(--cover-to, var(--foreground)) var(--tint-strength),
+                transparent
+            )
+            50%,
+        transparent 92%
+    );
+}
+
+.card:hover::before {
+    @apply opacity-100;
+}

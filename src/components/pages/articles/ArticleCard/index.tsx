@@ -1,9 +1,11 @@
 import Link from 'next/link';
 import ArticleCover from '@/components/pages/articles/ArticleCover';
+import styles from '@/components/pages/articles/ArticleCard/ArticleCard.module.css';
 import TagLink from '@/components/pages/articles/TagLink';
 import { cn } from '@/utils/cn';
 import { formatDate } from '@/utils/formatDate';
 import type { ArticleSummary } from '@/lib/posts';
+import type { CSSProperties } from 'react';
 
 export default function ArticleCard({
     article,
@@ -12,8 +14,21 @@ export default function ArticleCard({
     article: ArticleSummary;
     compact?: boolean;
 }) {
+    // Tint the card to match its cover thumbnail; the glow itself fades in on
+    // hover (see ArticleCard.module.css).
+    const coverColors = {
+        '--cover-from': article.coverColors[0],
+        '--cover-to': article.coverColors[1],
+    } as CSSProperties;
+
     return (
-        <li className="border-foreground/10 hover:border-foreground/30 relative flex h-full flex-col overflow-hidden rounded-2xl border transition-all duration-300 hover:shadow-lg">
+        <li
+            style={coverColors}
+            className={cn(
+                styles.card,
+                'border-foreground/10 hover:border-foreground/30 relative isolate flex h-full flex-col overflow-hidden rounded-2xl border transition-all duration-300 hover:shadow-lg'
+            )}
+        >
             <ArticleCover
                 src={article.cover}
                 className="aspect-video"
@@ -45,7 +60,9 @@ export default function ArticleCard({
                     <h3
                         className={cn(
                             'mt-2 font-bold',
-                            compact ? 'text-base sm:text-lg' : 'text-lg sm:text-xl'
+                            compact
+                                ? 'text-base sm:text-lg'
+                                : 'text-lg sm:text-xl'
                         )}
                     >
                         {article.title}

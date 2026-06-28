@@ -105,6 +105,15 @@ export function generatedCoverPath(slug: string): string {
 }
 
 /**
+ * The [from, to] gradient pair a generated cover is built from, chosen
+ * deterministically per slug. Exported so the article card can tint itself with
+ * the same colours as its thumbnail without re-parsing the generated SVG.
+ */
+export function coverGradientForSlug(slug: string): readonly [string, string] {
+    return COVER_GRADIENTS[hashString(slug) % COVER_GRADIENTS.length];
+}
+
+/**
  * Builds a complete 1200x630 SVG cover string for an article. The gradient is
  * chosen deterministically from the slug, so rebuilds are reproducible.
  */
@@ -117,11 +126,12 @@ export function buildArticleCoverSvg({
     title: string;
     tag?: string;
 }): string {
-    const [from, to] = COVER_GRADIENTS[hashString(slug) % COVER_GRADIENTS.length];
+    const [from, to] = coverGradientForSlug(slug);
     const gradientId = `bg-${slug}`;
     const glowId = `glow-${slug}`;
     const lines = wrapTitleLines(title);
-    const firstLineY = TITLE_CENTER_Y - ((lines.length - 1) * TITLE_LINE_HEIGHT) / 2;
+    const firstLineY =
+        TITLE_CENTER_Y - ((lines.length - 1) * TITLE_LINE_HEIGHT) / 2;
 
     const tagLabel = tag?.trim().toUpperCase();
     const tagText = tagLabel
