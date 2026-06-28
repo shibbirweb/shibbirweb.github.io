@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Breadcrumb from '@/components/layout/Breadcrumb';
 import ArticleContent from '@/components/pages/articles/ArticleContent';
@@ -104,15 +103,6 @@ export default async function ArticlePage({
                 <MermaidRenderer />
 
                 <CodeBlockCopy />
-
-                <div className="mt-14">
-                    <Link
-                        href="/articles"
-                        className="text-foreground/70 hover:text-foreground text-sm transition-colors"
-                    >
-                        Back to all articles
-                    </Link>
-                </div>
             </article>
 
             {related.length > 0 && (
