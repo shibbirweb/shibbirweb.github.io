@@ -1,6 +1,6 @@
 import SectionHeading from '@/components/pages/common/SectionHeading';
-import ProjectCard from './ProjectCard';
-import { projects } from './contents';
+import ProjectCard from '@/components/pages/home/ProjectsArea/ProjectCard';
+import { projects } from '@/components/pages/home/ProjectsArea/contents';
 
 export default function ProjectsArea() {
     return (

@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import ArticleCover from './ArticleCover';
-import TagLink from './TagLink';
+import ArticleCover from '@/components/pages/articles/ArticleCover';
+import TagLink from '@/components/pages/articles/TagLink';
 import { cn } from '@/utils/cn';
 import { formatDate } from '@/utils/formatDate';
 import type { ArticleSummary } from '@/lib/posts';

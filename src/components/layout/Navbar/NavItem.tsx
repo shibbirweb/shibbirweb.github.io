@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { cn } from '@/utils/cn';
-import type { NavItemData } from './contents';
+import type { NavItemData } from '@/components/layout/Navbar/contents';
 
 interface NavItemProps {
     item: NavItemData;

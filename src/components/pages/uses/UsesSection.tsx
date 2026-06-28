@@ -1,7 +1,7 @@
-import type { NowSectionData } from './contents';
-import NowBlock from './NowBlock';
+import type { UsesSectionData } from '@/components/pages/uses/types';
+import UsesBlock from '@/components/pages/uses/UsesBlock';
 
-export default function NowSection({ section }: { section: NowSectionData }) {
+export default function UsesSection({ section }: { section: UsesSectionData }) {
     return (
         <section>
             <h2 className="text-2xl font-bold sm:text-3xl md:text-4xl">
@@ -22,18 +22,12 @@ export default function NowSection({ section }: { section: NowSectionData }) {
 
             <div className="mt-6 flex flex-col gap-6">
                 {section.blocks.map((block, index) => (
-                    <NowBlock
+                    <UsesBlock
                         key={`${block.kind}-${index}`}
                         block={block}
                     />
                 ))}
             </div>
-
-            {section.outro && (
-                <p className="text-foreground/70 mt-6 max-w-3xl text-2xl leading-normal">
-                    {section.outro}
-                </p>
-            )}
         </section>
     );
 }

@@ -1,13 +1,13 @@
 'use client';
 
 import { cn } from '@/utils/cn';
-import MobileMenuButton from './MobileMenuButton';
-import MobileMenuPanel from './MobileMenuPanel';
-import MobileWordmark from './MobileWordmark';
-import type { NavItemData } from './contents';
-import { useDisclosure } from './hooks/useDisclosure';
-import { useCloseOnEscape } from './hooks/useCloseOnEscape';
-import { useCloseOnRouteChange } from './hooks/useCloseOnRouteChange';
+import MobileMenuButton from '@/components/layout/Navbar/MobileMenuButton';
+import MobileMenuPanel from '@/components/layout/Navbar/MobileMenuPanel';
+import MobileWordmark from '@/components/layout/Navbar/MobileWordmark';
+import type { NavItemData } from '@/components/layout/Navbar/contents';
+import { useDisclosure } from '@/components/layout/Navbar/hooks/useDisclosure';
+import { useCloseOnEscape } from '@/components/layout/Navbar/hooks/useCloseOnEscape';
+import { useCloseOnRouteChange } from '@/components/layout/Navbar/hooks/useCloseOnRouteChange';
 
 interface MobileNavProps {
     visible: boolean;

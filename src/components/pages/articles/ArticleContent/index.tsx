@@ -1,5 +1,5 @@
 import { cn } from '@/utils/cn';
-import styles from './ArticleContent.module.css';
+import styles from '@/components/pages/articles/ArticleContent/ArticleContent.module.css';
 
 /**
  * Renders an article's pre-built HTML (Markdown rendered with Shiki code

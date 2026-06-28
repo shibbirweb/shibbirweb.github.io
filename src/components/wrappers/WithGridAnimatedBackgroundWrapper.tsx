@@ -1,5 +1,5 @@
 import { HTMLAttributes } from 'react';
-import GridBackgroundComponent from '@/components/utils/GridBackgroundComponent';
+import GridBackground from '@/components/backgrounds/GridBackground';
 import { cn } from '@/utils/cn';
 
 export default function WithGridAnimatedBackgroundWrapper({
@@ -13,7 +13,7 @@ export default function WithGridAnimatedBackgroundWrapper({
             {...rest}
         >
             {children}
-            <GridBackgroundComponent
+            <GridBackground
                 className="motion-safe:animate-pulse"
                 style={{
                     animationDuration: '5s',

@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import ArticleContent from '../ArticleContent';
-import ArticleCover from '../ArticleCover';
-import ArticleGrid from '../ArticleGrid';
-import TagLink from '../TagLink';
-import { JsonLd } from '@/components/utils/JsonLd';
+import ArticleContent from '@/components/pages/articles/ArticleContent';
+import ArticleCover from '@/components/pages/articles/ArticleCover';
+import ArticleGrid from '@/components/pages/articles/ArticleGrid';
+import TagLink from '@/components/pages/articles/TagLink';
+import { JsonLd } from '@/components/seo/JsonLd';
 import { buildArticleJsonLd } from '@/utils/articleJsonLd';
 import { formatDate } from '@/utils/formatDate';
 import { getAllArticles, getArticle, getRelatedArticles } from '@/lib/posts';

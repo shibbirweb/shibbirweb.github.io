@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Zain, JetBrains_Mono } from 'next/font/google';
-import './globals.css';
+import '@/app/globals.css';
 import {
     facebookPageId,
     googleTagManagerId,
@@ -18,7 +18,7 @@ import {
     twitterUsername,
 } from '@/config/constants';
 import { GoogleTagManager } from '@next/third-parties/google';
-import { JsonLdScriptComponent } from '@/components/utils/JsonLdScriptComponent';
+import { JsonLdScript } from '@/components/seo/JsonLdScript';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { hasArticles } from '@/lib/posts';
@@ -122,7 +122,7 @@ export default function RootLayout({
                     content={facebookPageId}
                 ></meta>
                 {process.env.NODE_ENV === 'production' ? (
-                    <JsonLdScriptComponent />
+                    <JsonLdScript />
                 ) : null}
             </head>
             {process.env.NODE_ENV === 'production' && (

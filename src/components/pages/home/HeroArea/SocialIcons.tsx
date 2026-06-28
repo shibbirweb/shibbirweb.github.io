@@ -1,5 +1,5 @@
 import { cn } from '@/utils/cn';
-import { socialLinks } from './contents';
+import { socialLinks } from '@/components/pages/home/HeroArea/contents';
 
 export default function SocialIcons() {
     return (

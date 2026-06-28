@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import ArticleCard from '@/app/articles/ArticleCard';
+import ArticleCard from '@/components/pages/articles/ArticleCard';
 import SectionHeading from '@/components/pages/common/SectionHeading';
 import { getLatestArticles } from '@/lib/posts';
 

@@ -1,7 +1,7 @@
 import { cn } from '@/utils/cn';
-import NavItem from './NavItem';
-import NavLogo from './NavLogo';
-import type { NavItemData } from './contents';
+import NavItem from '@/components/layout/Navbar/NavItem';
+import NavLogo from '@/components/layout/Navbar/NavLogo';
+import type { NavItemData } from '@/components/layout/Navbar/contents';
 
 interface DesktopNavProps {
     visible: boolean;

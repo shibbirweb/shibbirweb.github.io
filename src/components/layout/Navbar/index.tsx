@@ -1,8 +1,8 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import DesktopNav from './DesktopNav';
-import MobileNav from './MobileNav';
+import DesktopNav from '@/components/layout/Navbar/DesktopNav';
+import MobileNav from '@/components/layout/Navbar/MobileNav';
 import {
     articlesItem,
     heroId,
@@ -10,9 +10,9 @@ import {
     sectionIds,
     sectionItems,
     type NavItemData,
-} from './contents';
-import { useNavbarVisibility } from './hooks/useNavbarVisibility';
-import { useScrollSpy } from './hooks/useScrollSpy';
+} from '@/components/layout/Navbar/contents';
+import { useNavbarVisibility } from '@/components/layout/Navbar/hooks/useNavbarVisibility';
+import { useScrollSpy } from '@/components/layout/Navbar/hooks/useScrollSpy';
 
 export default function Navbar({
     hasArticles = false,

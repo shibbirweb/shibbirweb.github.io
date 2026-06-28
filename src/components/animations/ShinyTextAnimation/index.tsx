@@ -1,6 +1,6 @@
 import { cn } from '@/utils/cn';
 import React from 'react';
-import styles from './ShinyTextAnimation.module.css';
+import styles from '@/components/animations/ShinyTextAnimation/ShinyTextAnimation.module.css';
 
 interface ShinyTextAnimationProps {
     children: React.ReactNode;
