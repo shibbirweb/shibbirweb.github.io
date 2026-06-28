@@ -311,15 +311,13 @@ export function getRelatedArticles(slug: string, limit = 3): ArticleSummary[] {
         .map((entry) => entry.article);
 }
 
-/** Every tag used across published articles, most frequent first. */
+/** Every tag used across published articles, sorted alphabetically. */
 export function getAllTags(): string[] {
-    const counts = new Map<string, number>();
+    const tags = new Set<string>();
     for (const article of getAllArticles()) {
         for (const tag of article.tags) {
-            counts.set(tag, (counts.get(tag) ?? 0) + 1);
+            tags.add(tag);
         }
     }
-    return [...counts.entries()]
-        .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
-        .map(([tag]) => tag);
+    return [...tags].sort((a, b) => a.localeCompare(b));
 }
