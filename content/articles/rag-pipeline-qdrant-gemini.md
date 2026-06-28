@@ -15,6 +15,26 @@ Retrieval-augmented generation (RAG) grounds a language model in your own data, 
 3. Store the vectors in Qdrant for fast similarity search.
 4. Retrieve the top matches and pass them to Gemini as context.
 
+
+1. **Build the Docker Image**: Use the `Dockerfile` to build the Docker image for the Express application.
+   ```
+   docker build -t express-lb .
+   ```
+
+## Request Workflow Diagram
+
+```mermaid
+graph TD;
+    A[Client] -->|HTTP Request| B[Nginx Load Balancer :8000];
+    B -->|Round Robin<br/>Primary| C[App Instance 1 :4500];
+    B -->|Round Robin<br/>Primary| D[App Instance 2 :4501];
+    B -->|Backup<br/>if 1 & 2 down| E[App Instance 3 :4502<br/>Backup];
+    C --> F[Response];
+    D --> F;
+    E -->|Only if needed| F;
+    F --> A;
+```
+
 ## Searching with Qdrant
 
 Qdrant returns the nearest neighbours for a query embedding in milliseconds:
@@ -27,3 +47,22 @@ const hits = await client.search('articles', {
 ```
 
 Feed those passages into the prompt and let the model answer from them. The result is grounded, cite-able output that keeps improving as your corpus grows.
+
+
+## Request Workflow Diagram
+
+```mermaid
+graph TD;
+    A[Client] -->|HTTP Request| B[Nginx Load Balancer :8000];
+    B -->|Round Robin<br/>Primary| C[App Instance 1 :4500];
+    B -->|Round Robin<br/>Primary| D[App Instance 2 :4501];
+    B -->|Backup<br/>if 1 & 2 down| E[App Instance 3 :4502<br/>Backup];
+    C --> F[Response];
+    D --> F;
+    E -->|Only if needed| F;
+    F --> A;
+```
+
+## VS Code Laravel
+
+https://gist.github.com/shibbirweb/529577ce5437c6a10953c81308957cc3

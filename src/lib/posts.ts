@@ -172,6 +172,11 @@ const gistExtension: TokenizerAndRendererExtension = {
 type CodeToken = Tokens.Code & { highlighted?: string };
 const CODE_THEMES = { light: 'github-light', dark: 'github-dark' } as const;
 
+/** First word of a fenced block's info string (its language), defaulting to text. */
+function codeLang(token: CodeToken): string {
+    return (token.lang ?? '').trim().split(/\s+/)[0] || 'text';
+}
+
 async function highlightCode(code: string, lang: string): Promise<string> {
     try {
         return await codeToHtml(code, {
@@ -194,9 +199,13 @@ marked.use({
     async walkTokens(token) {
         if (token.type === 'code') {
             const codeToken = token as CodeToken;
-            const lang =
-                (codeToken.lang ?? '').trim().split(/\s+/)[0] || 'text';
-            codeToken.highlighted = await highlightCode(codeToken.text, lang);
+            // Mermaid blocks render to SVG in the browser (see MermaidRenderer),
+            // so skip Shiki and let the code renderer emit a <pre class="mermaid">.
+            if (codeLang(codeToken) === 'mermaid') return;
+            codeToken.highlighted = await highlightCode(
+                codeToken.text,
+                codeLang(codeToken)
+            );
         }
         if (token.type === 'gist') {
             const gistToken = token as GistToken;
@@ -208,6 +217,11 @@ marked.use({
     renderer: {
         code(token) {
             const codeToken = token as CodeToken;
+            if (codeLang(codeToken) === 'mermaid') {
+                return `<pre class="mermaid not-prose">${escapeHtml(
+                    codeToken.text
+                )}</pre>`;
+            }
             if (codeToken.highlighted) return codeToken.highlighted;
             return `<pre><code>${escapeHtml(codeToken.text)}</code></pre>`;
         },
