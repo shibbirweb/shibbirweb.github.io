@@ -1,6 +1,6 @@
 import SectionHeading from '@/components/pages/common/SectionHeading';
-import SkillGroup from '@/components/pages/home/SkillsArea/SkillGroup';
-import { skillGroups } from '@/components/pages/home/SkillsArea/contents';
+import SkillCard from '@/components/pages/home/SkillsArea/SkillCard';
+import { skills } from '@/components/pages/home/SkillsArea/contents';
 
 export default function SkillsArea() {
     return (
@@ -13,15 +13,14 @@ export default function SkillsArea() {
                     Skills &amp; Tech
                 </SectionHeading>
 
-                <div className="mt-12 flex flex-col gap-10">
-                    {skillGroups.map((group) => (
-                        <SkillGroup
-                            key={group.title}
-                            title={group.title}
-                            items={group.items}
+                <ul className="mt-12 flex flex-wrap justify-center gap-3 sm:gap-4">
+                    {skills.map((skill) => (
+                        <SkillCard
+                            key={skill.name}
+                            skill={skill}
                         />
                     ))}
-                </div>
+                </ul>
             </div>
         </section>
     );

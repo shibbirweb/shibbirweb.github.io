@@ -1,0 +1,41 @@
+@reference "tailwindcss";
+
+/* Skill tile surface styling, scoped to the component. Everything expressible as
+   a Tailwind utility uses @apply; only the genuinely custom bits (the brand-tinted
+   radial gradient and its strength variable) are written as raw CSS.
+
+   On hover a very soft, brand-coloured glow fades in: a translucent radial wash on
+   a ::before layer behind the tile content (the tile is `relative isolate` in the
+   component, so the negative z-index keeps the wash under the icon and name). It is
+   tinted with the tile's --brand-color (set inline per tile) and falls back to
+   --foreground for the monochrome logos; deliberately barely noticeable, with the
+   strength stepping up a touch in dark mode. color-scheme is set here (not globally)
+   so the per-theme light-dark() brand colours used on these tiles (JavaScript,
+   Linux) resolve to the system theme. */
+.tile {
+    @apply scheme-light-dark;
+    --glow-strength: 8%;
+}
+
+@media (prefers-color-scheme: dark) {
+    .tile {
+        --glow-strength: 14%;
+    }
+}
+
+.tile::before {
+    @apply pointer-events-none absolute inset-0 z-[-1] rounded-[inherit] opacity-0 content-[''] motion-safe:transition-opacity motion-safe:duration-300;
+    background-image: radial-gradient(
+        130% 100% at 50% 30%,
+        color-mix(
+            in oklab,
+            var(--brand-color, var(--foreground)) var(--glow-strength),
+            transparent
+        ),
+        transparent 70%
+    );
+}
+
+.tile:hover::before {
+    @apply opacity-100;
+}
