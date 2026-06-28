@@ -153,3 +153,13 @@
         color: #f85149;
     }
 }
+
+/* Mermaid source. On the client, MermaidRenderer hides this <pre> and replaces
+   it with an interactive diagram; without JS the raw definition stays visible as
+   a fallback. not-prose already strips Typography's code-block styling. */
+.content :global(pre.mermaid) {
+    margin: 1.6em 0;
+    color: color-mix(in srgb, var(--foreground) 55%, transparent);
+    font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+    font-size: 0.85em;
+}

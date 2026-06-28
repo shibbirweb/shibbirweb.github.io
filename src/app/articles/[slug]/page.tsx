@@ -5,6 +5,7 @@ import ArticleContent from '@/components/pages/articles/ArticleContent';
 import ArticleCover from '@/components/pages/articles/ArticleCover';
 import ArticleGrid from '@/components/pages/articles/ArticleGrid';
 import TagLink from '@/components/pages/articles/TagLink';
+import MermaidRenderer from '@/components/pages/articles/MermaidRenderer';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { buildArticleJsonLd } from '@/utils/articleJsonLd';
 import { formatDate } from '@/utils/formatDate';
@@ -100,6 +101,8 @@ export default async function ArticlePage({
                 <div className="via-foreground/50 mt-12 h-px bg-linear-to-r from-transparent to-transparent" />
 
                 <ArticleContent html={article.html} />
+
+                <MermaidRenderer />
 
                 <div className="mt-14">
                     <Link
