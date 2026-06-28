@@ -9,7 +9,7 @@ export default function ContactArea() {
             className="py-20 sm:py-28"
         >
             <div className="container mx-auto flex flex-col items-center px-4 text-center">
-                <SectionHeading accentClassName="decoration-teal-500">
+                <SectionHeading>
                     Let&apos;s connect
                 </SectionHeading>
 

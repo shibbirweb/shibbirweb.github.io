@@ -38,11 +38,7 @@ export default function ProjectCard({
                 {project.category}
             </p>
             <h3 className="mt-2 text-lg font-bold sm:text-xl">
-                <span
-                    className={`underline decoration-2 underline-offset-4 ${project.accentClassName}`}
-                >
-                    {project.name}
-                </span>
+                {project.name}
             </h3>
             <p className="text-foreground/70 mt-3 grow text-base leading-relaxed">
                 {project.description}

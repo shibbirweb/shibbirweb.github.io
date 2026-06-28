@@ -22,12 +22,7 @@ export default function ArticlesIndex({
     return (
         <main className="container mx-auto px-4 py-20 sm:py-28">
             <Breadcrumb />
-            <SectionHeading
-                as="h1"
-                accentClassName="decoration-emerald-500"
-            >
-                Articles
-            </SectionHeading>
+            <SectionHeading as="h1">Articles</SectionHeading>
             <p className="text-foreground/70 mt-6 max-w-3xl text-lg leading-relaxed">
                 Notes on backend engineering, AI, and self-hosted
                 infrastructure.
