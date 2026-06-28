@@ -28,7 +28,7 @@ export const facets: Facet[] = [
     },
     {
         title: 'Range',
-        text: `${careerExperience}+ years delivering production software across healthcare, e-commerce, SaaS, and the public sector.`,
+        text: `${careerExperience}+ years building production software across healthcare, e-commerce, SaaS, and the public sector.`,
         accent: 'var(--color-emerald-500)',
         placementClassName: 'lg:col-start-3 lg:row-start-1',
         line: { x: 84, y: 18 },
@@ -44,7 +44,7 @@ export const facets: Facet[] = [
     },
     {
         title: 'End to end',
-        text: 'From architecture to self-hosted infrastructure, I enjoy owning the entire product lifecycle and shipping complete systems.',
+        text: 'I take products from idea to production, owning architecture, APIs, and deployment while exploring self-hosting in my homelab.',
         accent: 'var(--color-rose-500)',
         placementClassName: 'lg:col-start-3 lg:row-start-3',
         line: { x: 84, y: 82 },
