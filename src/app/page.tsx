@@ -4,10 +4,13 @@ import ContactArea from '@/components/pages/home/ContactArea';
 import HeroArea from '@/components/pages/home/HeroArea';
 import ProjectsArea from '@/components/pages/home/ProjectsArea';
 import SkillsArea from '@/components/pages/home/SkillsArea';
+import SectionUrlSync from '@/components/layout/SectionUrlSync';
 
 export default function Home() {
     return (
         <main className="home-sections">
+            <SectionUrlSync />
+
             <HeroArea />
 
             <AboutMeArea />

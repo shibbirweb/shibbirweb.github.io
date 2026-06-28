@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { cn } from '@/utils/cn';
 import type { NavItemData } from '@/components/layout/Navbar/contents';
+import { lockScrollSync } from '@/components/layout/scrollSyncLock';
 
 interface NavItemProps {
     item: NavItemData;
@@ -16,6 +17,13 @@ export default function NavItem({
     variant = 'pill',
     onNavigate,
 }: NavItemProps) {
+    // A section link smooth-scrolls in-page; hold the URL sync off so the hash
+    // lands on the clicked section instead of every section glided past.
+    const handleClick = () => {
+        if (item.sectionId) lockScrollSync(1000);
+        onNavigate?.();
+    };
+
     const className = cn(
         'block text-sm transition-colors',
         variant === 'pill'
@@ -49,7 +57,7 @@ export default function NavItem({
             <Link
                 href={item.href}
                 aria-current={active ? 'page' : undefined}
-                onClick={onNavigate}
+                onClick={handleClick}
                 className={className}
             >
                 {item.label}

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { MouseEvent } from 'react';
 import Shibbir from '@/components/icons/shibbir';
+import { lockScrollSync } from '@/components/layout/scrollSyncLock';
 
 interface NavLogoProps {
     className?: string;
@@ -35,6 +36,9 @@ export default function NavLogo({
         onNavigate?.();
         if (pathname !== '/') return;
         event.preventDefault();
+        // Hold the URL sync off so the hash clears cleanly to "/" instead of
+        // being rewritten to each section the upward glide passes.
+        lockScrollSync(1000);
         window.scrollTo({ top: 0, behavior: 'smooth' });
         window.history.replaceState(
             window.history.state,
