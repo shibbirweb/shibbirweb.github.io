@@ -15,9 +15,9 @@ export default function Home() {
 
             <AboutMeArea />
 
-            <ProjectsArea />
-
             <SkillsArea />
+
+            <ProjectsArea />
 
             {/* <ArticlesArea /> */}
 
