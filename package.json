@@ -3,8 +3,8 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "dev": "tsx scripts/generate-covers.ts && tsx scripts/prepare-resume.ts && next dev --turbopack",
-        "dev:https": "tsx scripts/generate-covers.ts && tsx scripts/prepare-resume.ts && next dev --experimental-https",
+        "dev": "tsx scripts/generate-covers.ts && tsx scripts/prepare-resume.ts && next-image-export-optimizer && next dev --turbopack",
+        "dev:https": "tsx scripts/generate-covers.ts && tsx scripts/prepare-resume.ts && next-image-export-optimizer && next dev --experimental-https",
         "build": "tsx scripts/generate-covers.ts && tsx scripts/prepare-resume.ts && next build && next-image-export-optimizer",
         "start": "next start",
         "lint": "eslint"
