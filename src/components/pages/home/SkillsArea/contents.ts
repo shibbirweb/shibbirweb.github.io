@@ -1,5 +1,6 @@
 import AiAgentsIcon from '@/components/icons/tech/ai-agents';
 import AndroidStudioIcon from '@/components/icons/tech/android-studio';
+import CaddyIcon from '@/components/icons/tech/caddy';
 import CiCdIcon from '@/components/icons/tech/ci-cd';
 import CloudflareIcon from '@/components/icons/tech/cloudflare';
 import DockerIcon from '@/components/icons/tech/docker';
@@ -104,6 +105,7 @@ export const skills: Skill[] = [
         color: 'light-dark(#D08A00, #FCC624)',
     },
     { name: 'Nginx', Icon: NginxIcon, color: '#009639' },
+    { name: 'Caddy', Icon: CaddyIcon, color: '#1F88C0' },
     { name: 'Cloudflare', Icon: CloudflareIcon, color: '#F38020' },
     { name: 'CI/CD', Icon: CiCdIcon, color: '#6366F1' },
     { name: 'Proxmox', Icon: ProxmoxIcon, color: '#E57000' },
