@@ -2,7 +2,7 @@
 
 import { Fragment } from 'react';
 import { usePathname } from 'next/navigation';
-import { jetBrainsMono } from '@/config/fonts';
+import { jetBrainsMono } from '@/config/monoFont';
 import { cn } from '@/utils/cn';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { buildBreadcrumbJsonLd } from '@/utils/breadcrumbJsonLd';
