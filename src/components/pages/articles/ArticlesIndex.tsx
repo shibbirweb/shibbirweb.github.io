@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+import Breadcrumb from '@/components/layout/Breadcrumb';
 import SectionHeading from '@/components/pages/common/SectionHeading';
 import ArticleGrid from '@/components/pages/articles/ArticleGrid';
 import ArticlesList from '@/components/pages/articles/ArticlesList';
@@ -20,6 +21,7 @@ export default function ArticlesIndex({
 
     return (
         <main className="container mx-auto px-4 py-20 sm:py-28">
+            <Breadcrumb />
             <SectionHeading
                 as="h1"
                 accentClassName="decoration-emerald-500"

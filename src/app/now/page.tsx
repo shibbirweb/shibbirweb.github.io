@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Breadcrumb from '@/components/layout/Breadcrumb';
 import SectionHeading from '@/components/pages/common/SectionHeading';
 import NowSection from '@/components/pages/now/NowSection';
 import { nowMeta, nowQuote, nowSections } from '@/app/now/contents';
@@ -21,6 +22,7 @@ export const metadata: Metadata = {
 export default function NowPage() {
     return (
         <main className="container mx-auto px-4 py-20 sm:py-28">
+            <Breadcrumb />
             <SectionHeading as="h1">{nowMeta.title}</SectionHeading>
             <p className="text-foreground/70 mt-6 max-w-3xl text-2xl leading-normal">
                 {nowMeta.subtitle}

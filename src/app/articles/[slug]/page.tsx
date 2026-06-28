@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import Breadcrumb from '@/components/layout/Breadcrumb';
 import ArticleContent from '@/components/pages/articles/ArticleContent';
 import ArticleCover from '@/components/pages/articles/ArticleCover';
 import ArticleGrid from '@/components/pages/articles/ArticleGrid';
@@ -86,6 +87,7 @@ export default async function ArticlePage({
 
     return (
         <main className="container mx-auto px-4 py-20 sm:py-28">
+            <Breadcrumb currentName={article.title} />
             <article>
                 <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
                     <ArticleCover

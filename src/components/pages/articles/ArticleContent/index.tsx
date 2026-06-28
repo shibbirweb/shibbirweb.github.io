@@ -1,13 +1,6 @@
-import { JetBrains_Mono } from 'next/font/google';
+import { jetBrainsMono } from '@/config/fonts';
 import { cn } from '@/utils/cn';
 import styles from '@/components/pages/articles/ArticleContent/ArticleContent.module.css';
-
-// Colocated with the only consumer so the monospace font ships solely on the
-// single article page, instead of loading globally from the root layout.
-const jetBrainsMono = JetBrains_Mono({
-    variable: '--font-jetbrains-mono',
-    subsets: ['latin'],
-});
 
 /**
  * Renders an article's pre-built HTML (Markdown rendered with Shiki code
