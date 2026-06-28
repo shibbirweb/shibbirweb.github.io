@@ -1,4 +1,5 @@
 allowBuilds:
   '@tailwindcss/oxide': false
+  esbuild: true
   sharp: false
   unrs-resolver: false

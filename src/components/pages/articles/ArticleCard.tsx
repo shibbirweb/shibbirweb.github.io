@@ -14,12 +14,10 @@ export default function ArticleCard({
 }) {
     return (
         <li className="border-foreground/10 hover:border-foreground/30 relative flex h-full flex-col overflow-hidden rounded-2xl border transition-all duration-300 hover:shadow-lg">
-            {article.cover && (
-                <ArticleCover
-                    src={article.cover}
-                    className="aspect-video"
-                />
-            )}
+            <ArticleCover
+                src={article.cover}
+                className="aspect-video"
+            />
             <div
                 className={cn(
                     'flex grow flex-col',
