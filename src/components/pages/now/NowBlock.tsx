@@ -1,6 +1,6 @@
 import TagGroup from '@/components/pages/common/TagGroup';
-import type { NowBlockData } from './contents';
-import BulletList from './BulletList';
+import type { NowBlockData } from '@/components/pages/now/types';
+import BulletList from '@/components/pages/now/BulletList';
 
 export default function NowBlock({ block }: { block: NowBlockData }) {
     switch (block.kind) {

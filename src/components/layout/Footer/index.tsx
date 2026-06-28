@@ -1,4 +1,4 @@
-import FooterBottom from '@/components/pages/common/FooterBottom';
+import FooterBottom from '@/components/layout/Footer/FooterBottom';
 
 export default function Footer() {
     return (

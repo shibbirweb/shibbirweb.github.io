@@ -1,9 +1,9 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import ArticleGrid from './ArticleGrid';
-import Pagination from './Pagination';
-import TagFilter from './TagFilter';
+import ArticleGrid from '@/components/pages/articles/ArticleGrid';
+import Pagination from '@/components/pages/articles/Pagination';
+import TagFilter from '@/components/pages/articles/TagFilter';
 import type { ArticleSummary } from '@/lib/posts';
 
 interface ArticlesListProps {

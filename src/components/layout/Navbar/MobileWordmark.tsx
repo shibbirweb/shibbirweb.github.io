@@ -1,7 +1,7 @@
 import { cn } from '@/utils/cn';
-import NavLogo from './NavLogo';
-import { useRecentlyChanged } from './hooks/useRecentlyChanged';
-import { useScrollY } from './hooks/useScrollY';
+import NavLogo from '@/components/layout/Navbar/NavLogo';
+import { useRecentlyChanged } from '@/components/layout/Navbar/hooks/useRecentlyChanged';
+import { useScrollY } from '@/components/layout/Navbar/hooks/useScrollY';
 
 interface MobileWordmarkProps {
     /** Menu open: travel into the panel's logo slot. Closed: rest at / ride away from the top. */

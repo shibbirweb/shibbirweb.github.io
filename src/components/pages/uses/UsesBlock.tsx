@@ -1,6 +1,6 @@
-import type { UsesBlockData } from './contents';
-import SpecList from './SpecList';
-import GearList from './GearList';
+import type { UsesBlockData } from '@/components/pages/uses/types';
+import SpecList from '@/components/pages/uses/SpecList';
+import GearList from '@/components/pages/uses/GearList';
 import TagGroup from '@/components/pages/common/TagGroup';
 
 export default function UsesBlock({ block }: { block: UsesBlockData }) {

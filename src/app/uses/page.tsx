@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import SectionHeading from '@/components/pages/common/SectionHeading';
-import UsesSection from './UsesSection';
-import { usesSections } from './contents';
+import UsesSection from '@/components/pages/uses/UsesSection';
+import { usesSections } from '@/app/uses/contents';
 import { siteName } from '@/config/constants';
 
 const description = `The gear, software, developer tools, and home-lab setup ${siteName} uses day to day for software development, AI, and self-hosting.`;

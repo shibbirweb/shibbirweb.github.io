@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import ArticlesIndex from './ArticlesIndex';
+import ArticlesIndex from '@/components/pages/articles/ArticlesIndex';
 import { getAllArticles, getAllTags } from '@/lib/posts';
 import { siteName } from '@/config/constants';
 

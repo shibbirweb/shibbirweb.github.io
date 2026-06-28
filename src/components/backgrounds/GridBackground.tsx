@@ -1,7 +1,7 @@
 import { cn } from '@/utils/cn';
 import { HTMLAttributes } from 'react';
 
-export default function GridBackgroundComponent(
+export default function GridBackground(
     props: HTMLAttributes<HTMLDivElement>
 ) {
     const { className, ...rest } = props;

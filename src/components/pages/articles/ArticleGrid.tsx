@@ -1,4 +1,4 @@
-import ArticleCard from './ArticleCard';
+import ArticleCard from '@/components/pages/articles/ArticleCard';
 import { cn } from '@/utils/cn';
 import type { ArticleSummary } from '@/lib/posts';
 

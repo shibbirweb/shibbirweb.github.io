@@ -1,9 +1,9 @@
 import { Suspense } from 'react';
 import SectionHeading from '@/components/pages/common/SectionHeading';
-import ArticleGrid from './ArticleGrid';
-import ArticlesList from './ArticlesList';
-import Pagination from './Pagination';
-import TagFilter from './TagFilter';
+import ArticleGrid from '@/components/pages/articles/ArticleGrid';
+import ArticlesList from '@/components/pages/articles/ArticlesList';
+import Pagination from '@/components/pages/articles/Pagination';
+import TagFilter from '@/components/pages/articles/TagFilter';
 import { ARTICLES_PER_PAGE, type ArticleSummary } from '@/lib/posts';
 
 export default function ArticlesIndex({

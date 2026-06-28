@@ -1,6 +1,6 @@
 import { jsonLd } from '@/utils/jsonLd';
 
-export const JsonLdScriptComponent = () => {
+export const JsonLdScript = () => {
     return (
         <script
             id="jsonld-person"

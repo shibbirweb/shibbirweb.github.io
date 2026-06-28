@@ -1,8 +1,8 @@
 import ExternalLinkIcon from '@/components/icons/external-link';
 import GithubIcon from '@/components/icons/github';
 import Tag from '@/components/pages/common/Tag';
-import ProjectLink from './ProjectLink';
-import { Project } from './contents';
+import ProjectLink from '@/components/pages/home/ProjectsArea/ProjectLink';
+import { Project } from '@/components/pages/home/ProjectsArea/contents';
 
 export default function ProjectCard({ project }: { project: Project }) {
     return (

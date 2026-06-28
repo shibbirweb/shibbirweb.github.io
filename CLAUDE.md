@@ -34,25 +34,32 @@ Site-wide config (URLs for `siteURL`, sitemap) is exposed through `publicRuntime
 
 ### Page composition
 
-`src/app/page.tsx` composes the page sections (inside a single `<main>`), each a folder under `src/app/_root/` (the `_` prefix makes it a route-excluded colocation directory):
+`src/app/page.tsx` composes the home page sections (inside a single `<main>`), each a PascalCase folder with an `index.tsx` under `src/components/pages/home/`:
 
-- `hero-area/`: name + title + social icons over an animated grid background; scroll-down cue links to `#about`
-- `about-me-area/`: heading, photo, bio, experience/education (anchor `#about`)
-- `projects-area/`: "Featured Projects" card grid driven by `contents.ts` (anchor `#work`)
-- `skills-area/`: grouped skill tags driven by `contents.ts` (anchor `#skills`)
-- `contact-area/`: mailto CTA + reused `SocialIcons` (anchor `#contact`)
-- `footer-area/`: bottom SVG logo
+- `HeroArea/`: name + title + social icons over an animated grid background; scroll-down cue links to `#about`
+- `AboutMeArea/`: heading, photo, bio, experience/education (anchor `#about`)
+- `ProjectsArea/`: "Featured Projects" card grid driven by `contents.ts` (anchor `#work`)
+- `SkillsArea/`: grouped skill tags driven by `contents.ts` (anchor `#skills`)
+- `ArticlesArea/`: "Latest Articles" teaser of the most recent posts (anchor `#articles`)
+- `ContactArea/`: mailto CTA + reused `SocialIcons` (anchor `#contact`)
 
-Section folders may carry their own `contents.ts` (e.g. `hero-area/contents.ts` holds `socialLinks`; `projects-area/contents.ts` holds the curated project list). Shared/reusable pieces live in `src/components/` (`animations/`, `icons/`, `utils/`, `wrappers/`, `pages/common/`). Section headings use the shared `SectionHeading` (`src/components/pages/common/SectionHeading.tsx`), the underline-accent motif. Anchor IDs (`#about`, `#work`, `#skills`, `#contact`) work with the `scroll-smooth` set on `<html>`.
+Section folders carry their own component-wise `contents.ts` (e.g. `HeroArea/contents.ts` holds `socialLinks`; `ProjectsArea/contents.ts` holds the curated project list). Page-wise data that a route's `page.tsx` owns stays beside the route instead (e.g. `src/app/now/contents.ts`, `src/app/uses/contents.ts`), with its shared types extracted to a `types.ts` in the component folder so `src/components/` never imports from `src/app/`. Shared/reusable pieces live in `src/components/` (`animations/`, `backgrounds/`, `icons/`, `layout/`, `seo/`, `wrappers/`, plus `pages/` for page-grouped sections with `pages/common/` for cross-section primitives). Section headings use the shared `SectionHeading` (`src/components/pages/common/SectionHeading.tsx`), the underline-accent motif. Anchor IDs (`#about`, `#work`, `#skills`, `#articles`, `#contact`) work with the `scroll-smooth` set on `<html>`.
 
 ### Component conventions
 
 - Prefer small, single-responsibility, reusable components. Do **not** put multiple components (or large inline JSX blocks) in one file; extract repeated markup (cards, tags, list rows, links) into their own components. When a component grows large or juggles several concerns, **split it into smaller subcomponents** rather than letting it become a monolith.
-- Cross-section/shared UI primitives live in `src/components/pages/common/` (e.g. `SectionHeading`, `Tag`). Section-specific subcomponents are colocated in the section folder next to its `contents.ts` (e.g. `projects-area/ProjectCard.tsx`, `projects-area/ProjectLink.tsx`, `skills-area/SkillGroup.tsx`).
+- Cross-section/shared UI primitives live in `src/components/pages/common/` (e.g. `SectionHeading`, `Tag`). Section-specific subcomponents are colocated in the section folder next to its `contents.ts` (e.g. `ProjectsArea/ProjectCard.tsx`, `ProjectsArea/ProjectLink.tsx`, `SkillsArea/SkillGroup.tsx`).
 - Keep each section's `index.tsx` thin: section wrapper + `SectionHeading` + a `.map()` over a subcomponent. Data lives in `contents.ts`, not inline.
 - Reuse the shared `cn()` helper and existing primitives before creating new ones; avoid premature abstraction for genuinely one-off markup.
 - A component that spans more than one file (e.g. a co-located CSS Module, subcomponents, or its own `contents.ts`) gets its **own folder** with the entry point as `index.tsx` and its files beside it, e.g. `components/animations/AnimatedUnderline/index.tsx` + `AnimatedUnderline.module.css`. Keep genuinely single-file components as a single `.tsx`.
 - Put stateful and side-effecting logic (`useEffect`, IntersectionObservers, event listeners, disclosure/toggle state) in **named custom hooks** (`useXxx`) instead of inlining it in components. Colocate them in a `hooks/` folder beside the component (e.g. `components/layout/Navbar/hooks/useScrollSpy.ts`) and keep generic ones (`useDisclosure`, `useCloseOnEscape`, `useScrollSpy`) reusable. A component should read top-down: call hooks, then return JSX.
+
+### Imports & file placement
+
+- **Use the `@/` alias for every import; never use a relative path (`./` or `../`)**, not even for a same-folder sibling (e.g. `import ProjectCard from '@/components/pages/home/ProjectsArea/ProjectCard'`, not `'./ProjectCard'`). CSS and asset imports follow the same rule.
+- **`src/app/` holds only routing concerns**: `page.tsx`, `layout.tsx`, metadata routes (`sitemap.ts`, `robots.ts`, `manifest.ts`), `globals.css`, and route icons/images. **Never define a component in `src/app/`**; all components live in `src/components/`.
+- **Group components by purpose, never in a catch-all bucket**: `animations/`, `backgrounds/`, `icons/`, `layout/`, `seo/`, `wrappers/`, and `pages/` (section components grouped by route, with `pages/common/` for cross-section primitives). `src/utils/` is for **pure helper functions only** (e.g. `cn`, `formatDate`); never put a component there.
+- **`src/components/` must never import from `src/app/`** (dependencies flow `app -> components` only). Data a route's `page.tsx` owns is page-wise and lives beside the route as `src/app/<route>/contents.ts`; data a self-contained component owns is component-wise and lives in a `contents.ts` inside that component's folder. When page-wise data and its components share types, put the types in a `types.ts` in the component folder and import them from both sides.
 
 ### Naming conventions
 
@@ -60,6 +67,8 @@ Section folders may carry their own `contents.ts` (e.g. `hero-area/contents.ts` 
 - Avoid cryptic abbreviations and one/two-letter identifiers (e.g. `--au-c`, `d`, `tmp`); spell out the intent (`underlineColor`, `delayMs`, `sectionRef`).
 - Short, idiomatic names are still fine where they are unambiguous: a loop `i`, the shared `cn()` helper, a mapped `item`/`group`.
 - This applies project-wide, to **TypeScript identifiers and CSS variable/class names alike**.
+- **Directories**: grouping/category folders are lowercase (`animations/`, `icons/`, `layout/`, `pages/`); a folder that *is* one component is PascalCase and matches its exported component (`HeroArea/`, `Navbar/`, `ArticleContent/`).
+- Do not suffix a component with `Component` (redundant under `src/components/`): name it `GridBackground`, not `GridBackgroundComponent`.
 
 ### Copy & punctuation
 
@@ -76,7 +85,7 @@ Section folders may carry their own `contents.ts` (e.g. `hero-area/contents.ts` 
 
 ### SEO & structured data
 
-This is a major focus of the codebase. `layout.tsx` defines the full Next.js `Metadata` (OpenGraph, Twitter, robots, icons, manifest). `src/utils/jsonLd.ts` builds a `schema.org` `ProfilePage`/`Person` JSON-LD object (typed with `schema-dts`), rendered via `JsonLdScriptComponent`. **Both JSON-LD injection and Google Tag Manager are gated on `process.env.NODE_ENV === 'production'`** (see `layout.tsx`), so they do not appear in dev.
+This is a major focus of the codebase. `layout.tsx` defines the full Next.js `Metadata` (OpenGraph, Twitter, robots, icons, manifest). `src/utils/jsonLd.ts` builds a `schema.org` `ProfilePage`/`Person` JSON-LD object (typed with `schema-dts`), rendered via `JsonLdScript` (in `src/components/seo/`). **Both JSON-LD injection and Google Tag Manager are gated on `process.env.NODE_ENV === 'production'`** (see `layout.tsx`), so they do not appear in dev.
 
 ### Styling (Tailwind v4)
 

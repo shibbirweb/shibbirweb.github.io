@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { cn } from '@/utils/cn';
-import styles from './AnimatedUnderline.module.css';
+import styles from '@/components/animations/AnimatedUnderline/AnimatedUnderline.module.css';
 
 export type UnderlineVariant =
     | 'draw-right'

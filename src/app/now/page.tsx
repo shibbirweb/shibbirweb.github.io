@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import SectionHeading from '@/components/pages/common/SectionHeading';
-import NowSection from './NowSection';
-import { nowMeta, nowQuote, nowSections } from './contents';
+import NowSection from '@/components/pages/now/NowSection';
+import { nowMeta, nowQuote, nowSections } from '@/app/now/contents';
 import { siteName } from '@/config/constants';
 
 const description = `What ${siteName} is focused on right now: current work, what he's building and learning, home-lab experiments, reading, and goals.`;

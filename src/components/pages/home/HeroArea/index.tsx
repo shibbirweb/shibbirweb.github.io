@@ -1,6 +1,6 @@
 import ShinyTextAnimation from '@/components/animations/ShinyTextAnimation';
-import ScrollDownCue from './ScrollDownCue';
-import SocialIcons from './SocialIcons';
+import ScrollDownCue from '@/components/pages/home/HeroArea/ScrollDownCue';
+import SocialIcons from '@/components/pages/home/HeroArea/SocialIcons';
 import WithGridAnimatedBackgroundWrapper from '@/components/wrappers/WithGridAnimatedBackgroundWrapper';
 import { professionalTitle } from '@/config/constants';
 

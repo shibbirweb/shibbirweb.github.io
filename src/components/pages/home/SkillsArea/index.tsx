@@ -1,6 +1,6 @@
 import SectionHeading from '@/components/pages/common/SectionHeading';
-import SkillGroup from './SkillGroup';
-import { skillGroups } from './contents';
+import SkillGroup from '@/components/pages/home/SkillsArea/SkillGroup';
+import { skillGroups } from '@/components/pages/home/SkillsArea/contents';
 
 export default function SkillsArea() {
     return (

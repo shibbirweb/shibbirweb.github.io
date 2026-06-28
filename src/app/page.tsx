@@ -1,9 +1,9 @@
-import AboutMeArea from './_root/about-me-area';
-import ArticlesArea from './_root/articles-area';
-import ContactArea from './_root/contact-area';
-import HeroArea from './_root/hero-area';
-import ProjectsArea from './_root/projects-area';
-import SkillsArea from './_root/skills-area';
+import AboutMeArea from '@/components/pages/home/AboutMeArea';
+import ArticlesArea from '@/components/pages/home/ArticlesArea';
+import ContactArea from '@/components/pages/home/ContactArea';
+import HeroArea from '@/components/pages/home/HeroArea';
+import ProjectsArea from '@/components/pages/home/ProjectsArea';
+import SkillsArea from '@/components/pages/home/SkillsArea';
 
 export default function Home() {
     return (

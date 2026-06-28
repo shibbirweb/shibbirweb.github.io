@@ -1,4 +1,4 @@
-import SocialIcons from '@/app/_root/hero-area/SocialIcons';
+import SocialIcons from '@/components/pages/home/HeroArea/SocialIcons';
 import SectionHeading from '@/components/pages/common/SectionHeading';
 import { siteAuthorEmail } from '@/config/constants';
 
