@@ -92,6 +92,11 @@ This is a major focus of the codebase. `layout.tsx` defines the full Next.js `Me
 
 CSS-first configuration lives in `src/app/globals.css`; there is **no `tailwind.config.js`**. Theme tokens, custom keyframes (`shine`), and custom utilities (`text-box-trim-*`, `text-box-edge-*`) are declared with `@theme` / `@utility` directives. Dark mode is driven by `prefers-color-scheme` (system), not a class toggle. Use the `cn()` helper (`@/utils/cn`, wraps `clsx` + `tailwind-merge`) for conditional class composition. Respect `motion-safe:` prefixes on animations.
 
+- **Tailwind utilities are the default** for component styling, composed via `cn()`.
+- **Custom CSS that a section or component needs (and that is not a global concern) goes in a co-located CSS Module** (`ComponentName.module.css` beside the component's `index.tsx`), imported only by that component via the `@/` alias and applied with `cn(styles.x, '...utilities...')`. Do **not** add component- or section-specific rules to `globals.css`. Handle that component's theming inside its module with `@media (prefers-color-scheme: dark)` (and scope properties like `color-scheme` there too, not on `:root`, unless they are genuinely site-wide). See `SignatureSpotlight`, `AnimatedUnderline`, and `SkillsArea/SkillCard` for the pattern.
+- **`globals.css` is reserved for global concerns only**: theme tokens, base styles, shared keyframes, and shared `@theme` / `@utility` declarations used across the app.
+- **Inside a CSS Module, prefer Tailwind over hand-written CSS.** Any declaration expressible as a utility must be written with `@apply` (e.g. `@apply pointer-events-none absolute inset-0 opacity-0 motion-safe:transition-opacity`); reach for raw CSS only for what Tailwind genuinely cannot express (e.g. a `color-mix()` / `radial-gradient()` value, a bespoke custom property). Using `@apply` in a module requires `@reference "tailwindcss";` at the top of the file so the utilities resolve. Prefer Tailwind variants over hand-rolled media queries too (`motion-safe:` instead of a `prefers-reduced-motion` block); a raw `@media (prefers-color-scheme: dark)` is acceptable only for theming a custom property, matching `SignatureSpotlight`.
+
 Path alias: `@/*` -> `./src/*`.
 
 ### Deployment
