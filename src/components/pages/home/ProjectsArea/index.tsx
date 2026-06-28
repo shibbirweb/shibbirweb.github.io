@@ -9,13 +9,9 @@ export default function ProjectsArea() {
             className="py-20 sm:py-28"
         >
             <div className="container mx-auto px-4">
-                <SectionHeading>
+                <SectionHeading className="text-center">
                     Featured Projects
                 </SectionHeading>
-
-                <p className="text-foreground/70 mt-4 max-w-3xl text-lg leading-relaxed">
-                    A few things I&apos;ve built.
-                </p>
 
                 <ul className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2">
                     {projects.map((project, index) => (

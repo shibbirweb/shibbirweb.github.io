@@ -10,7 +10,7 @@ export default function AboutMeArea() {
             className="relative"
         >
             <div className="container mx-auto flex min-h-svh flex-col justify-center gap-12 px-4 py-20 sm:py-28">
-                <SectionHeading>
+                <SectionHeading className="text-center">
                     About me
                 </SectionHeading>
 

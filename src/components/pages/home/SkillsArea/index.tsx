@@ -9,7 +9,7 @@ export default function SkillsArea() {
             className="py-20 sm:py-28"
         >
             <div className="container mx-auto px-4">
-                <SectionHeading>
+                <SectionHeading className="text-center">
                     Skills &amp; Tech
                 </SectionHeading>
 

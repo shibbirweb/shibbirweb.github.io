@@ -13,7 +13,7 @@ export default function ArticlesArea() {
             className="py-20 sm:py-28"
         >
             <div className="container mx-auto px-4">
-                <SectionHeading>
+                <SectionHeading className="text-center">
                     Latest Articles
                 </SectionHeading>
                 <p className="text-foreground/70 mt-4 max-w-3xl text-lg leading-relaxed">

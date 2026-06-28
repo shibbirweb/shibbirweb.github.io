@@ -1,5 +1,5 @@
 import AboutMeArea from '@/components/pages/home/AboutMeArea';
-import ArticlesArea from '@/components/pages/home/ArticlesArea';
+// import ArticlesArea from '@/components/pages/home/ArticlesArea';
 import ContactArea from '@/components/pages/home/ContactArea';
 import HeroArea from '@/components/pages/home/HeroArea';
 import ProjectsArea from '@/components/pages/home/ProjectsArea';
@@ -16,7 +16,7 @@ export default function Home() {
 
             <SkillsArea />
 
-            <ArticlesArea />
+            {/* <ArticlesArea /> */}
 
             <ContactArea />
         </main>
