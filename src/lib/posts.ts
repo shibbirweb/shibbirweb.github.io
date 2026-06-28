@@ -7,6 +7,7 @@ import {
     type TokenizerAndRendererExtension,
 } from 'marked';
 import { codeToHtml } from 'shiki';
+import { generatedCoverPath } from '@/utils/generateArticleCover';
 
 const ARTICLES_DIRECTORY = path.join(process.cwd(), 'content/articles');
 
@@ -30,7 +31,7 @@ export interface ArticleSummary {
     date: string;
     updated?: string;
     tags: string[];
-    cover?: string;
+    cover: string;
     readingMinutes: number;
 }
 
@@ -74,7 +75,7 @@ function toSummary(article: ParsedArticle): ArticleSummary {
         date: data.date ?? '',
         updated: data.updated,
         tags: Array.isArray(data.tags) ? data.tags : [],
-        cover: data.cover,
+        cover: data.cover ?? generatedCoverPath(slug),
         readingMinutes: estimateReadingMinutes(content),
     };
 }

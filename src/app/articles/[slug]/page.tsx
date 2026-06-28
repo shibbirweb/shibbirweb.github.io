@@ -87,17 +87,13 @@ export default async function ArticlePage({
     return (
         <main className="container mx-auto px-4 py-20 sm:py-28">
             <article>
-                {article.cover ? (
-                    <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
-                        <ArticleCover
-                            src={article.cover}
-                            className="h-auto rounded-2xl"
-                        />
-                        {header}
-                    </div>
-                ) : (
-                    header
-                )}
+                <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
+                    <ArticleCover
+                        src={article.cover}
+                        className="h-auto rounded-2xl"
+                    />
+                    {header}
+                </div>
 
                 <div className="via-foreground/50 mt-12 h-px bg-linear-to-r from-transparent to-transparent" />
 
