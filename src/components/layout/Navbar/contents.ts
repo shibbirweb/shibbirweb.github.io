@@ -9,8 +9,8 @@ export type NavItemData = {
 // In-page section anchors (homepage) and standalone page links.
 export const sectionItems: NavItemData[] = [
     { label: 'About', href: '/#about', sectionId: 'about' },
-    { label: 'Projects', href: '/#work', sectionId: 'work' },
     { label: 'Skills', href: '/#skills', sectionId: 'skills' },
+    { label: 'Projects', href: '/#work', sectionId: 'work' },
     { label: 'Contact', href: '/#contact', sectionId: 'contact' },
 ];
 
