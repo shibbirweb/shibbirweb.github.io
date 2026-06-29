@@ -4,6 +4,16 @@ description: 'What embeddings actually are, why cosine similarity works, and how
 date: '2026-04-05'
 tags: ['AI', 'Embeddings', 'Search']
 cover: '/images/articles/understanding-vector-embeddings.svg'
+category: 'AI Engineering'
+difficulty: 'Beginner'
+tech: ['Python', 'NumPy', 'OpenAI']
+series:
+    name: 'Building an LLM Knowledge System'
+    order: 1
+learn:
+    - 'What an embedding vector represents and where it comes from'
+    - 'Why cosine similarity captures meaning better than keyword overlap'
+    - 'How semantic search answers questions exact-match search misses'
 ---
 
 An embedding turns text into a list of numbers that captures meaning. Similar ideas land close together in that space, which is what makes semantic search possible.

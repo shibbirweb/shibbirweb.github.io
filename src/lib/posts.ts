@@ -18,6 +18,15 @@ const PUBLIC_DIRECTORY = path.join(process.cwd(), 'public');
 /** How many articles are listed per page on the /articles index. */
 export const ARTICLES_PER_PAGE = 9;
 
+/** A self-rated difficulty, surfaced as a badge on the article header. */
+export type ArticleDifficulty = 'Beginner' | 'Intermediate' | 'Advanced';
+
+/** One article's place in a multi-part series, declared in its frontmatter. */
+interface SeriesFrontmatter {
+    name: string;
+    order: number;
+}
+
 interface Frontmatter {
     title?: string;
     description?: string;
@@ -26,6 +35,36 @@ interface Frontmatter {
     tags?: string[];
     draft?: boolean;
     cover?: string;
+    /** A single grouping label (broader than tags) used to rank related posts. */
+    category?: string;
+    difficulty?: ArticleDifficulty;
+    /** Concrete tools/stack the article builds on, shown as a stack strip. */
+    tech?: string[];
+    /** Key takeaways rendered in the "What you'll learn" card. */
+    learn?: string[];
+    series?: SeriesFrontmatter;
+}
+
+/** A heading in the article body, used to build the table of contents. */
+export interface TocItem {
+    id: string;
+    text: string;
+    /** Heading level: 2 for `##`, 3 for `###`. */
+    level: number;
+}
+
+/** One entry in a series tracker, in reading order. */
+export interface SeriesPart {
+    slug: string;
+    title: string;
+    order: number;
+    isCurrent: boolean;
+}
+
+/** A resolved series: its name plus every published part, in reading order. */
+export interface ArticleSeries {
+    name: string;
+    parts: SeriesPart[];
 }
 
 export interface ArticleSummary {
@@ -39,10 +78,19 @@ export interface ArticleSummary {
     /** The cover's two dominant colours, used to tint the card to match it. */
     coverColors: readonly [string, string];
     readingMinutes: number;
+    category?: string;
+    difficulty?: ArticleDifficulty;
+    series?: SeriesFrontmatter;
 }
 
 export interface Article extends ArticleSummary {
     html: string;
+    /** Body headings (H2/H3) for the table of contents. */
+    toc: TocItem[];
+    /** Key takeaways for the "What you'll learn" card; empty when unset. */
+    learn: string[];
+    /** Stack/tools the article uses; empty when unset. */
+    tech: string[];
 }
 
 interface ParsedArticle {
@@ -51,9 +99,19 @@ interface ParsedArticle {
     content: string;
 }
 
+// A static build renders every article page, and each page reads the full
+// corpus several times (getArticle + related + series + adjacent). Parsing all
+// files once and caching the result avoids re-reading every markdown file on
+// each call. Only cached in production builds so that editing an article in dev
+// still shows up on the next request without restarting the server.
+let parsedFilesCache: ParsedArticle[] | null = null;
+
 function readArticleFiles(): ParsedArticle[] {
+    if (parsedFilesCache && process.env.NODE_ENV === 'production') {
+        return parsedFilesCache;
+    }
     if (!fs.existsSync(ARTICLES_DIRECTORY)) return [];
-    return fs
+    const files = fs
         .readdirSync(ARTICLES_DIRECTORY)
         .filter((name) => name.endsWith('.md') || name.endsWith('.mdx'))
         .map((name) => {
@@ -68,6 +126,8 @@ function readArticleFiles(): ParsedArticle[] {
             const { data, content } = matter(raw);
             return { slug, data: data as Frontmatter, content };
         });
+    parsedFilesCache = files;
+    return files;
 }
 
 function estimateReadingMinutes(content: string): number {
@@ -113,6 +173,12 @@ function toSummary(article: ParsedArticle): ArticleSummary {
         cover,
         coverColors: resolveCoverColors(cover, slug),
         readingMinutes: estimateReadingMinutes(content),
+        category: data.category,
+        difficulty: data.difficulty,
+        series:
+            data.series && typeof data.series.name === 'string'
+                ? { name: data.series.name, order: Number(data.series.order) || 0 }
+                : undefined,
     };
 }
 
@@ -319,29 +385,161 @@ marked.use({
     },
 });
 
+/** Turn heading text into a URL-safe anchor slug (`Cache-aside` -> `cache-aside`). */
+function slugifyHeading(text: string): string {
+    return text
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+}
+
+const HTML_ENTITIES: Record<string, string> = {
+    '&amp;': '&',
+    '&lt;': '<',
+    '&gt;': '>',
+    '&quot;': '"',
+    '&#39;': "'",
+};
+
+/** Strip inline tags and decode the few entities `marked` emits, for plain text. */
+function headingPlainText(inner: string): string {
+    return inner
+        .replace(/<[^>]+>/g, '')
+        .replace(/&amp;|&lt;|&gt;|&quot;|&#39;/g, (entity) => HTML_ENTITIES[entity])
+        // Drop any other entity (e.g. &hellip;, &#8230;) so it never leaks a
+        // literal "hellip" into the slug; the visible heading keeps its glyph.
+        .replace(/&#?[a-z0-9]+;/gi, '')
+        .trim();
+}
+
+/**
+ * Adds stable `id` anchors to the body's H2/H3 headings and returns the table of
+ * contents alongside the rewritten HTML. IDs and the TOC are produced in a single
+ * pass so they always agree; duplicate slugs are disambiguated with a numeric
+ * suffix (`-2`, `-3`). Headings that already carry an id are left untouched.
+ */
+function addHeadingIdsAndExtractToc(html: string): {
+    html: string;
+    toc: TocItem[];
+} {
+    const toc: TocItem[] = [];
+    const used = new Map<string, number>();
+    const rewritten = html.replace(
+        /<h([23])>([\s\S]*?)<\/h\1>/g,
+        (match, level: string, inner: string) => {
+            const text = headingPlainText(inner);
+            if (!text) return match;
+            const base = slugifyHeading(text) || 'section';
+            const seen = used.get(base) ?? 0;
+            used.set(base, seen + 1);
+            const id = seen === 0 ? base : `${base}-${seen + 1}`;
+            toc.push({ id, text, level: Number(level) });
+            return `<h${level} id="${id}">${inner}</h${level}>`;
+        }
+    );
+    return { html: rewritten, toc };
+}
+
+/** A self-contained list of takeaways/tools from frontmatter, never null. */
+function stringList(value: unknown): string[] {
+    return Array.isArray(value)
+        ? value.filter((item): item is string => typeof item === 'string')
+        : [];
+}
+
 /** A single rendered article, or null if the slug is missing or a draft. */
 export async function getArticle(slug: string): Promise<Article | null> {
     const article = readArticleFiles().find((item) => item.slug === slug);
     if (!article || article.data.draft === true) return null;
-    const html = await marked.parse(article.content);
-    return { ...toSummary(article), html };
+    const rendered = await marked.parse(article.content);
+    const { html, toc } = addHeadingIdsAndExtractToc(rendered);
+    return {
+        ...toSummary(article),
+        html,
+        toc,
+        learn: stringList(article.data.learn),
+        tech: stringList(article.data.tech),
+    };
 }
 
-/** Up to `limit` other articles, ranked by shared tags then recency. */
+/**
+ * Up to `limit` other articles ranked by relevance to `slug`: each shared tag
+ * counts most, a shared category and a shared series add a strong signal, and
+ * recency breaks ties so the suggestion list never feels stale. Articles with no
+ * signal at all are dropped rather than padded with arbitrary posts.
+ */
 export function getRelatedArticles(slug: string, limit = 3): ArticleSummary[] {
     const all = getAllArticles();
     const current = all.find((article) => article.slug === slug);
     if (!current) return [];
     const currentTags = new Set(current.tags);
+
     return all
         .filter((article) => article.slug !== slug)
-        .map((article) => ({
-            article,
-            shared: article.tags.filter((tag) => currentTags.has(tag)).length,
-        }))
-        .sort((a, b) => b.shared - a.shared)
+        .map((article) => {
+            const sharedTags = article.tags.filter((tag) =>
+                currentTags.has(tag)
+            ).length;
+            const sameCategory =
+                current.category && article.category === current.category;
+            const sameSeries =
+                current.series && article.series?.name === current.series.name;
+            const score =
+                sharedTags * 3 +
+                (sameCategory ? 4 : 0) +
+                (sameSeries ? 5 : 0);
+            return { article, score };
+        })
+        .filter((entry) => entry.score > 0)
+        .sort((a, b) =>
+            b.score !== a.score
+                ? b.score - a.score
+                : a.article.date < b.article.date
+                  ? 1
+                  : -1
+        )
         .slice(0, limit)
         .map((entry) => entry.article);
+}
+
+/**
+ * The series `slug` belongs to, with every published part in reading order, or
+ * null when the article is standalone or the series has only this one part.
+ */
+export function getSeriesForArticle(slug: string): ArticleSeries | null {
+    const all = getAllArticles();
+    const current = all.find((article) => article.slug === slug);
+    if (!current?.series) return null;
+    const seriesName = current.series.name;
+    const parts = all
+        .filter((article) => article.series?.name === seriesName)
+        .sort((a, b) => (a.series?.order ?? 0) - (b.series?.order ?? 0))
+        .map((article) => ({
+            slug: article.slug,
+            title: article.title,
+            order: article.series?.order ?? 0,
+            isCurrent: article.slug === slug,
+        }));
+    if (parts.length < 2) return null;
+    return { name: seriesName, parts };
+}
+
+/**
+ * The articles published just before and after `slug` in the chronological feed,
+ * for previous/next navigation. `previous` is the older neighbour, `next` the
+ * newer one; either is undefined at the ends of the list.
+ */
+export function getAdjacentArticles(slug: string): {
+    previous?: ArticleSummary;
+    next?: ArticleSummary;
+} {
+    const all = getAllArticles(); // newest first
+    const index = all.findIndex((article) => article.slug === slug);
+    if (index === -1) return {};
+    return {
+        next: index > 0 ? all[index - 1] : undefined,
+        previous: index < all.length - 1 ? all[index + 1] : undefined,
+    };
 }
 
 /** Every tag used across published articles, sorted alphabetically. */
