@@ -1,0 +1,34 @@
+/* Entrance animation for the search modal: the backdrop fades in while the panel
+   eases up into place. Gated behind prefers-reduced-motion. Keyframes are written
+   in raw CSS (a @keyframes body Tailwind cannot express) and referenced from the
+   same module so CSS Modules scopes both the name and its use together. */
+
+@media (prefers-reduced-motion: no-preference) {
+    .backdrop {
+        animation: search-backdrop-in 0.18s ease-out both;
+    }
+
+    .panel {
+        animation: search-panel-in 0.24s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+}
+
+@keyframes search-backdrop-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes search-panel-in {
+    from {
+        opacity: 0;
+        transform: translateY(-12px) scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
