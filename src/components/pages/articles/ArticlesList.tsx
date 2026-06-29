@@ -4,6 +4,7 @@ import { useSearchParams } from 'next/navigation';
 import ArticleGrid from '@/components/pages/articles/ArticleGrid';
 import Pagination from '@/components/pages/articles/Pagination';
 import TagFilter from '@/components/pages/articles/TagFilter';
+import { buildPageHref } from '@/utils/pageHref';
 import type { ArticleSummary } from '@/lib/posts';
 
 interface ArticlesListProps {
@@ -30,6 +31,10 @@ export default function ArticlesList({
             ? requested
             : 1;
     const start = (current - 1) * perPage;
+    // Keep the active tag on the URL when paging, so pagination stays scoped to
+    // the filtered set instead of dropping back to all articles.
+    const createHref = (page: number) =>
+        buildPageHref('/articles', searchParams, page);
 
     return (
         <>
@@ -49,6 +54,7 @@ export default function ArticlesList({
                     <Pagination
                         current={current}
                         total={totalPages}
+                        createHref={createHref}
                     />
                 </>
             )}

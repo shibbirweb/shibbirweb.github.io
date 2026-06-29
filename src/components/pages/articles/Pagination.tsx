@@ -1,10 +1,6 @@
 import Link from 'next/link';
 import { cn } from '@/utils/cn';
 
-function pageHref(page: number): string {
-    return page <= 1 ? '/articles' : `/articles?page=${page}`;
-}
-
 /**
  * Condensed page list: the first and last pages always show, along with the
  * current page and its immediate neighbours; gaps collapse to an ellipsis.
@@ -27,6 +23,8 @@ function getPageItems(current: number, total: number): (number | 'ellipsis')[] {
 interface PaginationProps {
     current: number;
     total: number;
+    /** Builds the href for a page number, preserving the active query params. */
+    createHref: (page: number) => string;
 }
 
 const itemBase =
@@ -34,7 +32,11 @@ const itemBase =
 const itemInactive =
     'border-foreground/15 text-foreground/70 hover:text-foreground hover:bg-foreground/5';
 
-export default function Pagination({ current, total }: PaginationProps) {
+export default function Pagination({
+    current,
+    total,
+    createHref,
+}: PaginationProps) {
     if (total <= 1) return null;
     const items = getPageItems(current, total);
 
@@ -45,7 +47,7 @@ export default function Pagination({ current, total }: PaginationProps) {
         >
             {current > 1 && (
                 <Link
-                    href={pageHref(current - 1)}
+                    href={createHref(current - 1)}
                     rel="prev"
                     className={cn(itemBase, itemInactive)}
                 >
@@ -67,7 +69,7 @@ export default function Pagination({ current, total }: PaginationProps) {
                 ) : (
                     <Link
                         key={item}
-                        href={pageHref(item)}
+                        href={createHref(item)}
                         aria-current={item === current ? 'page' : undefined}
                         className={cn(
                             itemBase,
@@ -82,7 +84,7 @@ export default function Pagination({ current, total }: PaginationProps) {
             )}
             {current < total && (
                 <Link
-                    href={pageHref(current + 1)}
+                    href={createHref(current + 1)}
                     rel="next"
                     className={cn(itemBase, itemInactive)}
                 >

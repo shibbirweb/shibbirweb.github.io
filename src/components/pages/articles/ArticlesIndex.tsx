@@ -6,6 +6,7 @@ import ArticleSearch from '@/components/pages/articles/ArticleSearch';
 import ArticlesList from '@/components/pages/articles/ArticlesList';
 import Pagination from '@/components/pages/articles/Pagination';
 import TagFilter from '@/components/pages/articles/TagFilter';
+import { buildPageHref } from '@/utils/pageHref';
 import { ARTICLES_PER_PAGE, type ArticleSummary } from '@/lib/posts';
 
 export default function ArticlesIndex({
@@ -48,6 +49,13 @@ export default function ArticlesIndex({
                         <Pagination
                             current={1}
                             total={totalPages}
+                            createHref={(page) =>
+                                buildPageHref(
+                                    '/articles',
+                                    new URLSearchParams(),
+                                    page
+                                )
+                            }
                         />
                     </>
                 }
