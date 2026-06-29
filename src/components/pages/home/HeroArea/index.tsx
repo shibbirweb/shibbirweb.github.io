@@ -1,5 +1,5 @@
-import GlitchFontSwap from '@/components/animations/GlitchFontSwap';
 import ShinyTextAnimation from '@/components/animations/ShinyTextAnimation';
+import HeroName from '@/components/pages/home/HeroArea/HeroName';
 import ScrollDownCue from '@/components/pages/home/HeroArea/ScrollDownCue';
 import SocialIcons from '@/components/pages/home/HeroArea/SocialIcons';
 import WithGridAnimatedBackgroundWrapper from '@/components/wrappers/WithGridAnimatedBackgroundWrapper';
@@ -19,8 +19,8 @@ export default function HeroArea() {
                     <div className="flex w-full grow flex-col items-center justify-center py-6">
                         <div className="flex flex-col gap-y-2 px-4 sm:gap-y-3 md:gap-y-4 lg:items-end lg:justify-center">
                             <ShinyTextAnimation>
-                                <h1 className="flex flex-wrap items-center justify-center gap-x-8 text-[length:clamp(2.75rem,14vw,6rem)] leading-none font-bold sm:text-8xl sm:leading-10 md:gap-x-12 md:text-9xl md:leading-12">
-                                    <GlitchFontSwap
+                                <h1 className="flex flex-wrap items-center justify-center gap-x-[0.25em] text-[length:clamp(2.75rem,14vw,6rem)] leading-none font-bold sm:text-8xl sm:leading-10 md:text-9xl md:leading-12">
+                                    <HeroName
                                         words={[
                                             personGivenName,
                                             personFamilyName,
