@@ -1,14 +1,19 @@
 'use client';
 
 import Search from '@/components/icons/search';
+import { jetBrainsMono } from '@/config/monoFont';
 import { useIsMac } from '@/components/pages/articles/ArticleSearch/hooks/useIsMac';
 import { cn } from '@/utils/cn';
 
+const keycap =
+    'border-foreground/15 bg-foreground/[0.04] text-foreground/55 group-hover:border-foreground/30 group-hover:text-foreground/80 inline-flex h-5 min-w-5 items-center justify-center rounded-md border border-b-2 px-1 font-mono text-[0.7rem] leading-none transition-colors';
+
 /**
- * The search affordance shown on the articles pages: a button that opens the
- * search modal, with its keyboard shortcut shown beside the icon (Cmd+K on
- * macOS, Ctrl+K elsewhere). Collapses to an icon-only circle on small screens,
- * where the shortcut hint is not useful.
+ * The search affordance on the articles pages: a button that opens the search
+ * modal. The keyboard shortcut sits beside the icon as mono keycaps (matching
+ * the terminal-path breadcrumb), separated by a divider so the icon and shortcut
+ * read as one designed control. Collapses to an icon-only key on small screens,
+ * where the shortcut is not useful.
  */
 export default function SearchTrigger({
     onClick,
@@ -17,7 +22,7 @@ export default function SearchTrigger({
     onClick: () => void;
     className?: string;
 }) {
-    const shortcut = useIsMac() ? '⌘K' : 'Ctrl K';
+    const keys = useIsMac() ? ['⌘', 'K'] : ['Ctrl', 'K'];
 
     return (
         <button
@@ -25,16 +30,27 @@ export default function SearchTrigger({
             onClick={onClick}
             aria-label="Search articles"
             aria-keyshortcuts="Control+K Meta+K"
-            title={`Search articles (${shortcut})`}
+            title="Search articles"
             className={cn(
-                'group border-foreground/15 text-foreground/60 hover:border-foreground/40 hover:text-foreground hover:bg-foreground/5 inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border transition-colors sm:w-auto sm:justify-start sm:gap-2 sm:pr-2 sm:pl-3.5',
+                jetBrainsMono.variable,
+                'group border-foreground/15 text-foreground/55 hover:border-foreground/40 hover:text-foreground hover:bg-foreground/[0.04] inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl border transition-colors sm:w-auto sm:justify-start sm:gap-2.5 sm:pr-2.5 sm:pl-3',
                 className
             )}
         >
             <Search className="size-5 shrink-0" />
-            <kbd className="border-foreground/20 text-foreground/50 group-hover:text-foreground/70 hidden rounded-md border px-1.5 py-0.5 text-xs font-medium transition-colors sm:inline-block">
-                {shortcut}
-            </kbd>
+            <span
+                aria-hidden="true"
+                className="border-foreground/10 hidden items-center gap-1 border-l pl-2.5 sm:flex"
+            >
+                {keys.map((key) => (
+                    <kbd
+                        key={key}
+                        className={keycap}
+                    >
+                        {key}
+                    </kbd>
+                ))}
+            </span>
         </button>
     );
 }
