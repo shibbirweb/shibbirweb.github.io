@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 360" role="img" aria-label="Cache-aside read path diagram: the app reads from Redis, falls back to the database on a miss, then writes the value back to the cache.">
+  <style>
+    .card { fill: #ffffff; }
+    .frame { fill: none; stroke: #e2e8f0; }
+    .box { fill: #f8fafc; stroke: #cbd5e1; }
+    .title { fill: #0f172a; font: 700 22px ui-sans-serif, system-ui, sans-serif; }
+    .sub { fill: #64748b; font: 400 14px ui-sans-serif, system-ui, sans-serif; }
+    .node { fill: #0f172a; font: 600 17px ui-sans-serif, system-ui, sans-serif; }
+    .node-sub { fill: #64748b; font: 400 12px ui-monospace, monospace; }
+    .legend { fill: #475569; font: 400 13px ui-sans-serif, system-ui, sans-serif; }
+    .badge { fill: #dc2626; }
+    .badge-text { fill: #ffffff; font: 700 12px ui-sans-serif, system-ui, sans-serif; }
+    .flow { stroke: #94a3b8; stroke-width: 2; fill: none; }
+    @media (prefers-color-scheme: dark) {
+      .card { fill: #0b1120; }
+      .frame { stroke: #1e293b; }
+      .box { fill: #111a2e; stroke: #334155; }
+      .title { fill: #e2e8f0; }
+      .sub { fill: #94a3b8; }
+      .node { fill: #e2e8f0; }
+      .node-sub { fill: #94a3b8; }
+      .legend { fill: #94a3b8; }
+      .flow { stroke: #475569; }
+    }
+  </style>
+
+  <defs>
+    <marker id="arrowR" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#94a3b8" />
+    </marker>
+  </defs>
+
+  <rect class="card" x="0" y="0" width="820" height="360" rx="16" />
+  <rect class="frame" x="1" y="1" width="818" height="358" rx="16" />
+
+  <text class="title" x="40" y="56">Cache-aside read path</text>
+  <text class="sub" x="40" y="82">The app owns the cache; the database stays the source of truth.</text>
+
+  <!-- Nodes -->
+  <g>
+    <rect class="box" x="50" y="150" width="180" height="84" rx="12" />
+    <text class="node" x="140" y="188" text-anchor="middle">App server</text>
+    <text class="node-sub" x="140" y="210" text-anchor="middle">request handler</text>
+
+    <rect class="box" x="320" y="150" width="180" height="84" rx="12" />
+    <text class="node" x="410" y="188" text-anchor="middle">Redis</text>
+    <text class="node-sub" x="410" y="210" text-anchor="middle">key → value, TTL</text>
+
+    <rect class="box" x="590" y="150" width="180" height="84" rx="12" />
+    <text class="node" x="680" y="188" text-anchor="middle">Database</text>
+    <text class="node-sub" x="680" y="210" text-anchor="middle">source of truth</text>
+  </g>
+
+  <!-- Flow arrows: top track points right (read + miss), bottom track points left (row + fill) -->
+  <path class="flow" d="M236 176 L308 176" marker-end="url(#arrowR)" />
+  <path class="flow" d="M506 176 L578 176" marker-end="url(#arrowR)" />
+  <path class="flow" d="M584 208 L512 208" marker-end="url(#arrowR)" />
+  <path class="flow" d="M314 208 L242 208" marker-end="url(#arrowR)" />
+
+  <!-- Step badges -->
+  <g>
+    <circle class="badge" cx="272" cy="160" r="11" /><text class="badge-text" x="272" y="164" text-anchor="middle">1</text>
+    <circle class="badge" cx="542" cy="160" r="11" /><text class="badge-text" x="542" y="164" text-anchor="middle">2</text>
+    <circle class="badge" cx="548" cy="224" r="11" /><text class="badge-text" x="548" y="228" text-anchor="middle">3</text>
+    <circle class="badge" cx="278" cy="224" r="11" /><text class="badge-text" x="278" y="228" text-anchor="middle">4</text>
+  </g>
+
+  <!-- Legend -->
+  <text class="legend" x="40" y="300">1 · read key   ·   2 · miss → query   ·   3 · row returned   ·   4 · set key (TTL) + return</text>
+</svg>

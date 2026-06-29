@@ -3,6 +3,16 @@ title: 'Prompt Engineering Patterns for Production'
 description: 'Reusable prompt structures that make model output predictable: role framing, few-shot examples, and structured output you can parse.'
 date: '2026-06-19'
 tags: ['AI', 'LLM', 'Prompt Engineering']
+category: 'AI Engineering'
+difficulty: 'Intermediate'
+tech: ['LLM', 'JSON Schema']
+series:
+    name: 'Building an LLM Knowledge System'
+    order: 2
+learn:
+    - 'How role framing steers a model toward the answer you want'
+    - 'When few-shot examples beat longer instructions'
+    - 'How to enforce structured output your code can parse safely'
 ---
 
 A prompt is an interface. In a demo you can tweak wording by feel, but in production you need structures that behave the same way every run. These patterns get you there.

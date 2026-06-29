@@ -4,13 +4,29 @@ import Breadcrumb from '@/components/layout/Breadcrumb';
 import ArticleContent from '@/components/pages/articles/ArticleContent';
 import ArticleCover from '@/components/pages/articles/ArticleCover';
 import ArticleGrid from '@/components/pages/articles/ArticleGrid';
+import ArticleMeta from '@/components/pages/articles/ArticleMeta';
+import ArticlePager from '@/components/pages/articles/ArticlePager';
+import ImageLightbox from '@/components/pages/articles/ImageLightbox';
+import ReadingProgress from '@/components/pages/articles/ReadingProgress';
+import SeriesNav from '@/components/pages/articles/SeriesNav';
+import TableOfContents from '@/components/pages/articles/TableOfContents';
+import MobileTableOfContents from '@/components/pages/articles/TableOfContents/MobileTableOfContents';
 import TagLink from '@/components/pages/articles/TagLink';
+import TechStack from '@/components/pages/articles/TechStack';
+import WhatYoullLearn from '@/components/pages/articles/WhatYoullLearn';
 import MermaidRenderer from '@/components/pages/articles/MermaidRenderer';
 import CodeBlockCopy from '@/components/pages/articles/CodeBlock';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { buildArticleJsonLd } from '@/utils/articleJsonLd';
-import { formatDate } from '@/utils/formatDate';
-import { getAllArticles, getArticle, getRelatedArticles } from '@/lib/posts';
+import { jetBrainsMono } from '@/config/monoFont';
+import { cn } from '@/utils/cn';
+import {
+    getAdjacentArticles,
+    getAllArticles,
+    getArticle,
+    getRelatedArticles,
+    getSeriesForArticle,
+} from '@/lib/posts';
 
 export const dynamicParams = false;
 
@@ -56,53 +72,101 @@ export default async function ArticlePage({
     if (!article) notFound();
 
     const related = getRelatedArticles(slug, 4);
-
-    const header = (
-        <header>
-            <p className="text-foreground/60 text-sm">
-                <time dateTime={article.date}>{formatDate(article.date)}</time>
-                {' · '}
-                {article.readingMinutes} min read
-            </p>
-            <h1 className="mt-3 text-3xl font-bold sm:text-4xl">
-                {article.title}
-            </h1>
-            <ul className="mt-6 flex flex-wrap gap-2">
-                {article.tags.map((tag) => (
-                    <TagLink
-                        key={tag}
-                        tag={tag}
-                        className="px-3 py-1 text-sm"
-                    />
-                ))}
-            </ul>
-            {article.description && (
-                <p className="text-foreground/80 mt-6 text-lg leading-relaxed">
-                    {article.description}
-                </p>
-            )}
-        </header>
-    );
+    const series = getSeriesForArticle(slug);
+    const { previous, next } = getAdjacentArticles(slug);
 
     return (
-        <main className="container mx-auto px-4 py-20 sm:py-28">
+        <main
+            className={cn(
+                jetBrainsMono.variable,
+                'container mx-auto px-4 py-20 sm:py-28'
+            )}
+        >
+            <ReadingProgress accentColors={article.coverColors} />
             <Breadcrumb currentName={article.title} />
+
             <article>
                 <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
                     <ArticleCover
                         src={article.cover}
                         className="h-auto rounded-2xl"
                     />
-                    {header}
+                    <header>
+                        <ArticleMeta
+                            date={article.date}
+                            updated={article.updated}
+                            readingMinutes={article.readingMinutes}
+                            difficulty={article.difficulty}
+                        />
+                        <h1 className="mt-4 text-3xl font-bold sm:text-4xl">
+                            {article.title}
+                        </h1>
+                        {article.description && (
+                            <p className="text-foreground/80 mt-5 text-lg leading-relaxed">
+                                {article.description}
+                            </p>
+                        )}
+                        <ul className="mt-6 flex flex-wrap gap-2">
+                            {article.tags.map((tag) => (
+                                <TagLink
+                                    key={tag}
+                                    tag={tag}
+                                    className="px-3 py-1 text-sm"
+                                />
+                            ))}
+                        </ul>
+                        {article.tech.length > 0 && (
+                            <TechStack
+                                tech={article.tech}
+                                className="mt-5"
+                            />
+                        )}
+                    </header>
                 </div>
 
                 <div className="via-foreground/50 mt-12 h-px bg-linear-to-r from-transparent to-transparent" />
 
-                <ArticleContent html={article.html} />
+                <div className="mt-12 lg:grid lg:grid-cols-[minmax(0,1fr)_15rem] lg:gap-12 xl:gap-16">
+                    <div className="min-w-0">
+                        {series && (
+                            <SeriesNav
+                                series={series}
+                                currentSlug={slug}
+                                accentColors={article.coverColors}
+                                className="mb-8"
+                            />
+                        )}
+                        {article.learn.length > 0 && (
+                            <WhatYoullLearn
+                                items={article.learn}
+                                accentColors={article.coverColors}
+                                className="mb-8"
+                            />
+                        )}
+                        <MobileTableOfContents
+                            toc={article.toc}
+                            accentColors={article.coverColors}
+                        />
 
-                <MermaidRenderer />
+                        <ArticleContent html={article.html} />
 
-                <CodeBlockCopy />
+                        <MermaidRenderer />
+                        <CodeBlockCopy />
+                        <ImageLightbox />
+
+                        <ArticlePager
+                            previous={previous}
+                            next={next}
+                        />
+                    </div>
+
+                    <aside className="hidden lg:block">
+                        <TableOfContents
+                            toc={article.toc}
+                            accentColors={article.coverColors}
+                        />
+                    </aside>
+                </div>
             </article>
 
             {related.length > 0 && (

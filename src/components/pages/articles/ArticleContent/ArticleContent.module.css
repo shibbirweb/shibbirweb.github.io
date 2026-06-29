@@ -196,6 +196,20 @@
     }
 }
 
+/* Anchored headings sit clear of the floating navbar and the reading-progress
+   bar when reached via a table-of-contents link (the TOC links to these ids). */
+.content :where(h2, h3) {
+    scroll-margin-top: 6rem;
+}
+
+/* Content images: a rounded hairline frame so screenshots and diagrams read as
+   deliberate figures. ImageLightbox adds the zoom cursor and click-to-expand on
+   the client; gist images keep their own styling. */
+.content :where(img):not(:where(.gist-embed *)) {
+    border-radius: 0.75rem;
+    border: 1px solid color-mix(in srgb, var(--foreground) 10%, transparent);
+}
+
 /* Mermaid source. On the client, MermaidRenderer hides this <pre> and replaces
    it with an interactive diagram; without JS the raw definition stays visible as
    a fallback. not-prose already strips Typography's code-block styling. */

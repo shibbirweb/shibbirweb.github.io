@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { createPortal } from 'react-dom';
 import CloseIcon from '@/components/icons/close';
+import { useModalChrome } from '@/components/pages/articles/hooks/useModalChrome';
 import MermaidIconButton from '@/components/pages/articles/MermaidRenderer/MermaidIconButton';
 import MermaidCopyButton from '@/components/pages/articles/MermaidRenderer/MermaidCopyButton';
 import MermaidStage from '@/components/pages/articles/MermaidRenderer/MermaidStage';
@@ -21,23 +22,7 @@ interface MermaidModalProps {
 export default function MermaidModal({ svg, source, onClose }: MermaidModalProps) {
     const closeRef = useRef<HTMLButtonElement>(null);
 
-    useEffect(() => {
-        const previouslyFocused = document.activeElement as HTMLElement | null;
-        const previousOverflow = document.body.style.overflow;
-        document.body.style.overflow = 'hidden';
-        closeRef.current?.focus();
-
-        const onKeyDown = (event: KeyboardEvent) => {
-            if (event.key === 'Escape') onClose();
-        };
-        document.addEventListener('keydown', onKeyDown);
-
-        return () => {
-            document.removeEventListener('keydown', onKeyDown);
-            document.body.style.overflow = previousOverflow;
-            previouslyFocused?.focus?.();
-        };
-    }, [onClose]);
+    useModalChrome(onClose, closeRef);
 
     return createPortal(
         <div

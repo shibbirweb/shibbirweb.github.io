@@ -2,8 +2,20 @@
 title: 'Building a RAG Pipeline with Qdrant and Gemini'
 description: 'A practical walkthrough of retrieval-augmented generation: chunking, embeddings, vector search with Qdrant, and grounding answers with Gemini.'
 date: '2026-06-20'
+updated: '2026-06-26'
 tags: ['AI', 'RAG', 'Qdrant', 'Embeddings']
 cover: '/images/articles/rag-pipeline-qdrant-gemini.svg'
+category: 'AI Engineering'
+difficulty: 'Advanced'
+tech: ['Qdrant', 'Gemini', 'Python', 'FastAPI']
+series:
+    name: 'Building an LLM Knowledge System'
+    order: 3
+learn:
+    - 'How to chunk documents so retrieval stays relevant'
+    - 'Storing and querying embeddings in Qdrant'
+    - 'Grounding Gemini answers in retrieved context to cut hallucinations'
+    - 'Wiring the retrieve-then-generate loop behind an API'
 ---
 
 Retrieval-augmented generation (RAG) grounds a language model in your own data, so answers stay accurate and current without retraining. Here is the pipeline I reach for.
