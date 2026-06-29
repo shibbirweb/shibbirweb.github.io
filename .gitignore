@@ -54,3 +54,8 @@ certificates
 
 # resume PDF copied from content/resume (build artifact)
 /public/resume-shibbir-ahmed.pdf
+
+# resume PDF source: ship only the .example.pdf placeholder and keep the real
+# resume (resume-shibbir-ahmed.pdf) untracked so it is never committed/exposed
+/content/resume/*.pdf
+!/content/resume/*.example.pdf

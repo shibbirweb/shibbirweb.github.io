@@ -1,8 +1,9 @@
 // Build-time copy of the resume PDF into `public/`. The site is statically
 // exported, so `content/` is not served; this mirrors `generate-covers.ts`.
-// When `content/resume/` holds a PDF we copy it to the served path so the
-// navbar's Resume item can link to it; when none exists we prune the public
-// copy so the served state matches `hasResume()`. Runs before `next dev`/build.
+// When `content/resume/` holds a real (non-`.example.pdf`) PDF we copy it to the
+// served path so the navbar's Resume item can link to it; when only a placeholder
+// (or nothing) is present we prune the public copy so the served state matches
+// `hasResume()`. Runs before `next dev`/build.
 
 import fs from 'node:fs';
 import path from 'node:path';
