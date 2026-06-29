@@ -44,12 +44,20 @@ export function useArticleSearchBox({
     const trimmedQuery = debouncedQuery.trim();
     const terms = useMemo(() => searchTerms(trimmedQuery), [trimmedQuery]);
 
-    const suggestions = useMemo(() => {
+    const matches = useMemo(() => {
         if (!trimmedQuery) return [];
-        return searchArticles(articles, trimmedQuery)
-            .slice(0, MAX_SUGGESTIONS)
-            .map((result) => result.article);
+        return searchArticles(articles, trimmedQuery).map(
+            (result) => result.article
+        );
     }, [articles, trimmedQuery]);
+
+    // The dropdown previews only the top matches; the full count is surfaced so
+    // the user knows how many articles Enter will reveal.
+    const suggestions = useMemo(
+        () => matches.slice(0, MAX_SUGGESTIONS),
+        [matches]
+    );
+    const resultCount = matches.length;
 
     const searchRowIndex = suggestions.length;
     const hasQuery = trimmedQuery.length > 0;
@@ -126,6 +134,7 @@ export function useArticleSearchBox({
         query,
         terms,
         suggestions,
+        resultCount,
         searchRowIndex,
         searchRowActive: activeIndex === searchRowIndex,
         activeIndex,

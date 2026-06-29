@@ -10,6 +10,9 @@ import styles from '@/components/pages/articles/ArticleSearch/SearchModal.module
 import { cn } from '@/utils/cn';
 import type { ArticleSummary } from '@/lib/posts';
 
+const kbd =
+    'border-foreground/20 text-foreground/50 inline-flex h-4 min-w-4 items-center justify-center rounded border px-1 text-[0.65rem]';
+
 /**
  * Command-palette style search over the pre-generated articles, shown above a
  * blurred backdrop. The input drives a debounced suggestion list (title and tag
@@ -107,19 +110,40 @@ export default function SearchModal({
                 </div>
 
                 {box.hasQuery ? (
-                    <SearchSuggestions
-                        listboxId={listboxId}
-                        optionId={optionId}
-                        query={box.query}
-                        terms={box.terms}
-                        suggestions={box.suggestions}
-                        activeIndex={box.activeIndex}
-                        searchRowIndex={box.searchRowIndex}
-                        searchRowActive={box.searchRowActive}
-                        onHighlight={box.highlightOption}
-                        onSelectArticle={box.goToArticle}
-                        onSearchAll={box.goToResults}
-                    />
+                    <>
+                        <SearchSuggestions
+                            listboxId={listboxId}
+                            optionId={optionId}
+                            query={box.query}
+                            terms={box.terms}
+                            suggestions={box.suggestions}
+                            activeIndex={box.activeIndex}
+                            searchRowIndex={box.searchRowIndex}
+                            searchRowActive={box.searchRowActive}
+                            onHighlight={box.highlightOption}
+                            onSelectArticle={box.goToArticle}
+                            onSearchAll={box.goToResults}
+                        />
+                        <div className="border-foreground/10 text-foreground/50 flex items-center justify-between gap-3 border-t px-4 py-2.5 text-xs">
+                            <span>
+                                <span className="text-foreground font-medium">
+                                    {box.resultCount}
+                                </span>{' '}
+                                {box.resultCount === 1 ? 'result' : 'results'}
+                            </span>
+                            <span className="hidden items-center gap-3 sm:flex">
+                                <span className="flex items-center gap-1.5">
+                                    <kbd className={kbd}>↑</kbd>
+                                    <kbd className={kbd}>↓</kbd>
+                                    to navigate
+                                </span>
+                                <span className="flex items-center gap-1.5">
+                                    <kbd className={kbd}>↵</kbd>
+                                    to open
+                                </span>
+                            </span>
+                        </div>
+                    </>
                 ) : (
                     <p className="text-foreground/50 px-4 py-6 text-sm">
                         Start typing to find an article by its title or a tag.
