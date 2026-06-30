@@ -1,5 +1,6 @@
 'use client';
 
+import { useRef } from 'react';
 import { cn } from '@/utils/cn';
 import MobileMenuButton from '@/components/layout/Navbar/MobileMenuButton';
 import MobileMenuPanel from '@/components/layout/Navbar/MobileMenuPanel';
@@ -7,6 +8,7 @@ import MobileWordmark from '@/components/layout/Navbar/MobileWordmark';
 import type { NavItemData } from '@/components/layout/Navbar/contents';
 import { useDisclosure } from '@/components/layout/Navbar/hooks/useDisclosure';
 import { useCloseOnEscape } from '@/components/layout/Navbar/hooks/useCloseOnEscape';
+import { useCloseOnClickOutside } from '@/components/layout/Navbar/hooks/useCloseOnClickOutside';
 import { useCloseOnRouteChange } from '@/components/layout/Navbar/hooks/useCloseOnRouteChange';
 
 interface MobileNavProps {
@@ -25,12 +27,15 @@ export default function MobileNav({
     isActive,
 }: MobileNavProps) {
     const { open, toggle, close } = useDisclosure();
+    const menuRef = useRef<HTMLDivElement>(null);
     useCloseOnEscape(open, close);
+    useCloseOnClickOutside(menuRef, open, close);
     useCloseOnRouteChange(close);
 
     return (
         <>
             <div
+                ref={menuRef}
                 className={cn(
                     'fixed top-4 right-4 z-50 transition-all duration-700 ease-in-out motion-reduce:transition-none md:hidden',
                     visible
@@ -38,13 +43,6 @@ export default function MobileNav({
                         : 'pointer-events-none invisible translate-x-24 opacity-0'
                 )}
             >
-                {open && (
-                    <div
-                        aria-hidden="true"
-                        onClick={close}
-                        className="fixed inset-0"
-                    />
-                )}
                 <MobileMenuButton
                     open={open}
                     onToggle={toggle}
