@@ -34,8 +34,8 @@ export default function MobileNav({
                 className={cn(
                     'fixed top-4 right-4 z-50 transition-all duration-500 ease-out motion-reduce:transition-none md:hidden',
                     visible
-                        ? 'visible translate-y-0 opacity-100'
-                        : 'pointer-events-none invisible -translate-y-24 opacity-0'
+                        ? 'visible translate-x-0 opacity-100'
+                        : 'pointer-events-none invisible translate-x-24 opacity-0'
                 )}
             >
                 {open && (
