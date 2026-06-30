@@ -19,7 +19,7 @@ export default function HeroArea() {
                     <div className="flex w-full grow flex-col items-center justify-center py-6">
                         <div className="flex flex-col gap-y-2 px-4 sm:gap-y-3 md:gap-y-4 lg:items-end lg:justify-center">
                             <ShinyTextAnimation>
-                                <h1 className="flex flex-wrap items-center justify-center gap-x-[0.25em] text-[length:clamp(2.75rem,14vw,6rem)] leading-none font-bold sm:text-8xl sm:leading-10 md:text-9xl md:leading-12">
+                                <h1 className="flex flex-wrap items-center justify-center gap-x-[0.25em] text-[length:clamp(2.75rem,14vw,6rem)] leading-none font-bold not-supports-[text-box-trim:trim-both]:!leading-[0.75] sm:text-8xl sm:leading-10 lg:text-9xl lg:leading-12">
                                     <HeroName
                                         words={[
                                             personGivenName,
