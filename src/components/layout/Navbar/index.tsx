@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import DesktopNav from '@/components/layout/Navbar/DesktopNav';
 import MobileNav from '@/components/layout/Navbar/MobileNav';
 import {
+    adminItem,
     articlesItem,
     heroId,
     pageItems,
@@ -18,9 +19,12 @@ import { useScrollSpy } from '@/components/layout/Navbar/hooks/useScrollSpy';
 export default function Navbar({
     hasArticles = false,
     hasResume = false,
+    adminEnabled = false,
 }: {
     hasArticles?: boolean;
     hasResume?: boolean;
+    /** Adds the dev-only Article Studio link; off in production builds. */
+    adminEnabled?: boolean;
 }) {
     const pathname = usePathname();
     const isHome = pathname === '/';
@@ -30,6 +34,7 @@ export default function Navbar({
         ...(hasArticles ? [articlesItem] : []),
         ...pageItems,
         ...(hasResume ? [resumeItem] : []),
+        ...(adminEnabled ? [adminItem] : []),
     ];
 
     const isActive = (item: NavItemData) =>

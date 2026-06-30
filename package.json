@@ -29,6 +29,7 @@
         "@types/node": "^20",
         "@types/react": "^19",
         "@types/react-dom": "^19",
+        "@types/turndown": "^5.0.6",
         "eslint": "^9",
         "eslint-config-next": "15.3.2",
         "eslint-config-prettier": "10.1.5",
@@ -37,6 +38,8 @@
         "schema-dts": "^1.1.5",
         "tailwindcss": "^4",
         "tsx": "^4.22.4",
+        "turndown": "^7.2.4",
+        "turndown-plugin-gfm": "^1.0.2",
         "typescript": "^5"
     }
 }

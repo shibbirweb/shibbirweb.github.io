@@ -128,6 +128,7 @@ export default function RootLayout({
                 <Navbar
                     hasArticles={hasArticles()}
                     hasResume={hasResume()}
+                    adminEnabled={process.env.NODE_ENV !== 'production'}
                 />
                 <div className="flex grow flex-col">{children}</div>
                 <Footer />

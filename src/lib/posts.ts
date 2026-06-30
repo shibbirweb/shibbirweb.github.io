@@ -447,12 +447,25 @@ function stringList(value: unknown): string[] {
         : [];
 }
 
+/**
+ * Render an article body (Markdown without frontmatter) into the exact HTML the
+ * production article page uses: Shiki-highlighted code blocks, inlined gists,
+ * Mermaid placeholders, and H2/H3 anchors plus the table of contents. The dev
+ * Article Studio renders its live preview through this same function so the
+ * preview is byte-for-byte what a published page would show.
+ */
+export async function renderArticleMarkdown(
+    content: string
+): Promise<{ html: string; toc: TocItem[] }> {
+    const rendered = await marked.parse(content);
+    return addHeadingIdsAndExtractToc(rendered);
+}
+
 /** A single rendered article, or null if the slug is missing or a draft. */
 export async function getArticle(slug: string): Promise<Article | null> {
     const article = readArticleFiles().find((item) => item.slug === slug);
     if (!article || article.data.draft === true) return null;
-    const rendered = await marked.parse(article.content);
-    const { html, toc } = addHeadingIdsAndExtractToc(rendered);
+    const { html, toc } = await renderArticleMarkdown(article.content);
     return {
         ...toSummary(article),
         html,

@@ -1,0 +1,51 @@
+@reference 'tailwindcss';
+
+/* The contentEditable writing surface. Prose typography is applied as utilities
+   on the element itself; this module owns the placeholder, the focus reset, and
+   the atomic embed widgets that prose styling does not cover. The project's
+   custom theme colours (foreground) are not available to @apply here, so they
+   are written as color-mix over var(--foreground), matching the other modules. */
+.editor {
+    @apply min-h-full outline-none;
+}
+
+.editor:focus {
+    @apply outline-none;
+}
+
+/* Placeholder on the empty first block (the hook toggles data-empty). The
+   float-left, zero-height trick sits the hint exactly where the caret is. */
+.editor[data-empty='true'] > :first-child::before {
+    content: 'Start writing, or use the toolbar to add a block';
+    @apply pointer-events-none float-left h-0;
+    color: color-mix(in oklab, var(--foreground) 35%, transparent);
+}
+
+/* Atomic, non-editable blocks (code / Mermaid / gist) that preserve their
+   source Markdown. Clicking one reopens its dedicated dialog to edit it. */
+.embed {
+    @apply my-5 cursor-pointer rounded-xl p-3 transition-colors;
+    border: 1px solid color-mix(in oklab, var(--foreground) 10%, transparent);
+    background: color-mix(in oklab, var(--foreground) 3%, transparent);
+}
+
+.embed:hover {
+    border-color: color-mix(in oklab, #8b5cf6 45%, transparent);
+    background: color-mix(in oklab, #8b5cf6 6%, transparent);
+}
+
+.embed [data-role='label'] {
+    @apply mb-2 flex items-center gap-1.5 font-mono text-xs font-semibold tracking-wide;
+    color: color-mix(in oklab, var(--foreground) 50%, transparent);
+}
+
+.embed [data-role='body'] {
+    @apply min-w-0;
+}
+
+.embed pre {
+    @apply m-0 max-h-52 overflow-auto rounded-lg p-3 font-mono text-xs leading-relaxed;
+    white-space: pre;
+    background: color-mix(in oklab, var(--foreground) 5%, transparent);
+    color: color-mix(in oklab, var(--foreground) 80%, transparent);
+}

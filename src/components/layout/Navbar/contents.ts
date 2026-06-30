@@ -32,6 +32,13 @@ export const resumeItem: NavItemData = {
     external: true,
 };
 
+// The dev-only Article Studio entry point. Only added to the nav in development
+// (see Navbar `adminEnabled`); production builds never include the admin routes.
+export const adminItem: NavItemData = {
+    label: 'Studio',
+    href: '/admin',
+};
+
 export const sectionIds = sectionItems.map((item) => item.sectionId as string);
 
 // id of the hero element on the home page; observed to toggle the navbar.
