@@ -20,7 +20,7 @@ export default function DesktopNav({
         <nav
             aria-label="Primary"
             className={cn(
-                'fixed top-4 left-1/2 z-50 hidden -translate-x-1/2 transition-all duration-500 ease-out motion-reduce:transition-none md:block',
+                'fixed top-4 left-1/2 z-50 hidden -translate-x-1/2 transition-all duration-700 ease-in-out motion-reduce:transition-none md:block',
                 visible
                     ? 'visible translate-y-0 opacity-100'
                     : 'pointer-events-none invisible -translate-y-24 opacity-0'

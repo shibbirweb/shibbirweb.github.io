@@ -32,7 +32,7 @@ export default function MobileNav({
         <>
             <div
                 className={cn(
-                    'fixed top-4 right-4 z-50 transition-all duration-500 ease-out motion-reduce:transition-none md:hidden',
+                    'fixed top-4 right-4 z-50 transition-all duration-700 ease-in-out motion-reduce:transition-none md:hidden',
                     visible
                         ? 'visible translate-x-0 opacity-100'
                         : 'pointer-events-none invisible translate-x-24 opacity-0'
