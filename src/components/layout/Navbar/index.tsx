@@ -12,6 +12,7 @@ import {
     sectionItems,
     type NavItemData,
 } from '@/components/layout/Navbar/contents';
+import { useHeroPassed } from '@/components/layout/Navbar/hooks/useHeroPassed';
 import { useNavbarVisibility } from '@/components/layout/Navbar/hooks/useNavbarVisibility';
 import { useScrollSpy } from '@/components/layout/Navbar/hooks/useScrollSpy';
 
@@ -25,6 +26,7 @@ export default function Navbar({
     const pathname = usePathname();
     const isHome = pathname === '/';
     const visible = useNavbarVisibility(isHome, heroId);
+    const brandVisible = useHeroPassed(isHome, heroId);
     const activeSection = useScrollSpy(sectionIds, isHome);
     const pages = [
         ...(hasArticles ? [articlesItem] : []),
@@ -41,6 +43,7 @@ export default function Navbar({
         <>
             <DesktopNav
                 visible={visible}
+                brandVisible={brandVisible}
                 sectionItems={sectionItems}
                 pageItems={pages}
                 isActive={isActive}
