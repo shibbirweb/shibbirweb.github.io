@@ -22,3 +22,8 @@ export function lockScrollSync(durationMs: number) {
 export function isScrollSyncLocked() {
     return Date.now() < unlockAt;
 }
+
+/** Milliseconds until the sync lock lifts, or 0 when it is not locked. */
+export function scrollSyncLockRemaining() {
+    return Math.max(0, unlockAt - Date.now());
+}
