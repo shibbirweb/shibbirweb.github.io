@@ -5,6 +5,8 @@ import type { NavItemData } from '@/components/layout/Navbar/contents';
 
 interface DesktopNavProps {
     visible: boolean;
+    /** Reveal the wordmark, once the hero name has scrolled ~50% out of view. */
+    brandVisible: boolean;
     sectionItems: NavItemData[];
     pageItems: NavItemData[];
     isActive: (item: NavItemData) => boolean;
@@ -12,6 +14,7 @@ interface DesktopNavProps {
 
 export default function DesktopNav({
     visible,
+    brandVisible,
     sectionItems,
     pageItems,
     isActive,
@@ -27,16 +30,23 @@ export default function DesktopNav({
             )}
         >
             <ul className="border-foreground/10 bg-background/60 flex items-center gap-0.5 rounded-full border px-2 py-1.5 shadow-lg shadow-black/5 backdrop-blur-lg">
-                <li>
+                <li className="flex items-center">
                     <NavLogo
                         collapsible
-                        className="text-foreground/80 hover:text-foreground block px-2 py-1.5 transition-colors"
+                        revealed={brandVisible}
+                        className={cn(
+                            'text-foreground/80 hover:text-foreground block py-1.5 transition-[padding,color] duration-500 ease-out motion-reduce:transition-none',
+                            brandVisible ? 'px-2' : 'px-0'
+                        )}
+                    />
+                    <span
+                        aria-hidden="true"
+                        className={cn(
+                            'bg-foreground/15 h-5 transition-[width,margin] duration-500 ease-out motion-reduce:transition-none',
+                            brandVisible ? 'mx-0.5 w-px' : 'mx-0 w-0'
+                        )}
                     />
                 </li>
-                <li
-                    aria-hidden="true"
-                    className="bg-foreground/15 mx-0.5 h-5 w-px"
-                />
                 {sectionItems.map((item) => (
                     <NavItem
                         key={item.href}

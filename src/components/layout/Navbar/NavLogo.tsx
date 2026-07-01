@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import type { MouseEvent } from 'react';
 import Shibbir from '@/components/icons/shibbir';
 import { lockScrollSync } from '@/components/layout/scrollSyncLock';
+import { cn } from '@/utils/cn';
 
 interface NavLogoProps {
     className?: string;
@@ -16,6 +17,12 @@ interface NavLogoProps {
      * md and lg breakpoints (around 768 to 1023px).
      */
     collapsible?: boolean;
+    /**
+     * Collapsible only: when false the wordmark collapses to zero width and fades
+     * out (the desktop bar hides it near the top of the home page so it does not
+     * duplicate the hero name, then reveals it once the hero has scrolled away).
+     */
+    revealed?: boolean;
 }
 
 /**
@@ -29,6 +36,7 @@ export default function NavLogo({
     className,
     onNavigate,
     collapsible = false,
+    revealed = true,
 }: NavLogoProps) {
     const pathname = usePathname();
 
@@ -63,7 +71,14 @@ export default function NavLogo({
                 // so the glyphs' 1px non-scaling stroke can render just past the
                 // box edge: that keeps the "S" and "D" rounded edges intact while
                 // still hiding "AHMED", which sits well beyond the margin.
-                <span className="block h-5 w-[4.8rem] overflow-clip [overflow-clip-margin:2px] transition-[width] duration-500 ease-out motion-reduce:transition-none lg:w-[8.92rem]">
+                <span
+                    className={cn(
+                        'block h-5 overflow-clip [overflow-clip-margin:2px] transition-[width,opacity] duration-500 ease-out motion-reduce:transition-none',
+                        revealed
+                            ? 'w-[4.8rem] opacity-100 lg:w-[8.92rem]'
+                            : 'w-0 opacity-0'
+                    )}
+                >
                     <Shibbir className="block h-5 w-[8.92rem] max-w-none" />
                 </span>
             ) : (
