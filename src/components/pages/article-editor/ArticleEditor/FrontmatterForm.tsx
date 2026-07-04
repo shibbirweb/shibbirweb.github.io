@@ -2,13 +2,13 @@
 
 import { useId } from 'react';
 import ChevronIcon from '@/components/icons/chevron';
+import { DIFFICULTIES } from '@/lib/articleSchema';
 import TagListInput from '@/components/pages/article-editor/ArticleEditor/TagListInput';
 import type {
     ArticleFrontmatter,
     EditorSuggestions,
 } from '@/components/pages/article-editor/ArticleEditor/types';
 
-const DIFFICULTIES = ['Beginner', 'Intermediate', 'Advanced'] as const;
 const inputClassName =
     'border-foreground/15 bg-background/60 mt-2 w-full rounded-xl border px-3 py-2.5 text-sm outline-none transition focus:border-foreground/40';
 
@@ -151,55 +151,87 @@ export default function FrontmatterForm({
                     />
                 </label>
 
-                <div className="border-foreground/10 grid gap-4 rounded-xl border p-4 sm:col-span-2 sm:grid-cols-[1fr_8rem]">
-                    <label>
-                        <span className="text-sm font-medium">Series</span>
+                <div className="border-foreground/10 grid gap-4 rounded-xl border p-4 sm:col-span-2">
+                    <label className="flex cursor-pointer items-center gap-2.5">
                         <input
-                            className={inputClassName}
-                            value={frontmatter.series?.name ?? ''}
-                            list={seriesListId}
-                            placeholder="Optional series name"
+                            type="checkbox"
+                            className="accent-foreground size-4 cursor-pointer"
+                            checked={!!frontmatter.series}
                             onChange={(event) =>
                                 onChange({
-                                    series: event.target.value
+                                    series: event.target.checked
                                         ? {
-                                              name: event.target.value,
+                                              name:
+                                                  frontmatter.series?.name ?? '',
                                               order:
-                                                  frontmatter.series?.order ??
-                                                  1,
+                                                  frontmatter.series?.order ?? 1,
                                           }
                                         : undefined,
                                 })
                             }
                         />
-                        <datalist id={seriesListId}>
-                            {suggestions.seriesNames.map((series) => (
-                                <option
-                                    key={series}
-                                    value={series}
+                        <span className="text-sm font-medium">
+                            Part of a series
+                        </span>
+                        <span className="text-foreground/45 text-xs">
+                            Links this article into a multi-part series
+                        </span>
+                    </label>
+
+                    {frontmatter.series && (
+                        <div className="grid gap-4 sm:grid-cols-[1fr_8rem]">
+                            <label>
+                                <span className="text-sm font-medium">
+                                    Series name
+                                </span>
+                                <input
+                                    className={inputClassName}
+                                    value={frontmatter.series.name}
+                                    list={seriesListId}
+                                    placeholder="e.g. Building an LLM Knowledge System"
+                                    onChange={(event) =>
+                                        onChange({
+                                            series: {
+                                                name: event.target.value,
+                                                order:
+                                                    frontmatter.series?.order ??
+                                                    1,
+                                            },
+                                        })
+                                    }
                                 />
-                            ))}
-                        </datalist>
-                    </label>
-                    <label>
-                        <span className="text-sm font-medium">Part</span>
-                        <input
-                            type="number"
-                            min="1"
-                            className={inputClassName}
-                            disabled={!frontmatter.series}
-                            value={frontmatter.series?.order ?? 1}
-                            onChange={(event) =>
-                                frontmatter.series &&
-                                onChange({
-                                    series: {
-                                        ...frontmatter.series,
-                                        order: Number(event.target.value) || 1,
-                                    },
-                                })
-                            }
-                        />
-                    </label>
+                                <datalist id={seriesListId}>
+                                    {suggestions.seriesNames.map((series) => (
+                                        <option
+                                            key={series}
+                                            value={series}
+                                        />
+                                    ))}
+                                </datalist>
+                            </label>
+                            <label>
+                                <span className="text-sm font-medium">Part</span>
+                                <input
+                                    type="number"
+                                    min="1"
+                                    className={inputClassName}
+                                    value={frontmatter.series.order}
+                                    onChange={(event) =>
+                                        onChange({
+                                            series: {
+                                                name:
+                                                    frontmatter.series?.name ??
+                                                    '',
+                                                order:
+                                                    Number(event.target.value) ||
+                                                    1,
+                                            },
+                                        })
+                                    }
+                                />
+                            </label>
+                        </div>
+                    )}
                 </div>
 
                 <div className="sm:col-span-2">
@@ -233,7 +265,7 @@ export default function FrontmatterForm({
                     <input
                         type="checkbox"
                         className="accent-foreground size-4 cursor-pointer"
-                        checked={frontmatter.draft}
+                        checked={frontmatter.draft ?? false}
                         onChange={(event) =>
                             onChange({ draft: event.target.checked })
                         }

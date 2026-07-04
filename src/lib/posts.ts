@@ -2,29 +2,26 @@ import fs from 'node:fs';
 import path from 'node:path';
 import matter from 'gray-matter';
 import { renderMarkdown, type TocItem } from '@/lib/markdown';
+import type {
+    ArticleDifficulty,
+    ArticleSeries as SeriesFrontmatter,
+} from '@/lib/articleSchema';
 import {
     coverGradientForSlug,
     generatedCoverPath,
 } from '@/utils/generateArticleCover';
 
-// Re-exported so existing `@/lib/posts` importers of the table-of-contents type
-// keep working after the renderer moved to `@/lib/markdown`.
+// Re-exported so existing `@/lib/posts` importers keep working after the
+// table-of-contents type moved to `@/lib/markdown` and the frontmatter types to
+// `@/lib/articleSchema`.
 export type { TocItem } from '@/lib/markdown';
+export type { ArticleDifficulty } from '@/lib/articleSchema';
 
 const ARTICLES_DIRECTORY = path.join(process.cwd(), 'content/articles');
 const PUBLIC_DIRECTORY = path.join(process.cwd(), 'public');
 
 /** How many articles are listed per page on the /articles index. */
 export const ARTICLES_PER_PAGE = 9;
-
-/** A self-rated difficulty, surfaced as a badge on the article header. */
-export type ArticleDifficulty = 'Beginner' | 'Intermediate' | 'Advanced';
-
-/** One article's place in a multi-part series, declared in its frontmatter. */
-interface SeriesFrontmatter {
-    name: string;
-    order: number;
-}
 
 interface Frontmatter {
     title?: string;

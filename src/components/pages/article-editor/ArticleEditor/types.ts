@@ -1,22 +1,11 @@
-export type ArticleDifficulty = 'Beginner' | 'Intermediate' | 'Advanced';
+// The frontmatter schema is the single source in `@/lib/articleSchema`; re-exported
+// here so editor components keep importing it from their local `types` module.
+export type {
+    ArticleDifficulty,
+    ArticleFrontmatter,
+} from '@/lib/articleSchema';
 
-export interface ArticleFrontmatter {
-    title: string;
-    description: string;
-    date: string;
-    updated?: string;
-    tags: string[];
-    cover?: string;
-    category?: string;
-    difficulty?: ArticleDifficulty;
-    tech: string[];
-    learn: string[];
-    series?: {
-        name: string;
-        order: number;
-    };
-    draft: boolean;
-}
+import type { ArticleFrontmatter } from '@/lib/articleSchema';
 
 export interface ArticleDraft {
     frontmatter: ArticleFrontmatter;
