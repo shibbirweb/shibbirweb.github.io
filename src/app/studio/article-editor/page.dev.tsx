@@ -8,9 +8,9 @@ export const metadata: Metadata = {
     robots: { index: false, follow: false },
 };
 
-// Thin placeholder for now. Steps 7-8 turn this into an async Server Component
-// that reads the filesystem (listArticles / getSuggestions) and threads the data
-// into <ArticleEditor />.
+// The editor renders its live preview client-side (useMarkdownPreview). Step 7
+// turns this into an async Server Component that reads the filesystem
+// (listArticles / getSuggestions) and threads the data into <ArticleEditor />.
 export default function ArticleEditorPage() {
     return <ArticleEditor />;
 }
