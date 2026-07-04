@@ -6,25 +6,41 @@ import FrontmatterForm from '@/components/pages/article-editor/ArticleEditor/Fro
 import MarkdownInput from '@/components/pages/article-editor/ArticleEditor/MarkdownInput';
 import SaveBar from '@/components/pages/article-editor/ArticleEditor/SaveBar';
 import { createEmptyDraft } from '@/components/pages/article-editor/ArticleEditor/contents';
+import { useArticleActions } from '@/components/pages/article-editor/ArticleEditor/hooks/useArticleActions';
 import { useUnsavedChangesWarning } from '@/components/pages/article-editor/ArticleEditor/hooks/useUnsavedChangesWarning';
-import {
-    MOCK_ARTICLE_LIST,
-    MOCK_SUGGESTIONS,
-    SAMPLE_DRAFT,
-} from '@/components/pages/article-editor/ArticleEditor/mockData';
-import type { ArticleDraft } from '@/components/pages/article-editor/ArticleEditor/types';
+import type {
+    ArticleDraft,
+    ArticleListItem,
+    EditorSuggestions,
+} from '@/components/pages/article-editor/ArticleEditor/types';
 import { slugifyHeading } from '@/lib/markdown';
 import { cn } from '@/utils/cn';
 
-export default function ArticleEditor() {
-    const [draft, setDraft] = useState<ArticleDraft>(SAMPLE_DRAFT);
-    const [savedDraft, setSavedDraft] = useState<ArticleDraft>(SAMPLE_DRAFT);
+/** The URL slug a file maps to: extension and `NN-` ordering prefix stripped. */
+function fileSlug(file: string): string {
+    return file.replace(/\.mdx?$/, '').replace(/^\d+-/, '');
+}
+
+export default function ArticleEditor({
+    existing,
+    suggestions: initialSuggestions,
+}: {
+    existing: ArticleListItem[];
+    suggestions: EditorSuggestions;
+}) {
+    const [draft, setDraft] = useState<ArticleDraft>(createEmptyDraft);
+    const [savedDraft, setSavedDraft] = useState<ArticleDraft>(draft);
     // null = the file name follows the title; a string is an author override.
     const [slugOverride, setSlugOverride] = useState<string | null>(null);
     const [savedSlugOverride, setSavedSlugOverride] = useState<string | null>(
         null
     );
     const [isPreviewVisible, setIsPreviewVisible] = useState(true);
+
+    const { articles, suggestions, saveState, save, open } = useArticleActions(
+        existing,
+        initialSuggestions
+    );
 
     const autoSlug = slugifyHeading(draft.frontmatter.title) || 'untitled-article';
     const slug = slugOverride ?? autoSlug;
@@ -50,6 +66,15 @@ export default function ArticleEditor() {
         );
     }
 
+    /** Point the save bar at a file's on-disk slug (override only when it differs). */
+    function syncSlugToFile(file: string, title: string) {
+        const onDisk = fileSlug(file);
+        const auto = slugifyHeading(title) || 'untitled-article';
+        const override = onDisk === auto ? null : onDisk;
+        setSlugOverride(override);
+        setSavedSlugOverride(override);
+    }
+
     function startNewArticle() {
         if (!confirmDiscard()) return;
         const next = createEmptyDraft();
@@ -59,17 +84,19 @@ export default function ArticleEditor() {
         setSavedSlugOverride(null);
     }
 
-    function openArticle(file: string) {
+    async function openArticle(file: string) {
         if (!confirmDiscard()) return;
-        // Real file loading lands in Step 7; the mock just acknowledges.
-        window.alert(`Mock open: ${file}. File loading lands in Step 7.`);
+        const loaded = await open(file);
+        setDraft(loaded);
+        setSavedDraft(loaded);
+        syncSlugToFile(file, loaded.frontmatter.title);
     }
 
-    function saveArticle() {
-        // Real filesystem save lands in Step 7; here we clear the dirty state.
+    async function saveArticle() {
+        const result = await save(draft, slug);
+        if (!result) return; // save failed; keep the dirty state for a retry
         setSavedDraft(draft);
-        setSavedSlugOverride(slugOverride);
-        window.alert('Mock save complete. Filesystem saving lands in Step 7.');
+        syncSlugToFile(result.file, draft.frontmatter.title);
     }
 
     return (
@@ -87,18 +114,20 @@ export default function ArticleEditor() {
                     Article Editor
                 </h1>
                 <p className="text-foreground/65 mt-3 max-w-3xl">
-                    Shape structured frontmatter and Markdown side by side. This
-                    milestone uses fixtures so the complete authoring flow can
-                    be reviewed before filesystem wiring begins.
+                    Shape structured frontmatter and Markdown side by side, then
+                    save straight to the content folder. Reads and writes the real
+                    article files through the dev server, with a live preview
+                    rendered by the same components the published site uses.
                 </p>
             </header>
 
             <SaveBar
-                existing={MOCK_ARTICLE_LIST}
+                existing={articles}
                 slug={slug}
                 isSlugAuto={slugOverride === null}
                 isPreviewVisible={isPreviewVisible}
                 isDirty={isDirty}
+                saveState={saveState}
                 onSlugChange={changeSlug}
                 onResetSlug={() => setSlugOverride(null)}
                 onNew={startNewArticle}
@@ -112,7 +141,7 @@ export default function ArticleEditor() {
             <div className="grid gap-6">
                 <FrontmatterForm
                     frontmatter={draft.frontmatter}
-                    suggestions={MOCK_SUGGESTIONS}
+                    suggestions={suggestions}
                     onChange={(patch) =>
                         setDraft((current) => ({
                             ...current,

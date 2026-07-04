@@ -94,10 +94,13 @@ export async function loadArticle(file: string): Promise<ArticleDraft> {
  * (`article_drafts` vs `articles`); an existing same-slug file in the target is
  * overwritten in place (its ordering prefix reused), otherwise the next prefix is
  * assigned. Toggling `draft` moves the file: any same-slug copy in the sibling
- * folder is removed.
+ * folder is removed. `slug` is the author's file-name override (from the save bar);
+ * it falls back to the title, and is re-slugified server-side so the written path
+ * is always confined and safe.
  */
 export async function saveArticle(
-    input: ArticleDraft
+    input: ArticleDraft,
+    slugOverride: string
 ): Promise<{ file: string; status: ArticleStatus }> {
     const status: ArticleStatus = input.frontmatter.draft
         ? 'draft'
@@ -107,7 +110,10 @@ export async function saveArticle(
     const siblingDirectory =
         status === 'draft' ? PUBLISHED_DIRECTORY : DRAFT_DIRECTORY;
 
-    const slug = slugifyHeading(input.frontmatter.title) || 'untitled-article';
+    const slug =
+        slugifyHeading(slugOverride) ||
+        slugifyHeading(input.frontmatter.title) ||
+        'untitled-article';
     // `slugifyHeading` only emits `[a-z0-9-]`; this guard makes the confinement
     // explicit and fails loudly if that ever changes.
     if (slug.includes('/') || slug.includes('..')) {

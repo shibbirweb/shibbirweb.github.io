@@ -1,5 +1,6 @@
 'use client';
 
+import type { SaveState } from '@/components/pages/article-editor/ArticleEditor/hooks/useArticleActions';
 import type { ArticleListItem } from '@/components/pages/article-editor/ArticleEditor/types';
 
 export default function SaveBar({
@@ -8,6 +9,7 @@ export default function SaveBar({
     isSlugAuto,
     isPreviewVisible,
     isDirty,
+    saveState,
     onSlugChange,
     onResetSlug,
     onNew,
@@ -20,6 +22,7 @@ export default function SaveBar({
     isSlugAuto: boolean;
     isPreviewVisible: boolean;
     isDirty: boolean;
+    saveState: SaveState;
     onSlugChange: (value: string) => void;
     onResetSlug: () => void;
     onNew: () => void;
@@ -27,6 +30,7 @@ export default function SaveBar({
     onSave: () => void;
     onTogglePreview: () => void;
 }) {
+    const isSaving = saveState.status === 'saving';
     return (
         <div className="border-foreground/10 bg-background/85 mb-6 flex flex-wrap items-center gap-3 rounded-2xl border p-3 shadow-lg backdrop-blur-xl">
             <div className="min-w-0 grow px-2">
@@ -122,11 +126,24 @@ export default function SaveBar({
             </button>
             <button
                 type="button"
-                className="bg-foreground text-background hover:bg-foreground/85 cursor-pointer rounded-xl px-4 py-2 text-sm font-semibold transition-colors"
+                className="bg-foreground text-background hover:bg-foreground/85 cursor-pointer rounded-xl px-4 py-2 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60"
+                disabled={isSaving}
                 onClick={onSave}
             >
-                Save draft
+                {isSaving ? 'Saving...' : 'Save'}
             </button>
+            {(saveState.status === 'saved' || saveState.status === 'error') && (
+                <p
+                    role="status"
+                    className={
+                        saveState.status === 'error'
+                            ? 'text-red-600 dark:text-red-400 w-full px-2 text-xs'
+                            : 'text-foreground/55 w-full px-2 text-xs'
+                    }
+                >
+                    {saveState.message}
+                </p>
+            )}
         </div>
     );
 }
