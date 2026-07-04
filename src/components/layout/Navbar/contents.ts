@@ -32,6 +32,12 @@ export const resumeItem: NavItemData = {
     external: true,
 };
 
+// Dev-only authoring tools, surfaced under a "Studio" dropdown. Gated on
+// NODE_ENV in Navbar so the group and its links never render in the built site.
+export const studioItems: NavItemData[] = [
+    { label: 'Article Editor', href: '/article-editor' },
+];
+
 export const sectionIds = sectionItems.map((item) => item.sectionId as string);
 
 // id of the hero element on the home page; observed to toggle the navbar.

@@ -1,6 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+import { isDevelopment } from '@/config/env';
 import DesktopNav from '@/components/layout/Navbar/DesktopNav';
 import MobileNav from '@/components/layout/Navbar/MobileNav';
 import {
@@ -10,6 +11,7 @@ import {
     resumeItem,
     sectionIds,
     sectionItems,
+    studioItems,
     type NavItemData,
 } from '@/components/layout/Navbar/contents';
 import { useHeroPassed } from '@/components/layout/Navbar/hooks/useHeroPassed';
@@ -33,6 +35,9 @@ export default function Navbar({
         ...pageItems,
         ...(hasResume ? [resumeItem] : []),
     ];
+    // Dev-only authoring tools. `isDevelopment` folds to a literal at build
+    // time, so the list is empty in production and the Studio group never renders.
+    const studio = isDevelopment ? studioItems : [];
 
     const isActive = (item: NavItemData) =>
         item.sectionId
@@ -46,6 +51,7 @@ export default function Navbar({
                 brandVisible={brandVisible}
                 sectionItems={sectionItems}
                 pageItems={pages}
+                studioItems={studio}
                 isActive={isActive}
             />
             <MobileNav
@@ -53,6 +59,7 @@ export default function Navbar({
                 isHome={isHome}
                 sectionItems={sectionItems}
                 pageItems={pages}
+                studioItems={studio}
                 isActive={isActive}
             />
         </>
