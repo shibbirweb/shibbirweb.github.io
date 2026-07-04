@@ -35,7 +35,7 @@ export const resumeItem: NavItemData = {
 // Dev-only authoring tools, surfaced under a "Studio" dropdown. Gated on
 // NODE_ENV in Navbar so the group and its links never render in the built site.
 export const studioItems: NavItemData[] = [
-    { label: 'Article Editor', href: '/article-editor' },
+    { label: 'Article Editor', href: '/studio/article-editor' },
 ];
 
 export const sectionIds = sectionItems.map((item) => item.sectionId as string);
