@@ -26,10 +26,10 @@ export const pageItems: NavItemData[] = [
 
 export const resumeItem: NavItemData = {
     label: 'Resume',
-    // The served copy of the content/resume PDF (matches resumePdfPublicPath in
-    // @/lib/resume); the nav item opens the file directly in a new tab.
-    href: '/resume-shibbir-ahmed.pdf',
-    external: true,
+    // The on-site resume page (src/app/resume); it has its own Download PDF
+    // (print) action. The static-PDF machinery in @/lib/resume is kept but no
+    // longer linked here.
+    href: '/resume',
 };
 
 // Dev-only authoring tools, surfaced under a "Studio" dropdown. Gated on

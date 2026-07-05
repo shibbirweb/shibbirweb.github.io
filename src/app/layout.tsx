@@ -25,7 +25,6 @@ import Footer from '@/components/layout/Footer';
 import PageGradientBackground from '@/components/backgrounds/PageGradientBackground';
 import { PageGradientProvider } from '@/components/backgrounds/PageGradientBackground/PageGradientProvider';
 import { hasArticles } from '@/lib/posts';
-import { hasResume } from '@/lib/resume';
 import { notoSans } from '@/config/fonts';
 
 export const metadata: Metadata = {
@@ -127,15 +126,16 @@ export default function RootLayout({
                 <GoogleTagManager gtmId={googleTagManagerId} />
             )}
             <body
-                className={`${notoSans.variable} bg-background relative flex min-h-svh flex-col text-base antialiased`}
+                className={`${notoSans.variable} bg-background relative flex min-h-svh flex-col text-base antialiased print:bg-white!`}
             >
                 <PageGradientProvider>
                     <PageGradientBackground />
                     <HashScroll />
-                    <Navbar
-                        hasArticles={hasArticles()}
-                        hasResume={hasResume()}
-                    />
+                    {/* Site chrome is hidden in print so pages (e.g. /resume)
+                        save as a clean document. */}
+                    <div className="print:hidden">
+                        <Navbar hasArticles={hasArticles()} />
+                    </div>
                     <div className="flex grow flex-col">{children}</div>
                     <Footer />
                 </PageGradientProvider>

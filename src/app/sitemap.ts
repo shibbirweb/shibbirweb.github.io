@@ -29,6 +29,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
             changeFrequency: 'monthly',
             priority: 0.7,
         },
+        {
+            url: `${siteURL}/resume`,
+            lastModified: now,
+            changeFrequency: 'monthly',
+            priority: 0.7,
+        },
     ];
 
     if (articles.length === 0) return entries;
