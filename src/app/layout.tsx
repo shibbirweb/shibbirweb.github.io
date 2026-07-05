@@ -18,6 +18,7 @@ import {
 } from '@/config/constants';
 import { GoogleTagManager } from '@next/third-parties/google';
 import { JsonLdScript } from '@/components/seo/JsonLdScript';
+import { ThemeScript } from '@/components/layout/ThemeToggle/ThemeScript';
 import HashScroll from '@/components/layout/HashScroll';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -103,8 +104,12 @@ export default function RootLayout({
         <html
             lang="en"
             className="scroll-smooth"
+            suppressHydrationWarning
         >
             <head>
+                {/* Applies the saved theme before first paint (no flash). Must be
+                    first in <head> and runs in every environment. */}
+                <ThemeScript />
                 <meta
                     name="apple-mobile-web-app-title"
                     content={siteName}

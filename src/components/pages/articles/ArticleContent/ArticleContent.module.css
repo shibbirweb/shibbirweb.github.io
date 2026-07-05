@@ -13,8 +13,9 @@
 }
 
 /* Shiki code blocks. Shiki emits per-token --shiki-light / --shiki-dark custom
-   properties; we apply the light palette by default and the dark palette under
-   prefers-color-scheme so code matches the site theme in both modes. */
+   properties; the light palette is applied by default and the dark palette when
+   the resolved theme is dark (data-theme, set by the switcher) or, without JS,
+   when the OS prefers dark. See globals.css for why light-dark() is avoided. */
 .content :global(.shiki) {
     background-color: var(--shiki-light-bg);
 }
@@ -75,17 +76,30 @@
     white-space: nowrap;
     color: color-mix(in srgb, var(--foreground) 80%, transparent);
 }
+
+/* Dark Shiki palette: the OS media query is the no-JS fallback; the resolved
+   data-theme is what the switcher drives. */
 @media (prefers-color-scheme: dark) {
-    .content :global(.shiki) {
+    :global(html:not([data-theme])) .content :global(.shiki) {
         background-color: var(--shiki-dark-bg);
     }
-    .content :global(.shiki),
-    .content :global(.shiki) span {
+    :global(html:not([data-theme])) .content :global(.shiki),
+    :global(html:not([data-theme])) .content :global(.shiki) span {
         color: var(--shiki-dark);
     }
-    .content :global(.code-block) {
+    :global(html:not([data-theme])) .content :global(.code-block) {
         background-color: var(--shiki-dark-bg);
     }
+}
+:global(html[data-theme='dark']) .content :global(.shiki) {
+    background-color: var(--shiki-dark-bg);
+}
+:global(html[data-theme='dark']) .content :global(.shiki),
+:global(html[data-theme='dark']) .content :global(.shiki) span {
+    color: var(--shiki-dark);
+}
+:global(html[data-theme='dark']) .content :global(.code-block) {
+    background-color: var(--shiki-dark-bg);
 }
 
 /* Embedded GitHub gists. GitHub's gist-embed stylesheet references Primer
@@ -118,82 +132,83 @@
 }
 
 /* GitHub's gist-embed stylesheet ships only a light palette (chrome via tokens,
-   syntax via hardcoded github-light hex). In dark mode we repaint the gist with
-   GitHub's github-dark colors so it matches the site theme. Selectors are kept
-   specific enough to win over GitHub's linked stylesheet. */
-@media (prefers-color-scheme: dark) {
-    .content :global(.gist-embed .gist-file) {
-        border-color: #30363d;
-    }
-    .content :global(.gist-embed .gist-data) {
-        background-color: #0d1117;
-        border-bottom-color: #30363d;
-    }
-    .content :global(.gist-embed .highlight) {
-        background: #0d1117;
-    }
-    .content :global(.gist-embed .blob-num) {
-        color: #6e7681;
-        background-color: #0d1117;
-    }
-    .content :global(.gist-embed .blob-code-inner) {
-        color: #e6edf3;
-    }
-    .content :global(.gist-embed .gist-meta) {
-        background-color: #161b22;
-    }
-    .content :global(.gist-embed .gist-meta a) {
-        color: #8b949e;
-    }
+   syntax via hardcoded github-light hex). When the resolved theme is dark we
+   repaint the gist with GitHub's github-dark colors so it matches the site theme.
+   Selectors are kept specific enough to win over GitHub's linked stylesheet.
+   Unlike the other surfaces this keyed only on data-theme (not also the OS media
+   query): the ~30 selectors are not worth duplicating for the rare no-JS case,
+   where the gist harmlessly stays in GitHub's readable light theme. */
+:global(html[data-theme='dark']) .content :global(.gist-embed .gist-file) {
+    border-color: #30363d;
+}
+:global(html[data-theme='dark']) .content :global(.gist-embed .gist-data) {
+    background-color: #0d1117;
+    border-bottom-color: #30363d;
+}
+:global(html[data-theme='dark']) .content :global(.gist-embed .highlight) {
+    background: #0d1117;
+}
+:global(html[data-theme='dark']) .content :global(.gist-embed .blob-num) {
+    color: #6e7681;
+    background-color: #0d1117;
+}
+:global(html[data-theme='dark']) .content :global(.gist-embed .blob-code-inner) {
+    color: #e6edf3;
+}
+:global(html[data-theme='dark']) .content :global(.gist-embed .gist-meta) {
+    background-color: #161b22;
+}
+:global(html[data-theme='dark']) .content :global(.gist-embed .gist-meta a) {
+    color: #8b949e;
+}
 
-    /* github-dark syntax palette (mirrors GitHub's grouped selectors) */
-    .content :global(.gist-embed .pl-c),
-    .content :global(.gist-embed .pl-ba) {
-        color: #8b949e;
-    }
-    .content :global(.gist-embed .pl-sg) {
-        color: #6e7681;
-    }
-    .content :global(.gist-embed .pl-k) {
-        color: #ff7b72;
-    }
-    .content :global(.gist-embed .pl-c1),
-    .content :global(.gist-embed .pl-s .pl-v),
-    .content :global(.gist-embed .pl-mh),
-    .content :global(.gist-embed .pl-ms) {
-        color: #79c0ff;
-    }
-    .content :global(.gist-embed .pl-e),
-    .content :global(.gist-embed .pl-en),
-    .content :global(.gist-embed .pl-mdr) {
-        color: #d2a8ff;
-    }
-    .content :global(.gist-embed .pl-ent),
-    .content :global(.gist-embed .pl-mi1) {
-        color: #7ee787;
-    }
-    .content :global(.gist-embed .pl-v),
-    .content :global(.gist-embed .pl-smw) {
-        color: #ffa657;
-    }
-    .content :global(.gist-embed .pl-s),
-    .content :global(.gist-embed .pl-pds),
-    .content :global(.gist-embed .pl-sr),
-    .content :global(.gist-embed .pl-sr .pl-sra),
-    .content :global(.gist-embed .pl-corl) {
-        color: #a5d6ff;
-    }
-    .content :global(.gist-embed .pl-smi),
-    .content :global(.gist-embed .pl-s .pl-s1) {
-        color: #c9d1d9;
-    }
-    .content :global(.gist-embed .pl-ml) {
-        color: #f2cc60;
-    }
-    .content :global(.gist-embed .pl-bu),
-    .content :global(.gist-embed .pl-md) {
-        color: #f85149;
-    }
+/* github-dark syntax palette (mirrors GitHub's grouped selectors) */
+:global(html[data-theme='dark']) .content :global(.gist-embed .pl-c),
+:global(html[data-theme='dark']) .content :global(.gist-embed .pl-ba) {
+    color: #8b949e;
+}
+:global(html[data-theme='dark']) .content :global(.gist-embed .pl-sg) {
+    color: #6e7681;
+}
+:global(html[data-theme='dark']) .content :global(.gist-embed .pl-k) {
+    color: #ff7b72;
+}
+:global(html[data-theme='dark']) .content :global(.gist-embed .pl-c1),
+:global(html[data-theme='dark']) .content :global(.gist-embed .pl-s .pl-v),
+:global(html[data-theme='dark']) .content :global(.gist-embed .pl-mh),
+:global(html[data-theme='dark']) .content :global(.gist-embed .pl-ms) {
+    color: #79c0ff;
+}
+:global(html[data-theme='dark']) .content :global(.gist-embed .pl-e),
+:global(html[data-theme='dark']) .content :global(.gist-embed .pl-en),
+:global(html[data-theme='dark']) .content :global(.gist-embed .pl-mdr) {
+    color: #d2a8ff;
+}
+:global(html[data-theme='dark']) .content :global(.gist-embed .pl-ent),
+:global(html[data-theme='dark']) .content :global(.gist-embed .pl-mi1) {
+    color: #7ee787;
+}
+:global(html[data-theme='dark']) .content :global(.gist-embed .pl-v),
+:global(html[data-theme='dark']) .content :global(.gist-embed .pl-smw) {
+    color: #ffa657;
+}
+:global(html[data-theme='dark']) .content :global(.gist-embed .pl-s),
+:global(html[data-theme='dark']) .content :global(.gist-embed .pl-pds),
+:global(html[data-theme='dark']) .content :global(.gist-embed .pl-sr),
+:global(html[data-theme='dark']) .content :global(.gist-embed .pl-sr .pl-sra),
+:global(html[data-theme='dark']) .content :global(.gist-embed .pl-corl) {
+    color: #a5d6ff;
+}
+:global(html[data-theme='dark']) .content :global(.gist-embed .pl-smi),
+:global(html[data-theme='dark']) .content :global(.gist-embed .pl-s .pl-s1) {
+    color: #c9d1d9;
+}
+:global(html[data-theme='dark']) .content :global(.gist-embed .pl-ml) {
+    color: #f2cc60;
+}
+:global(html[data-theme='dark']) .content :global(.gist-embed .pl-bu),
+:global(html[data-theme='dark']) .content :global(.gist-embed .pl-md) {
+    color: #f85149;
 }
 
 /* Anchored headings sit clear of the floating navbar and the reading-progress
@@ -268,22 +283,39 @@
 .content :global(.markdown-alert-caution) {
     --alert-accent: #cf222e;
 }
+/* github-dark accents: OS media query is the no-JS fallback, data-theme is the
+   switcher-driven override. */
 @media (prefers-color-scheme: dark) {
-    .content :global(.markdown-alert-note) {
+    :global(html:not([data-theme])) .content :global(.markdown-alert-note) {
         --alert-accent: #4493f8;
     }
-    .content :global(.markdown-alert-tip) {
+    :global(html:not([data-theme])) .content :global(.markdown-alert-tip) {
         --alert-accent: #3fb950;
     }
-    .content :global(.markdown-alert-important) {
+    :global(html:not([data-theme])) .content :global(.markdown-alert-important) {
         --alert-accent: #ab7df8;
     }
-    .content :global(.markdown-alert-warning) {
+    :global(html:not([data-theme])) .content :global(.markdown-alert-warning) {
         --alert-accent: #d29922;
     }
-    .content :global(.markdown-alert-caution) {
+    :global(html:not([data-theme])) .content :global(.markdown-alert-caution) {
         --alert-accent: #f85149;
     }
+}
+:global(html[data-theme='dark']) .content :global(.markdown-alert-note) {
+    --alert-accent: #4493f8;
+}
+:global(html[data-theme='dark']) .content :global(.markdown-alert-tip) {
+    --alert-accent: #3fb950;
+}
+:global(html[data-theme='dark']) .content :global(.markdown-alert-important) {
+    --alert-accent: #ab7df8;
+}
+:global(html[data-theme='dark']) .content :global(.markdown-alert-warning) {
+    --alert-accent: #d29922;
+}
+:global(html[data-theme='dark']) .content :global(.markdown-alert-caution) {
+    --alert-accent: #f85149;
 }
 
 /* Tables. renderMarkdown wraps each <table> in a .table-scroll.not-prose div, so
@@ -355,9 +387,12 @@
     background-color: color-mix(in srgb, #f8e3a1 70%, transparent);
 }
 @media (prefers-color-scheme: dark) {
-    .content mark {
+    :global(html:not([data-theme])) .content mark {
         background-color: color-mix(in srgb, #d29922 40%, transparent);
     }
+}
+:global(html[data-theme='dark']) .content mark {
+    background-color: color-mix(in srgb, #d29922 40%, transparent);
 }
 
 /* Sub/superscript keep a stable line height so they do not disturb the leading. */

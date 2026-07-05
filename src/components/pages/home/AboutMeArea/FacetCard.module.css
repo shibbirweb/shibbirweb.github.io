@@ -36,11 +36,18 @@
 }
 
 @media (prefers-color-scheme: dark) {
-    .glow {
+    :global(html:not([data-theme])) .glow {
         background: radial-gradient(
             120% 120% at var(--facet-origin),
             color-mix(in oklab, var(--facet-accent) 32%, transparent) 0%,
             transparent 64%
         );
     }
+}
+:global(html[data-theme='dark']) .glow {
+    background: radial-gradient(
+        120% 120% at var(--facet-origin),
+        color-mix(in oklab, var(--facet-accent) 32%, transparent) 0%,
+        transparent 64%
+    );
 }

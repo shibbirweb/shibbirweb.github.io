@@ -11,13 +11,16 @@
     --tint-strength: 8%;
 }
 
+/* A translucent colour over near-black reads much dimmer than over the light
+   background, so dark mode needs a higher mix to stay visible while still feeling
+   soft. Mirrored on the OS media query for the no-JS fallback. */
 @media (prefers-color-scheme: dark) {
-    .card {
-        /* A translucent colour over near-black reads much dimmer than over the
-           light background, so dark mode needs a higher mix to stay visible
-           while still feeling soft. */
+    :global(html:not([data-theme])) .card {
         --tint-strength: 14%;
     }
+}
+:global(html[data-theme='dark']) .card {
+    --tint-strength: 14%;
 }
 
 .card::before {

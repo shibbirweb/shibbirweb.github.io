@@ -1,6 +1,7 @@
 import { cn } from '@/utils/cn';
 import NavItem from '@/components/layout/Navbar/NavItem';
 import NavLogo from '@/components/layout/Navbar/NavLogo';
+import ThemeToggle from '@/components/layout/ThemeToggle';
 import type { NavItemData } from '@/components/layout/Navbar/contents';
 
 interface MobileMenuPanelProps {
@@ -27,7 +28,11 @@ export default function MobileMenuPanel({
         <nav
             aria-label="Primary"
             className={cn(
-                'border-foreground/10 bg-background/70 absolute top-full right-0 mt-2 w-56 origin-top-right rounded-2xl border p-2 shadow-xl shadow-black/10 backdrop-blur-lg transition-all duration-200 ease-out',
+                // Cap the height to the space below the button so a long list
+                // (sections + pages + studio + theme) scrolls within the panel
+                // instead of running off short screens; dvh tracks the mobile
+                // browser chrome, overscroll-contain stops scroll chaining.
+                'border-foreground/10 bg-background/70 absolute top-full right-0 mt-2 max-h-[calc(100dvh-5.5rem)] w-56 origin-top-right overflow-y-auto overscroll-contain rounded-2xl border p-2 shadow-xl shadow-black/10 backdrop-blur-lg transition-all duration-200 ease-out',
                 open
                     ? 'visible scale-100 opacity-100'
                     : 'pointer-events-none invisible scale-95 opacity-0'
@@ -102,6 +107,14 @@ export default function MobileMenuPanel({
                     </ul>
                 </>
             )}
+            <div
+                aria-hidden="true"
+                className="bg-foreground/10 my-1 h-px"
+            />
+            <div className="flex items-center justify-between px-4 py-2">
+                <span className="text-foreground/60 text-sm">Theme</span>
+                <ThemeToggle />
+            </div>
         </nav>
     );
 }
