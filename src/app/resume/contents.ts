@@ -32,7 +32,7 @@ export const resumeSections: ResumeSectionData[] = [
     {
         kind: 'text',
         label: 'Summary',
-        text: 'Senior Full-Stack Software Engineer with 7+ years building and scaling high-performance web applications. Deep experience in PHP/Laravel and modern JavaScript (Vue, Nuxt, React, Node/TypeScript), now focused on AI engineering with the Anthropic Claude API, MCP, and LLM-powered product features. Leads teams, owns systems end to end, and ships reliable production software.',
+        text: 'Senior Full-Stack Software Engineer with 7+ years shipping scalable, high-performance web applications in PHP/Laravel and modern JavaScript (Vue, Nuxt, React, Node/TypeScript). Leads engineering teams, owns products end to end, and designs REST APIs, queue-based pipelines, and event-driven backends. Now building AI products on the Anthropic Claude API and MCP, from in-app assistants to tool and function calling. Focused on system design, performance, and reliable delivery.',
     },
     {
         kind: 'skills',
@@ -51,9 +51,11 @@ export const resumeSections: ResumeSectionData[] = [
                     'Node.js',
                     'Express',
                     'REST APIs',
+                    'Queue Processing (Horizon)',
                     'Sanctum',
                     'OAuth2',
                     'JWT',
+                    'Socket.io',
                 ],
             },
             {
@@ -76,20 +78,29 @@ export const resumeSections: ResumeSectionData[] = [
             },
             {
                 label: 'AI',
-                values: ['Anthropic Claude API', 'MCP', 'LLMs'],
+                values: [
+                    'Anthropic Claude API',
+                    'MCP (Model Context Protocol)',
+                    'LLM Integration',
+                    'Prompt Engineering',
+                    'Tool / Function Calling',
+                ],
             },
             {
-                label: 'Cloud & Tools',
+                label: 'DevOps & Cloud',
+                values: ['Docker', 'AWS S3', 'CI/CD', 'Sentry', 'Git'],
+            },
+            {
+                label: 'Tools',
                 values: [
-                    'AWS S3',
-                    'Docker',
-                    'Twilio',
-                    'Mailgun',
-                    'Sentry',
-                    'Capacitor (iOS)',
-                    'WordPress',
-                    'Git',
+                    'GitHub',
                     'Jira',
+                    'Agile',
+                    'Capacitor (iOS)',
+                    'Mailgun',
+                    'Twilio',
+                    'reCAPTCHA',
+                    'WordPress',
                 ],
             },
         ],
@@ -107,11 +118,12 @@ export const resumeSections: ResumeSectionData[] = [
                         role: 'Senior Software Engineer',
                         period: 'Oct 2024 - Present',
                         highlights: [
-                            'Lead a team of 3 engineers while shipping 180+ features and fixes to production (55,000+ lines of code) across 5 applications in 21 months.',
-                            'Integrated 2 US Communicating With Congress systems (HCWC federal, SCWC state), delivering constituent advocacy messages directly to legislator offices.',
-                            'Engineered AI features on the Anthropic Claude API: an in-app assistant powered by a custom MCP server with 7 legislator-data tools, plus 4 internal MCP developer tools.',
-                            'Fixed 300+ production bugs via Sentry monitoring, including congressional delivery failures resolved across 3 services; secured public flows with Twilio SMS OTP, OAuth2, reCAPTCHA v3/v2, and SQL injection remediation.',
-                            "Launched the platform's iOS app (Capacitor 8) and drove App Store submission readiness.",
+                            'Led a team of 3 engineers, shipping 180+ production features and fixes (55,000+ lines of code) across 5 applications in 21 months.',
+                            'Integrated 2 US Communicating With Congress systems (HCWC federal, SCWC state) to deliver constituent advocacy messages directly to legislator offices.',
+                            'Built AI features on the Anthropic Claude API: an in-app assistant backed by a custom MCP server exposing 7 legislator-data tools, plus 4 internal MCP developer tools.',
+                            'Resolved 300+ production bugs via Sentry monitoring, including congressional delivery failures fixed across 3 services.',
+                            'Hardened public-facing flows with Twilio SMS OTP, OAuth2, reCAPTCHA v3/v2, and SQL-injection remediation.',
+                            'Launched the platform iOS app with Capacitor 8 and drove App Store submission readiness.',
                         ],
                         tech: [
                             'PHP (Laravel)',
@@ -147,10 +159,10 @@ export const resumeSections: ResumeSectionData[] = [
                         role: 'Senior Full Stack Developer',
                         period: 'Feb 2024 - Oct 2024',
                         highlights: [
-                            'Built web applications with Nuxt.js and Vue (Vue CLI), writing efficient, optimized, testable, and reusable code.',
-                            'Evaluated client specifications and project requirements, translating them into delivered features.',
-                            'Owned UI page design and development standards; adapted and enhanced existing code.',
-                            'Built internal snippets and tools to speed up team workflow and resolved new technical challenges as they arose.',
+                            'Developed client-facing web applications with Nuxt.js and Vue, delivering efficient, reusable, and testable code.',
+                            'Translated client specifications and project requirements into shipped, production-ready features.',
+                            'Owned UI design and development standards across the frontend and refactored legacy code for maintainability.',
+                            'Built internal tooling and reusable components that streamlined team workflow.',
                         ],
                         tech: [
                             'Nuxt.js',
@@ -165,8 +177,8 @@ export const resumeSections: ResumeSectionData[] = [
                         role: 'Full Stack Developer',
                         period: 'Mar 2023 - Jan 2024',
                         highlights: [
-                            'Developed and maintained web application features across the stack.',
-                            'Improved existing code and handled additional operational tasks as needed.',
+                            'Developed and maintained full-stack web application features across the product.',
+                            'Refactored and improved existing code and supported ongoing operational needs.',
                         ],
                     },
                 ],
@@ -180,10 +192,10 @@ export const resumeSections: ResumeSectionData[] = [
                         role: 'Senior Web Developer',
                         period: 'Oct 2019 - Feb 2023',
                         highlights: [
-                            'Developed web applications with PHP/Laravel and Vue.js (Vue CLI).',
-                            'Analyzed client requirements and translated them into project deliverables.',
-                            'Built efficient, optimized, testable, and reusable code.',
-                            'Executed and monitored UI design and development standards.',
+                            'Built PHP/Laravel and Vue.js web applications from requirements through production delivery.',
+                            'Analyzed client requirements and translated them into shipped deliverables.',
+                            'Delivered efficient, optimized, testable, and reusable code.',
+                            'Established and monitored UI design and development standards.',
                         ],
                         tech: [
                             'PHP',
@@ -198,7 +210,7 @@ export const resumeSections: ResumeSectionData[] = [
                         role: 'Web Developer, Internship',
                         period: 'Oct 2018 - Sep 2019',
                         highlights: [
-                            'Assisted in building web application features and performed operational tasks as required.',
+                            'Assisted in building web application features and handled day-to-day operational tasks.',
                         ],
                     },
                 ],
@@ -206,16 +218,13 @@ export const resumeSections: ResumeSectionData[] = [
         ],
     },
     {
-        kind: 'awards',
-        label: 'Honors & Awards',
-        entries: [
-            { title: 'Top Performer', issuer: 'RoBenDevs', date: 'Jul 2025' },
-            { title: 'Top Performer', issuer: 'RoBenDevs', date: 'Feb 2025' },
-            {
-                title: 'Best Web Engineer',
-                issuer: 'Media365 Limited',
-                date: 'Aug 2023',
-            },
+        kind: 'bullets',
+        label: 'AI Experience',
+        items: [
+            'Designed and shipped an in-app AI assistant on the Anthropic Claude API for a civic-engagement platform.',
+            'Built a custom MCP (Model Context Protocol) server exposing 7 legislator-data tools for tool and function calling, plus 4 internal MCP developer tools.',
+            'Applied prompt engineering and LLM integration to surface domain data through natural-language interactions.',
+            'Integrated AI-assisted developer tooling into the team engineering workflow.',
         ],
     },
     {
@@ -228,8 +237,9 @@ export const resumeSections: ResumeSectionData[] = [
                 company: 'RoBenDevs',
                 highlights: [
                     'Designed the Action Center engagement subsystem end to end: 13 database tables, REST APIs, and the full admin UI.',
-                    'Built background big-data pipelines (Laravel queues, Horizon): batch xlsx imports backed by S3, streamed chunked exports for the largest client datasets, and mass-message delivery with automatic recovery.',
-                    'Eliminated N+1 patterns firing 100s of extra database queries per request and removed render-blocking JavaScript from the login page.',
+                    'Increased email sending throughput 8x with a queue-based mass-message pipeline (automatic recovery), significantly cutting delivery time.',
+                    'Built background big-data pipelines (Laravel queues, Horizon): batch xlsx imports backed by S3 and streamed chunked exports for the largest client datasets.',
+                    'Eliminated N+1 query patterns firing 100s of extra database queries per request and removed render-blocking JavaScript from the login page.',
                 ],
                 tech: [
                     'Laravel',
@@ -247,8 +257,8 @@ export const resumeSections: ResumeSectionData[] = [
                 tagline: 'Telehealth consultation PWA',
                 company: 'Media365 Limited',
                 highlights: [
-                    'Contributed to a performant Progressive Web App for seamless cross-platform access.',
-                    'Optimized frontend speed and responsiveness and hardened the platform against spam and abuse.',
+                    'Built a performant Progressive Web App (PWA) for cross-platform telehealth consultations in emerging markets.',
+                    'Optimized frontend performance and responsiveness and implemented anti-spam and platform-integrity safeguards.',
                 ],
                 tech: ['Nuxt.js', 'Firebase Cloud Functions', 'Vuex', 'PWA'],
                 url: 'https://doctime.com.bd',
@@ -258,8 +268,8 @@ export const resumeSections: ResumeSectionData[] = [
                 tagline: 'Prescription writing solution',
                 company: 'Media365 Limited',
                 highlights: [
-                    'Built a user-friendly prescription-writing frontend with RESTful API integration.',
-                    'Optimized medicine search with frontend caching and a smart suggestion system for faster selection.',
+                    'Engineered a prescription-writing interface with RESTful API integration and frontend caching.',
+                    'Designed a smart medicine-suggestion system and optimized search for faster clinician workflows.',
                 ],
                 tech: ['Laravel', 'Nuxt.js', 'Pinia'],
                 url: 'https://www.doctorpro.doctime.com.bd/',
@@ -269,8 +279,8 @@ export const resumeSections: ResumeSectionData[] = [
                 tagline: 'Buy-now, pay-later payment gateway',
                 company: 'Media365 Limited',
                 highlights: [
-                    'Buy-now, pay-later gateway with seamless WordPress WooCommerce integration.',
-                    'Built JavaScript SDKs to embed the payment gateway into other web platforms.',
+                    'Built a buy-now, pay-later payment gateway with seamless WordPress WooCommerce integration.',
+                    'Developed JavaScript SDKs enabling third-party platforms to embed the gateway.',
                 ],
                 tech: [
                     'TypeScript',
@@ -286,8 +296,8 @@ export const resumeSections: ResumeSectionData[] = [
                 tagline: 'Online exam and practice platform (Web + Android)',
                 company: 'MAXSOP',
                 highlights: [
-                    'Bangladesh-based exam and practice platform for students and job seekers.',
-                    'Delivered the frontend, the REST API backend, and the Android app.',
+                    'Delivered an online exam and practice platform (web and Android) for students and job seekers.',
+                    'Owned the frontend, the REST API backend, and the native Android app, with SSLCommerz payment integration.',
                 ],
                 tech: [
                     'PHP',
@@ -300,9 +310,15 @@ export const resumeSections: ResumeSectionData[] = [
                     'SSLCommerz',
                 ],
             },
+        ],
+    },
+    {
+        kind: 'projects',
+        label: 'Open Source',
+        entries: [
             {
                 name: 'CKEditor 5 Image Remove Event Callback Plugin',
-                tagline: 'Open source, npm package',
+                tagline: 'Published npm package',
                 highlights: [
                     'Fires an event when an image is removed from CKEditor 5, letting apps clean up orphaned files on the server.',
                 ],
@@ -311,12 +327,25 @@ export const resumeSections: ResumeSectionData[] = [
             },
             {
                 name: 'Advanced Laravel Vue Paginate',
-                tagline: 'Open source, npm package',
+                tagline: 'Published npm package',
                 highlights: [
                     'Smart, highly customizable Vue pagination component for Laravel pagination.',
                 ],
                 tech: ['Vue.js', 'JavaScript'],
                 url: 'https://www.npmjs.com/package/advanced-laravel-vue-paginate',
+            },
+        ],
+    },
+    {
+        kind: 'awards',
+        label: 'Honors & Awards',
+        entries: [
+            { title: 'Top Performer', issuer: 'RoBenDevs', date: 'Jul 2025' },
+            { title: 'Top Performer', issuer: 'RoBenDevs', date: 'Feb 2025' },
+            {
+                title: 'Best Web Engineer',
+                issuer: 'Media365 Limited',
+                date: 'Aug 2023',
             },
         ],
     },
