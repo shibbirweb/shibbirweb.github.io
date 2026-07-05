@@ -27,7 +27,7 @@ export default function NavItem({
     const className = cn(
         'block text-sm transition-colors',
         variant === 'pill'
-            ? 'rounded-full px-3 py-1.5'
+            ? 'rounded-full px-2.5 py-1.5 lg:px-3'
             : 'hover:bg-foreground/5 rounded-xl px-4 py-2.5',
         active
             ? 'bg-foreground/10 text-foreground font-semibold'
