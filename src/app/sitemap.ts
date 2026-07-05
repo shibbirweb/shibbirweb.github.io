@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { siteURL } from '@/config/constants';
+import { siteThumbnail, siteURL } from '@/config/constants';
 import { articleOgImagePath } from '@/utils/generateArticleCover';
 import { getAllArticles } from '@/lib/posts';
 
@@ -34,6 +34,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
             lastModified: now,
             changeFrequency: 'monthly',
             priority: 0.7,
+            images: [siteThumbnail],
         },
     ];
 
