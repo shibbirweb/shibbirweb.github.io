@@ -9,18 +9,20 @@
    component, so the negative z-index keeps the wash under the icon and name). It is
    tinted with the tile's --brand-color (set inline per tile) and falls back to
    --foreground for the monochrome logos; deliberately barely noticeable, with the
-   strength stepping up a touch in dark mode. color-scheme is set here (not globally)
-   so the per-theme light-dark() brand colours used on these tiles (JavaScript,
-   Linux) resolve to the system theme. */
+   strength stepping up a touch in dark mode. The per-theme light-dark() brand
+   colours used on these tiles (JavaScript, Linux) resolve against the color-scheme
+   set globally on <html> (see globals.css), so no local color-scheme is needed. */
 .tile {
-    @apply scheme-light-dark;
     --glow-strength: 8%;
 }
 
 @media (prefers-color-scheme: dark) {
-    .tile {
+    :global(html:not([data-theme])) .tile {
         --glow-strength: 14%;
     }
+}
+:global(html[data-theme='dark']) .tile {
+    --glow-strength: 14%;
 }
 
 .tile::before {

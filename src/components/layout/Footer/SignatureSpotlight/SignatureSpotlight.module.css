@@ -18,10 +18,15 @@
     --spotlight-color: #a3a3a3; /* neutral-400 (light): one step up from the neutral-300 base */
 }
 
+/* neutral-600 (dark): one step up from the neutral-900 base. Applied via the OS
+   media query (no-JS fallback) and the resolved data-theme (the switcher). */
 @media (prefers-color-scheme: dark) {
-    .spotlight {
-        --spotlight-color: #525252; /* neutral-600 (dark): one step up from the neutral-900 base */
+    :global(html:not([data-theme])) .spotlight {
+        --spotlight-color: #525252;
     }
+}
+:global(html[data-theme='dark']) .spotlight {
+    --spotlight-color: #525252;
 }
 
 .reveal {

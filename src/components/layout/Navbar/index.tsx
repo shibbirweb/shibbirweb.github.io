@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import { isDevelopment } from '@/config/env';
 import DesktopNav from '@/components/layout/Navbar/DesktopNav';
 import MobileNav from '@/components/layout/Navbar/MobileNav';
+import ThemeMenu from '@/components/layout/ThemeToggle/ThemeMenu';
 import {
     articlesItem,
     heroId,
@@ -62,6 +63,7 @@ export default function Navbar({
                 studioItems={studio}
                 isActive={isActive}
             />
+            <ThemeMenu />
         </>
     );
 }

@@ -1,13 +1,62 @@
 @import 'tailwindcss';
 @plugin "@tailwindcss/typography";
 
+/* Make the `dark:` utility variant follow the theme switcher instead of only the
+   OS. Two branches, mirroring the token rules below: the resolved theme written
+   to <html data-theme> (ThemeScript/theme.ts), and a prefers-color-scheme
+   fallback that applies only when no theme has been resolved (JavaScript off).
+   With JS, data-theme is always the resolved light/dark (system included), so the
+   attribute branch covers everything and the media branch is the no-JS path.
+   Tailwind wraps each branch in :where(), so utility specificity is preserved. */
+@custom-variant dark {
+    &:where([data-theme='dark'], [data-theme='dark'] *) {
+        @slot;
+    }
+    @media (prefers-color-scheme: dark) {
+        &:where(:root:not([data-theme]), :root:not([data-theme]) *) {
+            @slot;
+        }
+    }
+}
+
+/* Theme tokens. The light palette is the default; the dark palette is applied by
+   the switcher writing the resolved theme to <html data-theme="dark"> (inline,
+   via ThemeScript/theme.ts), and by the OS media query as a no-JS fallback. The
+   dark rule is intentionally NOT expressed with light-dark(): the CSS compiler
+   lowers light-dark() to a prefers-color-scheme polyfill that ignores the
+   color-scheme property, so a forced choice would not take effect. color-scheme
+   is still set (following the OS by default) so native controls and the inline
+   light-dark() brand colours in SkillsArea resolve to the active theme; the
+   switcher overrides it inline on <html>. See src/components/layout/ThemeToggle. */
 :root {
+    color-scheme: light dark;
     --background: #ededed;
     --foreground: #171717;
     --section-swell-indigo: #e9e9f0;
     --section-swell-blue: #e7ebf2;
     --section-swell-yellow: #f0eee4;
     --section-swell-teal: #e6f1ef;
+}
+
+/* Applied when the OS prefers dark and the user has not overridden (no
+   data-theme, e.g. JavaScript disabled), or when the resolved theme is dark. */
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme]) {
+        --background: #0a0a0a;
+        --foreground: #ededed;
+        --section-swell-indigo: #0d0c16;
+        --section-swell-blue: #0a0d17;
+        --section-swell-yellow: #11100a;
+        --section-swell-teal: #0a1413;
+    }
+}
+:root[data-theme='dark'] {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+    --section-swell-indigo: #0d0c16;
+    --section-swell-blue: #0a0d17;
+    --section-swell-yellow: #11100a;
+    --section-swell-teal: #0a1413;
 }
 
 @theme inline {
@@ -29,17 +78,6 @@
     --text-box-edge-text-alphabetic: text alphabetic;
     --text-box-edge-cap-alphabetic: cap alphabetic;
     --text-box-edge-ex-text: ex text;
-}
-
-@media (prefers-color-scheme: dark) {
-    :root {
-        --background: #0a0a0a;
-        --foreground: #ededed;
-        --section-swell-indigo: #0d0c16;
-        --section-swell-blue: #0a0d17;
-        --section-swell-yellow: #11100a;
-        --section-swell-teal: #0a1413;
-    }
 }
 
 body {
@@ -76,23 +114,27 @@ body {
    transparent" band and lets the gradient meet the footer seamlessly in both
    light and dark mode. */
 .page-gradient {
+    --wash-strength: 6%;
     background-image: linear-gradient(
         180deg,
-        color-mix(in oklab, var(--page-grad-from) 6%, var(--background)) 0%,
-        color-mix(in oklab, var(--page-grad-to) 6%, var(--background)) 50%,
+        color-mix(in oklab, var(--page-grad-from) var(--wash-strength), var(--background))
+            0%,
+        color-mix(in oklab, var(--page-grad-to) var(--wash-strength), var(--background))
+            50%,
         var(--background) 100%
     );
 }
 
+/* A touch stronger when the resolved theme is dark; only the mix strength
+   changes, so the single gradient rule above is reused. Mirrored on the OS media
+   query for the no-JS fallback (no data-theme set). */
 @media (prefers-color-scheme: dark) {
-    .page-gradient {
-        background-image: linear-gradient(
-            180deg,
-            color-mix(in oklab, var(--page-grad-from) 12%, var(--background)) 0%,
-            color-mix(in oklab, var(--page-grad-to) 12%, var(--background)) 50%,
-            var(--background) 100%
-        );
+    :root:not([data-theme]) .page-gradient {
+        --wash-strength: 12%;
     }
+}
+:root[data-theme='dark'] .page-gradient {
+    --wash-strength: 12%;
 }
 
 /* Cross-fade the wash on route change: the element persists across client
