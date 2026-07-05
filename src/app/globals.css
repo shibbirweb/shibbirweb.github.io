@@ -117,10 +117,11 @@ body {
     --wash-strength: 6%;
     background-image: linear-gradient(
         180deg,
+        var(--background) 0%,
         color-mix(in oklab, var(--page-grad-from) var(--wash-strength), var(--background))
-            0%,
+            15%,
         color-mix(in oklab, var(--page-grad-to) var(--wash-strength), var(--background))
-            50%,
+            55%,
         var(--background) 100%
     );
 }
