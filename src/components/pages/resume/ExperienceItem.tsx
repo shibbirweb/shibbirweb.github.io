@@ -34,6 +34,24 @@ export default function ExperienceItem({ entry }: { entry: ExperienceEntry }) {
                         <div className="flex flex-wrap items-baseline justify-between gap-x-3">
                             <p className="text-foreground font-semibold">
                                 {position.role}
+                                {position.promotedFrom &&
+                                    position.promotedFrom.length > 0 && (
+                                        <span className="text-foreground/60 font-normal">
+                                            {' '}
+                                            (promoted from{' '}
+                                            <span className="print:hidden">
+                                                {position.promotedFrom.join(
+                                                    ' → '
+                                                )}
+                                            </span>
+                                            <span className="hidden print:inline">
+                                                {position.promotedFrom.join(
+                                                    ', '
+                                                )}
+                                            </span>
+                                            )
+                                        </span>
+                                    )}
                             </p>
                             <MetaText>{position.period}</MetaText>
                         </div>

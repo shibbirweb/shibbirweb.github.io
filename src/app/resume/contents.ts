@@ -17,7 +17,7 @@ import {
 export const resumeName = 'Md. Shibbir Ahmed';
 
 // Location + availability line under the contacts.
-export const resumeLocation = 'Dhaka, Bangladesh (GMT+6) · Open to remote roles';
+export const resumeLocation = 'Dhaka, Bangladesh (GMT+6)';
 
 // Contact row under the name. Labels are the display text; hrefs are the real
 // targets (mailto for email, canonical URLs for the rest).
@@ -155,11 +155,12 @@ export const resumeSections: ResumeSectionData[] = [
             },
             {
                 company: 'Media365 Limited',
-                companyURL: 'https://www.media365.com.bd',
+                companyURL: 'https://media365.com.bd',
                 location: 'Dhaka, Bangladesh',
                 positions: [
                     {
-                        role: 'Full Stack Developer → Senior Full Stack Developer',
+                        role: 'Senior Full Stack Developer',
+                        promotedFrom: ['Full Stack Developer'],
                         period: 'Mar 2023 - Oct 2024',
                         highlights: [
                             'Promoted to Senior within 11 months after delivering client-facing features across the product.',
@@ -184,7 +185,12 @@ export const resumeSections: ResumeSectionData[] = [
                 location: 'Mymensingh, Bangladesh',
                 positions: [
                     {
-                        role: 'Web Developer Intern → Junior Developer → Full Stack Developer → Senior Software Engineer',
+                        role: 'Senior Software Engineer',
+                        promotedFrom: [
+                            'Intern',
+                            'Junior Developer',
+                            'Full Stack Developer',
+                        ],
                         period: 'Oct 2018 - Feb 2023',
                         highlights: [
                             'Progressed from intern to Senior Software Engineer over 4+ years through three promotions.',

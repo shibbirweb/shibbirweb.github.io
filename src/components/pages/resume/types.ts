@@ -9,6 +9,12 @@ export type ContactLink = {
 /** One role held at a company (a company can have several over time). */
 export type ExperiencePosition = {
     role: string;
+    /**
+     * Earlier titles at the same company, oldest first, shown as a
+     * "(promoted from ...)" note after the current role (arrows on screen,
+     * commas in print).
+     */
+    promotedFrom?: string[];
     /** Employment period, e.g. `Oct 2024 - Present`. */
     period: string;
     /** Achievement bullets shown under the role. */
