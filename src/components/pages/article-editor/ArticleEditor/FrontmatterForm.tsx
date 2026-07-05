@@ -3,6 +3,7 @@
 import { useId } from 'react';
 import ChevronIcon from '@/components/icons/chevron';
 import { DIFFICULTIES } from '@/lib/articleSchema';
+import RequiredMark from '@/components/pages/article-editor/ArticleEditor/RequiredMark';
 import TagListInput from '@/components/pages/article-editor/ArticleEditor/TagListInput';
 import type {
     ArticleFrontmatter,
@@ -51,9 +52,13 @@ export default function FrontmatterForm({
 
             <div className="border-foreground/10 grid gap-5 border-t p-4 sm:grid-cols-2 sm:p-6">
                 <label className="sm:col-span-2">
-                    <span className="text-sm font-medium">Title</span>
+                    <span className="text-sm font-medium">
+                        Title
+                        <RequiredMark />
+                    </span>
                     <input
                         className={inputClassName}
+                        required
                         value={frontmatter.title}
                         onChange={(event) =>
                             onChange({ title: event.target.value })
@@ -71,10 +76,14 @@ export default function FrontmatterForm({
                     />
                 </label>
                 <label>
-                    <span className="text-sm font-medium">Publish date</span>
+                    <span className="text-sm font-medium">
+                        Publish date
+                        <RequiredMark />
+                    </span>
                     <input
                         type="date"
                         className={inputClassName}
+                        required
                         value={frontmatter.date}
                         onChange={(event) =>
                             onChange({ date: event.target.value })

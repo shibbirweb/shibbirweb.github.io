@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import {
+    deleteArticle,
     getSuggestions,
     listArticles,
     loadArticle,
@@ -62,5 +63,32 @@ export function useArticleActions(
         return loadArticle(file);
     }
 
-    return { articles, suggestions, saveState, save, open };
+    async function remove(slug: string) {
+        setSaveState({ status: 'saving' });
+        try {
+            const result = await deleteArticle(slug);
+            const [nextArticles, nextSuggestions] = await Promise.all([
+                listArticles(),
+                getSuggestions(),
+            ]);
+            setArticles(nextArticles);
+            setSuggestions(nextSuggestions);
+            setSaveState({
+                status: 'saved',
+                message: result.removed.length
+                    ? `Deleted ${result.removed.join(', ')}`
+                    : 'Nothing to delete',
+            });
+            return result;
+        } catch (error) {
+            setSaveState({
+                status: 'error',
+                message:
+                    error instanceof Error ? error.message : 'Delete failed',
+            });
+            return null;
+        }
+    }
+
+    return { articles, suggestions, saveState, save, open, remove };
 }

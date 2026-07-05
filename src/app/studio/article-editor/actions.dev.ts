@@ -142,6 +142,27 @@ export async function saveArticle(
     return { file: fileName, status };
 }
 
+/**
+ * Delete the article with `slug` from disk. Removes any same-slug file in either
+ * folder (there is normally just one), and returns which files were removed so the
+ * caller can confirm. The slug is re-slugified for safety before matching.
+ */
+export async function deleteArticle(
+    slug: string
+): Promise<{ removed: string[] }> {
+    const safeSlug = slugifyHeading(slug);
+    if (!safeSlug) return { removed: [] };
+    const removed: string[] = [];
+    for (const directory of [PUBLISHED_DIRECTORY, DRAFT_DIRECTORY]) {
+        const file = findFileBySlug(directory, safeSlug);
+        if (file) {
+            fs.rmSync(path.join(directory, file));
+            removed.push(file);
+        }
+    }
+    return { removed };
+}
+
 /** A sorted set of one string field across both folders. */
 function sortedUnique(values: Iterable<string>): string[] {
     return [...new Set(values)].sort((a, b) => a.localeCompare(b));

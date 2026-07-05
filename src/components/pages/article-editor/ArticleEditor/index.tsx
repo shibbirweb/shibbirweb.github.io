@@ -37,13 +37,14 @@ export default function ArticleEditor({
     );
     const [isPreviewVisible, setIsPreviewVisible] = useState(true);
 
-    const { articles, suggestions, saveState, save, open } = useArticleActions(
-        existing,
-        initialSuggestions
-    );
+    const { articles, suggestions, saveState, save, open, remove } =
+        useArticleActions(existing, initialSuggestions);
 
     const autoSlug = slugifyHeading(draft.frontmatter.title) || 'untitled-article';
     const slug = slugOverride ?? autoSlug;
+
+    // The saved file backing the current slug, if any; delete acts on this.
+    const savedFile = articles.find((article) => article.slug === slug);
 
     const isDirty =
         JSON.stringify(draft) !== JSON.stringify(savedDraft) ||
@@ -90,6 +91,25 @@ export default function ArticleEditor({
         setDraft(loaded);
         setSavedDraft(loaded);
         syncSlugToFile(file, loaded.frontmatter.title);
+    }
+
+    async function deleteArticle() {
+        if (!savedFile) return;
+        if (
+            !window.confirm(
+                `Delete ${savedFile.file}? This permanently removes the file and cannot be undone.`
+            )
+        ) {
+            return;
+        }
+        const result = await remove(slug);
+        if (!result) return;
+        // The open file is gone; start fresh from a blank draft.
+        const next = createEmptyDraft();
+        setDraft(next);
+        setSavedDraft(next);
+        setSlugOverride(null);
+        setSavedSlugOverride(null);
     }
 
     async function saveArticle() {
@@ -147,6 +167,8 @@ export default function ArticleEditor({
                 onOpen={openArticle}
                 onSave={saveArticle}
                 onPreview={previewArticle}
+                onDelete={deleteArticle}
+                canDelete={savedFile !== undefined}
                 onTogglePreview={() =>
                     setIsPreviewVisible((isVisible) => !isVisible)
                 }
