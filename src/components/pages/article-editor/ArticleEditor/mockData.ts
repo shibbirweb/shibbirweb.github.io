@@ -66,7 +66,50 @@ https://gist.github.com/BobNisco/9372605
 
 ![Cache-aside read path used as a sample article image.](/images/articles/inline/redis-cache-aside.svg)
 
-The final preview should match the [published articles](/articles), including inline code and every interactive enhancement.`,
+## The full formatting palette {#formatting-palette}
+
+> [!NOTE]
+> GitHub-style alerts come in NOTE, TIP, IMPORTANT, WARNING, and CAUTION.
+
+This line was ~~rewritten~~ for clarity, mentions H~2~O and x^2^, and ==highlights== the key term. Celebrate a clean build :tada:.
+
+### Steps and checks
+
+1. Draft the frontmatter.
+2. Write the body.
+3. Preview, then save.
+
+- [x] Rendered by the production components
+- [ ] Published to the live site
+
+### Comparison table
+
+| Feature | Renders |
+| --- | --- |
+| Footnotes | Yes |
+| Emoji | Yes |
+| Alerts | Yes |
+
+### Definitions
+
+Cache-aside
+: The app reads the cache and falls back to the database on a miss.
+
+Write-through
+: Writes go through the cache so it never serves stale data.
+
+You can cite a source inline[^workflow] and press <kbd>Cmd</kbd> + <kbd>S</kbd> to save.
+
+<details>
+<summary>Extra detail (raw HTML)</summary>
+
+Raw HTML passes straight through the renderer.
+
+</details>
+
+The final preview should match the [published articles](/articles), including inline code and every interactive enhancement.
+
+[^workflow]: Footnotes collect at the bottom of the article with a back-link.`,
 };
 
 export const MOCK_ARTICLE_LIST: ArticleListItem[] = [

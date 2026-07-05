@@ -221,3 +221,172 @@
     font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
     font-size: 0.85em;
 }
+
+/* GitHub-style alerts (> [!NOTE] / [!TIP] / [!IMPORTANT] / [!WARNING] /
+   [!CAUTION]). marked-alert emits .markdown-alert with a variant modifier and a
+   .markdown-alert-title row (an octicon SVG + the label). Each variant sets its
+   accent through a single custom property that drives the border, tint, and
+   title color; the dark block only re-points those accents. */
+.content :global(.markdown-alert) {
+    --alert-accent: color-mix(in srgb, var(--foreground) 45%, transparent);
+    margin: 1.6em 0;
+    padding: 0.6rem 1rem;
+    border-left: 0.25rem solid var(--alert-accent);
+    border-radius: 0.5rem;
+    background-color: color-mix(in srgb, var(--alert-accent) 8%, transparent);
+}
+.content :global(.markdown-alert) > :first-child {
+    margin-top: 0;
+}
+.content :global(.markdown-alert) > :last-child {
+    margin-bottom: 0;
+}
+.content :global(.markdown-alert-title) {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--alert-accent);
+}
+.content :global(.markdown-alert-title) svg {
+    fill: currentColor;
+}
+.content :global(.markdown-alert-note) {
+    --alert-accent: #0969da;
+}
+.content :global(.markdown-alert-tip) {
+    --alert-accent: #1a7f37;
+}
+.content :global(.markdown-alert-important) {
+    --alert-accent: #8250df;
+}
+.content :global(.markdown-alert-warning) {
+    --alert-accent: #9a6700;
+}
+.content :global(.markdown-alert-caution) {
+    --alert-accent: #cf222e;
+}
+@media (prefers-color-scheme: dark) {
+    .content :global(.markdown-alert-note) {
+        --alert-accent: #4493f8;
+    }
+    .content :global(.markdown-alert-tip) {
+        --alert-accent: #3fb950;
+    }
+    .content :global(.markdown-alert-important) {
+        --alert-accent: #ab7df8;
+    }
+    .content :global(.markdown-alert-warning) {
+        --alert-accent: #d29922;
+    }
+    .content :global(.markdown-alert-caution) {
+        --alert-accent: #f85149;
+    }
+}
+
+/* Tables. renderMarkdown wraps each <table> in a .table-scroll.not-prose div, so
+   wide tables scroll within the column and Typography does not restyle them; the
+   cell borders and header fill live here. */
+.content :global(.table-scroll) {
+    margin: 1.6em 0;
+    overflow-x: auto;
+}
+.content :global(.table-scroll) table {
+    width: 100%;
+    margin: 0;
+    border-collapse: collapse;
+    font-size: 0.925em;
+}
+.content :global(.table-scroll) th,
+.content :global(.table-scroll) td {
+    padding: 0.5rem 0.85rem;
+    border: 1px solid color-mix(in srgb, var(--foreground) 15%, transparent);
+    text-align: left;
+}
+.content :global(.table-scroll) thead th {
+    font-weight: 600;
+    background-color: color-mix(in srgb, var(--foreground) 5%, transparent);
+}
+
+/* Task lists (- [ ] / - [x]): drop the list marker and hang the checkbox so the
+   items read as a checklist. */
+.content li:has(> input[type='checkbox']) {
+    list-style: none;
+    margin-left: -1.25em;
+}
+.content li > input[type='checkbox'] {
+    margin-right: 0.5em;
+    vertical-align: middle;
+}
+
+/* Footnotes. marked-footnote appends a section.footnotes with a visually hidden
+   heading, numbered notes, and back-reference links; add a top divider, smaller
+   type, and a highlight on the note jumped to. */
+.content :global(.footnotes) {
+    margin-top: 2.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid color-mix(in srgb, var(--foreground) 12%, transparent);
+    font-size: 0.9em;
+    color: color-mix(in srgb, var(--foreground) 75%, transparent);
+}
+.content :global(.footnotes) h2 {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+}
+.content :global(.footnotes) li:target {
+    border-radius: 0.25rem;
+    background-color: color-mix(in srgb, #f2cc60 22%, transparent);
+}
+
+/* Highlight: ==text== -> <mark>. */
+.content mark {
+    padding: 0.05em 0.2em;
+    border-radius: 0.2em;
+    color: inherit;
+    background-color: color-mix(in srgb, #f8e3a1 70%, transparent);
+}
+@media (prefers-color-scheme: dark) {
+    .content mark {
+        background-color: color-mix(in srgb, #d29922 40%, transparent);
+    }
+}
+
+/* Sub/superscript keep a stable line height so they do not disturb the leading. */
+.content sub,
+.content sup {
+    font-size: 0.75em;
+    line-height: 0;
+}
+
+/* Definition lists: a term line followed by one or more `: definition` lines. */
+.content dl {
+    margin: 1.6em 0;
+}
+.content dt {
+    font-weight: 600;
+}
+.content dd {
+    margin: 0 0 0.5rem 1.5rem;
+}
+
+/* Keyboard keys authored as raw <kbd>. */
+.content kbd {
+    display: inline-block;
+    padding: 0.15em 0.45em;
+    font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+    font-size: 0.8em;
+    line-height: 1;
+    border: 1px solid color-mix(in srgb, var(--foreground) 20%, transparent);
+    border-bottom-width: 2px;
+    border-radius: 0.35rem;
+    background-color: color-mix(in srgb, var(--foreground) 6%, transparent);
+}
