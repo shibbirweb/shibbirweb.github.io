@@ -105,6 +105,16 @@ export function generatedCoverPath(slug: string): string {
 }
 
 /**
+ * Public path for an article's raster OpenGraph image. Social crawlers do not
+ * render SVG, so scripts/generate-og-images.ts rasterises each SVG cover to a PNG
+ * here at build time; generateMetadata and the article JSON-LD point at this same
+ * path so the write location and the meta URL never drift.
+ */
+export function articleOgImagePath(slug: string): string {
+    return `/og/articles/${slug}.png`;
+}
+
+/**
  * The [from, to] gradient pair a generated cover is built from, chosen
  * deterministically per slug. Exported so the article card can tint itself with
  * the same colours as its thumbnail without re-parsing the generated SVG.

@@ -2,6 +2,14 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import ArticleView from '@/components/pages/articles/ArticleView';
 import {
+    siteAuthor,
+    siteLocale,
+    siteName,
+    siteURL,
+    twitterUsername,
+} from '@/config/constants';
+import { articleOgImagePath } from '@/utils/generateArticleCover';
+import {
     getAdjacentArticles,
     getAllArticles,
     getArticle,
@@ -27,18 +35,45 @@ export async function generateMetadata({
     const { slug } = await params;
     const article = await getArticle(slug);
     if (!article) return {};
+    // SVG covers are not rendered by social crawlers, so point at the raster PNG
+    // that generate-og-images.ts produces; a raster cover is already OG-safe.
+    const ogImage = article.cover.endsWith('.svg')
+        ? articleOgImagePath(slug)
+        : article.cover;
     return {
         title: article.title,
         description: article.description,
+        keywords: [...new Set([...article.tags, ...article.tech])],
+        authors: [{ name: siteAuthor, url: siteURL }],
         alternates: { canonical: `/articles/${slug}` },
         openGraph: {
             title: article.title,
             description: article.description,
             url: `/articles/${slug}`,
+            siteName,
+            locale: siteLocale,
             type: 'article',
             publishedTime: article.date,
             modifiedTime: article.updated ?? article.date,
+            authors: [siteURL],
+            ...(article.category && { section: article.category }),
             tags: article.tags,
+            images: [
+                {
+                    url: ogImage,
+                    width: 1200,
+                    height: 630,
+                    alt: article.title,
+                    type: 'image/png',
+                },
+            ],
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: article.title,
+            description: article.description,
+            creator: twitterUsername,
+            images: [ogImage],
         },
     };
 }
