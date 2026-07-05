@@ -203,9 +203,11 @@
 }
 
 /* Content images: a rounded hairline frame so screenshots and diagrams read as
-   deliberate figures. ImageLightbox adds the zoom cursor and click-to-expand on
-   the client; gist images keep their own styling. */
+   deliberate figures, plus a zoom cursor so they read as clickable right away.
+   ImageLightbox wires the click-to-expand and a11y on the client; gist images
+   keep their own styling. */
 .content :where(img):not(:where(.gist-embed *)) {
+    cursor: zoom-in;
     border-radius: 0.75rem;
     border: 1px solid color-mix(in srgb, var(--foreground) 10%, transparent);
 }

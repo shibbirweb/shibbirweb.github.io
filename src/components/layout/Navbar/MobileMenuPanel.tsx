@@ -8,6 +8,8 @@ interface MobileMenuPanelProps {
     isHome: boolean;
     sectionItems: NavItemData[];
     pageItems: NavItemData[];
+    /** Dev-only authoring links; empty in production, so the group is hidden. */
+    studioItems: NavItemData[];
     isActive: (item: NavItemData) => boolean;
     onNavigate: () => void;
 }
@@ -17,6 +19,7 @@ export default function MobileMenuPanel({
     isHome,
     sectionItems,
     pageItems,
+    studioItems,
     isActive,
     onNavigate,
 }: MobileMenuPanelProps) {
@@ -77,6 +80,28 @@ export default function MobileMenuPanel({
                     />
                 ))}
             </ul>
+            {studioItems.length > 0 && (
+                <>
+                    <div
+                        aria-hidden="true"
+                        className="bg-foreground/10 my-1 h-px"
+                    />
+                    <p className="text-foreground/40 px-4 pt-1 pb-0.5 text-xs font-semibold tracking-wide uppercase">
+                        Studio
+                    </p>
+                    <ul className="flex flex-col gap-0.5">
+                        {studioItems.map((item) => (
+                            <NavItem
+                                key={item.href}
+                                item={item}
+                                active={isActive(item)}
+                                variant="row"
+                                onNavigate={onNavigate}
+                            />
+                        ))}
+                    </ul>
+                </>
+            )}
         </nav>
     );
 }

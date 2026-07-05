@@ -16,6 +16,8 @@ interface MobileNavProps {
     isHome: boolean;
     sectionItems: NavItemData[];
     pageItems: NavItemData[];
+    /** Dev-only authoring links; empty in production, so the group is hidden. */
+    studioItems: NavItemData[];
     isActive: (item: NavItemData) => boolean;
 }
 
@@ -24,6 +26,7 @@ export default function MobileNav({
     isHome,
     sectionItems,
     pageItems,
+    studioItems,
     isActive,
 }: MobileNavProps) {
     const { open, toggle, close } = useDisclosure();
@@ -52,6 +55,7 @@ export default function MobileNav({
                     isHome={isHome}
                     sectionItems={sectionItems}
                     pageItems={pageItems}
+                    studioItems={studioItems}
                     isActive={isActive}
                     onNavigate={close}
                 />

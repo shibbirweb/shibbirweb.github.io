@@ -1,6 +1,7 @@
 import { cn } from '@/utils/cn';
 import NavItem from '@/components/layout/Navbar/NavItem';
 import NavLogo from '@/components/layout/Navbar/NavLogo';
+import StudioMenu from '@/components/layout/Navbar/StudioMenu';
 import type { NavItemData } from '@/components/layout/Navbar/contents';
 
 interface DesktopNavProps {
@@ -9,6 +10,8 @@ interface DesktopNavProps {
     brandVisible: boolean;
     sectionItems: NavItemData[];
     pageItems: NavItemData[];
+    /** Dev-only authoring links; empty in production, so the group is hidden. */
+    studioItems: NavItemData[];
     isActive: (item: NavItemData) => boolean;
 }
 
@@ -17,6 +20,7 @@ export default function DesktopNav({
     brandVisible,
     sectionItems,
     pageItems,
+    studioItems,
     isActive,
 }: DesktopNavProps) {
     return (
@@ -65,6 +69,18 @@ export default function DesktopNav({
                         active={isActive(item)}
                     />
                 ))}
+                {studioItems.length > 0 && (
+                    <>
+                        <li
+                            aria-hidden="true"
+                            className="bg-foreground/15 mx-0.5 h-5 w-px"
+                        />
+                        <StudioMenu
+                            items={studioItems}
+                            isActive={isActive}
+                        />
+                    </>
+                )}
             </ul>
         </nav>
     );
