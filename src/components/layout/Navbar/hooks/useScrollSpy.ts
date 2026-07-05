@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react';
 
 /**
- * Tracks which section (by element id) sits around the middle of the viewport.
- * Returns the active id, or null when disabled or when no section is in the
- * band (for example at the very top of the page, over the hero). Pass a stable
+ * Tracks which section (by element id) the reader is currently in: the last
+ * element whose top has scrolled past a line near the top of the viewport. This
+ * works for both tall page sections and zero-height article headings (a thin
+ * mid-viewport band would flicker off between headings, since a heading is a
+ * point, not a span). Returns null before the first section (e.g. over the hero)
+ * and when disabled. The last section stays active once the page is scrolled to
+ * the bottom, so a short final section still highlights. Pass a stable
  * `sectionIds` reference to avoid re-subscribing on every render.
  */
 export function useScrollSpy(
@@ -17,39 +21,48 @@ export function useScrollSpy(
             setActiveId(null);
             return;
         }
-        const sections = sectionIds
-            .map((id) => document.getElementById(id))
-            .filter((el): el is HTMLElement => el !== null);
-        if (!sections.length) {
-            return;
-        }
-        // Remember every section's latest ratio: an observer callback only
-        // reports the entries that changed, so one section leaving the band
-        // must not clear another that is still in it. When all are zero (e.g.
-        // scrolled back up over the hero) the active id falls back to null.
-        const ratios = new Map<string, number>();
-        const observer = new IntersectionObserver(
-            (entries) => {
-                for (const entry of entries) {
-                    ratios.set(
-                        entry.target.id,
-                        entry.isIntersecting ? entry.intersectionRatio : 0
-                    );
+
+        let frame = 0;
+        const update = () => {
+            frame = 0;
+            const sections = sectionIds
+                .map((id) => document.getElementById(id))
+                .filter((el): el is HTMLElement => el !== null);
+            if (!sections.length) {
+                setActiveId(null);
+                return;
+            }
+            // The "current" line sits ~30% down the viewport, clear of the
+            // sticky navbar; a section is active from when its top crosses that
+            // line until the next section's top does.
+            const line = window.innerHeight * 0.3;
+            const atBottom =
+                window.innerHeight + window.scrollY >=
+                document.documentElement.scrollHeight - 2;
+            let current: string | null = null;
+            for (const section of sections) {
+                if (section.getBoundingClientRect().top <= line) {
+                    current = section.id;
                 }
-                let topId: string | null = null;
-                let topRatio = 0;
-                for (const [id, ratio] of ratios) {
-                    if (ratio > topRatio) {
-                        topRatio = ratio;
-                        topId = id;
-                    }
-                }
-                setActiveId(topId);
-            },
-            { rootMargin: '-40% 0px -50% 0px' }
-        );
-        sections.forEach((section) => observer.observe(section));
-        return () => observer.disconnect();
+            }
+            // Once scrolled to the very bottom, keep the last section lit even if
+            // its top never reaches the line (a short final section).
+            if (atBottom) current = sections[sections.length - 1].id;
+            setActiveId(current);
+        };
+
+        const onScroll = () => {
+            if (!frame) frame = requestAnimationFrame(update);
+        };
+
+        update();
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onScroll);
+        return () => {
+            window.removeEventListener('scroll', onScroll);
+            window.removeEventListener('resize', onScroll);
+            if (frame) cancelAnimationFrame(frame);
+        };
     }, [sectionIds, enabled]);
 
     return activeId;
