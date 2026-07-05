@@ -1,3 +1,4 @@
+import SyncPageGradient from '@/components/backgrounds/PageGradientBackground/SyncPageGradient';
 import Breadcrumb from '@/components/layout/Breadcrumb';
 import ArticleContent from '@/components/pages/articles/ArticleContent';
 import ArticleCover from '@/components/pages/articles/ArticleCover';
@@ -51,6 +52,7 @@ export default function ArticleView({
                 'container mx-auto px-4 py-20 sm:py-28'
             )}
         >
+            <SyncPageGradient colors={article.coverColors} />
             <ReadingProgress accentColors={article.coverColors} />
             <Breadcrumb currentName={article.title} />
 
