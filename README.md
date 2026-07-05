@@ -27,7 +27,7 @@ Personal portfolio and personal-brand site for **MD. Shibbir Ahmed**, Senior Ful
 
 ## 🌐 Live
 
-[https://shibbir.me](https://shibbir.me)
+[https://shibbir.me](https://shibbir.me) | [https://shibbirweb.github.io](https://shibbirweb.github.io)
 
 ## 📬 Contact
 
