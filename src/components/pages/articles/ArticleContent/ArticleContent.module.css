@@ -34,6 +34,22 @@
     background: transparent;
     font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
     font-weight: 400;
+    counter-reset: line;
+}
+
+/* Line numbers: Shiki wraps each source line in <span class="line">; a CSS
+   counter numbers them. currentColor is the active theme's code foreground (set
+   by the .shiki span rule above), so a muted mix adapts to light/dark with no
+   extra theme override. */
+.content pre:global(.shiki) code :global(.line)::before {
+    counter-increment: line;
+    content: counter(line);
+    display: inline-block;
+    width: 2ch;
+    margin-right: 1.4em;
+    text-align: right;
+    color: color-mix(in srgb, currentColor 40%, transparent);
+    user-select: none;
 }
 
 /* Code block wrapper: a header bar (language/extension badge + optional file
