@@ -186,6 +186,125 @@ flowchart LR
                 snippet: 'The final preview should match the [published articles](/articles), including every interactive enhancement.',
                 insert: 'The final preview should match the [published articles](/articles), including every interactive enhancement.\n',
             },
+            {
+                label: 'Blockquote',
+                note: 'Quote a source or call something out with a leading >.',
+                snippet: '> A blockquote for quoting a source or setting a passage apart.',
+                insert: '> A blockquote for quoting a source or setting a passage apart.\n',
+            },
+            {
+                label: 'Ordered list',
+                note: 'A numbered list for sequential steps.',
+                snippet: `1. First step.
+2. Second step.
+3. Third step.`,
+                insert: `1. First step.
+2. Second step.
+3. Third step.
+`,
+            },
+            {
+                label: 'Table',
+                note: 'A GFM pipe table; the header separator row sets the columns. Wide tables scroll within the column.',
+                snippet: `| Feature | Supported |
+| --- | --- |
+| Tables | Yes |
+| Footnotes | Yes |`,
+                insert: `| Feature | Supported |
+| --- | --- |
+| Tables | Yes |
+| Footnotes | Yes |
+`,
+            },
+            {
+                label: 'Task list',
+                note: 'Checkboxes with - [ ] (open) and - [x] (done).',
+                snippet: `- [x] Completed item
+- [ ] Pending item`,
+                insert: `- [x] Completed item
+- [ ] Pending item
+`,
+            },
+            {
+                label: 'Strikethrough',
+                note: 'Wrap text in ~~ to strike it through.',
+                snippet: 'This idea is ~~deprecated~~ and replaced by a better one.',
+                insert: 'This idea is ~~deprecated~~ and replaced by a better one.\n',
+            },
+            {
+                label: 'Footnote',
+                note: 'A [^ref] marker links to a note collected at the bottom of the article, with a back-link.',
+                snippet: `Here is a claim that needs a source.[^ref]
+
+[^ref]: The supporting note, shown at the bottom of the article.`,
+                insert: `Here is a claim that needs a source.[^ref]
+
+[^ref]: The supporting note, shown at the bottom of the article.
+`,
+            },
+            {
+                label: 'Emoji',
+                note: 'A :shortcode: renders to the matching emoji (GitHub names).',
+                snippet: 'Ship it :tada: and celebrate :rocket:.',
+                insert: 'Ship it :tada: and celebrate :rocket:.\n',
+            },
+            {
+                label: 'GitHub alert',
+                note: 'A blockquote starting with [!NOTE], [!TIP], [!IMPORTANT], [!WARNING], or [!CAUTION] renders as a colored callout.',
+                snippet: `> [!NOTE]
+> Useful information the reader should notice.`,
+                insert: `> [!NOTE]
+> Useful information the reader should notice.
+`,
+            },
+            {
+                label: 'Highlight',
+                note: 'Wrap text in == to highlight it (rendered as <mark>).',
+                snippet: 'Use ==highlighted text== to draw the eye.',
+                insert: 'Use ==highlighted text== to draw the eye.\n',
+            },
+            {
+                label: 'Subscript / superscript',
+                note: 'Single ~x~ is subscript and ^x^ is superscript (distinct from ~~strikethrough~~).',
+                snippet: 'Water is H~2~O and a square is x^2^.',
+                insert: 'Water is H~2~O and a square is x^2^.\n',
+            },
+            {
+                label: 'Definition list',
+                note: 'A term line followed by one or more `: definition` lines.',
+                snippet: `HTTP
+: A protocol for transferring hypertext.`,
+                insert: `HTTP
+: A protocol for transferring hypertext.
+`,
+            },
+            {
+                label: 'Custom heading ID',
+                note: 'Append {#custom-id} to a heading to set its anchor explicitly instead of the auto slug.',
+                snippet: '## Section title {#custom-anchor}',
+                insert: '## Section title {#custom-anchor}\n',
+            },
+            {
+                label: 'Raw HTML',
+                note: 'Raw HTML passes through, e.g. <kbd> keys or a <details> disclosure.',
+                snippet: `Press <kbd>Ctrl</kbd> + <kbd>C</kbd> to copy.
+
+<details>
+<summary>Show more</summary>
+
+Hidden detail revealed on click.
+
+</details>`,
+                insert: `Press <kbd>Ctrl</kbd> + <kbd>C</kbd> to copy.
+
+<details>
+<summary>Show more</summary>
+
+Hidden detail revealed on click.
+
+</details>
+`,
+            },
         ],
     },
 ];

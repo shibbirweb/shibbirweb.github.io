@@ -1,9 +1,14 @@
 import {
     marked,
+    type Token,
     type Tokens,
     type TokenizerAndRendererExtension,
 } from 'marked';
 import { codeToHtml } from 'shiki';
+import markedFootnote from 'marked-footnote';
+import markedAlert from 'marked-alert';
+import { markedEmoji } from 'marked-emoji';
+import { nameToEmoji } from 'gemoji';
 
 /** A heading in the article body, used to build the table of contents. */
 export interface TocItem {
@@ -84,6 +89,115 @@ const gistExtension: TokenizerAndRendererExtension = {
         return typeof gistToken.html === 'string' ? gistToken.html : '';
     },
 };
+
+// A token that carries already inline-tokenized children, so nested Markdown
+// (bold, code, links) inside the wrapper still renders.
+type InlineWrapToken = Tokens.Generic & { tokens: Token[] };
+
+/**
+ * A small inline extension that wraps `regex`-matched text in a single `tag`
+ * (`<mark>`, `<sub>`, `<sup>`). The captured inner text is inline-tokenized so it
+ * keeps formatting; `startNeedle` tells marked where a match might begin. These
+ * are tried before marked's core tokenizers, so each regex is anchored (`^`) and
+ * self-guarding (see subscript's `~~` guard).
+ */
+function inlineWrapExtension(
+    name: string,
+    regex: RegExp,
+    startNeedle: string,
+    tag: string
+): TokenizerAndRendererExtension {
+    return {
+        name,
+        level: 'inline',
+        start(src) {
+            const index = src.indexOf(startNeedle);
+            return index < 0 ? undefined : index;
+        },
+        tokenizer(src) {
+            const match = regex.exec(src);
+            if (!match) return undefined;
+            return {
+                type: name,
+                raw: match[0],
+                tokens: this.lexer.inlineTokens(match[1]),
+            };
+        },
+        renderer(token) {
+            const inner = this.parser.parseInline(
+                (token as InlineWrapToken).tokens
+            );
+            return `<${tag}>${inner}</${tag}>`;
+        },
+    };
+}
+
+// Highlight: ==text== -> <mark>.
+const highlightExtension = inlineWrapExtension(
+    'highlight',
+    /^==(?=\S)([^\n]+?)==/,
+    '==',
+    'mark'
+);
+// Subscript: ~text~ -> <sub>. The (?!~) guards reject ~~strikethrough~~ so it
+// falls through to marked's core GFM `del` tokenizer.
+const subscriptExtension = inlineWrapExtension(
+    'subscript',
+    /^~(?!~)([^~\n]+?)~(?!~)/,
+    '~',
+    'sub'
+);
+// Superscript: ^text^ -> <sup>.
+const superscriptExtension = inlineWrapExtension(
+    'superscript',
+    /^\^([^^\n]+?)\^/,
+    '^',
+    'sup'
+);
+
+// A term line followed by one or more `: definition` lines.
+type DefinitionListToken = Tokens.Generic & {
+    termTokens: Token[];
+    defs: { tokens: Token[] }[];
+};
+const DEFINITION_LIST_PATTERN = /^([^\n:][^\n]*)\n((?::[ \t][^\n]+(?:\n|$))+)/;
+
+const definitionListExtension: TokenizerAndRendererExtension = {
+    name: 'definitionList',
+    level: 'block',
+    start(src) {
+        const match = src.match(/\n[^\n:][^\n]*\n:[ \t]/);
+        return match?.index === undefined ? undefined : match.index + 1;
+    },
+    tokenizer(src) {
+        const match = DEFINITION_LIST_PATTERN.exec(src);
+        if (!match) return undefined;
+        const defs = match[2]
+            .split('\n')
+            .filter((line) => line.startsWith(':'))
+            .map((line) => line.replace(/^:[ \t]/, ''));
+        return {
+            type: 'definitionList',
+            raw: match[0],
+            termTokens: this.lexer.inlineTokens(match[1].trim()),
+            defs: defs.map((text) => ({
+                tokens: this.lexer.inlineTokens(text),
+            })),
+        };
+    },
+    renderer(token) {
+        const definitionToken = token as DefinitionListToken;
+        const term = `<dt>${this.parser.parseInline(definitionToken.termTokens)}</dt>`;
+        const definitions = definitionToken.defs
+            .map((def) => `<dd>${this.parser.parseInline(def.tokens)}</dd>`)
+            .join('');
+        return `<dl>${term}${definitions}</dl>`;
+    },
+};
+
+// A GitHub shortcode -> Unicode map for :emoji: syntax, from GitHub's own gemoji
+// dataset; resolved at build time, so no external images or runtime requests.
+const emojiMap: Record<string, string> = nameToEmoji;
 
 // Build-time syntax highlighting with two themes; globals.css picks the dark
 // palette under prefers-color-scheme so code matches the site theme.
@@ -166,7 +280,13 @@ async function highlightCode(code: string, lang: string): Promise<string> {
 
 marked.use({
     async: true,
-    extensions: [gistExtension],
+    extensions: [
+        gistExtension,
+        highlightExtension,
+        subscriptExtension,
+        superscriptExtension,
+        definitionListExtension,
+    ],
     async walkTokens(token) {
         if (token.type === 'code') {
             const codeToken = token as CodeToken;
@@ -199,6 +319,27 @@ marked.use({
         },
     },
 });
+
+// GitHub-parity Markdown extensions: footnotes ([^1] + auto footnotes section),
+// GitHub alerts (> [!NOTE]/[!TIP]/[!WARNING]/...), and :shortcode: emoji rendered
+// to Unicode from the gemoji dataset.
+marked.use(markedFootnote());
+marked.use(markedAlert());
+// Render :shortcode: as the Unicode character (not GitHub's <img>), so emoji ship
+// as plain text with no external images.
+marked.use(
+    markedEmoji<string>({
+        emojis: emojiMap,
+        renderer: (token) => token.emoji,
+    })
+);
+
+// Raw HTML in the Markdown body (e.g. <kbd>, <details>/<summary>, <br>) passes
+// through untouched: marked ships no sanitizer, and ArticleContent renders the
+// result with dangerouslySetInnerHTML. This is safe here because articles are
+// first-party content authored in content/ by the site owner; there is no
+// untrusted input. If third-party Markdown is ever ingested, add sanitization
+// (rehype-sanitize / DOMPurify) at that boundary.
 
 /** Turn heading text into a URL-safe anchor slug (`Cache-aside` -> `cache-aside`). */
 export function slugifyHeading(text: string): string {
@@ -247,17 +388,42 @@ function addHeadingIdsAndExtractToc(html: string): {
     const rewritten = html.replace(
         /<h([23])>([\s\S]*?)<\/h\1>/g,
         (match, level: string, inner: string) => {
-            const text = headingPlainText(inner);
+            // An explicit `{#custom-id}` trailing the heading wins over the slug;
+            // strip it from the visible heading and the TOC label either way.
+            const explicit = inner.match(/\s*\{#([a-z0-9-]+)\}\s*$/i);
+            const displayInner = explicit
+                ? inner.slice(0, explicit.index).trimEnd()
+                : inner;
+            const text = headingPlainText(displayInner);
             if (!text) return match;
-            const base = slugifyHeading(text) || 'section';
-            const seen = used.get(base) ?? 0;
-            used.set(base, seen + 1);
-            const id = seen === 0 ? base : `${base}-${seen + 1}`;
+            let id: string;
+            if (explicit) {
+                id = explicit[1];
+            } else {
+                const base = slugifyHeading(text) || 'section';
+                const seen = used.get(base) ?? 0;
+                used.set(base, seen + 1);
+                id = seen === 0 ? base : `${base}-${seen + 1}`;
+            }
             toc.push({ id, text, level: Number(level) });
-            return `<h${level} id="${id}">${inner}</h${level}>`;
+            return `<h${level} id="${id}">${displayInner}</h${level}>`;
         }
     );
     return { html: rewritten, toc };
+}
+
+/**
+ * Wrap each Markdown table in a horizontally scrollable container so wide tables
+ * scroll within the article column instead of overflowing on narrow screens.
+ * Matches the opening and closing tag as a pair, and only the bare `<table>` that
+ * `marked` emits, so tables inside embedded HTML (e.g. a gist's `<table class=...>`)
+ * are left untouched and their `</table>` never gets an orphaned closing div.
+ */
+function wrapTables(html: string): string {
+    return html.replace(
+        /<table>([\s\S]*?)<\/table>/g,
+        '<div class="table-scroll not-prose"><table>$1</table></div>'
+    );
 }
 
 /**
@@ -269,5 +435,6 @@ export async function renderMarkdown(content: string): Promise<{
     toc: TocItem[];
 }> {
     const rendered = await marked.parse(content);
-    return addHeadingIdsAndExtractToc(rendered);
+    const { html, toc } = addHeadingIdsAndExtractToc(rendered);
+    return { html: wrapTables(html), toc };
 }
