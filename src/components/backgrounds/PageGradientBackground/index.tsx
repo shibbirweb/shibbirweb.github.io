@@ -55,7 +55,7 @@ export default function PageGradientBackground() {
     return (
         <div
             aria-hidden="true"
-            className="page-gradient pointer-events-none absolute inset-0 -z-10"
+            className="page-gradient pointer-events-none absolute inset-0 -z-10 print:hidden"
             style={
                 {
                     '--page-grad-from': from,

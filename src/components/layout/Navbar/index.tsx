@@ -21,20 +21,19 @@ import { useScrollSpy } from '@/components/layout/Navbar/hooks/useScrollSpy';
 
 export default function Navbar({
     hasArticles = false,
-    hasResume = false,
 }: {
     hasArticles?: boolean;
-    hasResume?: boolean;
 }) {
     const pathname = usePathname();
     const isHome = pathname === '/';
     const visible = useNavbarVisibility(isHome, heroId);
     const brandVisible = useHeroPassed(isHome, heroId);
     const activeSection = useScrollSpy(sectionIds, isHome);
+    // The resume page always exists, so its nav item is always shown.
     const pages = [
         ...(hasArticles ? [articlesItem] : []),
         ...pageItems,
-        ...(hasResume ? [resumeItem] : []),
+        resumeItem,
     ];
     // Dev-only authoring tools. `isDevelopment` folds to a literal at build
     // time, so the list is empty in production and the Studio group never renders.
