@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { siteURL } from '@/config/constants';
+import { articleOgImagePath } from '@/utils/generateArticleCover';
 import { getAllArticles } from '@/lib/posts';
 
 export const dynamic = 'force-static';
@@ -40,6 +41,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     });
 
     for (const article of articles) {
+        // A crawlable raster (the OG PNG for SVG covers, else the cover itself)
+        // so the article's image is discoverable from the sitemap.
+        const image = article.cover.endsWith('.svg')
+            ? articleOgImagePath(article.slug)
+            : article.cover;
         entries.push({
             url: `${siteURL}/articles/${article.slug}`,
             lastModified: new Date(
@@ -47,6 +53,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
             ),
             changeFrequency: 'yearly',
             priority: 0.6,
+            images: [`${siteURL}${image}`],
         });
     }
 

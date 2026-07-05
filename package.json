@@ -5,7 +5,7 @@
     "scripts": {
         "dev": "tsx scripts/generate-covers.ts && tsx scripts/prepare-resume.ts && next-image-export-optimizer && next dev --turbopack",
         "dev:https": "tsx scripts/generate-covers.ts && tsx scripts/prepare-resume.ts && next-image-export-optimizer && next dev --experimental-https",
-        "build": "tsx scripts/generate-covers.ts && tsx scripts/prepare-resume.ts && next build && next-image-export-optimizer",
+        "build": "tsx scripts/generate-covers.ts && tsx scripts/generate-og-images.ts && tsx scripts/prepare-resume.ts && next build && next-image-export-optimizer",
         "start": "next start",
         "lint": "eslint"
     },
@@ -29,6 +29,7 @@
     },
     "devDependencies": {
         "@eslint/eslintrc": "^3",
+        "@resvg/resvg-js": "^2.6.2",
         "@tailwindcss/postcss": "^4",
         "@types/node": "^20",
         "@types/react": "^19",
