@@ -10,7 +10,7 @@ import {
     resumeSections,
 } from '@/app/resume/contents';
 import { jetBrainsMono } from '@/config/monoFont';
-import { siteName } from '@/config/constants';
+import { siteName, siteThumbnail } from '@/config/constants';
 
 const description = `The professional resume of ${siteName}: work experience, projects, technical skills, and education, with a one-click Save as PDF.`;
 
@@ -23,6 +23,20 @@ export const metadata: Metadata = {
         description,
         url: '/resume',
         type: 'website',
+        images: [
+            {
+                url: siteThumbnail,
+                width: 4000,
+                height: 2252,
+                alt: `Resume | ${siteName}`,
+            },
+        ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: `Resume | ${siteName}`,
+        description,
+        images: [siteThumbnail],
     },
 };
 
