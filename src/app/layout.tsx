@@ -23,6 +23,7 @@ import HashScroll from '@/components/layout/HashScroll';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import PageGradientBackground from '@/components/backgrounds/PageGradientBackground';
+import { PageGradientProvider } from '@/components/backgrounds/PageGradientBackground/PageGradientProvider';
 import { hasArticles } from '@/lib/posts';
 import { hasResume } from '@/lib/resume';
 import { notoSans } from '@/config/fonts';
@@ -128,14 +129,16 @@ export default function RootLayout({
             <body
                 className={`${notoSans.variable} bg-background relative flex min-h-svh flex-col text-base antialiased`}
             >
-                <PageGradientBackground />
-                <HashScroll />
-                <Navbar
-                    hasArticles={hasArticles()}
-                    hasResume={hasResume()}
-                />
-                <div className="flex grow flex-col">{children}</div>
-                <Footer />
+                <PageGradientProvider>
+                    <PageGradientBackground />
+                    <HashScroll />
+                    <Navbar
+                        hasArticles={hasArticles()}
+                        hasResume={hasResume()}
+                    />
+                    <div className="flex grow flex-col">{children}</div>
+                    <Footer />
+                </PageGradientProvider>
             </body>
         </html>
     );

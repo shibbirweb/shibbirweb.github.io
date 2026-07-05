@@ -26,7 +26,7 @@ export default async function ArticlePreviewPage({
     const article = await loadPreviewArticle(slug);
     if (!article) notFound();
 
-    const related = getRelatedArticles(slug, 4);
+    const related = getRelatedArticles(slug, 3);
     const series = getSeriesForArticle(slug);
     const { previous, next } = getAdjacentArticles(slug);
 
