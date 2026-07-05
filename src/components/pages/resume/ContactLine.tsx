@@ -1,5 +1,6 @@
 import { Fragment } from 'react';
 import type { ContactLink } from '@/components/pages/resume/types';
+import ExternalLink from '@/components/pages/resume/ExternalLink';
 
 /** Pipe-separated contact links (email, LinkedIn, GitHub, site). */
 export default function ContactLine({
@@ -19,12 +20,12 @@ export default function ContactLine({
                             |
                         </span>
                     )}
-                    <a
+                    <ExternalLink
                         href={contact.href}
                         className="hover:text-foreground transition-colors"
                     >
                         {contact.label}
-                    </a>
+                    </ExternalLink>
                 </Fragment>
             ))}
         </p>

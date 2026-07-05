@@ -14,9 +14,11 @@ import ResumeSectionBlock from '@/components/pages/resume/ResumeSectionBlock';
  * sections through the shared shell and the section dispatcher.
  */
 export default function ResumeDocument({
+    name,
     contacts,
     sections,
 }: {
+    name: string;
     contacts: ContactLink[];
     sections: ResumeSectionData[];
 }) {
@@ -27,7 +29,10 @@ export default function ResumeDocument({
                 'print:mx-0 print:max-w-none print:rounded-none print:border-0 print:bg-transparent print:p-0 print:font-[Helvetica,Arial,sans-serif] print:text-[10pt] print:leading-[1.35] print:text-black print:shadow-none'
             )}
         >
-            <ResumeContactHeader contacts={contacts} />
+            <ResumeContactHeader
+                name={name}
+                contacts={contacts}
+            />
 
             <div className="mt-7 flex flex-col gap-6 print:mt-4 print:gap-[13px]">
                 {sections.map((section) => (

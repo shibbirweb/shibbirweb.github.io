@@ -1,4 +1,5 @@
 import type { EducationEntry } from '@/components/pages/resume/types';
+import ExternalLink from '@/components/pages/resume/ExternalLink';
 import MetaText from '@/components/pages/resume/MetaText';
 
 /** One institution: name + year, degree underneath. */
@@ -12,12 +13,12 @@ export default function EducationItem({
             <div className="flex flex-wrap items-baseline justify-between gap-x-3">
                 <h3 className="font-semibold">
                     {entry.institutionURL ? (
-                        <a
+                        <ExternalLink
                             href={entry.institutionURL}
                             className="hover:underline"
                         >
                             {entry.institution}
-                        </a>
+                        </ExternalLink>
                     ) : (
                         entry.institution
                     )}

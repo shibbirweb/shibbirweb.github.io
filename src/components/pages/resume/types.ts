@@ -31,6 +31,8 @@ export type ProjectEntry = {
     name: string;
     /** Short tagline shown after the name, separated by a middot. */
     tagline?: string;
+    /** Company/context the project was built at (shown under the name). */
+    company?: string;
     highlights?: string[];
     tech?: string[];
     /** Live URL if it exists, otherwise the repository URL. */

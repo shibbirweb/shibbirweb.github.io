@@ -3,7 +3,7 @@ import { cn } from '@/utils/cn';
 import Breadcrumb from '@/components/layout/Breadcrumb';
 import DownloadPdfButton from '@/components/pages/resume/DownloadPdfButton';
 import ResumeDocument from '@/components/pages/resume/ResumeDocument';
-import { resumeContacts, resumeSections } from '@/app/resume/contents';
+import { resumeContacts, resumeName, resumeSections } from '@/app/resume/contents';
 import { jetBrainsMono } from '@/config/monoFont';
 import { siteName } from '@/config/constants';
 
@@ -42,6 +42,7 @@ export default function ResumePage() {
                 <DownloadPdfButton />
             </div>
             <ResumeDocument
+                name={resumeName}
                 contacts={resumeContacts}
                 sections={resumeSections}
             />

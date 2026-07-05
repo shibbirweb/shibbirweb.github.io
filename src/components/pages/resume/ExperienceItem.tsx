@@ -1,5 +1,6 @@
 import type { ExperienceEntry } from '@/components/pages/resume/types';
 import BulletList from '@/components/pages/resume/BulletList';
+import ExternalLink from '@/components/pages/resume/ExternalLink';
 import MetaText from '@/components/pages/resume/MetaText';
 import TechLine from '@/components/pages/resume/TechLine';
 
@@ -10,12 +11,12 @@ export default function ExperienceItem({ entry }: { entry: ExperienceEntry }) {
             <div className="flex flex-wrap items-baseline justify-between gap-x-3">
                 <h3 className="text-[15px] font-bold print:text-[11.5pt]">
                     {entry.companyURL ? (
-                        <a
+                        <ExternalLink
                             href={entry.companyURL}
                             className="hover:underline"
                         >
                             {entry.company}
-                        </a>
+                        </ExternalLink>
                     ) : (
                         entry.company
                     )}

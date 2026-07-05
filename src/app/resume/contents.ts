@@ -12,6 +12,10 @@ import {
     siteURL,
 } from '@/config/constants';
 
+// Name shown on the resume document (kept separate from the site-wide
+// `siteName` used for branding/SEO).
+export const resumeName = 'Md. Shibbir Ahmed';
+
 // Contact row under the name. Labels are the display text; hrefs are the real
 // targets (mailto for email, canonical URLs for the rest).
 export const resumeContacts: ContactLink[] = [
@@ -220,7 +224,8 @@ export const resumeSections: ResumeSectionData[] = [
         entries: [
             {
                 name: 'KP Dashboard',
-                tagline: 'Political influence and advocacy platform (RoBenDevs)',
+                tagline: 'Political influence and advocacy platform',
+                company: 'RoBenDevs',
                 highlights: [
                     'Designed the Action Center engagement subsystem end to end: 13 database tables, REST APIs, and the full admin UI.',
                     'Built background big-data pipelines (Laravel queues, Horizon): batch xlsx imports backed by S3, streamed chunked exports for the largest client datasets, and mass-message delivery with automatic recovery.',
@@ -238,8 +243,31 @@ export const resumeSections: ResumeSectionData[] = [
                 ],
             },
             {
+                name: 'DocTime',
+                tagline: 'Telehealth consultation PWA',
+                company: 'Media365 Limited',
+                highlights: [
+                    'Contributed to a performant Progressive Web App for seamless cross-platform access.',
+                    'Optimized frontend speed and responsiveness and hardened the platform against spam and abuse.',
+                ],
+                tech: ['Nuxt.js', 'Firebase Cloud Functions', 'Vuex', 'PWA'],
+                url: 'https://doctime.com.bd',
+            },
+            {
+                name: 'Doctor PRO',
+                tagline: 'Prescription writing solution',
+                company: 'Media365 Limited',
+                highlights: [
+                    'Built a user-friendly prescription-writing frontend with RESTful API integration.',
+                    'Optimized medicine search with frontend caching and a smart suggestion system for faster selection.',
+                ],
+                tech: ['Laravel', 'Nuxt.js', 'Pinia'],
+                url: 'https://www.doctorpro.doctime.com.bd/',
+            },
+            {
                 name: 'RateHammer (Baskefy)',
                 tagline: 'Buy-now, pay-later payment gateway',
+                company: 'Media365 Limited',
                 highlights: [
                     'Buy-now, pay-later gateway with seamless WordPress WooCommerce integration.',
                     'Built JavaScript SDKs to embed the payment gateway into other web platforms.',
@@ -254,28 +282,9 @@ export const resumeSections: ResumeSectionData[] = [
                 ],
             },
             {
-                name: 'Doctor PRO',
-                tagline: 'Prescription writing solution',
-                highlights: [
-                    'Built a user-friendly prescription-writing frontend with RESTful API integration.',
-                    'Optimized medicine search with frontend caching and a smart suggestion system for faster selection.',
-                ],
-                tech: ['Laravel', 'Nuxt.js', 'Pinia'],
-                url: 'https://www.doctorpro.doctime.com.bd/',
-            },
-            {
-                name: 'DocTime',
-                tagline: 'Telehealth consultation PWA',
-                highlights: [
-                    'Contributed to a performant Progressive Web App for seamless cross-platform access.',
-                    'Optimized frontend speed and responsiveness and hardened the platform against spam and abuse.',
-                ],
-                tech: ['Nuxt.js', 'Firebase Cloud Functions', 'Vuex', 'PWA'],
-                url: 'https://doctime.com.bd',
-            },
-            {
                 name: 'Oporajito',
                 tagline: 'Online exam and practice platform (Web + Android)',
+                company: 'MAXSOP',
                 highlights: [
                     'Bangladesh-based exam and practice platform for students and job seekers.',
                     'Delivered the frontend, the REST API backend, and the Android app.',
