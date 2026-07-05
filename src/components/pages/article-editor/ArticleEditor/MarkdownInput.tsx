@@ -1,15 +1,17 @@
 'use client';
 
-import type { KeyboardEvent } from 'react';
+import type { KeyboardEvent, RefObject } from 'react';
 import { jetBrainsMono } from '@/config/monoFont';
 import { cn } from '@/utils/cn';
 
 export default function MarkdownInput({
     value,
     onChange,
+    textareaRef,
 }: {
     value: string;
     onChange: (value: string) => void;
+    textareaRef?: RefObject<HTMLTextAreaElement | null>;
 }) {
     function handleKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
         if (event.key !== 'Tab') return;
@@ -35,6 +37,7 @@ export default function MarkdownInput({
                 </span>
             </div>
             <textarea
+                ref={textareaRef}
                 className={cn(
                     jetBrainsMono.variable,
                     'border-foreground/15 bg-foreground/[0.025] focus:border-foreground/40 min-h-[46rem] w-full resize-y rounded-xl border p-4 font-mono text-[13px] leading-6 transition outline-none'

@@ -19,6 +19,7 @@ export default function SaveBar({
     onDelete,
     canDelete,
     onTogglePreview,
+    onOpenGuide,
 }: {
     existing: ArticleListItem[];
     slug: string;
@@ -35,6 +36,7 @@ export default function SaveBar({
     onDelete: () => void;
     canDelete: boolean;
     onTogglePreview: () => void;
+    onOpenGuide: () => void;
 }) {
     const isSaving = saveState.status === 'saving';
     return (
@@ -78,6 +80,13 @@ export default function SaveBar({
                 onClick={onNew}
             >
                 New article
+            </button>
+            <button
+                type="button"
+                className="border-foreground/15 hover:bg-foreground/5 cursor-pointer rounded-xl border px-4 py-2 text-sm font-medium transition-colors"
+                onClick={onOpenGuide}
+            >
+                Guide
             </button>
             <label
                 className="sr-only"

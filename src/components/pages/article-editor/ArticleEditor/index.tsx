@@ -5,9 +5,13 @@ import EditorPreview from '@/components/pages/article-editor/ArticleEditor/Edito
 import FrontmatterForm from '@/components/pages/article-editor/ArticleEditor/FrontmatterForm';
 import MarkdownInput from '@/components/pages/article-editor/ArticleEditor/MarkdownInput';
 import SaveBar from '@/components/pages/article-editor/ArticleEditor/SaveBar';
+import WritingGuide from '@/components/pages/article-editor/ArticleEditor/WritingGuide';
 import { createEmptyDraft } from '@/components/pages/article-editor/ArticleEditor/contents';
+import { SAMPLE_DRAFT } from '@/components/pages/article-editor/ArticleEditor/mockData';
 import { useArticleActions } from '@/components/pages/article-editor/ArticleEditor/hooks/useArticleActions';
+import { useMarkdownInsertion } from '@/components/pages/article-editor/ArticleEditor/hooks/useMarkdownInsertion';
 import { useUnsavedChangesWarning } from '@/components/pages/article-editor/ArticleEditor/hooks/useUnsavedChangesWarning';
+import { useDisclosure } from '@/components/layout/Navbar/hooks/useDisclosure';
 import type {
     ArticleDraft,
     ArticleListItem,
@@ -36,9 +40,15 @@ export default function ArticleEditor({
         null
     );
     const [isPreviewVisible, setIsPreviewVisible] = useState(true);
+    const guide = useDisclosure();
 
     const { articles, suggestions, saveState, save, open, remove } =
         useArticleActions(existing, initialSuggestions);
+
+    const { textareaRef, insertSnippet } = useMarkdownInsertion(
+        draft.body,
+        (body) => setDraft((current) => ({ ...current, body }))
+    );
 
     const autoSlug = slugifyHeading(draft.frontmatter.title) || 'untitled-article';
     const slug = slugOverride ?? autoSlug;
@@ -81,6 +91,15 @@ export default function ArticleEditor({
         const next = createEmptyDraft();
         setDraft(next);
         setSavedDraft(next);
+        setSlugOverride(null);
+        setSavedSlugOverride(null);
+    }
+
+    /** Load the canonical every-feature example as a fresh unsaved draft. */
+    function loadExample() {
+        if (!confirmDiscard()) return;
+        setDraft(SAMPLE_DRAFT);
+        setSavedDraft(createEmptyDraft());
         setSlugOverride(null);
         setSavedSlugOverride(null);
     }
@@ -172,6 +191,7 @@ export default function ArticleEditor({
                 onTogglePreview={() =>
                     setIsPreviewVisible((isVisible) => !isVisible)
                 }
+                onOpenGuide={guide.show}
             />
 
             <div className="grid gap-6">
@@ -197,6 +217,7 @@ export default function ArticleEditor({
                 >
                     <MarkdownInput
                         value={draft.body}
+                        textareaRef={textareaRef}
                         onChange={(body) =>
                             setDraft((current) => ({ ...current, body }))
                         }
@@ -210,6 +231,20 @@ export default function ArticleEditor({
                     )}
                 </div>
             </div>
+
+            {guide.open && (
+                <WritingGuide
+                    onClose={guide.close}
+                    onInsert={(snippet) => {
+                        insertSnippet(snippet);
+                        guide.close();
+                    }}
+                    onLoadExample={() => {
+                        loadExample();
+                        guide.close();
+                    }}
+                />
+            )}
         </main>
     );
 }
