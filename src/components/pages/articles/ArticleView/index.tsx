@@ -4,9 +4,7 @@ import ArticleCover from '@/components/pages/articles/ArticleCover';
 import ArticleGrid from '@/components/pages/articles/ArticleGrid';
 import ArticleMeta from '@/components/pages/articles/ArticleMeta';
 import ArticlePager from '@/components/pages/articles/ArticlePager';
-import CodeBlockCopy from '@/components/pages/articles/CodeBlock';
 import ImageLightbox from '@/components/pages/articles/ImageLightbox';
-import MermaidRenderer from '@/components/pages/articles/MermaidRenderer';
 import ReadingProgress from '@/components/pages/articles/ReadingProgress';
 import SeriesNav from '@/components/pages/articles/SeriesNav';
 import TableOfContents from '@/components/pages/articles/TableOfContents';
@@ -14,53 +12,38 @@ import MobileTableOfContents from '@/components/pages/articles/TableOfContents/M
 import TagLink from '@/components/pages/articles/TagLink';
 import TechStack from '@/components/pages/articles/TechStack';
 import WhatYoullLearn from '@/components/pages/articles/WhatYoullLearn';
-import { SAMPLE_DRAFT } from '@/components/pages/article-editor/ArticleEditor/mockData';
+import MermaidRenderer from '@/components/pages/articles/MermaidRenderer';
+import CodeBlockCopy from '@/components/pages/articles/CodeBlock';
+import { JsonLd } from '@/components/seo/JsonLd';
+import { buildArticleJsonLd } from '@/utils/articleJsonLd';
 import { jetBrainsMono } from '@/config/monoFont';
-import { renderMarkdown } from '@/lib/markdown';
-import { getLatestArticles, type ArticleSeries } from '@/lib/posts';
 import { cn } from '@/utils/cn';
+import type {
+    Article,
+    ArticleSeries,
+    ArticleSummary,
+} from '@/lib/posts';
 
-const MOCK_ACCENT_COLORS = ['#2563eb', '#7c3aed'] as const;
-
-/** A resolved multi-part series built from the sample's frontmatter series. */
-function mockSeries(
-    name: string,
-    order: number,
-    currentTitle: string
-): ArticleSeries {
-    const others = [
-        { slug: 'series-part-foundations', title: 'Laying the Foundations' },
-        { slug: 'series-part-retrieval', title: 'Indexing and Retrieval' },
-        { slug: 'series-part-scale', title: 'Serving Answers at Scale' },
-    ];
-    const parts = [
-        {
-            slug: 'series-part-current',
-            title: currentTitle,
-            order,
-            isCurrent: true,
-        },
-        ...others.map((part, index) => ({
-            ...part,
-            order: order + index + 1,
-            isCurrent: false,
-        })),
-    ];
-    return { name, parts };
-}
-
-export default async function MockArticlePreviewPage() {
-    const { frontmatter } = SAMPLE_DRAFT;
-    const related = getLatestArticles(4);
-    const preview = await renderMarkdown(SAMPLE_DRAFT.body);
-    const series = frontmatter.series
-        ? mockSeries(
-              frontmatter.series.name,
-              frontmatter.series.order,
-              frontmatter.title
-          )
-        : null;
-
+/**
+ * The full article page body: cover/header, series nav, "what you'll learn", the
+ * rendered Markdown with its client upgraders (Mermaid, code copy, lightbox), the
+ * table of contents, the pager, related posts, and the production-only JSON-LD.
+ * Rendered verbatim by the real `/articles/[slug]` route and, in dev, by the
+ * editor's full-page preview so what the author sees is exactly what ships.
+ */
+export default function ArticleView({
+    article,
+    related,
+    series,
+    previous,
+    next,
+}: {
+    article: Article;
+    related: ArticleSummary[];
+    series: ArticleSeries | null;
+    previous?: ArticleSummary;
+    next?: ArticleSummary;
+}) {
     return (
         <main
             className={cn(
@@ -68,31 +51,32 @@ export default async function MockArticlePreviewPage() {
                 'container mx-auto px-4 py-20 sm:py-28'
             )}
         >
-            <ReadingProgress accentColors={MOCK_ACCENT_COLORS} />
-            <Breadcrumb currentName={frontmatter.title} />
+            <ReadingProgress accentColors={article.coverColors} />
+            <Breadcrumb currentName={article.title} />
 
             <article>
                 <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
                     <ArticleCover
-                        src={frontmatter.cover ?? ''}
-                        alt=""
+                        src={article.cover}
                         className="h-auto rounded-2xl"
                     />
                     <header>
                         <ArticleMeta
-                            date={frontmatter.date}
-                            updated={frontmatter.updated}
-                            readingMinutes={6}
-                            difficulty={frontmatter.difficulty}
+                            date={article.date}
+                            updated={article.updated}
+                            readingMinutes={article.readingMinutes}
+                            difficulty={article.difficulty}
                         />
                         <h1 className="mt-4 text-3xl font-bold sm:text-4xl">
-                            {frontmatter.title}
+                            {article.title}
                         </h1>
-                        <p className="text-foreground/80 mt-5 text-lg leading-relaxed">
-                            {frontmatter.description}
-                        </p>
+                        {article.description && (
+                            <p className="text-foreground/80 mt-5 text-lg leading-relaxed">
+                                {article.description}
+                            </p>
+                        )}
                         <ul className="mt-6 flex flex-wrap gap-2">
-                            {frontmatter.tags.map((tag) => (
+                            {article.tags.map((tag) => (
                                 <TagLink
                                     key={tag}
                                     tag={tag}
@@ -100,10 +84,12 @@ export default async function MockArticlePreviewPage() {
                                 />
                             ))}
                         </ul>
-                        <TechStack
-                            tech={frontmatter.tech}
-                            className="mt-5"
-                        />
+                        {article.tech.length > 0 && (
+                            <TechStack
+                                tech={article.tech}
+                                className="mt-5"
+                            />
+                        )}
                     </header>
                 </div>
 
@@ -114,34 +100,39 @@ export default async function MockArticlePreviewPage() {
                         {series && (
                             <SeriesNav
                                 series={series}
-                                currentSlug="series-part-current"
-                                accentColors={MOCK_ACCENT_COLORS}
+                                currentSlug={article.slug}
+                                accentColors={article.coverColors}
                                 className="mb-8"
                             />
                         )}
-                        <WhatYoullLearn
-                            items={frontmatter.learn}
-                            accentColors={MOCK_ACCENT_COLORS}
-                            className="mb-8"
-                        />
+                        {article.learn.length > 0 && (
+                            <WhatYoullLearn
+                                items={article.learn}
+                                accentColors={article.coverColors}
+                                className="mb-8"
+                            />
+                        )}
                         <MobileTableOfContents
-                            toc={preview.toc}
-                            accentColors={MOCK_ACCENT_COLORS}
+                            toc={article.toc}
+                            accentColors={article.coverColors}
                         />
-                        <ArticleContent html={preview.html} />
+
+                        <ArticleContent html={article.html} />
+
                         <MermaidRenderer />
                         <CodeBlockCopy />
                         <ImageLightbox />
+
                         <ArticlePager
-                            previous={related[0]}
-                            next={related[1]}
+                            previous={previous}
+                            next={next}
                         />
                     </div>
 
                     <aside className="hidden lg:block">
                         <TableOfContents
-                            toc={preview.toc}
-                            accentColors={MOCK_ACCENT_COLORS}
+                            toc={article.toc}
+                            accentColors={article.coverColors}
                         />
                     </aside>
                 </div>
@@ -161,6 +152,10 @@ export default async function MockArticlePreviewPage() {
                         className="mt-10 lg:grid-cols-4"
                     />
                 </aside>
+            )}
+
+            {process.env.NODE_ENV === 'production' && (
+                <JsonLd data={buildArticleJsonLd(article)} />
             )}
         </main>
     );

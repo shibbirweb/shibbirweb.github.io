@@ -15,6 +15,7 @@ export default function SaveBar({
     onNew,
     onOpen,
     onSave,
+    onPreview,
     onTogglePreview,
 }: {
     existing: ArticleListItem[];
@@ -28,6 +29,7 @@ export default function SaveBar({
     onNew: () => void;
     onOpen: (file: string) => void;
     onSave: () => void;
+    onPreview: () => void;
     onTogglePreview: () => void;
 }) {
     const isSaving = saveState.status === 'saving';
@@ -113,14 +115,9 @@ export default function SaveBar({
             </button>
             <button
                 type="button"
-                className="border-foreground/15 hover:bg-foreground/5 cursor-pointer rounded-xl border px-4 py-2 text-sm font-medium transition-colors"
-                onClick={() =>
-                    window.open(
-                        '/studio/article-editor/mock-preview',
-                        '_blank',
-                        'noopener,noreferrer'
-                    )
-                }
+                className="border-foreground/15 hover:bg-foreground/5 cursor-pointer rounded-xl border px-4 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60"
+                disabled={isSaving}
+                onClick={onPreview}
             >
                 Full preview
             </button>

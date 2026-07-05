@@ -99,6 +99,19 @@ export default function ArticleEditor({
         syncSlugToFile(result.file, draft.frontmatter.title);
     }
 
+    /** Save first (the preview reads from disk), then open the full page in a tab. */
+    async function previewArticle() {
+        const result = await save(draft, slug);
+        if (!result) return;
+        setSavedDraft(draft);
+        syncSlugToFile(result.file, draft.frontmatter.title);
+        window.open(
+            `/studio/article-editor/preview/${fileSlug(result.file)}`,
+            '_blank',
+            'noopener,noreferrer'
+        );
+    }
+
     return (
         <main className="mx-auto w-full max-w-[112rem] px-4 py-24 sm:px-6 lg:px-8">
             <header className="mb-8">
@@ -133,6 +146,7 @@ export default function ArticleEditor({
                 onNew={startNewArticle}
                 onOpen={openArticle}
                 onSave={saveArticle}
+                onPreview={previewArticle}
                 onTogglePreview={() =>
                     setIsPreviewVisible((isVisible) => !isVisible)
                 }

@@ -202,18 +202,33 @@ function stringList(value: unknown): string[] {
         : [];
 }
 
+/**
+ * Build a full `Article` (summary + rendered HTML + TOC) from a parsed source.
+ * Shared by `getArticle` and the dev-only editor preview loader so both render
+ * through the exact same pipeline; the caller decides which files are eligible
+ * (the site serves published only, the preview also reads drafts).
+ */
+export async function buildArticle(
+    slug: string,
+    data: unknown,
+    content: string
+): Promise<Article> {
+    const source: ParsedArticle = { slug, data: data as Frontmatter, content };
+    const { html, toc } = await renderMarkdown(content);
+    return {
+        ...toSummary(source),
+        html,
+        toc,
+        learn: stringList(source.data.learn),
+        tech: stringList(source.data.tech),
+    };
+}
+
 /** A single rendered article, or null if the slug is missing or a draft. */
 export async function getArticle(slug: string): Promise<Article | null> {
     const article = readArticleFiles().find((item) => item.slug === slug);
     if (!article || article.data.draft === true) return null;
-    const { html, toc } = await renderMarkdown(article.content);
-    return {
-        ...toSummary(article),
-        html,
-        toc,
-        learn: stringList(article.data.learn),
-        tech: stringList(article.data.tech),
-    };
+    return buildArticle(article.slug, article.data, article.content);
 }
 
 /**
