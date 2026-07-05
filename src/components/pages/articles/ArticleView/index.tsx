@@ -151,7 +151,7 @@ export default function ArticleView({
                     <ArticleGrid
                         articles={related}
                         compact
-                        className="mt-10 lg:grid-cols-4"
+                        className="mt-10"
                     />
                 </aside>
             )}
