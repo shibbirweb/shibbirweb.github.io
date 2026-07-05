@@ -9,8 +9,15 @@ import {
     resumeName,
     resumeSections,
 } from '@/app/resume/contents';
+import { JsonLd } from '@/components/seo/JsonLd';
+import { resumeJsonLd } from '@/utils/resumeJsonLd';
 import { jetBrainsMono } from '@/config/monoFont';
-import { siteName, siteThumbnail } from '@/config/constants';
+import {
+    siteLocale,
+    siteName,
+    siteThumbnail,
+    twitterUsername,
+} from '@/config/constants';
 
 const description = `The professional resume of ${siteName}: work experience, projects, technical skills, and education, with a one-click Save as PDF.`;
 
@@ -22,6 +29,8 @@ export const metadata: Metadata = {
         title: `Resume | ${siteName}`,
         description,
         url: '/resume',
+        siteName,
+        locale: siteLocale,
         type: 'website',
         images: [
             {
@@ -36,6 +45,8 @@ export const metadata: Metadata = {
         card: 'summary_large_image',
         title: `Resume | ${siteName}`,
         description,
+        creator: twitterUsername,
+        siteId: twitterUsername,
         images: [siteThumbnail],
     },
 };
@@ -54,6 +65,9 @@ export default function ResumePage() {
                 'print:scheme-light print:[--background:#fff] print:[--foreground:#000]'
             )}
         >
+            {process.env.NODE_ENV === 'production' && (
+                <JsonLd data={resumeJsonLd} />
+            )}
             <div className="print:hidden">
                 <Breadcrumb />
             </div>
