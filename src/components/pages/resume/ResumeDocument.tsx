@@ -15,10 +15,12 @@ import ResumeSectionBlock from '@/components/pages/resume/ResumeSectionBlock';
  */
 export default function ResumeDocument({
     name,
+    location,
     contacts,
     sections,
 }: {
     name: string;
+    location?: string;
     contacts: ContactLink[];
     sections: ResumeSectionData[];
 }) {
@@ -32,6 +34,7 @@ export default function ResumeDocument({
             <ResumeContactHeader
                 name={name}
                 contacts={contacts}
+                location={location}
             />
 
             <div className="mt-7 flex flex-col gap-6 print:mt-4 print:gap-[13px]">

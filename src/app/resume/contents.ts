@@ -16,6 +16,9 @@ import {
 // `siteName` used for branding/SEO).
 export const resumeName = 'Md. Shibbir Ahmed';
 
+// Location + availability line under the contacts.
+export const resumeLocation = 'Dhaka, Bangladesh (GMT+6) · Open to remote roles';
+
 // Contact row under the name. Labels are the display text; hrefs are the real
 // targets (mailto for email, canonical URLs for the rest).
 export const resumeContacts: ContactLink[] = [
@@ -32,7 +35,7 @@ export const resumeSections: ResumeSectionData[] = [
     {
         kind: 'text',
         label: 'Summary',
-        text: 'Senior Full-Stack Software Engineer with 7+ years shipping scalable, high-performance web applications in PHP/Laravel and modern JavaScript (Vue, Nuxt, React, Node/TypeScript). Leads engineering teams, owns products end to end, and designs REST APIs, queue-based pipelines, and event-driven backends. Now building AI products on the Anthropic Claude API and MCP, from in-app assistants to tool and function calling. Focused on system design, performance, and reliable delivery.',
+        text: 'Senior Full-Stack Software Engineer with 6+ years shipping scalable, high-performance web applications in PHP/Laravel and modern JavaScript (Vue, Nuxt, React, Node/TypeScript). Leads engineering teams, owns products end to end, and designs REST APIs, queue-based pipelines, and event-driven backends. Currently building AI products on the Anthropic Claude API and MCP: in-app assistants, custom MCP servers, and tool/function calling. Focused on system design, performance, and reliable delivery.',
     },
     {
         kind: 'skills',
@@ -40,7 +43,7 @@ export const resumeSections: ResumeSectionData[] = [
         groups: [
             {
                 label: 'Languages',
-                values: ['PHP', 'JavaScript', 'TypeScript', 'SQL', 'Kotlin', 'Java'],
+                values: ['PHP', 'JavaScript', 'TypeScript', 'SQL'],
             },
             {
                 label: 'Backend',
@@ -74,7 +77,7 @@ export const resumeSections: ResumeSectionData[] = [
             },
             {
                 label: 'Databases',
-                values: ['MySQL', 'SQLite', 'Redis', 'Firebase', 'Prisma ORM'],
+                values: ['MySQL', 'PostgreSQL', 'SQLite', 'Redis', 'Prisma ORM'],
             },
             {
                 label: 'AI',
@@ -119,7 +122,7 @@ export const resumeSections: ResumeSectionData[] = [
                         period: 'Oct 2024 - Present',
                         highlights: [
                             'Led a team of 3 engineers, shipping 180+ production features and fixes (55,000+ lines of code) across 5 applications in 21 months.',
-                            'Integrated 2 US Communicating With Congress systems (HCWC federal, SCWC state) to deliver constituent advocacy messages directly to legislator offices.',
+                            'Integrated 2 US Communicating-With-Congress delivery systems (federal and state) to route constituent advocacy messages directly to legislator offices.',
                             'Built AI features on the Anthropic Claude API: an in-app assistant backed by a custom MCP server exposing 7 legislator-data tools, plus 4 internal MCP developer tools.',
                             'Resolved 300+ production bugs via Sentry monitoring, including congressional delivery failures fixed across 3 services.',
                             'Hardened public-facing flows with Twilio SMS OTP, OAuth2, reCAPTCHA v3/v2, and SQL-injection remediation.',
@@ -156,13 +159,13 @@ export const resumeSections: ResumeSectionData[] = [
                 location: 'Dhaka, Bangladesh',
                 positions: [
                     {
-                        role: 'Senior Full Stack Developer',
-                        period: 'Feb 2024 - Oct 2024',
+                        role: 'Full Stack Developer → Senior Full Stack Developer',
+                        period: 'Mar 2023 - Oct 2024',
                         highlights: [
-                            'Developed client-facing web applications with Nuxt.js and Vue, delivering efficient, reusable, and testable code.',
-                            'Translated client specifications and project requirements into shipped, production-ready features.',
-                            'Owned UI design and development standards across the frontend and refactored legacy code for maintainability.',
-                            'Built internal tooling and reusable components that streamlined team workflow.',
+                            'Promoted to Senior within 11 months after delivering client-facing features across the product.',
+                            'Shipped client-facing Nuxt.js/Vue applications serving healthcare users in emerging markets, including a telehealth PWA and a prescription-writing platform.',
+                            'Refactored legacy frontend code and established UI development standards adopted across the team, reducing regression bugs in client deliveries.',
+                            'Built internal tooling and reusable component libraries that cut feature build time for the team.',
                         ],
                         tech: [
                             'Nuxt.js',
@@ -173,14 +176,6 @@ export const resumeSections: ResumeSectionData[] = [
                             'MySQL',
                         ],
                     },
-                    {
-                        role: 'Full Stack Developer',
-                        period: 'Mar 2023 - Jan 2024',
-                        highlights: [
-                            'Developed and maintained full-stack web application features across the product.',
-                            'Refactored and improved existing code and supported ongoing operational needs.',
-                        ],
-                    },
                 ],
             },
             {
@@ -189,13 +184,12 @@ export const resumeSections: ResumeSectionData[] = [
                 location: 'Mymensingh, Bangladesh',
                 positions: [
                     {
-                        role: 'Senior Web Developer',
-                        period: 'Oct 2019 - Feb 2023',
+                        role: 'Web Developer Intern → Junior Developer → Full Stack Developer → Senior Software Engineer',
+                        period: 'Oct 2018 - Feb 2023',
                         highlights: [
-                            'Built PHP/Laravel and Vue.js web applications from requirements through production delivery.',
-                            'Analyzed client requirements and translated them into shipped deliverables.',
-                            'Delivered efficient, optimized, testable, and reusable code.',
-                            'Established and monitored UI design and development standards.',
+                            'Progressed from intern to Senior Software Engineer over 4+ years through three promotions.',
+                            'Built and shipped PHP/Laravel and Vue.js applications from requirements through production delivery, including Oporajito, an online exam platform (web and Android) with SSLCommerz payment integration.',
+                            'Established and monitored UI design and development standards for the team.',
                         ],
                         tech: [
                             'PHP',
@@ -206,13 +200,6 @@ export const resumeSections: ResumeSectionData[] = [
                             'Git',
                         ],
                     },
-                    {
-                        role: 'Web Developer, Internship',
-                        period: 'Oct 2018 - Sep 2019',
-                        highlights: [
-                            'Assisted in building web application features and handled day-to-day operational tasks.',
-                        ],
-                    },
                 ],
             },
         ],
@@ -221,10 +208,9 @@ export const resumeSections: ResumeSectionData[] = [
         kind: 'bullets',
         label: 'AI Experience',
         items: [
-            'Designed and shipped an in-app AI assistant on the Anthropic Claude API for a civic-engagement platform.',
-            'Built a custom MCP (Model Context Protocol) server exposing 7 legislator-data tools for tool and function calling, plus 4 internal MCP developer tools.',
-            'Applied prompt engineering and LLM integration to surface domain data through natural-language interactions.',
-            'Integrated AI-assisted developer tooling into the team engineering workflow.',
+            'Designed the tool schema and data-access layer for a custom MCP server (7 legislator-data tools plus 4 internal developer tools), covering tool and function calling end to end.',
+            'Built prompt pipelines and LLM integration surfacing domain data through natural-language queries, including structured output handling and error recovery.',
+            "Integrated AI-assisted developer tooling (Claude Code) into the team's engineering workflow.",
         ],
     },
     {
@@ -340,8 +326,11 @@ export const resumeSections: ResumeSectionData[] = [
         kind: 'awards',
         label: 'Honors & Awards',
         entries: [
-            { title: 'Top Performer', issuer: 'RoBenDevs', date: 'Jul 2025' },
-            { title: 'Top Performer', issuer: 'RoBenDevs', date: 'Feb 2025' },
+            {
+                title: 'Top Performer',
+                issuer: 'RoBenDevs',
+                date: 'Feb 2025, Jul 2025',
+            },
             {
                 title: 'Best Web Engineer',
                 issuer: 'Media365 Limited',
