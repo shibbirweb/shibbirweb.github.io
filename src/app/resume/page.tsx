@@ -13,9 +13,9 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import { resumeJsonLd } from '@/utils/resumeJsonLd';
 import { jetBrainsMono } from '@/config/monoFont';
 import {
+    resumeThumbnail,
     siteLocale,
     siteName,
-    siteThumbnail,
     twitterUsername,
 } from '@/config/constants';
 
@@ -34,9 +34,9 @@ export const metadata: Metadata = {
         type: 'website',
         images: [
             {
-                url: siteThumbnail,
-                width: 4000,
-                height: 2252,
+                url: resumeThumbnail,
+                width: 1536,
+                height: 1024,
                 alt: `Resume | ${siteName}`,
             },
         ],
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
         description,
         creator: twitterUsername,
         siteId: twitterUsername,
-        images: [siteThumbnail],
+        images: [resumeThumbnail],
     },
 };
 
