@@ -62,14 +62,15 @@ export default function ProjectCard({
                     ariaLabel={`${project.name} source on GitHub`}
                     Icon={GithubIcon}
                 />
-                {project.liveURL ? (
+                {project.links?.map((link) => (
                     <ProjectLink
-                        href={project.liveURL}
-                        label={project.liveLabel ?? 'Live'}
-                        ariaLabel={`${project.name}, ${project.liveLabel ?? 'Live'}`}
+                        key={link.url}
+                        href={link.url}
+                        label={link.label}
+                        ariaLabel={`${project.name}, ${link.label}`}
                         Icon={ExternalLinkIcon}
                     />
-                ) : null}
+                ))}
             </div>
         </li>
     );
