@@ -40,6 +40,7 @@ export function buildPageMetadata({
             title: `${title} | ${siteName}`,
             description,
             url: path,
+            siteName,
             type: 'website',
             images: [
                 {
