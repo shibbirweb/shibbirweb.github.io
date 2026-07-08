@@ -3,17 +3,21 @@
  *
  * NOTE: the descriptions below are concise, honest summaries inferred from the
  * repos. Refine the copy, and add real outcome metrics (downloads, installs,
- * stars, perf numbers) plus Marketplace/npm/demo links via `liveURL` where they
+ * stars, perf numbers) plus Marketplace/npm/demo links via `links` where they
  * exist. Do NOT add metrics you can't back up.
  */
+export type ProjectExternalLink = {
+    url: string;
+    label: string;
+};
+
 export type Project = {
     name: string;
     category: string;
     description: string;
     tech: string[];
     repoURL: string;
-    liveURL?: string;
-    liveLabel?: string;
+    links?: ProjectExternalLink[];
 };
 
 export const projects: Project[] = [
@@ -25,9 +29,16 @@ export const projects: Project[] = [
         tech: ['TypeScript', 'VS Code API'],
         repoURL:
             'https://github.com/shibbirweb/vs-code-extra-cursor-caret-height',
-        liveURL:
-            'https://marketplace.visualstudio.com/items?itemName=shibbirweb.extra-cursor-caret-height',
-        liveLabel: 'Marketplace',
+        links: [
+            {
+                url: 'https://marketplace.visualstudio.com/items?itemName=shibbirweb.extra-cursor-caret-height',
+                label: 'Marketplace',
+            },
+            {
+                url: 'https://open-vsx.org/extension/shibbirweb/extra-cursor-caret-height',
+                label: 'Open VSX',
+            },
+        ],
     },
     {
         name: 'CKEditor 5 Image Remove Callback',
@@ -37,9 +48,12 @@ export const projects: Project[] = [
         tech: ['JavaScript', 'CKEditor 5'],
         repoURL:
             'https://github.com/shibbirweb/ckeditor5-image-remove-event-callback-plugin',
-        liveURL:
-            'https://www.npmjs.com/package/ckeditor5-image-remove-event-callback-plugin',
-        liveLabel: 'npm',
+        links: [
+            {
+                url: 'https://www.npmjs.com/package/ckeditor5-image-remove-event-callback-plugin',
+                label: 'npm',
+            },
+        ],
     },
     {
         name: 'Advanced Laravel Vue Paginate',
@@ -49,9 +63,12 @@ export const projects: Project[] = [
         tech: ['Vue.js', 'JavaScript', 'Laravel'],
         repoURL:
             'https://github.com/shibbirweb/advanced-laravel-vue-paginate',
-        liveURL:
-            'https://www.npmjs.com/package/advanced-laravel-vue-paginate',
-        liveLabel: 'npm',
+        links: [
+            {
+                url: 'https://www.npmjs.com/package/advanced-laravel-vue-paginate',
+                label: 'npm',
+            },
+        ],
     },
     {
         name: 'Nginx Load Balancer',
