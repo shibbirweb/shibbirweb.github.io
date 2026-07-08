@@ -42,6 +42,7 @@ export const siteKeywords: string[] = [
 export const siteAuthor: string = 'Shibbir Ahmed';
 export const siteAuthorEmail: string = 'shibbirweb@gmail.com';
 export const siteThumbnail: string = `${siteURL}/images/shibbir-ahmed.jpg`;
+export const resumeThumbnail: string = `${siteURL}/images/og-resume-shibbir-ahmed.png`;
 
 // workplace
 export const currentJobTitle: string = 'Senior Software Engineer (Full Stack)';
