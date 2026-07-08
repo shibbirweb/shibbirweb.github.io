@@ -1,23 +1,17 @@
-import type { Metadata } from 'next';
 import Breadcrumb from '@/components/layout/Breadcrumb';
 import SectionHeading from '@/components/pages/common/SectionHeading';
 import NowSection from '@/components/pages/now/NowSection';
 import { nowMeta, nowQuote, nowSections } from '@/app/now/contents';
 import { siteName } from '@/config/constants';
+import { buildPageMetadata } from '@/utils/pageMetadata';
 
 const description = `What ${siteName} is focused on right now: current work, what he's building and learning, home-lab experiments, reading, and goals.`;
 
-export const metadata: Metadata = {
+export const metadata = buildPageMetadata({
     title: 'Now',
     description,
-    alternates: { canonical: '/now' },
-    openGraph: {
-        title: `Now | ${siteName}`,
-        description,
-        url: '/now',
-        type: 'website',
-    },
-};
+    path: '/now',
+});
 
 export default function NowPage() {
     return (

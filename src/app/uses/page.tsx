@@ -1,23 +1,17 @@
-import type { Metadata } from 'next';
 import Breadcrumb from '@/components/layout/Breadcrumb';
 import SectionHeading from '@/components/pages/common/SectionHeading';
 import UsesSection from '@/components/pages/uses/UsesSection';
 import { usesSections } from '@/app/uses/contents';
 import { siteName } from '@/config/constants';
+import { buildPageMetadata } from '@/utils/pageMetadata';
 
 const description = `The gear, software, developer tools, and home-lab setup ${siteName} uses day to day for software development, AI, and self-hosting.`;
 
-export const metadata: Metadata = {
+export const metadata = buildPageMetadata({
     title: 'Uses',
     description,
-    alternates: { canonical: '/uses' },
-    openGraph: {
-        title: `Uses | ${siteName}`,
-        description,
-        url: '/uses',
-        type: 'website',
-    },
-};
+    path: '/uses',
+});
 
 export default function UsesPage() {
     return (
