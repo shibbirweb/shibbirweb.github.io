@@ -25,6 +25,9 @@ export const projects: Project[] = [
         tech: ['TypeScript', 'VS Code API'],
         repoURL:
             'https://github.com/shibbirweb/vs-code-extra-cursor-caret-height',
+        liveURL:
+            'https://marketplace.visualstudio.com/items?itemName=shibbirweb.extra-cursor-caret-height',
+        liveLabel: 'Marketplace',
     },
     {
         name: 'CKEditor 5 Image Remove Callback',
@@ -34,15 +37,21 @@ export const projects: Project[] = [
         tech: ['JavaScript', 'CKEditor 5'],
         repoURL:
             'https://github.com/shibbirweb/ckeditor5-image-remove-event-callback-plugin',
+        liveURL:
+            'https://www.npmjs.com/package/ckeditor5-image-remove-event-callback-plugin',
+        liveLabel: 'npm',
     },
     {
-        name: 'Nuxt 3 + Laravel Sanctum Auth',
-        category: 'Full-Stack Demo',
+        name: 'Advanced Laravel Vue Paginate',
+        category: 'Vue.js Package',
         description:
-            'A reference implementation of SPA authentication using Nuxt 3 on the frontend and Laravel Sanctum on the backend.',
-        tech: ['Nuxt.js', 'Laravel', 'PHP', 'Vue.js'],
+            'A Vue.js pagination component that renders Laravel paginator responses out of the box, with a customizable, ready-to-use paginate UI.',
+        tech: ['Vue.js', 'JavaScript', 'Laravel'],
         repoURL:
-            'https://github.com/shibbirweb/demo-nuxt-3-laravel-sanctum-authentication',
+            'https://github.com/shibbirweb/advanced-laravel-vue-paginate',
+        liveURL:
+            'https://www.npmjs.com/package/advanced-laravel-vue-paginate',
+        liveLabel: 'npm',
     },
     {
         name: 'Nginx Load Balancer',
