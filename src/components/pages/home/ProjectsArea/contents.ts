@@ -18,7 +18,7 @@ export type Project = {
 
 export const projects: Project[] = [
     {
-        name: 'VS Code Extra Cursor Caret Height',
+        name: 'Extra Cursor Caret Height',
         category: 'VS Code Extension',
         description:
             'A Visual Studio Code extension that adds configurable extra height to the cursor caret, making it easier to track the caret while editing.',
