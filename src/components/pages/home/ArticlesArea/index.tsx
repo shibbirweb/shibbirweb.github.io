@@ -16,10 +16,6 @@ export default function ArticlesArea() {
                 <SectionHeading className="text-center">
                     Latest Articles
                 </SectionHeading>
-                <p className="text-foreground/70 mt-4 max-w-3xl text-lg leading-relaxed">
-                    Writing on backend engineering, AI, and self-hosted
-                    infrastructure.
-                </p>
 
                 <ul className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {latest.map((article) => (
