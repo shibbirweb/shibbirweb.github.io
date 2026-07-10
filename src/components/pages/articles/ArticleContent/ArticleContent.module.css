@@ -1,11 +1,18 @@
+@reference "tailwindcss";
+
 /* Styles for rendered article markdown: inline code, Shiki code blocks, and
    embedded GitHub gists. Scoped to the article body via .content. The Shiki and
    gist class names come from the generated HTML, hence :global(). */
 
-/* Inline code: JetBrains Mono, without Typography's backtick quotes. */
+/* Inline code: Slack-style chip (crimson text on a subtle gray, bordered,
+   rounded pill), JetBrains Mono, without Typography's backtick quotes. The
+   background/border mix var(--foreground), so they adapt to light/dark on
+   their own; Slack keeps the crimson text color in both themes. */
 .content :where(code):not(:where(pre *)) {
+    @apply rounded border px-[0.35em] py-[0.15em] text-[0.85em] font-medium text-[#e01e5a];
     font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
-    font-weight: 500;
+    background-color: color-mix(in srgb, var(--foreground) 4%, transparent);
+    border-color: color-mix(in srgb, var(--foreground) 13%, transparent);
 }
 .content :where(code):not(:where(pre *))::before,
 .content :where(code):not(:where(pre *))::after {
