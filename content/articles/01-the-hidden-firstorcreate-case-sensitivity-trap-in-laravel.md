@@ -1,8 +1,8 @@
 ---
 title: 'The Hidden "firstOrCreate()" Case-Sensitivity Trap in Laravel'
-description: 'How a case-insensitive collation in MySQL made Laravel''s firstOrCreate() treat HR123 and hr123 as the same record, and how I debugged it.'
+description: 'Laravel''s firstOrCreate() returned the wrong record due to MySQL''s case-insensitive collation. Learn how collations work and 5 production-ready fixes.'
 date: '2026-07-10'
-tags: ['Laravel', 'MySQL', 'Eloquent', 'Database Collation', 'Debugging']
+tags: ['Laravel', 'MySQL', 'Eloquent', 'Database Collation', 'Debugging', 'Backend']
 category: 'Backend'
 difficulty: 'Intermediate'
 tech: ['Laravel', 'SQL']
