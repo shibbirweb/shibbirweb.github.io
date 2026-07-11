@@ -17,6 +17,7 @@ import {
     twitterUsername,
 } from '@/config/constants';
 import { GoogleTagManager } from '@next/third-parties/google';
+import PageviewTracker from '@/components/analytics/PageviewTracker';
 import { JsonLdScript } from '@/components/seo/JsonLdScript';
 import { ThemeScript } from '@/components/layout/ThemeToggle/ThemeScript';
 import HashScroll from '@/components/layout/HashScroll';
@@ -129,7 +130,10 @@ export default function RootLayout({
                 ) : null}
             </head>
             {process.env.NODE_ENV === 'production' && (
-                <GoogleTagManager gtmId={googleTagManagerId} />
+                <>
+                    <GoogleTagManager gtmId={googleTagManagerId} />
+                    <PageviewTracker />
+                </>
             )}
             <body
                 className={`${notoSans.variable} bg-background relative flex min-h-svh flex-col text-base antialiased print:bg-white!`}
