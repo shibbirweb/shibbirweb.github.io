@@ -142,14 +142,19 @@ export default function RootLayout({
                     <div className="print:hidden">
                         <Navbar hasArticles={hasArticles()} />
                     </div>
-                    <div className="flex grow flex-col">{children}</div>
+                    {/* ServiceWorkerManager is the last child so its sticky
+                        update toast floats over content while scrolling, then
+                        parks at this wrapper's bottom edge (top of the footer),
+                        clear of the footer signature below. Prod only (same gate
+                        as GTM/JSON-LD); a service worker would fight turbopack
+                        HMR in dev. */}
+                    <div className="flex grow flex-col">
+                        {children}
+                        {process.env.NODE_ENV === 'production' && (
+                            <ServiceWorkerManager />
+                        )}
+                    </div>
                     <Footer />
-                    {/* Service worker registration + update toast, prod only
-                        (same gate as GTM/JSON-LD); a service worker would fight
-                        turbopack HMR in dev. */}
-                    {process.env.NODE_ENV === 'production' && (
-                        <ServiceWorkerManager />
-                    )}
                 </PageGradientProvider>
             </body>
         </html>
