@@ -31,6 +31,11 @@ export const metadata: Metadata = {
     metadataBase: new URL(siteURL),
     alternates: {
         canonical: '/',
+        types: {
+            'application/rss+xml': `${siteURL}/feed.xml`,
+            'application/atom+xml': `${siteURL}/atom.xml`,
+            'application/feed+json': `${siteURL}/feed.json`,
+        },
     },
     title: {
         default: `${siteAuthor} | ${professionalTitle}`,
