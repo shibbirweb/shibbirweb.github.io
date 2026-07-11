@@ -74,6 +74,11 @@ export function useServiceWorker(): ServiceWorkerState {
             }
         };
 
+        // Check once on load (visiting the site / opening the PWA) so a fresh
+        // deploy surfaces immediately instead of only after the first poll tick.
+        // Fire-and-forget, so it never blocks first paint.
+        void checkForNewVersion();
+
         const pollTimer = window.setInterval(
             checkForNewVersion,
             VERSION_POLL_INTERVAL_MS
@@ -85,12 +90,18 @@ export function useServiceWorker(): ServiceWorkerState {
         };
         document.addEventListener('visibilitychange', onVisibilityChange);
 
+        // Re-check the moment connectivity returns: a tab left open through an
+        // offline stretch catches up on any deploy it missed.
+        const onOnline = () => void checkForNewVersion();
+        window.addEventListener('online', onOnline);
+
         return () => {
             window.clearInterval(pollTimer);
             document.removeEventListener(
                 'visibilitychange',
                 onVisibilityChange
             );
+            window.removeEventListener('online', onOnline);
             serwist.removeEventListener('waiting', onWaiting);
             serwist.removeEventListener('controlling', onControlling);
         };
