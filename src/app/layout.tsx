@@ -25,6 +25,7 @@ import Footer from '@/components/layout/Footer';
 import PageGradientBackground from '@/components/backgrounds/PageGradientBackground';
 import { PageGradientProvider } from '@/components/backgrounds/PageGradientBackground/PageGradientProvider';
 import { hasArticles } from '@/lib/posts';
+import ServiceWorkerManager from '@/components/pwa/ServiceWorkerManager';
 import { notoSans } from '@/config/fonts';
 
 export const metadata: Metadata = {
@@ -143,6 +144,12 @@ export default function RootLayout({
                     </div>
                     <div className="flex grow flex-col">{children}</div>
                     <Footer />
+                    {/* Service worker registration + update toast, prod only
+                        (same gate as GTM/JSON-LD); a service worker would fight
+                        turbopack HMR in dev. */}
+                    {process.env.NODE_ENV === 'production' && (
+                        <ServiceWorkerManager />
+                    )}
                 </PageGradientProvider>
             </body>
         </html>
