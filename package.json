@@ -5,12 +5,18 @@
     "scripts": {
         "dev": "tsx scripts/generate-covers.ts && tsx scripts/prepare-resume.ts && next-image-export-optimizer && next dev --turbopack",
         "dev:https": "tsx scripts/generate-covers.ts && tsx scripts/prepare-resume.ts && next-image-export-optimizer && next dev --experimental-https",
-        "build": "tsx scripts/generate-covers.ts && tsx scripts/generate-og-images.ts && tsx scripts/prepare-resume.ts && next build && next-image-export-optimizer",
+        "build": "tsx scripts/generate-covers.ts && tsx scripts/generate-og-images.ts && tsx scripts/prepare-resume.ts && next build --webpack && next-image-export-optimizer",
         "start": "next start",
+        "preview": "tsx scripts/serve-out.ts",
+        "preview:https": "tsx scripts/serve-out.ts --https",
+        "preview:docker": "mkdir -p certificates && HOST_UID=$(id -u) HOST_GID=$(id -g) docker compose up --build",
+        "preview:docker:down": "docker compose down",
         "lint": "eslint"
     },
     "dependencies": {
         "@next/third-parties": "^15.3.3",
+        "@serwist/next": "^9.5.11",
+        "@serwist/window": "9.5.11",
         "@tailwindcss/typography": "^0.5.20",
         "clsx": "^2.1.1",
         "gemoji": "^8.1.0",
@@ -40,6 +46,7 @@
         "prettier": "3.5.3",
         "prettier-plugin-tailwindcss": "0.6.11",
         "schema-dts": "^1.1.5",
+        "serwist": "^9.5.11",
         "tailwindcss": "^4",
         "tsx": "^4.22.4",
         "typescript": "^5"

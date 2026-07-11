@@ -1,0 +1,20 @@
+# One-shot helper image: has mkcert + certutil (libnss3-tools) so the local CA
+# can be issued and installed into the browser NSS trust stores WITHOUT
+# installing anything on the host. Runs as the host user (see docker-compose.yml)
+# so the files it writes stay owned by you.
+FROM debian:stable-slim
+
+ARG MKCERT_VERSION=v1.4.4
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libnss3-tools ca-certificates wget \
+    && wget -qO /usr/local/bin/mkcert \
+        "https://github.com/FiloSottile/mkcert/releases/download/${MKCERT_VERSION}/mkcert-${MKCERT_VERSION}-linux-amd64" \
+    && chmod +x /usr/local/bin/mkcert \
+    && apt-get purge -y wget \
+    && apt-get autoremove -y \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY trust.sh /usr/local/bin/trust.sh
+RUN chmod +x /usr/local/bin/trust.sh
+
+ENTRYPOINT ["/usr/local/bin/trust.sh"]

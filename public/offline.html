@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="robots" content="noindex" />
+        <title>Offline | Shibbir Ahmed</title>
+        <!--
+            Served by the service worker as the navigation fallback when an
+            unvisited page is opened with no network. Deliberately a plain,
+            script-free static file (not a Next route): a Next page served under
+            an arbitrary URL would re-run the client router and render not-found,
+            clobbering this message. Self-contained so it works fully offline.
+        -->
+        <style>
+            :root {
+                color-scheme: light dark;
+                --bg: #ffffff;
+                --fg: #171717;
+                --muted: #171717a6;
+                --border: #17171733;
+            }
+            @media (prefers-color-scheme: dark) {
+                :root {
+                    --bg: #0a0a0a;
+                    --fg: #ededed;
+                    --muted: #edededa6;
+                    --border: #ededed33;
+                }
+            }
+            * {
+                box-sizing: border-box;
+            }
+            body {
+                margin: 0;
+                min-height: 100svh;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 1rem;
+                padding: 2rem 1rem;
+                text-align: center;
+                background: var(--bg);
+                color: var(--fg);
+                font-family:
+                    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
+                    sans-serif;
+            }
+            .badge {
+                font-size: clamp(3rem, 8vw, 4.5rem);
+                font-weight: 700;
+                color: var(--muted);
+                line-height: 1;
+            }
+            h1 {
+                margin: 0.5rem 0 0;
+                font-size: clamp(1.5rem, 4vw, 2rem);
+            }
+            p {
+                margin: 0;
+                max-width: 34rem;
+                color: var(--muted);
+                font-size: 1.05rem;
+                line-height: 1.6;
+            }
+            a {
+                margin-top: 1rem;
+                display: inline-block;
+                padding: 0.75rem 1.5rem;
+                border: 1px solid var(--border);
+                border-radius: 9999px;
+                color: inherit;
+                text-decoration: none;
+                transition:
+                    transform 0.2s ease,
+                    border-color 0.2s ease;
+            }
+            a:hover {
+                transform: scale(1.05);
+                border-color: var(--fg);
+            }
+        </style>
+    </head>
+    <body>
+        <p class="badge">Offline</p>
+        <h1>You are offline</h1>
+        <p>
+            This page has not been saved for offline reading yet. Reconnect to
+            load it, or head back to a page you have already visited.
+        </p>
+        <a href="/">Back home</a>
+    </body>
+</html>
