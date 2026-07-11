@@ -13,6 +13,16 @@ declare global {
 
 declare const self: ServiceWorkerGlobalScope;
 
+// Serwist's stock defaultCache ends with two greedy rules: a NetworkFirst that
+// caches every cross-origin response and a NetworkOnly wildcard. When a
+// third-party script GTM injects (e.g. the Facebook pixel) is blocked or
+// offline, that NetworkFirst finds no cached fallback and rejects the fetch
+// event with `no-response`, surfacing as an uncaught SW error. Drop both
+// catch-alls (they are the last two entries) so third-party requests fall
+// through to the browser; caching them is pointless for a static site, and
+// same-origin pages/assets plus Google Fonts keep their specific rules above.
+const runtimeCaching = defaultCache.slice(0, -2);
+
 // The static offline shell (public/offline.html) is already in the Serwist
 // precache manifest (it is a public asset), so it is available to serve as the
 // navigation fallback below. It is a plain static file rather than a Next route
@@ -26,7 +36,7 @@ const serwist = new Serwist({
     skipWaiting: false,
     clientsClaim: true,
     navigationPreload: true,
-    runtimeCaching: defaultCache,
+    runtimeCaching,
     // When an unvisited page is opened offline, serve the precached
     // /offline.html shell instead of the browser's default error page.
     fallbacks: {

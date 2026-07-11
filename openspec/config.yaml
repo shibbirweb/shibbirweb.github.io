@@ -2,19 +2,31 @@ schema: spec-driven
 
 # Project context (optional)
 # This is shown to AI when creating artifacts.
-# Add your tech stack, conventions, style guides, domain knowledge, etc.
-# Example:
-#   context: |
-#     Tech stack: TypeScript, React, Node.js
-#     We use conventional commits
-#     Domain: e-commerce platform
+context: |
+  Project: single-page personal portfolio for Shibbir Ahmed.
+  Stack: Next.js 15 (App Router), Tailwind CSS v4 (CSS-first, no tailwind.config.js),
+  TypeScript, pnpm 10, Node 22.
+  Deployment: statically exported (next.config.ts sets output: 'export') to ./out,
+  served on GitHub Pages under the custom domain https://shibbir.me. No runtime server:
+  no API routes, no Server Actions, no next/image optimizer, no middleware, no ISR.
+  Single source of truth for all personal data, URLs, and SEO keywords is
+  src/config/constants.ts; edit it first for any content change.
+  Imports always use the @/ alias, never relative paths. src/app/ holds routing only;
+  all components live in src/components/ grouped by purpose, and src/components/ must
+  never import from src/app/. src/utils/ is pure helper functions only. Use the cn()
+  helper for conditional classes. There is no test suite.
+  Copy rule: never use the em dash character anywhere; rephrase, or use a pipe for
+  title/name separators.
 
 # Per-artifact rules (optional)
-# Add custom rules for specific artifacts.
-# Example:
-#   rules:
-#     proposal:
-#       - Keep proposals under 500 words
-#       - Always include a "Non-goals" section
-#     tasks:
-#       - Break tasks into chunks of max 2 hours
+rules:
+  proposal:
+    - Never use the em dash character; rephrase, or use a pipe for separators.
+    - Call out static-export impact when a proposal touches rendering or data (no server runtime).
+  tasks:
+    - Reference concrete file paths under src/; prefer editing src/config/constants.ts for content changes.
+    - Do not introduce runtime server features (API routes, Server Actions, middleware, ISR); they break the static export.
+  spec:
+    - Keep components small and single-responsibility; section data lives in contents.ts, not inline.
+    - Respect Tailwind v4 CSS-first styling and co-located CSS Modules; there is no tailwind.config.js.
+    - Inside a CSS Module, prefer Tailwind via @apply for any declaration expressible as a utility (add @reference "tailwindcss"; at the top); only @apply classes/utilities Tailwind actually provides. Reach for raw CSS solely for what Tailwind cannot express (color-mix(), gradients, @keyframes bodies, bespoke custom properties).
