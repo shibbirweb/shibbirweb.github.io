@@ -16,6 +16,7 @@ type Mode = 'light' | 'dark';
 interface Palette {
     background: string;
     foreground: string;
+    teal: string;
 }
 
 const GLOBALS = path.join(process.cwd(), 'src/app/globals.css');
@@ -53,6 +54,7 @@ function readPalettes(): Record<Mode, Palette> {
     const pick = (b: string): Palette => ({
         background: token(b, 'background'),
         foreground: token(b, 'foreground'),
+        teal: token(b, 'section-swell-teal'),
     });
     return { light: pick(light), dark: pick(dark) };
 }
@@ -75,13 +77,14 @@ function hexToRgb(hex: string): [number, number, number] {
 
 // Corner aurora glow, mirroring ProjectCard.module.css: three diffuse radial
 // washes anchored top-left, using oklch(0.72 0.16 <hue>) hues, softly present and
-// strengthened on hover. Deliberately NEUTRAL (a faint foreground-toned wash, no
-// color) so it reads as a barely-there tonal gradient matched to the card, not an
-// eye-catching colored glow; the hover lift is minimal.
-// Peak per-wash alpha of the foreground tint (per mode); the resting state shows it
-// at BASE_OPACITY and fades to 1 on hover.
-const GLOW_ALPHA: Record<Mode, number> = { light: 0.05, dark: 0.06 };
-const BASE_OPACITY = 0.7;
+// strengthened on hover. Uses the site's --section-swell-teal tint, which sits
+// right next to the background (light: a white-teal; dark: a near-black teal), so
+// the corner reads as a barely-there teal wash matched to the card, not an
+// eye-catching color; the hover lift is minimal.
+// Per-wash alpha of the teal tint (per mode); the resting state shows it at
+// BASE_OPACITY and fades to 1 on hover.
+const GLOW_ALPHA: Record<Mode, number> = { light: 0.7, dark: 0.75 };
+const BASE_OPACITY = 0.75;
 
 /** Top-left tonal glow: three layered radial washes of `color` at `alpha`. */
 function aurora(color: string, alpha: number): string {
@@ -145,9 +148,10 @@ const SYNTAX: Record<Mode, Record<string, string>> = {
 };
 
 function buildTheme(mode: Mode, palette: Palette): string {
-    const { background, foreground } = palette;
+    const { background, foreground, teal } = palette;
     const [r, g, b] = hexToRgb(foreground);
     const [br, bg, bb] = hexToRgb(background);
+    const [tr, tg, tb] = hexToRgb(teal);
     // foreground / background tints
     const fg = (a: number) => `rgba(${r}, ${g}, ${b}, ${a})`;
     const bgc = (a: number) => `rgba(${br}, ${bg}, ${bb}, ${a})`;
@@ -271,7 +275,7 @@ main::after {
     border-radius: inherit;
     pointer-events: none;
     opacity: ${BASE_OPACITY};
-    background-image: ${aurora(`${r}, ${g}, ${b}`, GLOW_ALPHA[mode])};
+    background-image: ${aurora(`${tr}, ${tg}, ${tb}`, GLOW_ALPHA[mode])};
 }
 main:hover::after {
     opacity: 1;

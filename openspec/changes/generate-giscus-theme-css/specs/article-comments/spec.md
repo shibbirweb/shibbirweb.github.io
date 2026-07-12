@@ -9,9 +9,10 @@ so the theme stays in sync with the palette. The generator SHALL run before the
 Next.js build (chained in the `dev` and `build` npm scripts, like the existing
 `generate-covers` step), and the two generated files SHALL be gitignored and
 regenerated each build rather than committed. The generated theme SHALL render the
-comment card with a faint neutral corner glow in the `ProjectCard` motif (soft
-top-left radial washes of the foreground tone, no color, kept subtle so it does not
-draw the eye, with a very minimal lift on hover), and SHALL preserve the
+comment card with a faint teal corner glow in the `ProjectCard` motif (soft
+top-left radial washes of the site's near-background `--section-swell-teal` tint,
+kept subtle so it does not draw the eye, with a very minimal lift on hover), and
+SHALL preserve the
 existing theme behavior (site palette, inverted primary button, rounded write-box
 card, crimson inline-code chips) in both light and dark.
 
@@ -19,7 +20,8 @@ card, crimson inline-code chips) in both light and dark.
 
 - **WHEN** the build runs (or the generator script is run directly)
 - **THEN** `public/giscus-light.css` and `public/giscus-dark.css` are produced from
-  the `--background` / `--foreground` tokens read out of `src/app/globals.css`, and
+  the `--background` / `--foreground` / `--section-swell-teal` tokens read out of
+  `src/app/globals.css`, and
   both files are emitted into the static export
 
 #### Scenario: Changing a palette token updates the theme
@@ -28,10 +30,10 @@ card, crimson inline-code chips) in both light and dark.
 - **THEN** the next build regenerates the giscus CSS so its colors match the new
   token, with no manual edit to the giscus files
 
-#### Scenario: Comment card shows a faint neutral corner glow
+#### Scenario: Comment card shows a faint teal corner glow
 
 - **WHEN** the custom theme loads inside the widget on the deployed site
-- **THEN** the comment card background shows a faint neutral top-left tonal glow
-  (soft radial washes of the foreground tone, no color) rather than a solid fill,
-  subtle enough not to draw the eye, and it fades up minimally and smoothly on hover
-  (a pseudo-layer `opacity` transition), in both light and dark
+- **THEN** the comment card background shows a faint teal top-left glow (soft radial
+  washes of the near-background `--section-swell-teal` tint) rather than a solid
+  fill, subtle enough not to draw the eye, and it fades up minimally and smoothly on
+  hover (a pseudo-layer `opacity` transition), in both light and dark

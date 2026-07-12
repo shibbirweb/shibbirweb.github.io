@@ -16,7 +16,8 @@ theme generator fits that exact pattern.
 
 **Goals:**
 - Single source of truth: the giscus theme derives from `globals.css` tokens.
-- Faint neutral corner glow on the card (ProjectCard motif, no color, subtle hover lift).
+- Faint teal corner glow on the card (ProjectCard motif, the site's near-background
+  `--section-swell-teal` tint, subtle hover lift).
 - Follow the existing generated-`public/`-asset convention (gitignored, built).
 
 **Non-Goals:**
@@ -32,8 +33,8 @@ theme generator fits that exact pattern.
 The user's intent is "generate based on our current colors," and `globals.css` is
 already the sole source. The generator reads the file and extracts, scoped to the
 `:root {` block (light) and the `:root[data-theme='dark'] {` block (dark), the
-`--background` and `--foreground` tokens, throwing if any is missing (guards a
-format change). Alternative considered: a new
+`--background`, `--foreground`, and `--section-swell-teal` tokens, throwing if any
+is missing (guards a format change). Alternative considered: a new
 `src/config/palette.ts` consumed by both globals.css and the script, rejected
 because Tailwind v4 CSS-first cannot import TS, so it would create a second copy,
 the opposite of the goal.
@@ -47,16 +48,18 @@ committed files have, deriving foreground-tinted `rgba()` values via a
 static GitHub prettylights maps. Only the `main` background changes (below). Output
 is written with `fs.writeFileSync`, mirroring `buildArticleCoverSvg`.
 
-**3. Faint neutral corner glow, on a pseudo-layer that fades on hover.**
+**3. Faint teal corner glow, on a pseudo-layer that fades on hover.**
 Replace `main { background: rgba(foreground, 0.025) }` with the ProjectCard model:
 `main` becomes a positioned, isolated stacking context with a transparent
 background; `main::before` (z-index -2) paints the opaque `<background>` base;
-`main::after` (z-index -1) paints three diffuse top-left `radial-gradient` washes
-of the foreground tone (`rgba(<foreground>, ~0.05)`, deliberately NEUTRAL, no color,
-so it reads as a barely-there tonal gradient matched to the card) at `opacity: 0.7`,
-fading to `1` on `main:hover` via an `opacity` transition (motion-safe) for a very
-minimal lift. Opacity is used because `background-image` cannot transition. The wash
-color is the palette foreground; alpha/opacity are small script constants.
+`main::after` (z-index -1) paints three diffuse top-left `radial-gradient` washes of
+the site's `--section-swell-teal` tint (light `#e6f1ef` white-teal / dark `#0a1413`
+near-black teal, both right next to the background, so the corner reads as a
+barely-there teal wash matched to the card, not an eye-catching color) at
+`opacity: 0.75`, fading to `1` on `main:hover` via an `opacity` transition
+(motion-safe) for a very minimal lift. Opacity is used because `background-image`
+cannot transition. The wash color is the palette teal token; alpha/opacity are small
+script constants.
 
 **4. Gitignore + untrack the two files.** Add them to `.gitignore` and
 `git rm --cached` them, so they are build output like `/public/og/`. The deploy

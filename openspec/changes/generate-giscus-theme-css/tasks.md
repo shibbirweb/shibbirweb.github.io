@@ -1,9 +1,9 @@
 ## 1. Generator script
 
 - [x] 1.1 Create `scripts/generate-giscus-themes.ts` (a `tsx` script ending in a top-level `main()`, mirroring `scripts/generate-covers.ts`)
-- [x] 1.2 Parse `src/app/globals.css`: extract `--background` and `--foreground` from the `:root {` block (light) and the `:root[data-theme='dark'] {` block (dark); throw if any token is missing
+- [x] 1.2 Parse `src/app/globals.css`: extract `--background`, `--foreground`, and `--section-swell-teal` from the `:root {` block (light) and the `:root[data-theme='dark'] {` block (dark); throw if any token is missing
 - [x] 1.3 Add a `hex -> {r,g,b}` helper and a `buildGiscusTheme(palette, mode)` that returns the full CSS string: the 73 Primer `--color-*` variables (foreground-tinted rgba surfaces/borders/buttons, inverted primary button, `hsl(234 ...)` accent, static GitHub prettylights maps) plus the element rules (textarea top radius, `-extras` bottom radius, `.btn-primary` radius/weight, crimson inline code, code block)
-- [x] 1.4 Set a faint neutral corner glow (ProjectCard motif) via pseudo-layers: `main` transparent + isolated; `main::before` opaque `<background>` base; `main::after` three top-left `radial-gradient` washes of the foreground tone (`rgba(<foreground>, ~0.05)`, no color) at `opacity: 0.7`, fading to `1` on `main:hover` (motion-safe `opacity` transition); keep the `foreground/10` border, `1rem` radius, and padding
+- [x] 1.4 Set a faint teal corner glow (ProjectCard motif) via pseudo-layers: `main` transparent + isolated; `main::before` opaque `<background>` base; `main::after` three top-left `radial-gradient` washes of the `--section-swell-teal` tint (near background) at `opacity: 0.75`, fading to `1` on `main:hover` (motion-safe `opacity` transition); keep the `foreground/10` border, `1rem` radius, and padding
 - [x] 1.5 Write `public/giscus-light.css` and `public/giscus-dark.css` with `fs.writeFileSync`
 
 ## 2. Wire into build + tracking
@@ -15,7 +15,7 @@
 ## 3. Verify
 
 - [x] 3.1 Run `pnpm exec tsx scripts/generate-giscus-themes.ts`; diff the regenerated files against the previous versions, only the `main` background (aurora glow) should differ
-- [x] 3.2 Single-source proof: change `--foreground` in `globals.css`, re-run the generator, confirm the giscus text/tint colors update; revert the token
+- [x] 3.2 Single-source proof: change a token in `globals.css` (e.g. `--foreground` or `--section-swell-teal`), re-run the generator, confirm the giscus colors/glow update; revert the token
 - [x] 3.3 `pnpm lint` + `pnpm build` succeed; both `giscus-*.css` are emitted into `./out`
 - [x] 3.4 Inject the generated CSS into the real giscus frame headless and screenshot: confirm the aurora glow renders and the button / input radius / palette are unchanged in light and dark
 - [ ] 3.5 Deploy verification (authoritative, localhost cannot render the theme): open a live article, confirm the comment card shows the ProjectCard aurora glow (strengthened on hover) in both light and dark and matches the site
