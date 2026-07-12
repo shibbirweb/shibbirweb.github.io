@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Serwist } from '@serwist/window';
-import { getBuildVersion } from '@/lib/version';
+import { getBuiltAt } from '@/lib/version';
 
 /** How often a long-lived tab re-checks version.json for a newer deploy. */
 const VERSION_POLL_INTERVAL_MS = 60_000;
@@ -30,12 +30,12 @@ interface ServiceWorkerState {
  *
  * Two triggers feed `updateReady`: the service worker's own `waiting` lifecycle
  * (a new worker installed alongside the running one), and a poll of the static
- * `version.json` whose `version` is compared against the version baked into this
- * bundle. When the deployed version is greater, `serwist.update()` forces the
- * browser to re-check the worker so `waiting` fires without waiting for its
- * periodic byte-check. Applying the update messages the worker to skip waiting;
- * the resulting `controlling` event clears all caches and reloads the page onto
- * the new build.
+ * `version.json` whose `builtAt` is compared against the `builtAt` baked into
+ * this bundle. When the deployed build is strictly newer, `serwist.update()`
+ * forces the browser to re-check the worker so `waiting` fires without waiting
+ * for its periodic byte-check. Applying the update messages the worker to skip
+ * waiting; the resulting `controlling` event clears all caches and reloads the
+ * page onto the new build.
  */
 export function useServiceWorker(): ServiceWorkerState {
     const [updateReady, setUpdateReady] = useState(false);
@@ -71,17 +71,21 @@ export function useServiceWorker(): ServiceWorkerState {
 
         void serwist.register();
 
-        const currentVersion = getBuildVersion();
-        const checkForNewVersion = async () => {
+        const currentBuiltAt = new Date(getBuiltAt()).getTime();
+        const checkForNewBuild = async () => {
             try {
-                const response = await fetch('/version.json', {
+                // The per-request query defeats CDN and service-worker caches
+                // (version.json ships with a max-age), so every poll reflects the
+                // currently deployed build rather than a stale cached copy.
+                const response = await fetch(`/version.json?ts=${Date.now()}`, {
                     cache: 'no-store',
                 });
                 if (!response.ok) return;
-                const data: { version?: number } = await response.json();
+                const data: { builtAt?: string } = await response.json();
+                const deployedBuiltAt = new Date(data.builtAt ?? '').getTime();
                 if (
-                    typeof data.version === 'number' &&
-                    data.version > currentVersion
+                    Number.isFinite(deployedBuiltAt) &&
+                    deployedBuiltAt > currentBuiltAt
                 ) {
                     await serwist.update();
                 }
@@ -93,22 +97,22 @@ export function useServiceWorker(): ServiceWorkerState {
         // Check once on load (visiting the site / opening the PWA) so a fresh
         // deploy surfaces immediately instead of only after the first poll tick.
         // Fire-and-forget, so it never blocks first paint.
-        void checkForNewVersion();
+        void checkForNewBuild();
 
         const pollTimer = window.setInterval(
-            checkForNewVersion,
+            checkForNewBuild,
             VERSION_POLL_INTERVAL_MS
         );
         const onVisibilityChange = () => {
             if (document.visibilityState === 'visible') {
-                void checkForNewVersion();
+                void checkForNewBuild();
             }
         };
         document.addEventListener('visibilitychange', onVisibilityChange);
 
         // Re-check the moment connectivity returns: a tab left open through an
         // offline stretch catches up on any deploy it missed.
-        const onOnline = () => void checkForNewVersion();
+        const onOnline = () => void checkForNewBuild();
         window.addEventListener('online', onOnline);
 
         return () => {
