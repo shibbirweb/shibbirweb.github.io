@@ -16,7 +16,7 @@ theme generator fits that exact pattern.
 
 **Goals:**
 - Single source of truth: the giscus theme derives from `globals.css` tokens.
-- Theme-matching gradient card background (section-swell motif).
+- ProjectCard corner-aurora glow on the card background (strengthened on hover).
 - Follow the existing generated-`public/`-asset convention (gitignored, built).
 
 **Non-Goals:**
@@ -32,8 +32,8 @@ theme generator fits that exact pattern.
 The user's intent is "generate based on our current colors," and `globals.css` is
 already the sole source. The generator reads the file and extracts, scoped to the
 `:root {` block (light) and the `:root[data-theme='dark'] {` block (dark), the
-`--background`, `--foreground`, and `--section-swell-indigo` tokens, throwing if
-any is missing (guards a format change). Alternative considered: a new
+`--background` and `--foreground` tokens, throwing if any is missing (guards a
+format change). Alternative considered: a new
 `src/config/palette.ts` consumed by both globals.css and the script, rejected
 because Tailwind v4 CSS-first cannot import TS, so it would create a second copy,
 the opposite of the goal.
@@ -47,13 +47,14 @@ committed files have, deriving foreground-tinted `rgba()` values via a
 static GitHub prettylights maps. Only the `main` background changes (below). Output
 is written with `fs.writeFileSync`, mirroring `buildArticleCoverSvg`.
 
-**3. Gradient background from the swell token.** Replace
-`main { background: rgba(foreground, 0.025) }` with
-`linear-gradient(180deg, <background> 0%, <section-swell-indigo> 55%, <background> 100%)`
-plus a `background-color: <background>` fallback, keeping the `foreground/10`
-border, `1rem` radius, and padding. This is the same base-to-swell-to-base motif as
-`main.home-sections > section` and `.page-gradient` in globals.css, so the card
-matches the site.
+**3. ProjectCard corner-aurora glow on the card background.** Replace
+`main { background: rgba(foreground, 0.025) }` with the same three diffuse
+top-left `radial-gradient` washes as `ProjectCard.module.css`
+(`color-mix(in oklab, oklch(0.72 0.16 <hue>) <strength>%, transparent)`, cool
+blue/indigo/violet hues) over a `background-color: <background>` base, and a
+`main:hover` rule that raises the strength, mirroring ProjectCard revealing its
+glow on hover. Hues and strengths are script constants (not palette-derived, like
+ProjectCard's own glow); background stays palette-driven.
 
 **4. Gitignore + untrack the two files.** Add them to `.gitignore` and
 `git rm --cached` them, so they are build output like `/public/og/`. The deploy
