@@ -6,11 +6,15 @@
         <meta name="robots" content="noindex" />
         <title>Offline | Shibbir Ahmed</title>
         <!--
-            Served by the service worker as the navigation fallback when an
-            unvisited page is opened with no network. Deliberately a plain,
-            script-free static file (not a Next route): a Next page served under
-            an arbitrary URL would re-run the client router and render not-found,
-            clobbering this message. Self-contained so it works fully offline.
+            The minimal, last-resort offline fallback. Served by the service
+            worker as the navigation fallback when an unvisited page is opened
+            with no network. Deliberately a plain, script-free, self-contained
+            static file (not a Next route): a Next page served under an arbitrary
+            URL would re-run the client router and render not-found, clobbering
+            this message, so the styled /offline route (src/app/offline) cannot
+            play this role. That route is the primary, full-design offline page
+            (navbar, footer, theme switcher); this file only has to survive with
+            zero dependencies at any URL.
         -->
         <style>
             :root {

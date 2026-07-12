@@ -23,11 +23,13 @@ declare const self: ServiceWorkerGlobalScope;
 // same-origin pages/assets plus Google Fonts keep their specific rules above.
 const runtimeCaching = defaultCache.slice(0, -2);
 
-// The static offline shell (public/offline.html) is already in the Serwist
-// precache manifest (it is a public asset), so it is available to serve as the
-// navigation fallback below. It is a plain static file rather than a Next route
-// on purpose: a Next document served under an arbitrary URL would re-run the
-// client router and render not-found instead of the offline message.
+// The minimal offline shell (public/offline-fallback.html) is already in the
+// Serwist precache manifest (it is a public asset), so it is available to serve
+// as the navigation fallback below. It is a plain static file rather than a Next
+// route on purpose: a Next document served under an arbitrary URL would re-run
+// the client router and render not-found instead of the offline message. The
+// styled /offline route (src/app/offline) is the primary, full-design offline
+// page, but being a hydrated route it cannot be the fallback for the same reason.
 const serwist = new Serwist({
     precacheEntries: self.__SW_MANIFEST,
     // The update toast drives the swap, so a new worker waits until the client
@@ -38,11 +40,11 @@ const serwist = new Serwist({
     navigationPreload: true,
     runtimeCaching,
     // When an unvisited page is opened offline, serve the precached
-    // /offline.html shell instead of the browser's default error page.
+    // /offline-fallback.html shell instead of the browser's default error page.
     fallbacks: {
         entries: [
             {
-                url: '/offline.html',
+                url: '/offline-fallback.html',
                 matcher({ request }) {
                     return request.destination === 'document';
                 },
