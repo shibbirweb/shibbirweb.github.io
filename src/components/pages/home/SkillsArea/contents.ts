@@ -39,6 +39,7 @@ import TypeScriptIcon from '@/components/icons/tech/typescript';
 import VectorSearchIcon from '@/components/icons/tech/vector-search';
 import ViteIcon from '@/components/icons/tech/vite';
 import VueJsIcon from '@/components/icons/tech/vue-js';
+import WordPressIcon from '@/components/icons/tech/wordpress';
 import type { ComponentType, SVGProps } from 'react';
 
 export type Skill = {
@@ -88,6 +89,7 @@ export const skills: Skill[] = [
         // lighter tint of the same blue in dark.
         color: 'light-dark(#003B57, #57A6DA)',
     },
+    { name: 'WordPress', Icon: WordPressIcon, color: '#21759B' },
     { name: 'Redis', Icon: RedisIcon, color: '#FF4438' },
     { name: 'Prisma', Icon: PrismaIcon },
     {
