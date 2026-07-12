@@ -7,12 +7,26 @@ import { getBuiltAt } from '@/lib/version';
 /** How often a long-lived tab re-checks version.json for a newer deploy. */
 const VERSION_POLL_INTERVAL_MS = 60_000;
 
-/** Delete every Cache Storage bucket so the next load pulls fresh assets. */
-async function clearAllCaches(): Promise<void> {
+/** Cache Storage buckets whose name contains this are the Serwist precache. */
+const PRECACHE_NAME_MARKER = 'serwist-precache';
+
+/**
+ * Delete the runtime caches (visited pages, static assets, images) while
+ * preserving the Serwist precache. Called when an update takes over so a
+ * stable-URL asset that changed in place (e.g. an image reused under the same
+ * filename) is refetched fresh, without dropping /offline.html and the app
+ * shell, which live in the precache and must stay available offline. The
+ * emptied runtime caches repopulate on demand as pages/assets are fetched again.
+ */
+async function clearRuntimeCaches(): Promise<void> {
     if (typeof window === 'undefined' || !('caches' in window)) return;
     try {
         const cacheKeys = await caches.keys();
-        await Promise.all(cacheKeys.map((key) => caches.delete(key)));
+        await Promise.all(
+            cacheKeys
+                .filter((key) => !key.includes(PRECACHE_NAME_MARKER))
+                .map((key) => caches.delete(key))
+        );
     } catch {
         // Best effort; the reload below still proceeds.
     }
@@ -34,8 +48,9 @@ interface ServiceWorkerState {
  * this bundle. When the deployed build is strictly newer, `serwist.update()`
  * forces the browser to re-check the worker so `waiting` fires without waiting
  * for its periodic byte-check. Applying the update messages the worker to skip
- * waiting; the resulting `controlling` event clears all caches and reloads the
- * page onto the new build.
+ * waiting; the resulting `controlling` event clears the runtime caches (keeping
+ * the precache) and reloads the page onto the new build, so offline access
+ * survives the update.
  */
 export function useServiceWorker(): ServiceWorkerState {
     const [updateReady, setUpdateReady] = useState(false);
@@ -55,16 +70,17 @@ export function useServiceWorker(): ServiceWorkerState {
         const onWaiting = () => setUpdateReady(true);
         serwist.addEventListener('waiting', onWaiting);
 
-        // When the waiting worker takes control after skipWaiting, drop every
-        // Cache Storage bucket (precache + runtime JS/CSS/font/image/page caches)
-        // and reload once. Clearing after the new worker controls guarantees the
-        // reload re-fetches the newest CSS/JS from the network rather than serving
-        // a stale CacheFirst/precache copy.
+        // When the waiting worker takes control after skipWaiting, drop the
+        // runtime caches (so a changed stable-URL asset is refetched fresh) but
+        // keep the Serwist precache, then reload once. Never clear everything:
+        // the precache holds /offline.html and the app shell, and the already
+        // installed worker will not re-run its precache install step, so wiping
+        // it would break offline access until the next deploy.
         let hasReloaded = false;
         const onControlling = async () => {
             if (hasReloaded) return;
             hasReloaded = true;
-            await clearAllCaches();
+            await clearRuntimeCaches();
             window.location.reload();
         };
         serwist.addEventListener('controlling', onControlling);
