@@ -1,39 +1,4 @@
-# pwa Specification
-
-## Purpose
-TBD - created by archiving change finish-pwa-offline-and-update. Update Purpose after archive.
-## Requirements
-### Requirement: Service worker registration
-
-The site SHALL register a service worker in production only, so the static export gains offline capability without affecting the turbopack dev server.
-
-#### Scenario: Registered in production
-- **WHEN** a visitor loads the production site
-- **THEN** the service worker at `/sw.js` is registered and reaches an activated state
-
-#### Scenario: Absent in development
-- **WHEN** the site runs under `pnpm dev`
-- **THEN** no service worker is registered and turbopack HMR is unaffected
-
-#### Scenario: Emitted into the static export
-- **WHEN** `pnpm build` completes
-- **THEN** `out/sw.js` exists and is non-empty and is served from the site root
-
-### Requirement: Offline runtime caching of visited pages
-
-The service worker SHALL cache pages and their assets at runtime, so a page or article a visitor has already opened remains readable without a network connection.
-
-#### Scenario: Visited page works offline
-- **WHEN** a visitor opens an article while online and later loads it with no network
-- **THEN** the previously visited article and the app shell render from cache
-
-#### Scenario: Unvisited page while offline
-- **WHEN** a visitor navigates to a route they have not visited while offline
-- **THEN** an offline fallback response is served rather than a browser error page
-
-#### Scenario: Static assets served from cache
-- **WHEN** a visited page requests already-cached static assets (scripts, styles, images)
-- **THEN** those assets are served from the cache without a network round trip
+## MODIFIED Requirements
 
 ### Requirement: Build version endpoint
 
@@ -82,4 +47,3 @@ When a newer build is detected, the site SHALL show a non-blocking notification 
 
 - **WHEN** a new version is available but the visitor has not acted on the notification
 - **THEN** the current page is not reloaded automatically and reading is uninterrupted
-

@@ -1,5 +1,4 @@
 import type { NextConfig } from 'next';
-import { execSync } from 'node:child_process';
 import withSerwistInit from '@serwist/next';
 
 // next dev runs a real Node server (Server Actions + node:fs available), while
@@ -9,19 +8,10 @@ import withSerwistInit from '@serwist/next';
 // export build.
 const isDev = process.env.NODE_ENV !== 'production';
 
-// The build version is a monotonically increasing integer: the git commit count,
-// which advances on every commit (and therefore every deploy) with no state file
-// and works identically locally and in CI. It is baked into the client and the
-// version.json route so the running app can detect a newer deploy. Falls back to
-// a timestamp when git is unavailable.
-function computeBuildVersion(): string {
-    try {
-        return execSync('git rev-list --count HEAD').toString().trim();
-    } catch {
-        return String(Date.now());
-    }
-}
-const buildVersion = computeBuildVersion();
+// A fresh ISO timestamp per build, baked into the client and the version.json
+// route so the running app can detect a newer deploy: the deployed build's
+// builtAt is strictly later than the one baked into an older open tab. Git plays
+// no part, so it works identically locally and in CI regardless of clone depth.
 const buildTime = new Date().toISOString();
 
 const nextConfig: NextConfig = {
@@ -45,7 +35,6 @@ const nextConfig: NextConfig = {
         nextImageExportOptimizer_exportFolderName: 'nextImageExportOptimizer',
         nextImageExportOptimizer_generateAndUseBlurImages: 'true',
         nextImageExportOptimizer_remoteImageCacheTTL: '0',
-        NEXT_PUBLIC_BUILD_VERSION: buildVersion,
         NEXT_PUBLIC_BUILD_TIME: buildTime,
     },
 };

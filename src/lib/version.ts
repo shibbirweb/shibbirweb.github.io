@@ -1,16 +1,9 @@
-// The build version is a monotonically increasing integer (git commit count),
-// computed once in next.config.ts and baked into NEXT_PUBLIC_BUILD_VERSION so the
-// client, the version.json route, and the update poll all read the same value.
-// A newer deploy has a strictly greater version, which is how the client detects
-// that an update is available.
+// The build identity is a fresh ISO timestamp, computed once in next.config.ts
+// and baked into NEXT_PUBLIC_BUILD_TIME so the client and the version.json route
+// read the same value. A newer deploy has a strictly later builtAt, which is how
+// the client detects that an update is available (no git history involved).
 
-/** The current build's version number. Falls back to 0 when unset. */
-export function getBuildVersion(): number {
-    const raw = Number(process.env.NEXT_PUBLIC_BUILD_VERSION);
-    return Number.isFinite(raw) ? raw : 0;
-}
-
-/** ISO timestamp of when this build was produced. */
+/** ISO timestamp of when this build was produced. Falls back to the epoch when unset. */
 export function getBuiltAt(): string {
     return process.env.NEXT_PUBLIC_BUILD_TIME ?? new Date(0).toISOString();
 }
