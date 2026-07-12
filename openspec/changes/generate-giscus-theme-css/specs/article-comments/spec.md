@@ -32,4 +32,5 @@ card, crimson inline-code chips) in both light and dark.
 - **WHEN** the custom theme loads inside the widget on the deployed site
 - **THEN** the comment card background shows a soft top-left aurora glow (the same
   `oklch` radial-wash motif as `ProjectCard`) rather than a solid fill, and the glow
-  strengthens on hover, in both light and dark
+  fades up smoothly on hover (a pseudo-layer `opacity` transition), in both light
+  and dark
