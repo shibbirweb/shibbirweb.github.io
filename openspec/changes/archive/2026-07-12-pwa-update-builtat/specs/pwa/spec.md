@@ -9,7 +9,7 @@ The site SHALL expose a static `version.json` describing the current build, and 
 - **WHEN** `pnpm build` completes
 - **THEN** `out/version.json` exists and contains a `builtAt` timestamp and no `version` field
 
-#### Scenario: Build identity advances across builds
+#### Scenario: Version increases across builds
 
 - **WHEN** a build follows a previous one
 - **THEN** its `builtAt` timestamp is strictly later than the previous deployed build's `builtAt`
