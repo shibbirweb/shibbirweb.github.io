@@ -16,7 +16,7 @@ theme generator fits that exact pattern.
 
 **Goals:**
 - Single source of truth: the giscus theme derives from `globals.css` tokens.
-- ProjectCard corner-aurora glow on the card background (strengthened on hover).
+- Faint neutral corner glow on the card (ProjectCard motif, no color, subtle hover lift).
 - Follow the existing generated-`public/`-asset convention (gitignored, built).
 
 **Non-Goals:**
@@ -47,16 +47,16 @@ committed files have, deriving foreground-tinted `rgba()` values via a
 static GitHub prettylights maps. Only the `main` background changes (below). Output
 is written with `fs.writeFileSync`, mirroring `buildArticleCoverSvg`.
 
-**3. ProjectCard corner-aurora glow, on a pseudo-layer that fades on hover.**
+**3. Faint neutral corner glow, on a pseudo-layer that fades on hover.**
 Replace `main { background: rgba(foreground, 0.025) }` with the ProjectCard model:
 `main` becomes a positioned, isolated stacking context with a transparent
 background; `main::before` (z-index -2) paints the opaque `<background>` base;
-`main::after` (z-index -1) paints the three diffuse top-left `radial-gradient`
-washes (`color-mix(in oklab, oklch(0.72 0.16 <hue>) <strength>%, transparent)`,
-cool blue/indigo/violet hues) at `opacity: 0.6`, fading to `1` on `main:hover` via
-an `opacity` transition (motion-safe). Opacity is used because `background-image`
-cannot transition. Hues and strengths are script constants (like ProjectCard's own
-glow); the base and text stay palette-driven.
+`main::after` (z-index -1) paints three diffuse top-left `radial-gradient` washes
+of the foreground tone (`rgba(<foreground>, ~0.05)`, deliberately NEUTRAL, no color,
+so it reads as a barely-there tonal gradient matched to the card) at `opacity: 0.7`,
+fading to `1` on `main:hover` via an `opacity` transition (motion-safe) for a very
+minimal lift. Opacity is used because `background-image` cannot transition. The wash
+color is the palette foreground; alpha/opacity are small script constants.
 
 **4. Gitignore + untrack the two files.** Add them to `.gitignore` and
 `git rm --cached` them, so they are build output like `/public/og/`. The deploy

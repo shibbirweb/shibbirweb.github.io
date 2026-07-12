@@ -9,8 +9,9 @@ so the theme stays in sync with the palette. The generator SHALL run before the
 Next.js build (chained in the `dev` and `build` npm scripts, like the existing
 `generate-covers` step), and the two generated files SHALL be gitignored and
 regenerated each build rather than committed. The generated theme SHALL render the
-comment card with the same corner aurora glow as `ProjectCard` (soft top-left,
-multi-hue `oklch` radial washes, strengthened on hover), and SHALL preserve the
+comment card with a faint neutral corner glow in the `ProjectCard` motif (soft
+top-left radial washes of the foreground tone, no color, kept subtle so it does not
+draw the eye, with a very minimal lift on hover), and SHALL preserve the
 existing theme behavior (site palette, inverted primary button, rounded write-box
 card, crimson inline-code chips) in both light and dark.
 
@@ -27,10 +28,10 @@ card, crimson inline-code chips) in both light and dark.
 - **THEN** the next build regenerates the giscus CSS so its colors match the new
   token, with no manual edit to the giscus files
 
-#### Scenario: Comment card shows the ProjectCard aurora glow
+#### Scenario: Comment card shows a faint neutral corner glow
 
 - **WHEN** the custom theme loads inside the widget on the deployed site
-- **THEN** the comment card background shows a soft top-left aurora glow (the same
-  `oklch` radial-wash motif as `ProjectCard`) rather than a solid fill, and the glow
-  fades up smoothly on hover (a pseudo-layer `opacity` transition), in both light
-  and dark
+- **THEN** the comment card background shows a faint neutral top-left tonal glow
+  (soft radial washes of the foreground tone, no color) rather than a solid fill,
+  subtle enough not to draw the eye, and it fades up minimally and smoothly on hover
+  (a pseudo-layer `opacity` transition), in both light and dark

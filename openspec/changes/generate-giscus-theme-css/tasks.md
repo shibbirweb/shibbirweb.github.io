@@ -3,7 +3,7 @@
 - [x] 1.1 Create `scripts/generate-giscus-themes.ts` (a `tsx` script ending in a top-level `main()`, mirroring `scripts/generate-covers.ts`)
 - [x] 1.2 Parse `src/app/globals.css`: extract `--background` and `--foreground` from the `:root {` block (light) and the `:root[data-theme='dark'] {` block (dark); throw if any token is missing
 - [x] 1.3 Add a `hex -> {r,g,b}` helper and a `buildGiscusTheme(palette, mode)` that returns the full CSS string: the 73 Primer `--color-*` variables (foreground-tinted rgba surfaces/borders/buttons, inverted primary button, `hsl(234 ...)` accent, static GitHub prettylights maps) plus the element rules (textarea top radius, `-extras` bottom radius, `.btn-primary` radius/weight, crimson inline code, code block)
-- [x] 1.4 In the `main` block, set the ProjectCard corner-aurora glow: three top-left `radial-gradient` washes (`color-mix(in oklab, oklch(0.72 0.16 <hue>) <strength>%, transparent)`, cool blue/indigo/violet hues) over `background-color: <background>`, plus a `main:hover` rule that raises the strength; keep the `foreground/10` border, `1rem` radius, and padding
+- [x] 1.4 Set a faint neutral corner glow (ProjectCard motif) via pseudo-layers: `main` transparent + isolated; `main::before` opaque `<background>` base; `main::after` three top-left `radial-gradient` washes of the foreground tone (`rgba(<foreground>, ~0.05)`, no color) at `opacity: 0.7`, fading to `1` on `main:hover` (motion-safe `opacity` transition); keep the `foreground/10` border, `1rem` radius, and padding
 - [x] 1.5 Write `public/giscus-light.css` and `public/giscus-dark.css` with `fs.writeFileSync`
 
 ## 2. Wire into build + tracking
