@@ -17,8 +17,11 @@
     --panel-glow: 16%;
 }
 
+/* Signature bloom: the accent rests dim and lifts to full on hover, matching the
+   skill-tile glow. The change is deliberately gentle (slow fade, small delta) so
+   it reads as ambient warmth rather than an eye-catching effect. */
 .panel::before {
-    @apply pointer-events-none absolute inset-0 z-0 rounded-[inherit] content-[''];
+    @apply pointer-events-none absolute inset-0 z-0 rounded-[inherit] opacity-55 content-[''] motion-safe:transition-opacity motion-safe:duration-700 motion-safe:ease-out;
     background-image:
         radial-gradient(
             55% 45% at 88% 0%,
@@ -34,4 +37,8 @@
             ),
             transparent 70%
         );
+}
+
+.panel:hover::before {
+    @apply opacity-100;
 }

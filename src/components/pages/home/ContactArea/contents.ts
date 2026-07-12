@@ -1,10 +1,5 @@
 import type { ContactFormValues } from '@/components/pages/home/ContactArea/types';
 
-export const contactHeading = "Let's connect";
-
-export const contactIntro =
-    'Tell me about the project, the problem, or the idea you want a second pair of eyes on.';
-
 // Left rail copy.
 export const asideEyebrow = 'Get in touch';
 export const asideHeadline = 'Have something in mind? Start the conversation.';
