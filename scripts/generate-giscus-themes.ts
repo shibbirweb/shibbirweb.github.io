@@ -78,10 +78,10 @@ function hexToRgb(hex: string): [number, number, number] {
 // strengthened on hover (ProjectCard reveals its glow on hover). Cool on-theme
 // hues (blue / indigo / violet) rather than the site accent alone.
 const GLOW_HUES = [210, 250, 290] as const;
-const GLOW_STRENGTH: Record<Mode, { base: number; hover: number }> = {
-    light: { base: 9, hover: 15 },
-    dark: { base: 12, hover: 18 },
-};
+// Full glow strength (per mode), painted on the ::after layer; the resting state
+// shows it at BASE_OPACITY and fades to 1 on hover, mirroring ProjectCard.
+const GLOW_FULL: Record<Mode, number> = { light: 15, dark: 18 };
+const BASE_OPACITY = 0.6;
 
 /** ProjectCard-style top-left aurora: three layered radial washes at `strength`. */
 function aurora(strength: number): string {
@@ -157,7 +157,7 @@ function buildTheme(mode: Mode, palette: Palette): string {
     // foreground / background tints
     const fg = (a: number) => `rgba(${r}, ${g}, ${b}, ${a})`;
     const bgc = (a: number) => `rgba(${br}, ${bg}, ${bb}, ${a})`;
-    const glow = GLOW_STRENGTH[mode];
+    const glowFull = GLOW_FULL[mode];
     const accent = ACCENT[mode];
     const status = STATUS[mode];
     const syntax = Object.entries(SYNTAX[mode])
@@ -243,10 +243,14 @@ main {
 ${syntax}
 
     color-scheme: ${mode};
-    /* One rounded card with the ProjectCard corner aurora glow (soft top-left
-       multi-hue washes over the base), strengthened on hover below. */
-    background-color: ${background};
-    background-image: ${aurora(glow.base)};
+    /* Rounded card. The ProjectCard corner aurora glow lives on the ::after layer
+       below so its opacity can fade smoothly on hover (background-image cannot
+       transition). main is a positioned, isolated stacking context with a
+       transparent background, so the ::before base fill and ::after glow (negative
+       z-index) sit behind the content. */
+    position: relative;
+    isolation: isolate;
+    background: transparent;
     border: 1px solid ${fg(0.1)};
     border-radius: 1rem;
     padding: 1.25rem 1.5rem;
@@ -255,9 +259,34 @@ ${syntax}
         Helvetica, Arial, sans-serif;
 }
 
-/* Strengthen the corner glow on hover, mirroring ProjectCard's hover reveal. */
-main:hover {
-    background-image: ${aurora(GLOW_STRENGTH[mode].hover)};
+/* Opaque base fill, behind the glow and content. */
+main::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    border-radius: inherit;
+    background-color: ${background};
+}
+
+/* ProjectCard corner aurora glow: soft at rest, fading to full on hover. */
+main::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: ${BASE_OPACITY};
+    background-image: ${aurora(glowFull)};
+}
+main:hover::after {
+    opacity: 1;
+}
+@media (prefers-reduced-motion: no-preference) {
+    main::after {
+        transition: opacity 320ms ease;
+    }
 }
 
 /* Write box reads as one rounded card. The write field is two stacked elements,
