@@ -75,33 +75,26 @@ function hexToRgb(hex: string): [number, number, number] {
 
 // Corner aurora glow, mirroring ProjectCard.module.css: three diffuse radial
 // washes anchored top-left, using oklch(0.72 0.16 <hue>) hues, softly present and
-// strengthened on hover (ProjectCard reveals its glow on hover). Cool on-theme
-// hues (blue / indigo / violet) rather than the site accent alone.
-const GLOW_HUES = [210, 250, 290] as const;
-// Full glow strength (per mode), painted on the ::after layer; the resting state
-// shows it at BASE_OPACITY and fades to 1 on hover, mirroring ProjectCard.
-// Kept deliberately faint: barely noticeable at rest, a gentle lift on hover.
-const GLOW_FULL: Record<Mode, number> = { light: 7, dark: 9 };
-const BASE_OPACITY = 0.35;
+// strengthened on hover. Deliberately NEUTRAL (a faint foreground-toned wash, no
+// color) so it reads as a barely-there tonal gradient matched to the card, not an
+// eye-catching colored glow; the hover lift is minimal.
+// Peak per-wash alpha of the foreground tint (per mode); the resting state shows it
+// at BASE_OPACITY and fades to 1 on hover.
+const GLOW_ALPHA: Record<Mode, number> = { light: 0.05, dark: 0.06 };
+const BASE_OPACITY = 0.7;
 
-/** ProjectCard-style top-left aurora: three layered radial washes at `strength`. */
-function aurora(strength: number): string {
-    const [a, b, c] = GLOW_HUES;
-    const wash = (
-        size: string,
-        at: string,
-        hue: number,
-        fade: string
-    ): string =>
+/** Top-left tonal glow: three layered radial washes of `color` at `alpha`. */
+function aurora(color: string, alpha: number): string {
+    const wash = (size: string, at: string, fade: string): string =>
         `radial-gradient(
         ${size} at ${at},
-        color-mix(in oklab, oklch(0.72 0.16 ${hue}) ${strength}%, transparent),
+        rgba(${color}, ${alpha}),
         transparent ${fade}
     )`;
     return [
-        wash('80% 85%', '0% 0%', a, '78%'),
-        wash('70% 75%', '20% 4%', b, '75%'),
-        wash('65% 70%', '2% 24%', c, '72%'),
+        wash('80% 85%', '0% 0%', '78%'),
+        wash('70% 75%', '20% 4%', '75%'),
+        wash('65% 70%', '2% 24%', '72%'),
     ].join(',\n    ');
 }
 
@@ -158,7 +151,6 @@ function buildTheme(mode: Mode, palette: Palette): string {
     // foreground / background tints
     const fg = (a: number) => `rgba(${r}, ${g}, ${b}, ${a})`;
     const bgc = (a: number) => `rgba(${br}, ${bg}, ${bb}, ${a})`;
-    const glowFull = GLOW_FULL[mode];
     const accent = ACCENT[mode];
     const status = STATUS[mode];
     const syntax = Object.entries(SYNTAX[mode])
@@ -279,7 +271,7 @@ main::after {
     border-radius: inherit;
     pointer-events: none;
     opacity: ${BASE_OPACITY};
-    background-image: ${aurora(glowFull)};
+    background-image: ${aurora(`${r}, ${g}, ${b}`, GLOW_ALPHA[mode])};
 }
 main:hover::after {
     opacity: 1;
