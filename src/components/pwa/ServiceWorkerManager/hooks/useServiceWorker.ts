@@ -7,6 +7,17 @@ import { getBuildVersion } from '@/lib/version';
 /** How often a long-lived tab re-checks version.json for a newer deploy. */
 const VERSION_POLL_INTERVAL_MS = 60_000;
 
+/** Delete every Cache Storage bucket so the next load pulls fresh assets. */
+async function clearAllCaches(): Promise<void> {
+    if (typeof window === 'undefined' || !('caches' in window)) return;
+    try {
+        const cacheKeys = await caches.keys();
+        await Promise.all(cacheKeys.map((key) => caches.delete(key)));
+    } catch {
+        // Best effort; the reload below still proceeds.
+    }
+}
+
 interface ServiceWorkerState {
     /** True once an updated service worker is waiting to take over. */
     updateReady: boolean;
@@ -23,7 +34,8 @@ interface ServiceWorkerState {
  * bundle. When the deployed version is greater, `serwist.update()` forces the
  * browser to re-check the worker so `waiting` fires without waiting for its
  * periodic byte-check. Applying the update messages the worker to skip waiting;
- * the resulting `controlling` event reloads the page onto the new build.
+ * the resulting `controlling` event clears all caches and reloads the page onto
+ * the new build.
  */
 export function useServiceWorker(): ServiceWorkerState {
     const [updateReady, setUpdateReady] = useState(false);
@@ -43,12 +55,16 @@ export function useServiceWorker(): ServiceWorkerState {
         const onWaiting = () => setUpdateReady(true);
         serwist.addEventListener('waiting', onWaiting);
 
-        // When the waiting worker takes control after skipWaiting, reload once so
-        // the page renders the new build.
+        // When the waiting worker takes control after skipWaiting, drop every
+        // Cache Storage bucket (precache + runtime JS/CSS/font/image/page caches)
+        // and reload once. Clearing after the new worker controls guarantees the
+        // reload re-fetches the newest CSS/JS from the network rather than serving
+        // a stale CacheFirst/precache copy.
         let hasReloaded = false;
-        const onControlling = () => {
+        const onControlling = async () => {
             if (hasReloaded) return;
             hasReloaded = true;
+            await clearAllCaches();
             window.location.reload();
         };
         serwist.addEventListener('controlling', onControlling);
