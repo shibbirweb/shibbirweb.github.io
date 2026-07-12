@@ -1,6 +1,10 @@
 import SectionHeading from '@/components/pages/common/SectionHeading';
-import ProjectCard from '@/components/pages/home/ProjectsArea/ProjectCard';
-import { projects } from '@/components/pages/home/ProjectsArea/contents';
+import ProjectGrid from '@/components/pages/home/ProjectsArea/ProjectGrid';
+import ResumeBridge from '@/components/pages/home/ProjectsArea/ResumeBridge';
+import {
+    packageProjects,
+    personalProjects,
+} from '@/components/pages/home/ProjectsArea/contents';
 
 export default function ProjectsArea() {
     return (
@@ -9,19 +13,31 @@ export default function ProjectsArea() {
             className="py-20 sm:py-28"
         >
             <div className="container mx-auto px-4">
-                <SectionHeading className="text-center">
-                    Featured Projects
-                </SectionHeading>
+                <div className="space-y-3 text-center">
+                    <SectionHeading>Open Source</SectionHeading>
+                    <p className="text-foreground/60 mx-auto max-w-xl">
+                        Tools, plugins, and experiments I build in the open.
+                    </p>
+                </div>
 
-                <ul className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2">
-                    {projects.map((project, index) => (
-                        <ProjectCard
-                            key={project.repoURL}
-                            project={project}
-                            index={index}
-                        />
-                    ))}
-                </ul>
+                <div className="mt-12 space-y-6">
+                    <h3 className="text-foreground/60 text-center text-sm font-bold tracking-wider uppercase">
+                        Packages &amp; Plugins
+                    </h3>
+                    <ProjectGrid projects={packageProjects} />
+                </div>
+
+                <div className="mt-14 space-y-6">
+                    <h3 className="text-foreground/60 text-center text-sm font-bold tracking-wider uppercase">
+                        Personal Projects
+                    </h3>
+                    <ProjectGrid
+                        projects={personalProjects}
+                        indexOffset={packageProjects.length}
+                    />
+                </div>
+
+                <ResumeBridge />
             </div>
         </section>
     );

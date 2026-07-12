@@ -20,7 +20,9 @@ export type Project = {
     links?: ProjectExternalLink[];
 };
 
-export const projects: Project[] = [
+// Reusable tools published for others (VS Code Marketplace, npm). These carry
+// `links` to their distribution page alongside the source repo.
+export const packageProjects: Project[] = [
     {
         name: 'Extra Cursor Caret Height',
         category: 'VS Code Extension',
@@ -71,6 +73,19 @@ export const projects: Project[] = [
         ],
     },
     {
+        name: 'Shibbir CLI',
+        category: 'CLI Tool',
+        description:
+            'A Node.js command-line tool bundling helpful commands to run on your machine, packaging frequently used developer workflows.',
+        tech: ['Node.js', 'JavaScript'],
+        repoURL: 'https://github.com/shibbirweb/shibbir-cli',
+    },
+];
+
+// Public repos built for personal use, learning, or practice. Source only, no
+// distribution page.
+export const personalProjects: Project[] = [
+    {
         name: 'Nginx Load Balancer',
         category: 'DevOps / Infrastructure',
         description:
@@ -79,18 +94,19 @@ export const projects: Project[] = [
         repoURL: 'https://github.com/shibbirweb/p-nginx-load-balancer',
     },
     {
-        name: 'DNS Manager',
-        category: 'Developer Tool',
-        description: 'A PHP utility for managing DNS records programmatically.',
-        tech: ['PHP'],
-        repoURL: 'https://github.com/shibbirweb/dns-manager',
-    },
-    {
-        name: 'Shibbir CLI',
-        category: 'CLI Tool',
+        name: 'Cloudflare DNS & Server Manager',
+        category: 'Control Panel',
         description:
-            'A personal Node.js command-line tool that packages frequently used developer workflows.',
-        tech: ['Node.js', 'JavaScript'],
-        repoURL: 'https://github.com/shibbirweb/shibbir-cli',
+            'A Laravel and React (Inertia) control panel to manage remote servers over SSH with an in-browser terminal, provision sites, issue WordPress magic-login tokens, and manage Cloudflare DNS records.',
+        tech: [
+            'PHP',
+            'Laravel',
+            'Inertia.js',
+            'React',
+            'TypeScript',
+            'Cloudflare API',
+            'WordPress',
+        ],
+        repoURL: 'https://github.com/shibbirweb/dns-manager',
     },
 ];
