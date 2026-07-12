@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from 'next';
 import '@/app/globals.css';
 import {
     facebookPageId,
-    googleTagManagerId,
     jsonLdAlternateName,
     personFamilyName,
     personGivenName,
@@ -16,7 +15,7 @@ import {
     siteURL,
     twitterUsername,
 } from '@/config/constants';
-import { GoogleTagManager } from '@next/third-parties/google';
+import DeferredGoogleTagManager from '@/components/analytics/DeferredGoogleTagManager';
 import PageviewTracker from '@/components/analytics/PageviewTracker';
 import { JsonLdScript } from '@/components/seo/JsonLdScript';
 import { ThemeScript } from '@/components/layout/ThemeToggle/ThemeScript';
@@ -131,7 +130,7 @@ export default function RootLayout({
             </head>
             {process.env.NODE_ENV === 'production' && (
                 <>
-                    <GoogleTagManager gtmId={googleTagManagerId} />
+                    <DeferredGoogleTagManager />
                     <PageviewTracker />
                 </>
             )}
