@@ -73,6 +73,10 @@ export const githubURL: string = 'https://github.com/shibbirweb';
 export const facebookURL: string = 'https://www.facebook.com/shibbirweb';
 export const twitterURL: string = 'https://x.com/shibbirweb';
 
+// contact form (public keys; the site is statically exported, so these ship to the client)
+export const web3formsAccessKey: string = '91a6de0d-ce19-4432-bf0d-da3a9f3a84eb';
+export const hcaptchaSiteKey: string = '50b2fe65-b00b-4b9e-ad62-3ba471098be2';
+
 // json-ld
 export const siteDatePublished: string = '2018-12-20T15:28:28+06:00';
 export const jsonLdAlternateName: string = 'shibbirweb';
