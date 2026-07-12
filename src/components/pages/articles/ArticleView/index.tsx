@@ -15,6 +15,7 @@ import TechStack from '@/components/pages/articles/TechStack';
 import WhatYoullLearn from '@/components/pages/articles/WhatYoullLearn';
 import MermaidRenderer from '@/components/pages/articles/MermaidRenderer';
 import CodeBlockCopy from '@/components/pages/articles/CodeBlock';
+import Comments from '@/components/pages/articles/Comments';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { buildArticleJsonLd } from '@/utils/articleJsonLd';
 import { jetBrainsMono } from '@/config/monoFont';
@@ -129,6 +130,8 @@ export default function ArticleView({
                             previous={previous}
                             next={next}
                         />
+
+                        <Comments />
                     </div>
 
                     <aside className="hidden lg:block">
