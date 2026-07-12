@@ -3,9 +3,9 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "dev": "tsx scripts/generate-covers.ts && tsx scripts/prepare-resume.ts && next-image-export-optimizer && next dev --turbopack",
-        "dev:https": "tsx scripts/generate-covers.ts && tsx scripts/prepare-resume.ts && next-image-export-optimizer && next dev --turbopack --experimental-https",
-        "build": "tsx scripts/generate-covers.ts && tsx scripts/generate-og-images.ts && tsx scripts/prepare-resume.ts && next build --webpack && next-image-export-optimizer",
+        "dev": "tsx scripts/generate-covers.ts && tsx scripts/prepare-resume.ts && tsx scripts/generate-giscus-themes.ts && next-image-export-optimizer && next dev --turbopack",
+        "dev:https": "tsx scripts/generate-covers.ts && tsx scripts/prepare-resume.ts && tsx scripts/generate-giscus-themes.ts && next-image-export-optimizer && next dev --turbopack --experimental-https",
+        "build": "tsx scripts/generate-covers.ts && tsx scripts/generate-og-images.ts && tsx scripts/prepare-resume.ts && tsx scripts/generate-giscus-themes.ts && next build --webpack && next-image-export-optimizer",
         "start": "next start",
         "preview": "tsx scripts/serve-out.ts",
         "preview:https": "tsx scripts/serve-out.ts --https",

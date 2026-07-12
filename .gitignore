@@ -63,6 +63,10 @@ certificates
 /public/sw.js.map
 /public/swe-worker-*.js
 
+# giscus comment theme generated from globals.css (build artifacts)
+/public/giscus-light.css
+/public/giscus-dark.css
+
 # locally trusted localhost cert for `pnpm preview:https` (mkcert, local only)
 /certificates/
 
