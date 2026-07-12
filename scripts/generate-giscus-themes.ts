@@ -80,8 +80,9 @@ function hexToRgb(hex: string): [number, number, number] {
 const GLOW_HUES = [210, 250, 290] as const;
 // Full glow strength (per mode), painted on the ::after layer; the resting state
 // shows it at BASE_OPACITY and fades to 1 on hover, mirroring ProjectCard.
-const GLOW_FULL: Record<Mode, number> = { light: 15, dark: 18 };
-const BASE_OPACITY = 0.6;
+// Kept deliberately faint: barely noticeable at rest, a gentle lift on hover.
+const GLOW_FULL: Record<Mode, number> = { light: 7, dark: 9 };
+const BASE_OPACITY = 0.35;
 
 /** ProjectCard-style top-left aurora: three layered radial washes at `strength`. */
 function aurora(strength: number): string {
