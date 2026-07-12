@@ -234,6 +234,28 @@
     color: #f85149;
 }
 
+/* Typography's invert palette paints headings/links/bold/inline-code/kbd pure
+   #fff in dark mode, which glares on the near-black background. Repoint them to
+   the site's soft dark foreground (var(--foreground), #ededed). Body stays the
+   palette's gray-300. OS media query is the no-JS fallback; data-theme is the
+   switcher-driven override. */
+@media (prefers-color-scheme: dark) {
+    :global(html:not([data-theme])) .content {
+        --tw-prose-invert-headings: var(--foreground);
+        --tw-prose-invert-links: var(--foreground);
+        --tw-prose-invert-bold: var(--foreground);
+        --tw-prose-invert-code: var(--foreground);
+        --tw-prose-invert-kbd: var(--foreground);
+    }
+}
+:global(html[data-theme='dark']) .content {
+    --tw-prose-invert-headings: var(--foreground);
+    --tw-prose-invert-links: var(--foreground);
+    --tw-prose-invert-bold: var(--foreground);
+    --tw-prose-invert-code: var(--foreground);
+    --tw-prose-invert-kbd: var(--foreground);
+}
+
 /* Anchored headings sit clear of the floating navbar and the reading-progress
    bar when reached via a table-of-contents link (the TOC links to these ids). */
 .content :where(h2, h3) {
