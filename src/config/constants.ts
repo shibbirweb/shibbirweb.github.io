@@ -2,6 +2,15 @@ export const siteURL: string = 'https://shibbir.me';
 export const facebookPageId: string = '123805794398882';
 export const googleTagManagerId: string = 'GTM-W4DC9Z6';
 
+// giscus comment widget (GitHub Discussions). giscusRepoId and giscusCategoryId
+// are opaque node IDs generated at https://giscus.app after enabling Discussions
+// on the repo and installing the giscus GitHub App; fill them in from there.
+// The widget shows a configuration error until both IDs are set.
+export const giscusRepo: string = 'shibbirweb/shibbirweb.github.io';
+export const giscusRepoId: string = 'MDEwOlJlcG9zaXRvcnkxNTQ4NTA5NjI=';
+export const giscusCategory: string = 'Comments';
+export const giscusCategoryId: string = 'DIC_kwDOCTrWks4DBBu5';
+
 export const siteName: string = 'Shibbir Ahmed';
 export const professionalTitle: string = 'Senior Full-Stack & AI Engineer';
 export const personGivenName: string = 'Shibbir';
