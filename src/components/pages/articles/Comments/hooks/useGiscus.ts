@@ -16,8 +16,22 @@ export interface GiscusConfig {
     categoryId: string;
 }
 
-function themeFor(): 'light' | 'dark' {
-    return getResolvedTheme() === 'dark' ? 'dark' : 'light';
+/**
+ * The giscus theme value: a full, origin-derived URL to the site's custom giscus
+ * theme stylesheet (`/giscus-light.css` or `/giscus-dark.css` in `public/`) for
+ * the resolved site theme, so the widget matches the site design system (a
+ * ProjectCard-style card). Origin-derived so dev and prod each point at their own
+ * host; runs in a client effect, so `window` is available.
+ *
+ * Giscus applies the theme by injecting a `<link rel="stylesheet" href=...>` into
+ * its own https iframe, so the URL must resolve over https: production
+ * (`https://shibbir.me/...`) and `pnpm dev:https` work; plain http `pnpm dev`
+ * blocks the http-origin stylesheet as mixed content and the widget falls back to
+ * its unstyled default.
+ */
+function themeFor(): string {
+    const mode = getResolvedTheme() === 'dark' ? 'dark' : 'light';
+    return `${window.location.origin}/giscus-${mode}.css`;
 }
 
 /**
