@@ -18,9 +18,9 @@ export default function ContactSuccess({
     return (
         <div
             role="status"
-            className="border-foreground/10 bg-background/40 flex flex-col items-center gap-4 rounded-2xl border px-6 py-10 text-center"
+            className="flex h-full flex-col items-center justify-center gap-4 py-6 text-center"
         >
-            <span className="flex size-14 items-center justify-center rounded-full bg-green-500/10 text-green-600 dark:text-green-400">
+            <span className="flex size-14 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600 ring-1 ring-emerald-500/20 dark:text-emerald-400">
                 <CheckIcon className="size-7" />
             </span>
             <div>
