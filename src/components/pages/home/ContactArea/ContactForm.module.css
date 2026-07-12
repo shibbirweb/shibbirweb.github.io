@@ -1,0 +1,37 @@
+@reference "tailwindcss";
+
+/* Contact panel ambient accent. A single soft emerald glow bleeds from the top
+   corners of the card, echoing the hover bloom on the skill tiles and tying the
+   form's accent to the green "sent" confirmation. The glow is a touch stronger
+   in dark mode, mirroring the strength-stepping used elsewhere (SkillCard). */
+.panel {
+    --panel-glow: 9%;
+}
+
+@media (prefers-color-scheme: dark) {
+    :global(html:not([data-theme])) .panel {
+        --panel-glow: 16%;
+    }
+}
+:global(html[data-theme='dark']) .panel {
+    --panel-glow: 16%;
+}
+
+.panel::before {
+    @apply pointer-events-none absolute inset-0 z-0 rounded-[inherit] content-[''];
+    background-image:
+        radial-gradient(
+            55% 45% at 88% 0%,
+            color-mix(in oklab, var(--color-emerald-500) var(--panel-glow), transparent),
+            transparent 72%
+        ),
+        radial-gradient(
+            50% 40% at 6% 4%,
+            color-mix(
+                in oklab,
+                var(--color-emerald-500) calc(var(--panel-glow) * 0.55),
+                transparent
+            ),
+            transparent 70%
+        );
+}

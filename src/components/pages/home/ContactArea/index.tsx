@@ -15,13 +15,13 @@ export default function ContactArea() {
             <div className="container mx-auto flex flex-col items-center px-4 text-center">
                 <SectionHeading>{contactHeading}</SectionHeading>
 
-                <p className="text-foreground/70 mt-4 max-w-2xl text-lg leading-relaxed">
+                <p className="text-foreground/70 mt-4 max-w-xl text-lg leading-relaxed text-balance">
                     {contactIntro}
                 </p>
 
                 <ContactForm />
 
-                <div className="mt-14">
+                <div className="mt-16">
                     <SocialIcons />
                 </div>
             </div>

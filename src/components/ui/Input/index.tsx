@@ -6,6 +6,7 @@ export const fieldControlClassName =
 
 type InputProps = React.ComponentPropsWithRef<'input'> & {
     label: string;
+    labelClassName?: string;
 };
 
 /**
@@ -15,6 +16,7 @@ type InputProps = React.ComponentPropsWithRef<'input'> & {
  */
 export default function Input({
     label,
+    labelClassName,
     id,
     className,
     ...rest
@@ -26,7 +28,7 @@ export default function Input({
         <div className="flex flex-col gap-2 text-left">
             <label
                 htmlFor={inputId}
-                className="text-sm font-medium"
+                className={cn('text-sm font-medium', labelClassName)}
             >
                 {label}
             </label>

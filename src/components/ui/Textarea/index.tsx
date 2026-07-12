@@ -4,6 +4,7 @@ import { fieldControlClassName } from '@/components/ui/Input';
 
 type TextareaProps = React.ComponentPropsWithRef<'textarea'> & {
     label: string;
+    labelClassName?: string;
 };
 
 /**
@@ -12,6 +13,7 @@ type TextareaProps = React.ComponentPropsWithRef<'textarea'> & {
  */
 export default function Textarea({
     label,
+    labelClassName,
     id,
     className,
     ...rest
@@ -23,7 +25,7 @@ export default function Textarea({
         <div className="flex flex-col gap-2 text-left">
             <label
                 htmlFor={textareaId}
-                className="text-sm font-medium"
+                className={cn('text-sm font-medium', labelClassName)}
             >
                 {label}
             </label>
