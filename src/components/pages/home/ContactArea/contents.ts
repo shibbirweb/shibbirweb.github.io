@@ -1,0 +1,50 @@
+import type { ContactFormValues } from '@/components/pages/home/ContactArea/types';
+
+export const contactHeading = "Let's connect";
+
+export const contactIntro =
+    'Have an idea, a question, or just want to say hi? Drop me a message below and I will get back to you, or find me on any of these platforms.';
+
+export const emptyContactValues: ContactFormValues = {
+    name: '',
+    email: '',
+    message: '',
+};
+
+type ContactFieldConfig = {
+    name: keyof ContactFormValues;
+    label: string;
+    type: 'text' | 'email';
+    placeholder: string;
+    autoComplete: string;
+};
+
+export const contactFields: ContactFieldConfig[] = [
+    {
+        name: 'name',
+        label: 'Name',
+        type: 'text',
+        placeholder: 'Your name',
+        autoComplete: 'name',
+    },
+    {
+        name: 'email',
+        label: 'Email',
+        type: 'email',
+        placeholder: 'you@example.com',
+        autoComplete: 'email',
+    },
+];
+
+export const messageField = {
+    label: 'Message',
+    placeholder: 'Tell me a little about what you have in mind...',
+};
+
+export const submitLabel = 'Send message';
+export const submittingLabel = 'Sending...';
+
+export const successTitle = 'Message sent successfully';
+export const successSubtitle =
+    "Thanks for reaching out. I will get back to you soon. Need to add something?";
+export const resendLabel = 'Resend again';

@@ -1,0 +1,47 @@
+import { cn } from '@/utils/cn';
+import Spinner from '@/components/ui/Spinner';
+
+type ButtonVariant = 'primary' | 'outline';
+
+const variantClassNames: Record<ButtonVariant, string> = {
+    primary:
+        'bg-foreground text-background hover:bg-foreground/85 disabled:cursor-not-allowed disabled:opacity-60',
+    outline:
+        'border-foreground/15 border hover:bg-foreground/5 disabled:cursor-not-allowed disabled:opacity-60',
+};
+
+type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
+    variant?: ButtonVariant;
+    isLoading?: boolean;
+};
+
+/**
+ * Reusable, theme-aware button. Styling rides the `foreground`/`background`
+ * tokens so it swaps with light/dark automatically. `isLoading` disables the
+ * button and shows a spinner before the label.
+ */
+export default function Button({
+    variant = 'primary',
+    isLoading = false,
+    type = 'button',
+    disabled,
+    className,
+    children,
+    ...rest
+}: ButtonProps) {
+    return (
+        <button
+            type={type}
+            disabled={disabled || isLoading}
+            className={cn(
+                'inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition-colors',
+                variantClassNames[variant],
+                className
+            )}
+            {...rest}
+        >
+            {isLoading && <Spinner />}
+            {children}
+        </button>
+    );
+}

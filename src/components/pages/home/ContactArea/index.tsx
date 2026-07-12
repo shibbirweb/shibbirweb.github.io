@@ -1,6 +1,10 @@
 import SocialIcons from '@/components/pages/home/HeroArea/SocialIcons';
 import SectionHeading from '@/components/pages/common/SectionHeading';
-import { siteAuthorEmail } from '@/config/constants';
+import ContactForm from '@/components/pages/home/ContactArea/ContactForm';
+import {
+    contactHeading,
+    contactIntro,
+} from '@/components/pages/home/ContactArea/contents';
 
 export default function ContactArea() {
     return (
@@ -9,23 +13,15 @@ export default function ContactArea() {
             className="py-20 sm:py-28"
         >
             <div className="container mx-auto flex flex-col items-center px-4 text-center">
-                <SectionHeading>
-                    Let&apos;s connect
-                </SectionHeading>
+                <SectionHeading>{contactHeading}</SectionHeading>
 
                 <p className="text-foreground/70 mt-4 max-w-2xl text-lg leading-relaxed">
-                    Have an idea, a question, or just want to say hi? Reach out
-                    over email or find me on any of these platforms.
+                    {contactIntro}
                 </p>
 
-                <a
-                    href={`mailto:${siteAuthorEmail}`}
-                    className="border-foreground/20 hover:border-foreground/50 mt-10 inline-block rounded-full border px-6 py-3 text-base transition-all duration-300 hover:scale-105"
-                >
-                    {siteAuthorEmail}
-                </a>
+                <ContactForm />
 
-                <div className="mt-10">
+                <div className="mt-14">
                     <SocialIcons />
                 </div>
             </div>
