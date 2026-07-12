@@ -49,14 +49,16 @@ main {
     --color-btn-active-bg: rgba(237, 237, 237, 0.14);
     --color-btn-active-border: rgba(237, 237, 237, 0.26);
     --color-btn-selected-bg: rgba(237, 237, 237, 0.1);
-    --color-btn-primary-text: #ffffff;
-    --color-btn-primary-bg: hsl(234 45% 55%);
-    --color-btn-primary-border: hsl(234 45% 48%);
-    --color-btn-primary-hover-bg: hsl(234 48% 60%);
-    --color-btn-primary-hover-border: hsl(234 48% 52%);
-    --color-btn-primary-selected-bg: hsl(234 48% 52%);
-    --color-btn-primary-disabled-text: rgba(255, 255, 255, 0.6);
-    --color-btn-primary-disabled-bg: hsl(234 20% 40%);
+    /* Primary button: the site's inverted button (bg-foreground text-background,
+       no border, semibold), matching SaveBar / UpdateToast. */
+    --color-btn-primary-text: #0a0a0a;
+    --color-btn-primary-bg: #ededed;
+    --color-btn-primary-border: transparent;
+    --color-btn-primary-hover-bg: rgba(237, 237, 237, 0.85);
+    --color-btn-primary-hover-border: transparent;
+    --color-btn-primary-selected-bg: rgba(237, 237, 237, 0.9);
+    --color-btn-primary-disabled-text: rgba(10, 10, 10, 0.85);
+    --color-btn-primary-disabled-bg: rgba(237, 237, 237, 0.5);
     --color-btn-primary-shadow: 0 0 transparent;
 
     /* Status colors. */
@@ -114,13 +116,23 @@ main {
         Helvetica, Arial, sans-serif;
 }
 
-/* Inner cards (write box, each comment) and inputs get the softer rounded corners
-   of the design system. */
-.gsc-comment-box,
-.gsc-comment .gsc-comment-box,
-.gsc-timeline .gsc-comment > div,
-.gsc-comment-box-textarea {
+/* Write box reads as one rounded card. The write field is two stacked elements,
+   the textarea and the markdown-hint bar (.gsc-comment-box-textarea-extras) below
+   it, so round the textarea's top corners only and the extras bar's bottom corners
+   only, keeping them flush (giscus's own default, which our theme must not undo). */
+.gsc-comment-box {
     border-radius: 0.75rem;
+}
+.gsc-comment-box-textarea {
+    border-radius: 0.5rem 0.5rem 0 0;
+}
+.gsc-comment-box-textarea-extras {
+    border-radius: 0 0 0.5rem 0.5rem;
+}
+/* Primary button: match the site's rounded-lg compact button. */
+.gsc-comment-box-buttons .btn-primary {
+    border-radius: 0.5rem;
+    font-weight: 600;
 }
 
 /* Inline code: the site's Slack-style crimson chip (ArticleContent.module.css). */
