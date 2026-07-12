@@ -1,0 +1,144 @@
+/* Custom giscus theme (dark) matching shibbir.me.
+   Self-contained (no @import / external url). Styled to match the site design
+   system: the widget is one rounded card like ProjectCard (foreground/10 hairline
+   border, 1rem radius, barely-there fill), with the write box and each comment as
+   softer inset cards, crimson inline-code chips, and JetBrains Mono for code.
+   Palette from src/app/globals.css (--foreground #ededed) and the muted site
+   accent from pageGradient.ts. NOTE: giscus loads this file as a stylesheet link
+   inside its https iframe, so it only applies over https (prod, or pnpm dev:https);
+   plain http dev blocks it as mixed content. */
+
+main {
+    /* Inner surfaces stay transparent so the card fill below shows through; the
+       write box / comments get their own inset fills via the tints below. */
+    --color-canvas-default: transparent;
+    --color-canvas-overlay: #0a0a0a;
+    --color-canvas-inset: rgba(237, 237, 237, 0.06);
+    --color-canvas-subtle: rgba(237, 237, 237, 0.04);
+
+    /* Text. */
+    --color-fg-default: #ededed;
+    --color-fg-muted: rgba(237, 237, 237, 0.65);
+    --color-fg-subtle: rgba(237, 237, 237, 0.5);
+    --color-fg-on-emphasis: #ffffff;
+
+    /* Borders: the card's hairline border-foreground/10. */
+    --color-border-default: rgba(237, 237, 237, 0.12);
+    --color-border-muted: rgba(237, 237, 237, 0.08);
+
+    /* Neutral fills (hovers, reaction pills, muted backgrounds). */
+    --color-neutral-muted: rgba(237, 237, 237, 0.12);
+    --color-neutral-subtle: rgba(237, 237, 237, 0.06);
+    --color-neutral-emphasis: rgba(237, 237, 237, 0.5);
+    --color-neutral-emphasis-plus: #ededed;
+
+    /* Accent: muted site indigo, lifted for contrast on dark. */
+    --color-accent-fg: hsl(234 60% 75%);
+    --color-accent-emphasis: hsl(234 45% 58%);
+    --color-accent-muted: hsl(234 45% 58% / 0.4);
+    --color-accent-subtle: hsl(234 45% 58% / 0.18);
+
+    /* Buttons. */
+    --color-btn-text: #ededed;
+    --color-btn-bg: rgba(237, 237, 237, 0.05);
+    --color-btn-border: rgba(237, 237, 237, 0.13);
+    --color-btn-shadow: 0 0 transparent;
+    --color-btn-inset-shadow: 0 0 transparent;
+    --color-btn-hover-bg: rgba(237, 237, 237, 0.1);
+    --color-btn-hover-border: rgba(237, 237, 237, 0.22);
+    --color-btn-active-bg: rgba(237, 237, 237, 0.14);
+    --color-btn-active-border: rgba(237, 237, 237, 0.26);
+    --color-btn-selected-bg: rgba(237, 237, 237, 0.1);
+    --color-btn-primary-text: #ffffff;
+    --color-btn-primary-bg: hsl(234 45% 55%);
+    --color-btn-primary-border: hsl(234 45% 48%);
+    --color-btn-primary-hover-bg: hsl(234 48% 60%);
+    --color-btn-primary-hover-border: hsl(234 48% 52%);
+    --color-btn-primary-selected-bg: hsl(234 48% 52%);
+    --color-btn-primary-disabled-text: rgba(255, 255, 255, 0.6);
+    --color-btn-primary-disabled-bg: hsl(234 20% 40%);
+    --color-btn-primary-shadow: 0 0 transparent;
+
+    /* Status colors. */
+    --color-success-fg: #3fb950;
+    --color-danger-fg: #f85149;
+    --color-attention-fg: #d29922;
+    --color-done-fg: hsl(234 60% 75%);
+
+    /* Inputs. */
+    --color-primer-border-active: hsl(234 45% 58%);
+    --color-primer-shadow-focus: 0 0 0 3px hsl(234 45% 58% / 0.35);
+
+    /* Reaction buttons. */
+    --color-social-reaction-bg-hover: rgba(237, 237, 237, 0.1);
+    --color-social-reaction-bg-reacted-hover: hsl(234 45% 58% / 0.25);
+
+    /* Code syntax highlighting (GitHub dark). */
+    --color-prettylights-syntax-comment: #8b949e;
+    --color-prettylights-syntax-constant: #79c0ff;
+    --color-prettylights-syntax-entity: #d2a8ff;
+    --color-prettylights-syntax-storage-modifier-import: #c9d1d9;
+    --color-prettylights-syntax-entity-tag: #7ee787;
+    --color-prettylights-syntax-keyword: #ff7b72;
+    --color-prettylights-syntax-string: #a5d6ff;
+    --color-prettylights-syntax-variable: #ffa657;
+    --color-prettylights-syntax-brackethighlighter-unmatched: #f85149;
+    --color-prettylights-syntax-invalid-illegal-text: #f0f6fc;
+    --color-prettylights-syntax-invalid-illegal-bg: #8e1519;
+    --color-prettylights-syntax-carriage-return-text: #f0f6fc;
+    --color-prettylights-syntax-carriage-return-bg: #b62324;
+    --color-prettylights-syntax-string-regexp: #7ee787;
+    --color-prettylights-syntax-markup-list: #f2cc60;
+    --color-prettylights-syntax-markup-heading: #1f6feb;
+    --color-prettylights-syntax-markup-italic: #c9d1d9;
+    --color-prettylights-syntax-markup-bold: #c9d1d9;
+    --color-prettylights-syntax-markup-deleted-text: #ffdcd7;
+    --color-prettylights-syntax-markup-deleted-bg: #67060c;
+    --color-prettylights-syntax-markup-inserted-text: #aff5b4;
+    --color-prettylights-syntax-markup-inserted-bg: #033a16;
+    --color-prettylights-syntax-markup-changed-text: #ffdfb6;
+    --color-prettylights-syntax-markup-changed-bg: #5a1e02;
+    --color-prettylights-syntax-markup-ignored-text: #c9d1d9;
+    --color-prettylights-syntax-markup-ignored-bg: #1158c7;
+    --color-prettylights-syntax-meta-diff-range: #d2a8ff;
+    --color-prettylights-syntax-sublimelinter-gutter-mark: #484f58;
+
+    color-scheme: dark;
+    /* One rounded card, like ProjectCard: hairline border, 1rem radius, faint fill. */
+    background: rgba(237, 237, 237, 0.03);
+    border: 1px solid rgba(237, 237, 237, 0.1);
+    border-radius: 1rem;
+    padding: 1.25rem 1.5rem;
+    font-family:
+        var(--font-noto-sans, -apple-system), BlinkMacSystemFont, 'Segoe UI',
+        Helvetica, Arial, sans-serif;
+}
+
+/* Inner cards (write box, each comment) and inputs get the softer rounded corners
+   of the design system. */
+.gsc-comment-box,
+.gsc-comment .gsc-comment-box,
+.gsc-timeline .gsc-comment > div,
+.gsc-comment-box-textarea {
+    border-radius: 0.75rem;
+}
+
+/* Inline code: the site's Slack-style crimson chip (ArticleContent.module.css). */
+.gsc-comment .markdown code:not(pre code):not(.highlight *) {
+    color: #e01e5a;
+    background-color: rgba(237, 237, 237, 0.06);
+    border: 1px solid rgba(237, 237, 237, 0.13);
+    border-radius: 0.25rem;
+    padding: 0.15em 0.35em;
+    font-family: var(--font-jetbrains-mono, ui-monospace), SFMono-Regular,
+        'SF Mono', Menlo, Consolas, monospace;
+}
+
+/* Code block: faint fill, hairline border, rounded, like the article .code-block. */
+.gsc-comment .markdown pre {
+    background-color: rgba(237, 237, 237, 0.05);
+    border: 1px solid rgba(237, 237, 237, 0.12);
+    border-radius: 0.75rem;
+    font-family: var(--font-jetbrains-mono, ui-monospace), SFMono-Regular,
+        'SF Mono', Menlo, Consolas, monospace;
+}
