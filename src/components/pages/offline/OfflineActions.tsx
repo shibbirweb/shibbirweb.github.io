@@ -1,5 +1,5 @@
-import Link from 'next/link';
 import Button from '@/components/ui/Button';
+import ButtonLink from '@/components/ui/ButtonLink';
 import ResetIcon from '@/components/icons/reset';
 
 /**
@@ -22,12 +22,12 @@ export default function OfflineActions() {
                 />
                 Try again
             </Button>
-            <Link
+            <ButtonLink
                 href="/"
-                className="border-foreground/15 hover:bg-foreground/5 inline-flex items-center justify-center gap-2 rounded-xl border px-5 py-2.5 text-sm font-semibold transition-colors"
+                variant="outline"
             >
                 Back home
-            </Link>
+            </ButtonLink>
         </div>
     );
 }
