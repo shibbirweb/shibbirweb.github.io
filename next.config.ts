@@ -49,6 +49,23 @@ const withSerwist = withSerwistInit({
     disable: isDev,
     register: false,
     reloadOnOnline: false,
+    // Keep content-hashed build output out of the precache. Every redeploy
+    // replaces the entire /_next/static tree (buildId-scoped _ssgManifest.js /
+    // _buildManifest.js, route chunks, css, fonts) with new hashes, so a client
+    // installing a service worker whose manifest still lists a previous build's
+    // assets hits 404s. Serwist precaching is all-or-nothing, so one 404 fails
+    // the whole install (bad-precaching-response) and the new worker never takes
+    // over. Precaching only deploy-stable public assets (offline-fallback.html,
+    // icons, images) keeps install resilient across builds; the runtimeCaching
+    // rules in src/app/sw.ts serve /_next assets on demand and tolerate 404s.
+    manifestTransforms: [
+        (entries) => ({
+            manifest: entries.filter(
+                (entry) => !entry.url.startsWith('/_next/static/')
+            ),
+            warnings: [],
+        }),
+    ],
 });
 
 export default withSerwist(nextConfig);
