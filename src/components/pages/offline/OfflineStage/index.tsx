@@ -1,5 +1,6 @@
 import { cn } from '@/utils/cn';
 import GridBackground from '@/components/backgrounds/GridBackground';
+import Checkbox from '@/components/ui/Checkbox';
 import SignalRings from '@/components/pages/offline/SignalRings';
 import OfflineActions from '@/components/pages/offline/OfflineActions';
 import {
@@ -74,23 +75,18 @@ export default function OfflineStage() {
 
             <OfflineActions />
 
-            <label
-                className={cn(
-                    styles.autoReload,
-                    'text-foreground/60 hover:text-foreground/80 mt-6 cursor-pointer items-center gap-2 text-sm transition-colors'
-                )}
-            >
-                <input
-                    type="checkbox"
+            <div className={cn(styles.autoReload, 'mt-6 items-center gap-2')}>
+                <Checkbox
+                    label={AUTO_RELOAD_LABEL}
                     data-offline-autoreload
-                    className={cn(styles.checkbox, 'size-4 rounded')}
+                    className="accent-[var(--offline-accent)]"
+                    labelClassName="text-foreground/60 hover:text-foreground/80 transition-colors"
                 />
-                {AUTO_RELOAD_LABEL}
                 <span
                     data-offline-countdown
                     className="text-foreground/80 font-medium tabular-nums"
                 />
-            </label>
+            </div>
 
             {/* Reconnect behaviour, shared verbatim with the fallback snapshot. */}
             <script dangerouslySetInnerHTML={{ __html: OFFLINE_RECONNECT_SCRIPT }} />

@@ -1,7 +1,10 @@
 import { cn } from '@/utils/cn';
 import Spinner from '@/components/ui/Spinner';
 
-type ButtonVariant = 'primary' | 'outline';
+export type ButtonVariant = 'primary' | 'outline';
+
+const buttonBaseClassName =
+    'inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition-colors';
 
 const variantClassNames: Record<ButtonVariant, string> = {
     primary:
@@ -9,6 +12,18 @@ const variantClassNames: Record<ButtonVariant, string> = {
     outline:
         'border-foreground/15 border hover:bg-foreground/5 disabled:cursor-not-allowed disabled:opacity-60',
 };
+
+/**
+ * The shared button styling, reused by Button and by ButtonLink (a link that
+ * reads as a button). Kept separate so a non-`<button>` element can wear the same
+ * look without duplicating the class list.
+ */
+export function buttonClassName(
+    variant: ButtonVariant = 'primary',
+    className?: string
+): string {
+    return cn(buttonBaseClassName, variantClassNames[variant], className);
+}
 
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
     variant?: ButtonVariant;
@@ -33,11 +48,7 @@ export default function Button({
         <button
             type={type}
             disabled={disabled || isLoading}
-            className={cn(
-                'inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition-colors',
-                variantClassNames[variant],
-                className
-            )}
+            className={buttonClassName(variant, className)}
             {...rest}
         >
             {isLoading && <Spinner />}
