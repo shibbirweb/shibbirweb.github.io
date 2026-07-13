@@ -14,9 +14,10 @@ const PRECACHE_NAME_MARKER = 'serwist-precache';
  * Delete the runtime caches (visited pages, static assets, images) while
  * preserving the Serwist precache. Called when an update takes over so a
  * stable-URL asset that changed in place (e.g. an image reused under the same
- * filename) is refetched fresh, without dropping /offline-fallback.html and the
- * other precached public assets, which must stay available offline. The emptied
- * runtime caches repopulate on demand as pages/assets are fetched again.
+ * filename) is refetched fresh, without dropping the precache: the app shell,
+ * the home document (`/`), and /offline-fallback.html live there and must stay
+ * available offline. The emptied runtime caches repopulate on demand as
+ * pages/assets are fetched again.
  */
 async function clearRuntimeCaches(): Promise<void> {
     if (typeof window === 'undefined' || !('caches' in window)) return;
@@ -64,7 +65,17 @@ export function useServiceWorker(): ServiceWorkerState {
             return;
         }
 
-        const serwist = new Serwist('/sw.js', { scope: '/' });
+        // updateViaCache: 'none' makes the browser bypass the HTTP cache when
+        // fetching sw.js (and its imports) on every update check. The deploy
+        // serves sw.js with a multi-hour max-age, so without this a client could
+        // install a stale sw.js whose precache manifest lists a previous build's
+        // content-hashed assets (already deleted by a newer deploy) and fail the
+        // whole install with bad-precaching-response. Always fetching a fresh
+        // sw.js keeps the manifest in step with the live assets.
+        const serwist = new Serwist('/sw.js', {
+            scope: '/',
+            updateViaCache: 'none',
+        });
         serwistRef.current = serwist;
 
         const onWaiting = () => setUpdateReady(true);
@@ -73,10 +84,10 @@ export function useServiceWorker(): ServiceWorkerState {
         // When the waiting worker takes control after skipWaiting, drop the
         // runtime caches (so a changed stable-URL asset is refetched fresh) but
         // keep the Serwist precache, then reload once. Never clear everything:
-        // the precache holds /offline-fallback.html and the other precached
-        // public assets, and the already installed worker will not re-run its
-        // precache install step, so wiping it would break the offline fallback
-        // until the next deploy.
+        // the precache holds the app shell, the home document, and
+        // /offline-fallback.html, and the already installed worker will not
+        // re-run its precache install step, so wiping it would break offline
+        // access until the next deploy.
         let hasReloaded = false;
         const onControlling = async () => {
             if (hasReloaded) return;
