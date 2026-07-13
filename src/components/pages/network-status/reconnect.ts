@@ -1,15 +1,17 @@
-// Shared source of truth for the offline page's reconnect behaviour, used by
-// both the hydrated /offline route (OfflineStage renders the script inline) and
-// the script-stripped offline fallback snapshot (scripts/generate-offline-fallback.ts
-// re-injects it). Keeping it framework-agnostic means one implementation covers
-// both runtimes: the fallback is the surface actually shown while offline, so the
-// behaviour has to work without React.
+// Shared source of truth for the network-status page's reconnect behaviour, used
+// by both the hydrated /network-status route (NetworkStatusStage renders the
+// script inline) and the script-stripped offline fallback snapshot
+// (scripts/generate-offline-fallback.ts re-injects it). Keeping it
+// framework-agnostic means one implementation covers both runtimes: the fallback
+// is the surface actually shown while offline, so the behaviour has to work
+// without React.
 
-export const OFFLINE_AUTO_RELOAD_KEY = 'offline-auto-reload';
-export const OFFLINE_RELOAD_DELAY_SECONDS = 5;
+export const NETWORK_AUTO_RELOAD_KEY = 'network-auto-reload';
+export const RELOAD_DELAY_SECONDS = 5;
 
-// Copy for each state. The offline strings are the initial (server-rendered)
-// content; the script swaps to the online strings when the connection returns.
+// Copy for each network state. The offline strings are the initial
+// (server-rendered) content; the script swaps to the online strings when the
+// connection returns.
 export const OFFLINE_HEADING = 'Offline';
 export const ONLINE_HEADING = 'Online';
 export const OFFLINE_STATUS = 'No connection';
@@ -21,26 +23,27 @@ export const ONLINE_COPY =
 export const AUTO_RELOAD_LABEL = 'Automatically reload when the connection returns';
 
 /**
- * A dependency-free IIFE that makes the offline page react to the network coming
- * back: it flips `data-status` on the root (which the CSS transitions from the
- * amber offline accent to the emerald online accent), swaps the heading/status/
+ * A dependency-free IIFE that makes the network-status page react to the network
+ * coming back: it flips `data-status` on the root (which the CSS transitions from
+ * the amber offline accent to the emerald online accent), swaps the heading/status/
  * copy text, and, when the auto-reload preference is on, counts down and reloads
  * so the page the user actually wanted resolves. The preference is persisted, and
  * the visible countdown plus checkbox give a window to opt out. Auto-reload is
- * skipped on the /offline route itself (reloading it is pointless and would loop);
- * it only runs when this page is serving as the navigation fallback at another URL.
+ * skipped on the /network-status route itself (reloading it is pointless and would
+ * loop); it only runs when this page is serving as the navigation fallback at
+ * another URL.
  */
-export const OFFLINE_RECONNECT_SCRIPT = `(function(){
-  var root=document.querySelector('[data-offline-root]');
+export const RECONNECT_SCRIPT = `(function(){
+  var root=document.querySelector('[data-network-root]');
   if(!root)return;
-  var KEY=${JSON.stringify(OFFLINE_AUTO_RELOAD_KEY)};
-  var DELAY=${OFFLINE_RELOAD_DELAY_SECONDS};
-  var title=root.querySelector('[data-offline-title]');
-  var copy=root.querySelector('[data-offline-copy]');
-  var status=root.querySelector('[data-offline-status]');
-  var box=root.querySelector('[data-offline-autoreload]');
-  var countdown=root.querySelector('[data-offline-countdown]');
-  var isFallback=location.pathname!=='/offline';
+  var KEY=${JSON.stringify(NETWORK_AUTO_RELOAD_KEY)};
+  var DELAY=${RELOAD_DELAY_SECONDS};
+  var title=root.querySelector('[data-network-title]');
+  var copy=root.querySelector('[data-network-copy]');
+  var status=root.querySelector('[data-network-status]');
+  var box=root.querySelector('[data-network-autoreload]');
+  var countdown=root.querySelector('[data-network-countdown]');
+  var isFallback=location.pathname!=='/network-status';
   var timer=null;
   function getPref(){try{var v=localStorage.getItem(KEY);return v===null?true:v==='1';}catch(e){return true;}}
   function setPref(v){try{localStorage.setItem(KEY,v?'1':'0');}catch(e){}}
@@ -51,8 +54,8 @@ export const OFFLINE_RECONNECT_SCRIPT = `(function(){
   if(box){box.checked=getPref();box.addEventListener('change',function(){setPref(box.checked);if(!box.checked)stop();else if(navigator.onLine&&root.getAttribute('data-status')==='online')start();});}
   window.addEventListener('online',online);
   window.addEventListener('offline',offline);
-  root.addEventListener('click',function(e){if(e.target.closest('[data-offline-reload]')){e.preventDefault();location.reload();}});
-  // Deferred so React (on the /offline route) hydrates the default offline markup
-  // first; mutating after hydration avoids a mismatch.
+  root.addEventListener('click',function(e){if(e.target.closest('[data-network-reload]')){e.preventDefault();location.reload();}});
+  // Deferred so React (on the /network-status route) hydrates the default offline
+  // markup first; mutating after hydration avoids a mismatch.
   setTimeout(function(){if(navigator.onLine)online();},0);
 })();`;

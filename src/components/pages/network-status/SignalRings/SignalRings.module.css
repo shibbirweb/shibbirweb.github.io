@@ -2,7 +2,7 @@
 
 /* Radar "searching for signal" glyph. Everything expressible as a utility uses
    @apply; the accent tint (color-mix) and the pulse keyframes are the sanctioned
-   raw-CSS exceptions. The rings and core inherit --offline-accent from the stage
+   raw-CSS exceptions. The rings and core inherit --network-accent from the stage
    (OfflineStage.module.css) so they share, and transition with, the status
    accent: amber while offline, emerald once the connection returns. */
 .radar {
@@ -13,12 +13,12 @@
    or reduced motion), under the outward pulses. */
 .halo {
     @apply absolute size-2/3 rounded-full border opacity-30 content-[''];
-    border-color: color-mix(in oklab, var(--offline-accent) 55%, transparent);
+    border-color: color-mix(in oklab, var(--network-accent) 55%, transparent);
 }
 
 .ring {
     @apply absolute size-full rounded-full border content-[''];
-    border-color: color-mix(in oklab, var(--offline-accent) 45%, transparent);
+    border-color: color-mix(in oklab, var(--network-accent) 45%, transparent);
     /* Reduced-motion / no-animation resting state: one faint static ring. */
     @apply opacity-40;
     /* With motion allowed, the rings start collapsed and transparent and the
@@ -36,9 +36,9 @@
 
 .core {
     @apply absolute size-3 rounded-full;
-    background-color: var(--offline-accent);
+    background-color: var(--network-accent);
     box-shadow: 0 0 0 6px
-        color-mix(in oklab, var(--offline-accent) 22%, transparent);
+        color-mix(in oklab, var(--network-accent) 22%, transparent);
 }
 
 @keyframes radar-pulse {

@@ -1,32 +1,32 @@
 import { cn } from '@/utils/cn';
 import GridBackground from '@/components/backgrounds/GridBackground';
 import Checkbox from '@/components/ui/Checkbox';
-import SignalRings from '@/components/pages/offline/SignalRings';
-import OfflineActions from '@/components/pages/offline/OfflineActions';
+import SignalRings from '@/components/pages/network-status/SignalRings';
+import NetworkStatusActions from '@/components/pages/network-status/NetworkStatusActions';
 import {
     AUTO_RELOAD_LABEL,
     OFFLINE_COPY,
     OFFLINE_HEADING,
-    OFFLINE_RECONNECT_SCRIPT,
     OFFLINE_STATUS,
-} from '@/components/pages/offline/offlineReconnect';
+    RECONNECT_SCRIPT,
+} from '@/components/pages/network-status/reconnect';
 import { zain } from '@/config/fonts';
-import styles from '@/components/pages/offline/OfflineStage/OfflineStage.module.css';
+import styles from '@/components/pages/network-status/NetworkStatusStage/NetworkStatusStage.module.css';
 
 /**
- * The offline hero: a "lost signal" stage that echoes the home hero (grid
+ * The network-status hero: a "lost signal" stage that echoes the home hero (grid
  * backdrop + display type) with an amber accent. It reacts to the network
- * returning via OFFLINE_RECONNECT_SCRIPT (rendered inline below): the accent
- * transitions amber -> emerald, the copy updates, and an optional 5s auto-reload
- * kicks in. The script is dependency-free and drives the DOM through data
- * attributes, so it runs identically here and in the script-stripped fallback
- * snapshot (see scripts/generate-offline-fallback.ts). The initial render is the
- * offline state; the script swaps to the online state after hydration.
+ * returning via RECONNECT_SCRIPT (rendered inline below): the accent transitions
+ * amber -> emerald, the copy updates, and an optional 5s auto-reload kicks in. The
+ * script is dependency-free and drives the DOM through data attributes, so it runs
+ * identically here and in the script-stripped fallback snapshot (see
+ * scripts/generate-offline-fallback.ts). The initial render is the offline state;
+ * the script swaps to the online state after hydration.
  */
-export default function OfflineStage() {
+export default function NetworkStatusStage() {
     return (
         <main
-            data-offline-root
+            data-network-root
             data-status="offline"
             // The reconnect script may flip data-status (and the text below) to the
             // online state before React hydrates when the device is already online,
@@ -50,7 +50,7 @@ export default function OfflineStage() {
                     className={cn(styles.dot, 'size-2 rounded-full')}
                 />
                 <span
-                    data-offline-status
+                    data-network-status
                     suppressHydrationWarning
                 >
                     {OFFLINE_STATUS}
@@ -58,7 +58,7 @@ export default function OfflineStage() {
             </span>
 
             <h1
-                data-offline-title
+                data-network-title
                 suppressHydrationWarning
                 className="font-display mt-6 text-[length:clamp(3.5rem,17vw,9rem)] leading-[0.82] font-bold tracking-tight"
             >
@@ -66,30 +66,30 @@ export default function OfflineStage() {
             </h1>
 
             <p
-                data-offline-copy
+                data-network-copy
                 suppressHydrationWarning
                 className="text-foreground/70 mt-6 max-w-xl text-lg leading-relaxed text-balance"
             >
                 {OFFLINE_COPY}
             </p>
 
-            <OfflineActions />
+            <NetworkStatusActions />
 
             <div className={cn(styles.autoReload, 'mt-6 items-center gap-2')}>
                 <Checkbox
                     label={AUTO_RELOAD_LABEL}
-                    data-offline-autoreload
-                    className="accent-[var(--offline-accent)]"
+                    data-network-autoreload
+                    className="accent-[var(--network-accent)]"
                     labelClassName="text-foreground/60 hover:text-foreground/80 transition-colors"
                 />
                 <span
-                    data-offline-countdown
+                    data-network-countdown
                     className="text-foreground/80 font-medium tabular-nums"
                 />
             </div>
 
             {/* Reconnect behaviour, shared verbatim with the fallback snapshot. */}
-            <script dangerouslySetInnerHTML={{ __html: OFFLINE_RECONNECT_SCRIPT }} />
+            <script dangerouslySetInnerHTML={{ __html: RECONNECT_SCRIPT }} />
         </main>
     );
 }

@@ -29,7 +29,7 @@ const runtimeCaching = defaultCache.slice(0, -2);
 // than a Next route on purpose: a Next document served under an arbitrary URL
 // would re-run the client router and render not-found instead of the offline
 // message. At build time scripts/generate-offline-fallback.ts overwrites it with
-// a self-contained, script-stripped snapshot of the /offline route, so the
+// a self-contained, script-stripped snapshot of the /network-status route, so the
 // fallback shows the real site chrome (navbar, footer, theme) with no hydration
 // and no router. public/offline-fallback.html is the committed placeholder that
 // keeps the precache entry present (and is what dev serves).

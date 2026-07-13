@@ -1,14 +1,14 @@
-// Post-build: snapshot the exported `/offline` route (out/offline.html) into a
-// self-contained static file (out/offline-fallback.html) and point the service
-// worker's navigation fallback at it.
+// Post-build: snapshot the exported `/network-status` route (out/network-status.html)
+// into a self-contained static file (out/offline-fallback.html) and point the
+// service worker's navigation fallback at it.
 //
 // Why a snapshot rather than serving the route directly: the service worker
 // serves the fallback under whatever unvisited URL the user opened. A hydrated
 // Next document served there re-runs the client router, matches no route, and
-// renders not-found, clobbering the offline page. Stripping every script leaves
-// the prerendered markup (navbar, footer, theme colours) with no hydration and
-// no router, so it is safe at any URL. The stylesheet is inlined and there are
-// no `<img>`/external assets, so the page renders fully offline even though the
+// renders not-found, clobbering the page. Stripping every script leaves the
+// prerendered markup (navbar, footer, theme colours) with no hydration and no
+// router, so it is safe at any URL. The stylesheet is inlined and there are no
+// `<img>`/external assets, so the page renders fully offline even though the
 // content-hashed /_next output is intentionally kept out of the precache.
 //
 // Runs last in `pnpm build`, after `out/` and `out/sw.js` exist.
@@ -17,10 +17,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { THEME_STORAGE_KEY } from '@/components/layout/ThemeToggle/theme';
-import { OFFLINE_RECONNECT_SCRIPT } from '@/components/pages/offline/offlineReconnect';
+import { RECONNECT_SCRIPT } from '@/components/pages/network-status/reconnect';
 
 const OUT = path.join(process.cwd(), 'out');
-const SOURCE = path.join(OUT, 'offline.html');
+const SOURCE = path.join(OUT, 'network-status.html');
 const DESTINATION = path.join(OUT, 'offline-fallback.html');
 const SERVICE_WORKER = path.join(OUT, 'sw.js');
 const FALLBACK_URL = '/offline-fallback.html';
@@ -32,11 +32,11 @@ const themePrePaintScript = `<script>(function(){try{var p=localStorage.getItem(
     THEME_STORAGE_KEY
 )});var t=(p==='light'||p==='dark')?p:(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');var d=document.documentElement;d.setAttribute('data-theme',t);d.style.colorScheme=t;}catch(e){}})();</script>`;
 
-// The offline reconnect behaviour (network listener, amber -> emerald swap,
-// auto-reload countdown, and the "Try again" reload). Shared verbatim with the
-// /offline route (OfflineStage renders the same source inline), so the fallback
-// snapshot behaves identically once its scripts are stripped.
-const reconnectScript = `<script>${OFFLINE_RECONNECT_SCRIPT}</script>`;
+// The reconnect behaviour (network listener, amber -> emerald swap, auto-reload
+// countdown, and the "Try again" reload). Shared verbatim with the
+// /network-status route (NetworkStatusStage renders the same source inline), so
+// the fallback snapshot behaves identically once its scripts are stripped.
+const reconnectScript = `<script>${RECONNECT_SCRIPT}</script>`;
 
 function inlineStylesheet(tag: string): string {
     const href = tag.match(/href="([^"]+)"/)?.[1];
