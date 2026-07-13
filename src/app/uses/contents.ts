@@ -3,7 +3,7 @@ import type { UsesSectionData } from '@/components/pages/uses/types';
 export const usesSections: UsesSectionData[] = [
     {
         title: 'Development Workstation',
-        emoji: '💻',
+        group: 'machine',
         intro: 'My primary machine for software development, AI experimentation, and gaming.',
         blocks: [
             {
@@ -38,7 +38,7 @@ export const usesSections: UsesSectionData[] = [
     },
     {
         title: 'Displays',
-        emoji: '🖥️',
+        group: 'machine',
         blocks: [
             {
                 kind: 'specs',
@@ -57,7 +57,7 @@ export const usesSections: UsesSectionData[] = [
     },
     {
         title: 'Keyboards',
-        emoji: '⌨️',
+        group: 'machine',
         blocks: [
             {
                 kind: 'gear',
@@ -78,7 +78,7 @@ export const usesSections: UsesSectionData[] = [
     },
     {
         title: 'Mouse',
-        emoji: '🖱️',
+        group: 'machine',
         blocks: [
             {
                 kind: 'gear',
@@ -94,7 +94,7 @@ export const usesSections: UsesSectionData[] = [
     },
     {
         title: 'Audio',
-        emoji: '🔊',
+        group: 'machine',
         intro: 'Perfect for music while coding, online meetings, and watching technical talks.',
         blocks: [
             {
@@ -105,7 +105,7 @@ export const usesSections: UsesSectionData[] = [
     },
     {
         title: 'Home Lab',
-        emoji: '🏠',
+        group: 'infra',
         intro: 'One of my favorite projects is my self-hosted home lab, where I experiment with infrastructure, networking, virtualization, automation, and self-hosting technologies.',
         blocks: [
             {
@@ -146,7 +146,7 @@ export const usesSections: UsesSectionData[] = [
     },
     {
         title: 'Cloud Infrastructure',
-        emoji: '☁️',
+        group: 'infra',
         intro: 'Alongside my home lab, I maintain a cloud server that hosts public-facing services and securely connects to my home network.',
         blocks: [
             {
@@ -171,8 +171,34 @@ export const usesSections: UsesSectionData[] = [
         ],
     },
     {
+        title: 'Infrastructure & DevOps',
+        group: 'infra',
+        blocks: [
+            {
+                kind: 'tags',
+                tags: [
+                    'Docker',
+                    'Docker Compose',
+                    'Linux',
+                    'Ubuntu Server',
+                    'Proxmox VE',
+                    'Cloudflare',
+                    'Nginx',
+                    'Caddy',
+                    'WireGuard',
+                    'Git',
+                    'GitHub',
+                    'SSH',
+                    'DNS Management',
+                    'Reverse Proxy',
+                    'SSL/TLS',
+                ],
+            },
+        ],
+    },
+    {
         title: 'Development',
-        emoji: '👨‍💻',
+        group: 'dev',
         blocks: [
             {
                 kind: 'tags',
@@ -214,7 +240,7 @@ export const usesSections: UsesSectionData[] = [
     },
     {
         title: 'AI',
-        emoji: '🤖',
+        group: 'dev',
         intro: 'AI has become part of my daily development workflow.',
         blocks: [
             {
@@ -239,40 +265,9 @@ export const usesSections: UsesSectionData[] = [
         ],
     },
     {
-        title: 'Infrastructure & DevOps',
-        emoji: '🐳',
-        blocks: [
-            {
-                kind: 'tags',
-                tags: [
-                    'Docker',
-                    'Docker Compose',
-                    'Linux',
-                    'Ubuntu Server',
-                    'Proxmox VE',
-                    'Cloudflare',
-                    'Nginx',
-                    'Caddy',
-                    'WireGuard',
-                    'Git',
-                    'GitHub',
-                    'SSH',
-                    'DNS Management',
-                    'Reverse Proxy',
-                    'SSL/TLS',
-                ],
-            },
-        ],
-    },
-    {
         title: 'Developer Tools',
-        emoji: '🛠️',
+        group: 'dev',
         blocks: [
-            {
-                kind: 'tags',
-                label: 'Editor',
-                tags: ['Visual Studio Code', 'Cursor'],
-            },
             {
                 kind: 'tags',
                 label: 'API testing',
@@ -290,13 +285,109 @@ export const usesSections: UsesSectionData[] = [
             },
             {
                 kind: 'tags',
-                label: 'Terminal',
-                tags: ['Windows Terminal', 'PowerShell', 'WSL'],
-            },
-            {
-                kind: 'tags',
                 label: 'Browser',
                 tags: ['Google Chrome', 'Firefox'],
+            },
+        ],
+    },
+    {
+        title: 'Editor Setup',
+        group: 'dev',
+        // TODO: These extensions, settings, keybindings, theme and fonts are
+        // placeholders. Replace them with your real VS Code setup.
+        intro: 'Where I spend most of the day. My editor, the extensions I keep installed, and the settings and keybindings I carry between machines.',
+        blocks: [
+            {
+                kind: 'extensions',
+                label: 'Extensions',
+                extensions: [
+                    {
+                        name: 'GitLens',
+                        publisher: 'eamodio',
+                        itemName: 'eamodio.gitlens',
+                        description:
+                            'Inline blame and history so I can see who changed a line and why, without leaving the file.',
+                    },
+                    {
+                        name: 'Prettier',
+                        publisher: 'esbenp',
+                        itemName: 'esbenp.prettier-vscode',
+                        description:
+                            'Opinionated formatting on save so diffs stay about logic, not whitespace.',
+                    },
+                    {
+                        name: 'ESLint',
+                        publisher: 'dbaeumer',
+                        itemName: 'dbaeumer.vscode-eslint',
+                        description:
+                            'Catches lint problems as I type instead of at CI time.',
+                    },
+                    {
+                        name: 'Tailwind CSS IntelliSense',
+                        publisher: 'bradlc',
+                        itemName: 'bradlc.vscode-tailwindcss',
+                        description:
+                            'Class name completion and hover previews for Tailwind projects.',
+                    },
+                    {
+                        name: 'Error Lens',
+                        publisher: 'usernamehw',
+                        itemName: 'usernamehw.errorlens',
+                        description:
+                            'Surfaces diagnostics inline at the end of the line for faster triage.',
+                    },
+                    {
+                        name: 'Docker',
+                        publisher: 'ms-azuretools',
+                        itemName: 'ms-azuretools.vscode-docker',
+                        description:
+                            'Manage containers, images, and Compose files from the editor.',
+                    },
+                ],
+            },
+            {
+                kind: 'specs',
+                label: 'Theme & fonts',
+                specs: [
+                    { label: 'Color theme', value: 'Default Dark Modern' },
+                    { label: 'Icon theme', value: 'Material Icon Theme' },
+                    { label: 'Editor font', value: 'JetBrains Mono' },
+                ],
+            },
+            {
+                kind: 'link',
+                label: 'Config',
+                title: 'settings.json & keybindings.json',
+                // TODO: Replace with the real gist id for your VS Code settings.
+                href: 'https://gist.github.com/shibbirweb/REPLACE_WITH_GIST_ID',
+                description:
+                    'My full editor settings and keybindings, kept in a gist so they stay current.',
+            },
+        ],
+    },
+    {
+        title: 'Terminal & Dotfiles',
+        group: 'dev',
+        // TODO: Placeholder shell setup and aliases. Swap in your real dotfiles.
+        intro: 'The shell I live in and a few aliases that save keystrokes.',
+        blocks: [
+            {
+                kind: 'specs',
+                specs: [
+                    { label: 'Terminal', value: 'Windows Terminal' },
+                    { label: 'Shell', value: 'PowerShell / bash (WSL2)' },
+                    { label: 'Prompt', value: 'Starship' },
+                    { label: 'Font', value: 'JetBrainsMono Nerd Font' },
+                ],
+            },
+            {
+                kind: 'link',
+                label: 'Dotfiles',
+                title: 'shell config & aliases',
+                // TODO: Replace with the real gist id for your dotfiles.
+                href: 'https://gist.github.com/shibbirweb/REPLACE_WITH_GIST_ID',
+                description:
+                    'My prompt, aliases, and shell tweaks, in a gist you can skim or clone.',
             },
         ],
     },

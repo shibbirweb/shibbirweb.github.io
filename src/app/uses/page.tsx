@@ -1,11 +1,13 @@
 import Breadcrumb from '@/components/layout/Breadcrumb';
-import SectionHeading from '@/components/pages/common/SectionHeading';
-import UsesSection from '@/components/pages/uses/UsesSection';
+import Masthead from '@/components/pages/uses/Masthead';
+import ContentsIndex from '@/components/pages/uses/ContentsIndex';
+import GearGuideEntry from '@/components/pages/uses/GearGuideEntry';
+import { entryNumber, sectionId } from '@/components/pages/uses/meta';
 import { usesSections } from '@/app/uses/contents';
 import { siteName } from '@/config/constants';
 import { buildPageMetadata } from '@/utils/pageMetadata';
 
-const description = `The gear, software, developer tools, and home-lab setup ${siteName} uses day to day for software development, AI, and self-hosting.`;
+const description = `The gear, editor setup, extensions, dotfiles, and self-hosted home lab ${siteName} uses day to day for software development, AI, and self-hosting.`;
 
 export const metadata = buildPageMetadata({
     title: 'Uses',
@@ -13,20 +15,37 @@ export const metadata = buildPageMetadata({
     path: '/uses',
 });
 
+const entries = usesSections.map((section, index) => ({
+    section,
+    id: sectionId(section.title),
+    number: entryNumber(index),
+}));
+
 export default function UsesPage() {
     return (
-        <main className="container mx-auto px-4 py-20 sm:py-28">
+        <main className="mx-auto max-w-5xl px-4 py-20 sm:py-24">
             <Breadcrumb />
-            <SectionHeading as="h1">Uses</SectionHeading>
-            <p className="text-foreground/70 mt-6 max-w-3xl text-lg leading-relaxed">
-                The gear, software, and self-hosted setup I use day to day.
-            </p>
 
-            <div className="mt-12 flex flex-col gap-12 sm:gap-16">
-                {usesSections.map((section) => (
-                    <UsesSection
-                        key={section.title}
-                        section={section}
+            <div className="mt-6">
+                <Masthead />
+            </div>
+
+            <ContentsIndex
+                entries={entries.map((entry) => ({
+                    id: entry.id,
+                    number: entry.number,
+                    title: entry.section.title,
+                    group: entry.section.group,
+                }))}
+            />
+
+            <div className="mt-16 flex flex-col gap-14 sm:gap-20">
+                {entries.map((entry) => (
+                    <GearGuideEntry
+                        key={entry.id}
+                        section={entry.section}
+                        id={entry.id}
+                        number={entry.number}
                     />
                 ))}
             </div>
