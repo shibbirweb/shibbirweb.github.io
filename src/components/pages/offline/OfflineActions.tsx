@@ -15,6 +15,10 @@ export default function OfflineActions() {
             <Button
                 type="button"
                 onClick={() => window.location.reload()}
+                // Also targeted by the static offline-fallback snapshot's reload
+                // handler, which runs when hydration is stripped (the onClick is
+                // gone there). See scripts/generate-offline-fallback.ts.
+                data-offline-reload
             >
                 <ResetIcon
                     aria-hidden="true"
