@@ -1,0 +1,55 @@
+@reference "tailwindcss";
+
+/* Radar "searching for signal" glyph. Everything expressible as a utility uses
+   @apply; the amber tint (color-mix) and the pulse keyframes are the sanctioned
+   raw-CSS exceptions. The rings and core share the amber signal colour that also
+   drives the "No connection" status dot, keeping the offline accent consistent. */
+.radar {
+    @apply size-28 sm:size-32;
+    --signal: var(--color-amber-500);
+}
+
+/* A persistent faint target ring so the glyph reads even at rest (a still frame
+   or reduced motion), under the outward pulses. */
+.halo {
+    @apply absolute size-2/3 rounded-full border opacity-30 content-[''];
+    border-color: color-mix(in oklab, var(--signal) 55%, transparent);
+}
+
+.ring {
+    @apply absolute size-full rounded-full border content-[''];
+    border-color: color-mix(in oklab, var(--signal) 45%, transparent);
+    /* Reduced-motion / no-animation resting state: one faint static ring. */
+    @apply opacity-40;
+    /* With motion allowed, the rings start collapsed and transparent and the
+       keyframes drive the outward pulse. */
+    @apply motion-safe:animate-[radar-pulse_2.8s_ease-out_infinite] motion-safe:opacity-0;
+}
+
+.ring:nth-child(2) {
+    @apply motion-safe:[animation-delay:0.93s];
+}
+
+.ring:nth-child(3) {
+    @apply motion-safe:[animation-delay:1.86s];
+}
+
+.core {
+    @apply absolute size-3 rounded-full;
+    background-color: var(--signal);
+    box-shadow: 0 0 0 6px color-mix(in oklab, var(--signal) 22%, transparent);
+}
+
+@keyframes radar-pulse {
+    0% {
+        transform: scale(0.16);
+        opacity: 0.7;
+    }
+    80% {
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 0;
+    }
+}
