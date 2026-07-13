@@ -17,6 +17,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { THEME_STORAGE_KEY } from '@/components/layout/ThemeToggle/theme';
+import { OFFLINE_RECONNECT_SCRIPT } from '@/components/pages/offline/offlineReconnect';
 
 const OUT = path.join(process.cwd(), 'out');
 const SOURCE = path.join(OUT, 'offline.html');
@@ -31,8 +32,11 @@ const themePrePaintScript = `<script>(function(){try{var p=localStorage.getItem(
     THEME_STORAGE_KEY
 )});var t=(p==='light'||p==='dark')?p:(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');var d=document.documentElement;d.setAttribute('data-theme',t);d.style.colorScheme=t;}catch(e){}})();</script>`;
 
-// Keep the one interactive affordance that is cheap without hydration: reload.
-const tryAgainScript = `<script>document.addEventListener('click',function(e){var t=e.target.closest('[data-offline-reload]');if(t){e.preventDefault();location.reload();}});</script>`;
+// The offline reconnect behaviour (network listener, amber -> emerald swap,
+// auto-reload countdown, and the "Try again" reload). Shared verbatim with the
+// /offline route (OfflineStage renders the same source inline), so the fallback
+// snapshot behaves identically once its scripts are stripped.
+const reconnectScript = `<script>${OFFLINE_RECONNECT_SCRIPT}</script>`;
 
 function inlineStylesheet(tag: string): string {
     const href = tag.match(/href="([^"]+)"/)?.[1];
@@ -64,11 +68,12 @@ function main(): void {
         .replace(/<link\b[^>]*rel="preload"[^>]*>/gi, '')
         .replace(/<link\b[^>]*rel="stylesheet"[^>]*>/gi, inlineStylesheet);
 
-    // 3. Re-add the pre-paint theme script and the reload handler.
-    html = html.replace(
-        '</head>',
-        `${themePrePaintScript}${tryAgainScript}</head>`
-    );
+    // 3. Re-add the pre-paint theme script in <head> (it only touches
+    //    documentElement), and the reconnect script at the end of <body> (it needs
+    //    the offline markup to exist when it runs).
+    html = html
+        .replace('</head>', `${themePrePaintScript}</head>`)
+        .replace('</body>', `${reconnectScript}</body>`);
 
     fs.writeFileSync(DESTINATION, html);
 

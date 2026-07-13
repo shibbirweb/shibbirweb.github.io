@@ -1,12 +1,27 @@
 @reference "tailwindcss";
 
-/* Amber accent bloom resting behind the offline hero, following the site's
-   signature glow motif (SkillCard / SignatureSpotlight). This is a section-level
-   surface rather than a hoverable card, so the glow rests soft and steady (no
-   hover bloom) and steps up a touch in dark mode, mirroring the token rules. The
-   radial gradient + color-mix are the sanctioned raw-CSS exceptions. */
+/* Registered so the amber -> emerald accent swap can be transitioned: it animates
+   the color-mix() bloom, the radar rings, and the status dot together (a plain
+   custom property cannot be transitioned). Inherited so SignalRings, a descendant,
+   picks it up. */
+@property --offline-accent {
+    syntax: '<color>';
+    inherits: true;
+    initial-value: #f59e0b;
+}
+
+/* The offline (default) accent is amber; the reconnect script flips data-status
+   to 'online', swapping to emerald, and the transition here animates the change.
+   The radial bloom + color-mix are the sanctioned raw-CSS exceptions. */
 .stage {
+    --offline-accent: var(--color-amber-500);
     --offline-glow: 9%;
+    @apply motion-safe:[transition:--offline-accent_700ms_ease];
+}
+
+.stage[data-status='online'] {
+    --offline-accent: var(--color-emerald-500);
+    --offline-glow: 12%;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -18,13 +33,51 @@
     --offline-glow: 15%;
 }
 
-/* Sits behind the grid (which is -z-10) so the wash tints the grid in the
-   centre; page content stays above at the default stacking level. */
+/* Sits behind the grid (which is -z-10) so the wash tints the grid in the centre;
+   page content stays above at the default stacking level. */
 .stage::before {
     @apply pointer-events-none absolute inset-0 content-[''] [z-index:-20];
     background-image: radial-gradient(
         60% 45% at 50% 42%,
-        color-mix(in oklab, var(--color-amber-500) var(--offline-glow), transparent),
+        color-mix(
+            in oklab,
+            var(--offline-accent) var(--offline-glow),
+            transparent
+        ),
         transparent 70%
     );
+}
+
+/* Status dot: the accent colour with a soft outward signal pulse. */
+.dot {
+    background-color: var(--offline-accent);
+    @apply motion-safe:animate-[offline-signal_2.2s_ease-out_infinite];
+}
+
+@keyframes offline-signal {
+    0% {
+        box-shadow: 0 0 0 0
+            color-mix(in oklab, var(--offline-accent) 50%, transparent);
+    }
+    70% {
+        box-shadow: 0 0 0 0.5rem
+            color-mix(in oklab, var(--offline-accent) 0%, transparent);
+    }
+    100% {
+        box-shadow: 0 0 0 0
+            color-mix(in oklab, var(--offline-accent) 0%, transparent);
+    }
+}
+
+/* Auto-reload control: only relevant once the connection is back, so it is hidden
+   until the reconnect script sets data-status='online'. */
+.autoReload {
+    @apply hidden;
+}
+.stage[data-status='online'] .autoReload {
+    @apply flex;
+}
+
+.checkbox {
+    accent-color: var(--offline-accent);
 }
