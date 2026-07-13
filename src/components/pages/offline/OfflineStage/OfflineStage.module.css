@@ -1,0 +1,30 @@
+@reference "tailwindcss";
+
+/* Amber accent bloom resting behind the offline hero, following the site's
+   signature glow motif (SkillCard / SignatureSpotlight). This is a section-level
+   surface rather than a hoverable card, so the glow rests soft and steady (no
+   hover bloom) and steps up a touch in dark mode, mirroring the token rules. The
+   radial gradient + color-mix are the sanctioned raw-CSS exceptions. */
+.stage {
+    --offline-glow: 9%;
+}
+
+@media (prefers-color-scheme: dark) {
+    :global(html:not([data-theme])) .stage {
+        --offline-glow: 15%;
+    }
+}
+:global(html[data-theme='dark']) .stage {
+    --offline-glow: 15%;
+}
+
+/* Sits behind the grid (which is -z-10) so the wash tints the grid in the
+   centre; page content stays above at the default stacking level. */
+.stage::before {
+    @apply pointer-events-none absolute inset-0 content-[''] [z-index:-20];
+    background-image: radial-gradient(
+        60% 45% at 50% 42%,
+        color-mix(in oklab, var(--color-amber-500) var(--offline-glow), transparent),
+        transparent 70%
+    );
+}
