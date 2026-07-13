@@ -4,7 +4,7 @@
    the color-mix() bloom, the radar rings, and the status dot together (a plain
    custom property cannot be transitioned). Inherited so SignalRings, a descendant,
    picks it up. */
-@property --offline-accent {
+@property --network-accent {
     syntax: '<color>';
     inherits: true;
     initial-value: #f59e0b;
@@ -14,23 +14,23 @@
    to 'online', swapping to emerald, and the transition here animates the change.
    The radial bloom + color-mix are the sanctioned raw-CSS exceptions. */
 .stage {
-    --offline-accent: var(--color-amber-500);
-    --offline-glow: 9%;
-    @apply motion-safe:[transition:--offline-accent_700ms_ease];
+    --network-accent: var(--color-amber-500);
+    --network-glow: 9%;
+    @apply motion-safe:[transition:--network-accent_700ms_ease];
 }
 
 .stage[data-status='online'] {
-    --offline-accent: var(--color-emerald-500);
-    --offline-glow: 12%;
+    --network-accent: var(--color-emerald-500);
+    --network-glow: 12%;
 }
 
 @media (prefers-color-scheme: dark) {
     :global(html:not([data-theme])) .stage {
-        --offline-glow: 15%;
+        --network-glow: 15%;
     }
 }
 :global(html[data-theme='dark']) .stage {
-    --offline-glow: 15%;
+    --network-glow: 15%;
 }
 
 /* Sits behind the grid (which is -z-10) so the wash tints the grid in the centre;
@@ -41,7 +41,7 @@
         60% 45% at 50% 42%,
         color-mix(
             in oklab,
-            var(--offline-accent) var(--offline-glow),
+            var(--network-accent) var(--network-glow),
             transparent
         ),
         transparent 70%
@@ -50,22 +50,22 @@
 
 /* Status dot: the accent colour with a soft outward signal pulse. */
 .dot {
-    background-color: var(--offline-accent);
-    @apply motion-safe:animate-[offline-signal_2.2s_ease-out_infinite];
+    background-color: var(--network-accent);
+    @apply motion-safe:animate-[network-signal_2.2s_ease-out_infinite];
 }
 
-@keyframes offline-signal {
+@keyframes network-signal {
     0% {
         box-shadow: 0 0 0 0
-            color-mix(in oklab, var(--offline-accent) 50%, transparent);
+            color-mix(in oklab, var(--network-accent) 50%, transparent);
     }
     70% {
         box-shadow: 0 0 0 0.5rem
-            color-mix(in oklab, var(--offline-accent) 0%, transparent);
+            color-mix(in oklab, var(--network-accent) 0%, transparent);
     }
     100% {
         box-shadow: 0 0 0 0
-            color-mix(in oklab, var(--offline-accent) 0%, transparent);
+            color-mix(in oklab, var(--network-accent) 0%, transparent);
     }
 }
 

@@ -1,5 +1,5 @@
 import { cn } from '@/utils/cn';
-import styles from '@/components/pages/offline/SignalRings/SignalRings.module.css';
+import styles from '@/components/pages/network-status/SignalRings/SignalRings.module.css';
 
 /**
  * "Searching for signal" radar glyph: a solid core node with concentric rings
