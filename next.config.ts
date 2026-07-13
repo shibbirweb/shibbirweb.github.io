@@ -49,20 +49,28 @@ const withSerwist = withSerwistInit({
     disable: isDev,
     register: false,
     reloadOnOnline: false,
-    // Keep content-hashed build output out of the precache. Every redeploy
-    // replaces the entire /_next/static tree (buildId-scoped _ssgManifest.js /
-    // _buildManifest.js, route chunks, css, fonts) with new hashes, so a client
-    // installing a service worker whose manifest still lists a previous build's
-    // assets hits 404s. Serwist precaching is all-or-nothing, so one 404 fails
-    // the whole install (bad-precaching-response) and the new worker never takes
-    // over. Precaching only deploy-stable public assets (offline-fallback.html,
-    // icons, images) keeps install resilient across builds; the runtimeCaching
-    // rules in src/app/sw.ts serve /_next assets on demand and tolerate 404s.
+    // Precache the home document so `/` is always available offline. Serwist
+    // precaches the /_next build assets (the app shell) but not the exported HTML
+    // pages (in this static export they are not globbed), and the runtime
+    // navigation cache is wiped on every update (see clearRuntimeCaches in
+    // useServiceWorker), so without this the home page drops out of the offline
+    // cache after an update until it is revisited. The precache survives updates,
+    // so the shell plus this entry keep `/` fully interactive offline.
+    //
+    // Appended via manifestTransforms (not additionalPrecacheEntries, which in
+    // this @serwist/next version replaces the whole globbed manifest and drops
+    // the public assets + offline-fallback.html). The transform runs on the final
+    // URLs, so it just adds `/`, de-duping in case a future export ever globs
+    // index.html. `buildTime` changes every build, so the entry re-caches on each
+    // deploy; `/` always exists, so it never 404s. Cross-build install 404s from
+    // the hashed shell assets are prevented by updateViaCache 'none' on the client
+    // (always fetch a fresh, in-step sw.js).
     manifestTransforms: [
         (entries) => ({
-            manifest: entries.filter(
-                (entry) => !entry.url.startsWith('/_next/static/')
-            ),
+            manifest: [
+                ...entries.filter((entry) => entry.url !== '/'),
+                { url: '/', revision: buildTime, size: 0 },
+            ],
             warnings: [],
         }),
     ],
