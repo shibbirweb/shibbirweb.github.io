@@ -101,6 +101,40 @@ body {
     initial-value: transparent;
 }
 
+/* Registering the background tokens as <color> custom properties lets them be
+   transitioned, so switching theme (light <-> dark) cross-fades the background
+   instead of snapping. They are set on :root and read by descendants (body,
+   section washes), so inherits: true; the initial-value is the light palette.
+   Only background surfaces are registered here: --foreground (text) and other
+   UI colours are deliberately left unregistered so they snap instantly rather
+   than fade. The value declarations above are unchanged; registration only
+   makes the tokens interpolable. The cross-fade itself is set on :root below. */
+@property --background {
+    syntax: '<color>';
+    inherits: true;
+    initial-value: #ededed;
+}
+@property --section-swell-indigo {
+    syntax: '<color>';
+    inherits: true;
+    initial-value: #e9e9f0;
+}
+@property --section-swell-blue {
+    syntax: '<color>';
+    inherits: true;
+    initial-value: #e7ebf2;
+}
+@property --section-swell-yellow {
+    syntax: '<color>';
+    inherits: true;
+    initial-value: #f0eee4;
+}
+@property --section-swell-teal {
+    syntax: '<color>';
+    inherits: true;
+    initial-value: #e6f1ef;
+}
+
 /* Per-page gradient background for every page except home (issue #75). The
    element is a full-page wash rendered by PageGradientBackground on non-home
    routes (absolutely positioned over the relative body, so it spans the whole
@@ -146,6 +180,25 @@ body {
         transition:
             --page-grad-from 700ms ease,
             --page-grad-to 700ms ease;
+    }
+}
+
+/* Cross-fade the theme on switch: the resolved theme is written to
+   <html data-theme>, flipping the tokens on :root, so transitioning them there
+   animates the body background and both gradient consumers together. Only the
+   background surfaces are transitioned; text (--foreground) and other UI colours
+   snap instantly so the content does not fade. 400ms feels responsive for a
+   deliberate toggle. No first-paint flash: the ThemeScript sets data-theme
+   before :root's first computed style, so there is no prior value to interpolate
+   from. Honour reduced-motion by staying instant. */
+@media (prefers-reduced-motion: no-preference) {
+    :root {
+        transition:
+            --background 400ms ease,
+            --section-swell-indigo 400ms ease,
+            --section-swell-blue 400ms ease,
+            --section-swell-yellow 400ms ease,
+            --section-swell-teal 400ms ease;
     }
 }
 
