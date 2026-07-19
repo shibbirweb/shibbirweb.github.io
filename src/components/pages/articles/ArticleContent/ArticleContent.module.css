@@ -102,6 +102,9 @@
     padding: 0.4rem 0.5rem 0.4rem 0.9rem;
     border-bottom: 1px solid
         color-mix(in srgb, var(--foreground) 12%, transparent);
+    /* A faint dark wash over the light Shiki body reads as a light-gray title bar;
+       the dark theme swaps to a black wash below to darken it (see the overrides). */
+    background-color: color-mix(in srgb, var(--foreground) 4%, transparent);
 }
 .content :global(.code-block__meta) {
     display: flex;
@@ -140,6 +143,9 @@
         --code-glow: 16%;
         background-color: var(--shiki-dark-bg);
     }
+    :global(html:not([data-theme])) .content :global(.code-block__bar) {
+        background-color: color-mix(in srgb, #000 22%, transparent);
+    }
 }
 :global(html[data-theme='dark']) .content :global(.shiki) {
     background-color: var(--shiki-dark-bg);
@@ -151,6 +157,9 @@
 :global(html[data-theme='dark']) .content :global(.code-block) {
     --code-glow: 16%;
     background-color: var(--shiki-dark-bg);
+}
+:global(html[data-theme='dark']) .content :global(.code-block__bar) {
+    background-color: color-mix(in srgb, #000 22%, transparent);
 }
 
 /* Embedded GitHub gists. GitHub's gist-embed stylesheet references Primer
