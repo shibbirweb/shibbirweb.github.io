@@ -62,11 +62,37 @@
 /* Code block wrapper: a header bar (language/extension badge + optional file
    path + copy button) sits above the Shiki body. */
 .content :global(.code-block) {
+    --code-glow: 9%;
+    position: relative;
+    isolation: isolate;
     margin: 1.6em 0;
     border: 1px solid color-mix(in srgb, var(--foreground) 12%, transparent);
     border-radius: 0.75rem;
     overflow: hidden;
     background-color: var(--shiki-light-bg);
+}
+
+/* Signature accent bloom on the code preview window, mirroring the /uses terminal
+   and the ContactForm panel: a soft emerald radial wash that is absent at rest and
+   blooms in only on hover, stepped up a touch in dark mode. Emerald ties the glow
+   to the terminal/code aesthetic. The figure background is opaque (the Shiki
+   palette), so the wash sits on a pointer-safe overlay above the surface, kept low
+   and top-anchored so code legibility is untouched. radial-gradient + color-mix
+   are the sanctioned raw-CSS exceptions; the rest is @apply. */
+.content :global(.code-block)::before {
+    @apply pointer-events-none absolute inset-0 z-10 opacity-0 content-[''] motion-safe:transition-opacity motion-safe:duration-700 motion-safe:ease-out;
+    background-image: radial-gradient(
+        70% 70% at 50% 0%,
+        color-mix(
+            in oklab,
+            var(--color-emerald-500) var(--code-glow),
+            transparent
+        ),
+        transparent 72%
+    );
+}
+.content :global(.code-block):hover::before {
+    @apply opacity-100;
 }
 .content :global(.code-block__bar) {
     display: flex;
@@ -76,6 +102,9 @@
     padding: 0.4rem 0.5rem 0.4rem 0.9rem;
     border-bottom: 1px solid
         color-mix(in srgb, var(--foreground) 12%, transparent);
+    /* A faint dark wash over the light Shiki body reads as a light-gray title bar;
+       the dark theme swaps to a black wash below to darken it (see the overrides). */
+    background-color: color-mix(in srgb, var(--foreground) 4%, transparent);
 }
 .content :global(.code-block__meta) {
     display: flex;
@@ -111,7 +140,11 @@
         color: var(--shiki-dark);
     }
     :global(html:not([data-theme])) .content :global(.code-block) {
+        --code-glow: 16%;
         background-color: var(--shiki-dark-bg);
+    }
+    :global(html:not([data-theme])) .content :global(.code-block__bar) {
+        background-color: color-mix(in srgb, #000 22%, transparent);
     }
 }
 :global(html[data-theme='dark']) .content :global(.shiki) {
@@ -122,7 +155,11 @@
     color: var(--shiki-dark);
 }
 :global(html[data-theme='dark']) .content :global(.code-block) {
+    --code-glow: 16%;
     background-color: var(--shiki-dark-bg);
+}
+:global(html[data-theme='dark']) .content :global(.code-block__bar) {
+    background-color: color-mix(in srgb, #000 22%, transparent);
 }
 
 /* Embedded GitHub gists. GitHub's gist-embed stylesheet references Primer
@@ -366,21 +403,38 @@
 /* Tables. renderMarkdown wraps each <table> in a .table-scroll.not-prose div, so
    wide tables scroll within the column and Typography does not restyle them; the
    cell borders and header fill live here. */
+/* The scroll container is the rounded window (mirroring the code previewer): a
+   12% border, 0.75rem radius, and overflow that clips the corners. The table uses
+   separate borders so only internal grid lines are drawn (right + bottom per cell,
+   dropped on the last column/row), keeping a clean single edge against the rounded
+   container instead of doubling up. */
 .content :global(.table-scroll) {
     margin: 1.6em 0;
     overflow-x: auto;
+    border: 1px solid color-mix(in srgb, var(--foreground) 12%, transparent);
+    border-radius: 0.75rem;
 }
 .content :global(.table-scroll) table {
     width: 100%;
     margin: 0;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     font-size: 0.925em;
 }
 .content :global(.table-scroll) th,
 .content :global(.table-scroll) td {
     padding: 0.5rem 0.85rem;
-    border: 1px solid color-mix(in srgb, var(--foreground) 15%, transparent);
+    border-right: 1px solid color-mix(in srgb, var(--foreground) 15%, transparent);
+    border-bottom: 1px solid
+        color-mix(in srgb, var(--foreground) 15%, transparent);
     text-align: left;
+}
+.content :global(.table-scroll) th:last-child,
+.content :global(.table-scroll) td:last-child {
+    border-right: none;
+}
+.content :global(.table-scroll) tbody tr:last-child td {
+    border-bottom: none;
 }
 .content :global(.table-scroll) thead th {
     font-weight: 600;
