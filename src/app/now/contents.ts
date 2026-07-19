@@ -29,36 +29,19 @@ export const nowSections: NowSectionData[] = [
     {
         title: 'Building',
         emoji: '🤖',
-        intro: "These are the projects I'm actively working on.",
+        intro: 'Exploring practical AI applications. Current interests:',
+        wide: true,
         blocks: [
             {
-                kind: 'subgroups',
-                subgroups: [
-                    {
-                        title: 'Personal Portfolio',
-                        intro: 'Building a modern portfolio with:',
-                        tags: [
-                            'Next.js',
-                            'TypeScript',
-                            'Tailwind CSS',
-                            'AI-powered "Ask Shibbir" assistant',
-                            'Interactive storytelling pages',
-                            'Developer blog',
-                        ],
-                    },
-                    {
-                        title: 'AI',
-                        intro: 'Exploring practical AI applications. Current interests:',
-                        tags: [
-                            'Large Language Models (LLMs)',
-                            'Agentic AI',
-                            'Retrieval-Augmented Generation (RAG)',
-                            'Model Context Protocol (MCP)',
-                            'Prompt Engineering',
-                            'Embeddings',
-                            'AI-assisted development',
-                        ],
-                    },
+                kind: 'tags',
+                tags: [
+                    'Large Language Models (LLMs)',
+                    'Agentic AI',
+                    'Retrieval-Augmented Generation (RAG)',
+                    'Model Context Protocol (MCP)',
+                    'Prompt Engineering',
+                    'Embeddings',
+                    'AI-assisted development',
                 ],
             },
         ],
@@ -87,6 +70,7 @@ export const nowSections: NowSectionData[] = [
         emoji: '🏠',
         intro: "I'm constantly experimenting with my self-hosted infrastructure. Current playground:",
         outro: 'I enjoy building infrastructure almost as much as building applications.',
+        wide: true,
         blocks: [
             {
                 kind: 'tags',
