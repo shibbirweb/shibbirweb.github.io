@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 // How long a visitor must linger at the very top of the home page, without
 // scrolling, before the navbar reveals itself on its own.
-const IDLE_REVEAL_DELAY_MS = 2000;
+const IDLE_REVEAL_DELAY_MS = 1000;
 
 /**
  * Whether the navbar should be shown. On the home page it stays hidden until

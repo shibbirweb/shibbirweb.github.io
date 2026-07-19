@@ -62,7 +62,7 @@ export default function Navbar({
                 studioItems={studio}
                 isActive={isActive}
             />
-            <ThemeMenu />
+            <ThemeMenu visible={visible} />
         </>
     );
 }

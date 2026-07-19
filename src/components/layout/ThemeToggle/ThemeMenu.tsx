@@ -13,9 +13,10 @@ import { useCloseOnRouteChange } from '@/components/layout/Navbar/hooks/useClose
  * Desktop theme control: a round icon button fixed to the top-right that opens a
  * small menu of the three preferences (light / system / dark). The trigger shows
  * the current preference's icon. Hidden on mobile, where the segmented
- * ThemeToggle lives inside the menu panel instead.
+ * ThemeToggle lives inside the menu panel instead. It shares the navbar's
+ * `visible` state, sliding in from the right edge in sync with it.
  */
-export default function ThemeMenu() {
+export default function ThemeMenu({ visible }: { visible: boolean }) {
     const { preference, setPreference } = useTheme();
     const { open, toggle, close } = useDisclosure();
     const menuRef = useRef<HTMLDivElement>(null);
@@ -30,7 +31,12 @@ export default function ThemeMenu() {
     return (
         <div
             ref={menuRef}
-            className="fixed top-4 right-4 z-50 hidden md:block"
+            className={cn(
+                'fixed top-4 right-4 z-50 hidden transition-all duration-700 ease-in-out motion-reduce:transition-none md:block',
+                visible
+                    ? 'visible translate-x-0 opacity-100'
+                    : 'pointer-events-none invisible translate-x-24 opacity-0'
+            )}
         >
             <button
                 type="button"
