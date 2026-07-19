@@ -1,6 +1,6 @@
 import Breadcrumb from '@/components/layout/Breadcrumb';
 import SectionHeading from '@/components/pages/common/SectionHeading';
-import NowSection from '@/components/pages/now/NowSection';
+import NowGrid from '@/components/pages/now/NowGrid';
 import { nowMeta, nowQuote, nowSections } from '@/app/now/contents';
 import { siteName } from '@/config/constants';
 import { buildPageMetadata } from '@/utils/pageMetadata';
@@ -21,20 +21,23 @@ export default function NowPage() {
             <p className="text-foreground/70 mt-6 max-w-3xl text-lg leading-relaxed">
                 {nowMeta.subtitle}
             </p>
-            <p className="text-foreground/60 mt-4 text-sm">
+
+            <p className="border-foreground/10 text-foreground/60 mt-6 inline-flex items-center gap-2.5 rounded-full border py-1.5 pr-4 pl-3 text-sm">
+                <span
+                    aria-hidden="true"
+                    className="relative grid size-2 place-items-center"
+                >
+                    <span className="absolute size-2 rounded-full bg-emerald-500 opacity-60 motion-safe:animate-ping" />
+                    <span className="size-2 rounded-full bg-emerald-500" />
+                </span>
                 Last updated{' '}
-                <time className="text-foreground/80 font-semibold">
+                <time className="text-foreground/85 font-semibold">
                     {nowMeta.lastUpdated}
                 </time>
             </p>
 
-            <div className="mt-12 flex flex-col gap-12 sm:gap-16">
-                {nowSections.map((section) => (
-                    <NowSection
-                        key={section.title}
-                        section={section}
-                    />
-                ))}
+            <div className="mt-12">
+                <NowGrid sections={nowSections} />
             </div>
 
             <blockquote className="text-foreground/80 mt-16 border-l-4 border-emerald-500 pl-6 text-xl font-semibold italic">
