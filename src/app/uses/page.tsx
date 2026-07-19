@@ -1,6 +1,6 @@
 import Breadcrumb from '@/components/layout/Breadcrumb';
 import SectionHeading from '@/components/pages/common/SectionHeading';
-import UsesSection from '@/components/pages/uses/UsesSection';
+import UsesGrid from '@/components/pages/uses/UsesGrid';
 import { usesSections } from '@/app/uses/contents';
 import { siteName } from '@/config/constants';
 import { buildPageMetadata } from '@/utils/pageMetadata';
@@ -19,16 +19,12 @@ export default function UsesPage() {
             <Breadcrumb />
             <SectionHeading as="h1">Uses</SectionHeading>
             <p className="text-foreground/70 mt-6 max-w-3xl text-lg leading-relaxed">
-                The gear, software, and self-hosted setup I use day to day.
+                A field guide to my setup: the gear on my desk, the machines that
+                run quietly in the rack, and the software I reach for every day.
             </p>
 
-            <div className="mt-12 flex flex-col gap-12 sm:gap-16">
-                {usesSections.map((section) => (
-                    <UsesSection
-                        key={section.title}
-                        section={section}
-                    />
-                ))}
+            <div className="mt-12">
+                <UsesGrid sections={usesSections} />
             </div>
         </main>
     );

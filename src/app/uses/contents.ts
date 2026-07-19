@@ -5,6 +5,7 @@ export const usesSections: UsesSectionData[] = [
         title: 'Development Workstation',
         emoji: '💻',
         intro: 'My primary machine for software development, AI experimentation, and gaming.',
+        wide: true,
         blocks: [
             {
                 kind: 'specs',
@@ -107,6 +108,7 @@ export const usesSections: UsesSectionData[] = [
         title: 'Home Lab',
         emoji: '🏠',
         intro: 'One of my favorite projects is my self-hosted home lab, where I experiment with infrastructure, networking, virtualization, automation, and self-hosting technologies.',
+        wide: true,
         blocks: [
             {
                 kind: 'specs',
@@ -173,6 +175,7 @@ export const usesSections: UsesSectionData[] = [
     {
         title: 'Development',
         emoji: '👨‍💻',
+        wide: true,
         blocks: [
             {
                 kind: 'tags',
@@ -267,6 +270,7 @@ export const usesSections: UsesSectionData[] = [
     {
         title: 'Developer Tools',
         emoji: '🛠️',
+        wide: true,
         blocks: [
             {
                 kind: 'tags',
