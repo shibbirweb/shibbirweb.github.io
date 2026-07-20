@@ -1,11 +1,12 @@
-/* Footer signature cursor spotlight: the glyphs change color only inside a soft
-   circle that follows the pointer, fading back to the dim watermark away from
-   it. The reveal layer is a brighter copy of the same SVG, masked to the circle,
-   so it only ever paints letters (never a visible disk or box edge). The pointer
-   vars and the reveal's --spotlight-opacity are written by usePointerSpotlight
-   from the pointer's proximity to the signature (so the glow wakes as the cursor
-   nears the letters, not only over them); only the reduced-motion fade is pure
-   CSS, and the pointer path never re-renders React. */
+/* Footer signature cursor spotlight: within a soft circle that follows the
+   pointer, the solid wordmark resolves into a field of binary 0/1 digits shaped
+   to the letters, fading back to the dim solid watermark away from it. The
+   reveal layer (a letterform-masked digit grid) is itself masked to the circle,
+   so digits only ever appear inside the letters (never a visible disk or box
+   edge). The pointer vars and the reveal's --spotlight-opacity are written by
+   usePointerSpotlight from the pointer's proximity to the signature (so the
+   binary wakes as the cursor nears the letters, not only over them); only the
+   reduced-motion fade is pure CSS, and the pointer path never re-renders React. */
 
 .spotlight {
     /* Size the spotlight from the signature's own width so the circle keeps the
@@ -49,8 +50,10 @@
     --spotlight-color: #525252;
 }
 
+/* The reveal layer is the moving spotlight: a soft circle that follows the
+   pointer (position + brightness written by usePointerSpotlight). Its content is
+   the binary field below, so within the circle the solid letters read as 0/1. */
 .reveal {
-    color: var(--spotlight-color);
     opacity: var(--spotlight-opacity, 0);
     -webkit-mask-image: radial-gradient(
         circle var(--spotlight-radius) at var(--pointer-x) var(--pointer-y),
@@ -64,6 +67,38 @@
         rgba(0, 0, 0, 0.5) 50%,
         transparent var(--spotlight-edge)
     );
+}
+
+/* Crops the digit grid to the wordmark's letterforms. The mask-image (an SVG of
+   the signature path) is set inline from the shared path so it always matches
+   the solid layer; stretched to fill so the letters line up at any width. This
+   mask nests inside .reveal's spotlight circle, so the two intersect: digits
+   appear only where a letter and the circle overlap. */
+.binaryLetters {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+}
+
+/* The field of 0s and 1s. Sized in container-query units so the same generated
+   grid keeps its density and over-covers the wordmark at every breakpoint; the
+   letterform mask crops the overflow. */
+.binaryGrid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0;
+    color: var(--spotlight-color);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.6cqw;
+    line-height: 1;
+    letter-spacing: 0.12cqw;
+    white-space: pre;
+    user-select: none;
 }
 
 @media (prefers-reduced-motion: no-preference) {

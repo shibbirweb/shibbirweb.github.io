@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { MouseEvent } from 'react';
-import Shibbir from '@/components/icons/shibbir';
+import ShibbirNavbar from '@/components/icons/shibbir-navbar';
 import { lockScrollSync } from '@/components/layout/scrollSyncLock';
 import { cn } from '@/utils/cn';
 
@@ -79,10 +79,10 @@ export default function NavLogo({
                             : 'w-0 opacity-0'
                     )}
                 >
-                    <Shibbir className="block h-5 w-[8.92rem] max-w-none" />
+                    <ShibbirNavbar className="block h-5 w-[8.92rem] max-w-none" />
                 </span>
             ) : (
-                <Shibbir className="h-5 w-auto" />
+                <ShibbirNavbar className="h-5 w-auto" />
             )}
         </Link>
     );
