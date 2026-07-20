@@ -22,7 +22,7 @@ export default function ProjectItem({ entry }: { entry: ProjectEntry }) {
                     <>
                         <span
                             aria-hidden="true"
-                            className="text-foreground/40"
+                            className="text-foreground/55"
                         >
                             {' · '}
                         </span>
@@ -34,7 +34,7 @@ export default function ProjectItem({ entry }: { entry: ProjectEntry }) {
             </h3>
 
             {entry.company && (
-                <p className="text-foreground/55 mt-0.5 text-[12px] font-medium print:text-[9pt]">
+                <p className="text-foreground/70 mt-0.5 text-[12px] font-medium print:text-[9pt]">
                     {entry.company}
                 </p>
             )}

@@ -7,12 +7,22 @@
 /* Inline code: Slack-style chip (crimson text on a subtle gray, bordered,
    rounded pill), JetBrains Mono, without Typography's backtick quotes. The
    background/border mix var(--foreground), so they adapt to light/dark on
-   their own; Slack keeps the crimson text color in both themes. */
+   their own. The crimson is theme-aware: a deeper rose in light and a lighter
+   rose in dark, so the small chip text clears WCAG AA (4.5:1) against the chip
+   background in both themes (a single crimson landed near 3:1 in dark). */
 .content :where(code):not(:where(pre *)) {
-    @apply rounded border px-[0.35em] py-[0.15em] text-[0.85em] font-medium text-[#e01e5a];
+    @apply rounded border px-[0.35em] py-[0.15em] text-[0.85em] font-medium text-[#be123c];
     font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
     background-color: color-mix(in srgb, var(--foreground) 4%, transparent);
     border-color: color-mix(in srgb, var(--foreground) 13%, transparent);
+}
+@media (prefers-color-scheme: dark) {
+    :global(html:not([data-theme])) .content :where(code):not(:where(pre *)) {
+        @apply text-[#fb7185];
+    }
+}
+:global(html[data-theme='dark']) .content :where(code):not(:where(pre *)) {
+    @apply text-[#fb7185];
 }
 .content :where(code):not(:where(pre *))::before,
 .content :where(code):not(:where(pre *))::after {

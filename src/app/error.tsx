@@ -17,13 +17,13 @@ export default function Error({ reset }: { error: Error; reset: () => void }) {
                 <button
                     type="button"
                     onClick={reset}
-                    className="border-foreground/20 hover:border-foreground/50 inline-block rounded-full border px-6 py-3 text-base transition-all duration-300 hover:scale-105"
+                    className="border-foreground/20 hover:border-foreground/50 inline-block rounded-full border px-6 py-3 text-base transition-[transform,border-color] duration-300 motion-safe:hover:scale-105"
                 >
                     Try again
                 </button>
                 <Link
                     href="/"
-                    className="border-foreground/20 hover:border-foreground/50 inline-block rounded-full border px-6 py-3 text-base transition-all duration-300 hover:scale-105"
+                    className="border-foreground/20 hover:border-foreground/50 inline-block rounded-full border px-6 py-3 text-base transition-[transform,border-color] duration-300 motion-safe:hover:scale-105"
                 >
                     Back home
                 </Link>

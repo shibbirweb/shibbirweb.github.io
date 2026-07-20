@@ -51,13 +51,13 @@ export default function SearchSuggestionItem({
                     />
                 </span>
                 <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                    <span className="text-foreground/45 text-xs">
+                    <span className="text-foreground/60 text-xs">
                         {formatDate(article.date)}
                     </span>
                     {article.tags.map((tag) => (
                         <span
                             key={tag}
-                            className="bg-foreground/[0.06] text-foreground/55 rounded-full px-2 py-0.5 text-[0.7rem]"
+                            className="bg-foreground/[0.06] text-foreground/70 rounded-full px-2 py-0.5 text-[0.7rem]"
                         >
                             <HighlightedText
                                 text={tag}

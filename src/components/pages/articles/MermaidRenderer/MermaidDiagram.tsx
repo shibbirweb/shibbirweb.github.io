@@ -19,7 +19,7 @@ export default function MermaidDiagram({ source }: { source: string }) {
 
     if (!svg) {
         return (
-            <pre className="not-prose border-foreground/10 text-foreground/55 overflow-x-auto rounded-xl border p-4 text-sm">
+            <pre className="not-prose border-foreground/10 text-foreground/70 overflow-x-auto rounded-xl border p-4 text-sm">
                 {source}
             </pre>
         );

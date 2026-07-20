@@ -20,7 +20,7 @@ import {
 const fieldAccentClassName =
     'focus:border-emerald-500/60 focus:ring-2 focus:ring-emerald-500/15';
 const fieldLabelClassName =
-    'text-foreground/50 text-[0.7rem] font-semibold tracking-[0.14em] uppercase';
+    'text-foreground/70 text-xs font-semibold tracking-[0.14em] uppercase';
 
 export default function ContactForm() {
     const { setContainer, token, reset: resetCaptcha } = useHCaptcha();
@@ -129,7 +129,7 @@ export default function ContactForm() {
                                         )}
                                     </Button>
                                     {!token && (
-                                        <span className="text-foreground/50 text-xs">
+                                        <span className="text-foreground/70 text-xs">
                                             Complete the captcha to enable
                                             sending.
                                         </span>

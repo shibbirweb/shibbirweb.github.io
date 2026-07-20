@@ -202,6 +202,25 @@ body {
     }
 }
 
+/* Global reduced-motion safety net. The site opts into motion per component
+   (motion-safe utilities and prefers-reduced-motion: no-preference blocks), but
+   any inline transition or animate utility that misses the gate would still run
+   at full motion. This blanket reset neutralises animation, transition, and
+   smooth scroll for users who ask for reduced motion, so the per-component
+   gating can never be silently undermined. Kept minimal (duration collapse,
+   single iteration) so state changes still apply instantly rather than snapping
+   mid-transition. */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
 /* Smooth gradient background for homepage content sections (issue #13).
    Each direct section of the homepage main swells from the base background
    to a faint wash of its own accent and back, so consecutive sections share

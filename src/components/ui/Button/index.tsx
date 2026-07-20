@@ -4,7 +4,7 @@ import Spinner from '@/components/ui/Spinner';
 export type ButtonVariant = 'primary' | 'outline';
 
 const buttonBaseClassName =
-    'inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition-colors';
+    'inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition-colors focus-visible:ring-foreground/50 focus-visible:ring-offset-background focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none';
 
 const variantClassNames: Record<ButtonVariant, string> = {
     primary:

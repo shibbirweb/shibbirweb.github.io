@@ -23,7 +23,7 @@ function PagerLink({ article, direction, alignEnd = false }: PagerLinkProps) {
                 alignEnd ? 'sm:col-start-2 sm:items-end sm:text-right' : ''
             )}
         >
-            <span className="text-foreground/50 flex items-center gap-1.5 text-xs font-semibold tracking-[0.08em] uppercase">
+            <span className="text-foreground/70 flex items-center gap-1.5 text-xs font-semibold tracking-[0.08em] uppercase">
                 {!isNext && (
                     <ChevronIcon className="size-3.5 -rotate-90 transition-transform group-hover:-translate-x-0.5" />
                 )}

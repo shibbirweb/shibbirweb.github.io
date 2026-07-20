@@ -61,7 +61,7 @@ export default function Pagination({
                         aria-hidden="true"
                         className={cn(
                             itemBase,
-                            'text-foreground/40 border-transparent'
+                            'text-foreground/55 border-transparent'
                         )}
                     >
                         …

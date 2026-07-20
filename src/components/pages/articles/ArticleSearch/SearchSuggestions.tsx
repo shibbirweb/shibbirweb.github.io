@@ -87,7 +87,7 @@ export default function SearchSuggestions({
                 >
                     <Search
                         aria-hidden="true"
-                        className="text-foreground/50 size-4 shrink-0"
+                        className="text-foreground/70 size-4 shrink-0"
                     />
                     <span className="text-foreground/70 min-w-0 truncate">
                         Search for{' '}
@@ -95,7 +95,7 @@ export default function SearchSuggestions({
                             “{trimmed}”
                         </span>
                     </span>
-                    <kbd className="border-foreground/20 text-foreground/50 ml-auto hidden shrink-0 rounded border px-1.5 py-0.5 text-[0.65rem] sm:inline-block">
+                    <kbd className="border-foreground/20 text-foreground/70 ml-auto hidden shrink-0 rounded border px-1.5 py-0.5 text-[0.65rem] sm:inline-block">
                         Enter
                     </kbd>
                 </button>

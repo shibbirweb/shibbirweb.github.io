@@ -32,13 +32,13 @@ export default function UsesCard({
             style={accent}
             className={cn(
                 styles.card,
-                'group border-foreground/10 hover:border-foreground/25 relative isolate flex h-full flex-col rounded-2xl border p-6 transition-all duration-300 hover:shadow-lg sm:p-7',
+                'group border-foreground/10 hover:border-foreground/25 relative isolate flex h-full flex-col rounded-2xl border p-6 transition-[border-color,box-shadow] duration-300 hover:shadow-lg sm:p-8',
                 section.wide && 'md:col-span-2'
             )}
         >
             <span
                 aria-hidden="true"
-                className="text-foreground/25 group-hover:text-foreground/45 absolute top-5 right-6 font-mono text-xs tracking-widest transition-colors duration-300 sm:top-6"
+                className="text-foreground/25 group-hover:text-foreground/60 absolute top-5 right-6 font-mono text-xs tracking-widest transition-colors duration-300 sm:top-6"
             >
                 {catalogNumber}
             </span>

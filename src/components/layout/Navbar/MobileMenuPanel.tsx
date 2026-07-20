@@ -91,7 +91,7 @@ export default function MobileMenuPanel({
                         aria-hidden="true"
                         className="bg-foreground/10 my-1 h-px"
                     />
-                    <p className="text-foreground/40 px-4 pt-1 pb-0.5 text-xs font-semibold tracking-wide uppercase">
+                    <p className="text-foreground/60 px-4 pt-1 pb-0.5 text-xs font-semibold tracking-wide uppercase">
                         Studio
                     </p>
                     <ul className="flex flex-col gap-0.5">

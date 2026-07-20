@@ -21,7 +21,7 @@ export default function BulletList({
                 >
                     <span
                         aria-hidden="true"
-                        className="text-foreground/40 select-none print:text-black"
+                        className="text-foreground/55 select-none print:text-black"
                     >
                         •
                     </span>
