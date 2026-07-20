@@ -14,7 +14,7 @@ export default function WithGridAnimatedBackgroundWrapper({
         >
             {children}
             <GridBackground
-                className="motion-safe:animate-pulse"
+                className="opacity-20 motion-safe:animate-pulse"
                 style={{
                     animationDuration: '5s',
                 }}
