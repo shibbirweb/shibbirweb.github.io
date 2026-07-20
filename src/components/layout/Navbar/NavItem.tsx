@@ -25,10 +25,10 @@ export default function NavItem({
     };
 
     const className = cn(
-        'block text-sm transition-colors',
+        'focus-ring block text-sm transition-colors',
         variant === 'pill'
             ? 'rounded-full px-2.5 py-1.5 lg:px-3'
-            : 'hover:bg-foreground/5 rounded-xl px-4 py-2.5',
+            : 'hover:bg-foreground/5 flex min-h-11 items-center rounded-xl px-4',
         active
             ? 'bg-foreground/10 text-foreground font-semibold'
             : 'text-foreground/70 hover:text-foreground'

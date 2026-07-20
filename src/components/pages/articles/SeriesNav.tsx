@@ -35,7 +35,7 @@ export default function SeriesNav({
             )}
         >
             <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-                <p className="text-foreground/60 text-xs font-semibold tracking-[0.12em] uppercase">
+                <p className="text-foreground/70 text-xs font-semibold tracking-[0.12em] uppercase">
                     Part {position} of {series.parts.length}
                 </p>
                 <p className="text-foreground/70 text-xs">Series</p>

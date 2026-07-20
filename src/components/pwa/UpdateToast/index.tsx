@@ -36,7 +36,7 @@ export default function UpdateToast({ onReload, onDismiss }: UpdateToastProps) {
             <button
                 type="button"
                 onClick={onReload}
-                className="bg-foreground text-background hover:bg-foreground/90 ml-1 cursor-pointer rounded-lg px-3 py-1 text-xs font-semibold transition-colors"
+                className="focus-ring bg-foreground text-background hover:bg-foreground/90 ml-1 inline-flex min-h-9 cursor-pointer items-center rounded-lg px-3 text-xs font-semibold transition-colors"
             >
                 Reload
             </button>
@@ -44,7 +44,7 @@ export default function UpdateToast({ onReload, onDismiss }: UpdateToastProps) {
                 type="button"
                 onClick={onDismiss}
                 aria-label="Dismiss"
-                className="text-foreground/70 hover:bg-foreground/10 hover:text-foreground flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-md text-lg leading-none transition-colors"
+                className="focus-ring text-foreground/70 hover:bg-foreground/10 hover:text-foreground flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-md text-lg leading-none transition-colors"
             >
                 &times;
             </button>

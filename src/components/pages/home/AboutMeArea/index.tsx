@@ -11,7 +11,7 @@ export default function AboutMeArea() {
             <div className="container mx-auto flex min-h-svh flex-col justify-center gap-12 px-4 py-20 sm:py-28">
                 <div className="space-y-3 text-center">
                     <SectionHeading>About me</SectionHeading>
-                    <p className="text-foreground/60 mx-auto max-w-xl">
+                    <p className="text-foreground/70 mx-auto max-w-xl">
                         The mindset, experience, and curiosity behind the
                         software I build.
                     </p>

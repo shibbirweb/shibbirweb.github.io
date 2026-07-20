@@ -34,7 +34,7 @@ export default function WhatYoullLearn({
             />
             <h2
                 id="what-youll-learn"
-                className="text-foreground/60 text-xs font-semibold tracking-[0.12em] uppercase"
+                className="text-foreground/70 text-xs font-semibold tracking-[0.12em] uppercase"
             >
                 What you&rsquo;ll learn
             </h2>

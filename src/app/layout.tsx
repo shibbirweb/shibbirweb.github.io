@@ -98,7 +98,12 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-    themeColor: 'white',
+    // Match the browser chrome to the resolved theme's background token instead
+    // of a fixed white, so the mobile status bar stays on-theme in dark mode.
+    themeColor: [
+        { media: '(prefers-color-scheme: light)', color: '#ededed' },
+        { media: '(prefers-color-scheme: dark)', color: '#0a0a0a' },
+    ],
 };
 
 export default function RootLayout({
@@ -137,6 +142,15 @@ export default function RootLayout({
             <body
                 className={`${notoSans.variable} bg-background relative flex min-h-svh flex-col text-base antialiased print:bg-white!`}
             >
+                {/* Skip link: the first focusable element, visually hidden until
+                    focused, so keyboard and screen-reader users can bypass the
+                    fixed nav and jump straight to each page's <main id="main">. */}
+                <a
+                    href="#main"
+                    className="focus-ring sr-only focus:not-sr-only focus:bg-background focus:text-foreground focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-lg focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:shadow-lg print:hidden"
+                >
+                    Skip to content
+                </a>
                 <PageGradientProvider>
                     <PageGradientBackground />
                     <HashScroll />

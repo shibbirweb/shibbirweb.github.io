@@ -32,7 +32,7 @@ export default function MobileTableOfContents({
             className="border-foreground/10 bg-foreground/[0.02] group mb-8 rounded-xl border lg:hidden"
         >
             <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-4 py-3 text-sm font-semibold [&::-webkit-details-marker]:hidden">
-                <span className="text-foreground/60 text-xs tracking-[0.12em] uppercase">
+                <span className="text-foreground/70 text-xs tracking-[0.12em] uppercase">
                     On this page
                 </span>
                 <ChevronIcon className="text-foreground/70 size-4 transition-transform group-open:rotate-180" />

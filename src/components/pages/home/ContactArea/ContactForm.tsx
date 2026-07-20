@@ -96,7 +96,7 @@ export default function ContactForm() {
 
                                 {status === 'error' && errorMessage && (
                                     <p
-                                        role="status"
+                                        role="alert"
                                         className="text-sm text-red-600 dark:text-red-400"
                                     >
                                         {errorMessage}

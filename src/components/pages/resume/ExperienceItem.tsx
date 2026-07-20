@@ -36,7 +36,7 @@ export default function ExperienceItem({ entry }: { entry: ExperienceEntry }) {
                                 {position.role}
                                 {position.promotedFrom &&
                                     position.promotedFrom.length > 0 && (
-                                        <span className="text-foreground/60 font-normal">
+                                        <span className="text-foreground/70 font-normal">
                                             {' '}
                                             (promoted from{' '}
                                             <span className="print:hidden">

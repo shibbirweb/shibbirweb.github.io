@@ -44,7 +44,7 @@ export default function MobileMenuPanel({
                 // travel in, and the logo simply lives in the menu.
                 <NavLogo
                     onNavigate={onNavigate}
-                    className="text-foreground/80 hover:text-foreground hover:bg-foreground/5 flex items-center rounded-xl px-4 py-3 transition-colors"
+                    className="text-foreground/80 hover:text-foreground hover:bg-foreground/5 flex min-h-11 items-center rounded-xl px-4 py-3 transition-colors"
                 />
             ) : (
                 // Inner pages reserve the slot the shared wordmark animates into
@@ -91,7 +91,7 @@ export default function MobileMenuPanel({
                         aria-hidden="true"
                         className="bg-foreground/10 my-1 h-px"
                     />
-                    <p className="text-foreground/60 px-4 pt-1 pb-0.5 text-xs font-semibold tracking-wide uppercase">
+                    <p className="text-foreground/70 px-4 pt-1 pb-0.5 text-xs font-semibold tracking-wide uppercase">
                         Studio
                     </p>
                     <ul className="flex flex-col gap-0.5">
@@ -112,7 +112,7 @@ export default function MobileMenuPanel({
                 className="bg-foreground/10 my-1 h-px"
             />
             <div className="flex items-center justify-between px-4 py-2">
-                <span className="text-foreground/60 text-sm">Theme</span>
+                <span className="text-foreground/70 text-sm">Theme</span>
                 <ThemeToggle />
             </div>
         </nav>

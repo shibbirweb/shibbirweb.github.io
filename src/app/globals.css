@@ -32,6 +32,11 @@
     color-scheme: light dark;
     --background: #ededed;
     --foreground: #171717;
+    /* Decorative grid/dot backdrop lines, derived from the foreground token so
+       they stay subtle and flip with the theme (dark lines on light, light lines
+       on dark) instead of a fixed gray. Consumed by GridBackground/DotBackground. */
+    --grid-line: color-mix(in oklab, var(--foreground) 13%, transparent);
+    --grid-dot: color-mix(in oklab, var(--foreground) 22%, transparent);
     --section-swell-indigo: #e9e9f0;
     --section-swell-blue: #e7ebf2;
     --section-swell-yellow: #f0eee4;
@@ -275,4 +280,13 @@ body {
         --text-box-edge- *,
         --global-value- *
     );
+}
+
+/* Shared keyboard focus ring. One definition so every interactive surface, the
+   nav/theme chrome, breadcrumb and article links, buttons and form controls,
+   shows the same visible focus indicator instead of a per-component mix of the
+   UA outline and bespoke rings. Uses focus-visible so it only appears for
+   keyboard users. Compose with `cn(styles..., 'focus-ring')` or apply directly. */
+@utility focus-ring {
+    @apply focus-visible:ring-foreground/50 focus-visible:ring-offset-background focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none;
 }

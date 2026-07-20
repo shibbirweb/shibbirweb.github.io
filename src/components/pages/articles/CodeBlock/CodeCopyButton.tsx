@@ -12,7 +12,7 @@ export default function CodeCopyButton({ code }: { code: string }) {
             type="button"
             aria-label={copied ? 'Copied' : 'Copy code'}
             onClick={() => copy(code)}
-            className="text-foreground/70 hover:bg-foreground/10 hover:text-foreground focus-visible:bg-foreground/10 focus-visible:text-foreground inline-flex cursor-pointer items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-colors"
+            className="focus-ring text-foreground/70 hover:bg-foreground/10 hover:text-foreground inline-flex min-h-9 cursor-pointer items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors"
         >
             {copied ? (
                 <>

@@ -14,7 +14,7 @@ export default function TagGroup({ label, tags }: TagGroupProps) {
     return (
         <div>
             {label && (
-                <h3 className="text-foreground/60 text-base font-bold">
+                <h3 className="text-foreground/70 text-base font-bold">
                     {label}
                 </h3>
             )}

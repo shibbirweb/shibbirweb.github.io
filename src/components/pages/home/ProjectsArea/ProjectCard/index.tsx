@@ -34,12 +34,12 @@ export default function ProjectCard({
                 'border-foreground/10 hover:border-foreground/30 relative isolate flex flex-col rounded-2xl border p-6 transition-all duration-300 hover:shadow-lg sm:p-8'
             )}
         >
-            <p className="text-foreground/60 text-xs font-bold tracking-wide uppercase">
+            <p className="text-foreground/70 text-xs font-bold tracking-wide uppercase">
                 {project.category}
             </p>
-            <h3 className="mt-2 text-lg font-bold sm:text-xl">
+            <h4 className="mt-2 text-lg font-bold sm:text-xl">
                 {project.name}
-            </h3>
+            </h4>
             <p className="text-foreground/70 mt-3 grow text-base leading-relaxed">
                 {project.description}
             </p>

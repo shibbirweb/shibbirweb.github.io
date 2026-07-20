@@ -39,12 +39,12 @@
     @apply opacity-100;
 }
 
-/* Emoji badge: a rounded square carrying a soft tint and ring of the card's
+/* Icon badge: a rounded square carrying a soft tint and ring of the card's
    accent so the badge, glow, and card read as one accented unit. The accent
    mix strength steps up in dark mode to keep the tint legible on the dark
    surface. */
 .badge {
-    @apply grid size-11 shrink-0 place-items-center rounded-xl border text-xl;
+    @apply grid size-11 shrink-0 place-items-center rounded-xl border;
     background-color: color-mix(
         in oklab,
         var(--card-accent, var(--foreground)) 10%,

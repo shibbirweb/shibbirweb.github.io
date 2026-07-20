@@ -45,7 +45,7 @@ export default function FacetCard({
                     />
                     <h3 className="font-semibold">{facet.title}</h3>
                 </div>
-                <p className="text-foreground/60 mt-2 text-sm leading-relaxed">
+                <p className="text-foreground/70 mt-2 text-sm leading-relaxed">
                     {facet.text}
                 </p>
             </div>

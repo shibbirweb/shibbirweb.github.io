@@ -12,7 +12,10 @@ export default function ArticleContent({ html }: { html: string }) {
         <div
             className={cn(
                 jetBrainsMono.variable,
-                'prose prose-lg dark:prose-invert mt-10 max-w-none',
+                // Cap the reading measure at ~75ch so body lines stay in the
+                // 65-75ch readability range on wide (xl/2xl) screens instead of
+                // stretching to the full content column.
+                'prose prose-lg dark:prose-invert mt-10 max-w-[75ch]',
                 styles.content
             )}
             dangerouslySetInnerHTML={{ __html: html }}

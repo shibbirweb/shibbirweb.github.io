@@ -19,7 +19,7 @@ export default function ScrollDownCue() {
             href="#about"
             aria-label="Scroll to the about section"
             className={cn(
-                'text-foreground/55 hover:text-foreground/70 mb-6 transition-all duration-500 ease-out motion-reduce:transition-none motion-safe:animate-bounce sm:mb-10',
+                'focus-ring text-foreground/55 hover:text-foreground/70 mb-6 inline-flex min-h-11 min-w-11 items-center justify-center rounded-full transition-all duration-500 ease-out motion-reduce:transition-none motion-safe:animate-bounce sm:mb-10',
                 navbarVisible
                     ? 'pointer-events-none invisible opacity-0'
                     : 'visible opacity-100'

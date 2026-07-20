@@ -29,7 +29,7 @@ export default function SkillCard({ skill }: { skill: Skill }) {
         >
             <Icon
                 className={cn(
-                    'text-foreground/60 size-7 shrink-0 transition-colors duration-300',
+                    'text-foreground/70 size-7 shrink-0 transition-colors duration-300',
                     color
                         ? 'group-hover:[color:var(--brand-color)]'
                         : 'group-hover:text-foreground'

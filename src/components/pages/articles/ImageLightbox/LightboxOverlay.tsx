@@ -20,7 +20,7 @@ function OverlayButton({
         <button
             type={type ?? 'button'}
             className={cn(
-                'flex size-10 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur transition-colors hover:bg-white/25 focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:outline-none',
+                'flex size-11 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur transition-colors hover:bg-white/25 focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:outline-none',
                 className
             )}
             {...rest}
@@ -48,6 +48,7 @@ export default function LightboxOverlay({
     onClose: () => void;
 }) {
     const closeRef = useRef<HTMLButtonElement>(null);
+    const dialogRef = useRef<HTMLDivElement>(null);
     const hasMultiple = images.length > 1;
 
     const goTo = useCallback(
@@ -60,7 +61,7 @@ export default function LightboxOverlay({
 
     // Scroll lock, focus management, and Escape live in the shared modal hook,
     // mounted once; only the left/right paging re-binds as the index changes.
-    useModalChrome(onClose, closeRef);
+    useModalChrome(onClose, closeRef, dialogRef);
 
     useEffect(() => {
         if (!hasMultiple) return;
@@ -76,6 +77,7 @@ export default function LightboxOverlay({
 
     return createPortal(
         <div
+            ref={dialogRef}
             role="dialog"
             aria-modal="true"
             aria-label="Image viewer"

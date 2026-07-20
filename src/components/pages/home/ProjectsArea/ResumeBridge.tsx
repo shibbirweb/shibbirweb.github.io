@@ -9,7 +9,7 @@ import ChevronIcon from '@/components/icons/chevron';
 export default function ResumeBridge() {
     return (
         <div className="mt-14 text-center">
-            <p className="text-foreground/60">
+            <p className="text-foreground/70">
                 My professional, client-facing work lives on the resume.
             </p>
             <Link

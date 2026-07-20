@@ -48,6 +48,7 @@ export default function ArticleView({
 }) {
     return (
         <main
+            id="main"
             className={cn(
                 jetBrainsMono.variable,
                 'container mx-auto px-4 py-20 sm:py-28'

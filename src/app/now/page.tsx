@@ -15,14 +15,17 @@ export const metadata = buildPageMetadata({
 
 export default function NowPage() {
     return (
-        <main className="container mx-auto px-4 py-20 sm:py-28">
+        <main
+            id="main"
+            className="container mx-auto px-4 py-20 sm:py-28"
+        >
             <Breadcrumb />
             <SectionHeading as="h1">{nowMeta.title}</SectionHeading>
             <p className="text-foreground/70 mt-6 max-w-3xl text-lg leading-relaxed">
                 {nowMeta.subtitle}
             </p>
 
-            <p className="border-foreground/10 text-foreground/60 mt-6 inline-flex items-center gap-2.5 rounded-full border py-1.5 pr-4 pl-3 text-sm">
+            <p className="border-foreground/10 text-foreground/70 mt-6 inline-flex items-center gap-2.5 rounded-full border py-1.5 pr-4 pl-3 text-sm">
                 <span
                     aria-hidden="true"
                     className="relative grid size-2 place-items-center"

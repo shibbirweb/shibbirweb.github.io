@@ -6,7 +6,7 @@ export default function Sun({
 }: React.SVGProps<SVGSVGElement>) {
     return (
         <svg
-            className={cn('', className)}
+            className={cn('size-5', className)}
             {...rest}
             viewBox="0 0 24 24"
             fill="none"

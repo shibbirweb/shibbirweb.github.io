@@ -24,7 +24,7 @@ export default function EditorPreview({ body }: { body: string }) {
                 </span>
             </div>
             <div className="min-h-0 flex-1 overflow-y-auto px-5 pb-8">
-                <div className="bg-foreground/5 text-foreground/60 mt-5 rounded-lg px-3 py-2 text-xs">
+                <div className="bg-foreground/5 text-foreground/70 mt-5 rounded-lg px-3 py-2 text-xs">
                     Live render of the body through the production Markdown,
                     Shiki, gist, Mermaid, and article component pipeline.
                 </div>

@@ -13,14 +13,14 @@ export default function ResumeContactHeader({
 }) {
     return (
         <header className="text-center">
-            <p className="text-xl font-bold tracking-tight sm:text-2xl print:text-[16pt]">
+            <h1 className="text-xl font-bold tracking-tight sm:text-2xl print:text-[16pt]">
                 {name}
-            </p>
+            </h1>
             <div className="mt-2 print:mt-1">
                 <ContactLine contacts={contacts} />
             </div>
             {location && (
-                <p className="text-foreground/60 mt-1 font-mono text-[11px] print:font-[Helvetica,Arial,sans-serif] print:text-[9pt]">
+                <p className="text-foreground/70 mt-1 font-mono text-[11px] print:font-[Helvetica,Arial,sans-serif] print:text-[9pt]">
                     {location}
                 </p>
             )}

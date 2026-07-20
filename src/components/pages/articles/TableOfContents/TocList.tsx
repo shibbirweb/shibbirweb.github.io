@@ -27,10 +27,10 @@ export default function TocList({
                             onClick={onNavigate}
                             aria-current={isActive ? 'location' : undefined}
                             className={cn(
-                                'group flex items-center gap-2 rounded-md py-1 leading-snug transition-colors',
+                                'focus-ring group flex items-center gap-2 rounded-md py-1 leading-snug transition-colors',
                                 item.level === 3 ? 'pl-5' : 'pl-2',
                                 isActive
-                                    ? 'text-[var(--accent-to)]'
+                                    ? 'font-medium text-[color-mix(in_oklab,var(--accent-to),var(--foreground)_45%)]'
                                     : 'text-foreground/70 hover:text-foreground'
                             )}
                         >

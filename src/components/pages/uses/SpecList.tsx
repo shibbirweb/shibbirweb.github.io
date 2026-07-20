@@ -14,7 +14,7 @@ export default function SpecList({ label, specs }: SpecListProps) {
     return (
         <div>
             {label && (
-                <h3 className="text-foreground/60 mb-3 text-base font-bold">
+                <h3 className="text-foreground/70 mb-3 text-base font-bold">
                     {label}
                 </h3>
             )}

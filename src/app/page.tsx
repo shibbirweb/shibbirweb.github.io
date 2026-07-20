@@ -8,7 +8,10 @@ import SectionUrlSync from '@/components/layout/SectionUrlSync';
 
 export default function Home() {
     return (
-        <main className="home-sections">
+        <main
+            id="main"
+            className="home-sections"
+        >
             <SectionUrlSync />
 
             <HeroArea />

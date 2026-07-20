@@ -45,7 +45,7 @@ export default function ThemeMenu({ visible }: { visible: boolean }) {
                 aria-expanded={open}
                 aria-label="Theme"
                 title="Theme"
-                className="border-foreground/10 bg-background/60 text-foreground/80 hover:text-foreground relative flex size-11 cursor-pointer items-center justify-center rounded-full border shadow-lg shadow-black/5 backdrop-blur-lg transition-colors"
+                className="focus-ring border-foreground/10 bg-background/60 text-foreground/80 hover:text-foreground relative flex size-11 cursor-pointer items-center justify-center rounded-full border shadow-lg shadow-black/5 backdrop-blur-lg transition-colors"
             >
                 <ActiveIcon
                     aria-hidden="true"
@@ -85,7 +85,7 @@ export default function ThemeMenu({ visible }: { visible: boolean }) {
                                             close();
                                         }}
                                         className={cn(
-                                            'flex w-full cursor-pointer items-center gap-3 rounded-xl px-4 py-2.5 text-sm transition-colors',
+                                            'focus-ring flex min-h-11 w-full cursor-pointer items-center gap-3 rounded-xl px-4 py-2.5 text-sm transition-colors',
                                             active
                                                 ? 'bg-foreground/10 text-foreground font-semibold'
                                                 : 'text-foreground/70 hover:text-foreground hover:bg-foreground/5'

@@ -13,7 +13,7 @@ export default function SocialIcons() {
                     title={name}
                     aria-label={name}
                     className={cn(
-                        'p-2 transition-[color,transform] duration-300 motion-safe:hover:scale-110',
+                        'focus-ring inline-flex min-h-11 min-w-11 items-center justify-center rounded-full transition-[color,transform] duration-300 motion-safe:hover:scale-110',
                         socialColorClassNames
                     )}
                 >

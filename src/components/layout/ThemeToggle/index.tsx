@@ -29,10 +29,10 @@ export default function ThemeToggle({ className }: { className?: string }) {
                         aria-label={`${label} theme`}
                         title={`${label} theme`}
                         className={cn(
-                            'flex size-8 cursor-pointer items-center justify-center rounded-full transition-colors',
+                            'focus-ring flex size-11 cursor-pointer items-center justify-center rounded-full transition-colors',
                             active
                                 ? 'bg-foreground/10 text-foreground'
-                                : 'text-foreground/60 hover:text-foreground'
+                                : 'text-foreground/70 hover:text-foreground'
                         )}
                     >
                         <Icon

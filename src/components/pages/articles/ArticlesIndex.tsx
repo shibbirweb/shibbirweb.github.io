@@ -22,7 +22,10 @@ export default function ArticlesIndex({
     );
 
     return (
-        <main className="container mx-auto px-4 py-20 sm:py-28">
+        <main
+            id="main"
+            className="container mx-auto px-4 py-20 sm:py-28"
+        >
             <Breadcrumb />
             <div className="flex items-start justify-between gap-4">
                 <SectionHeading as="h1">Articles</SectionHeading>

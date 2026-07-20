@@ -33,7 +33,7 @@ export default function TableOfContents({
             style={accentStyle(accentColors)}
             className="sticky top-24 hidden max-h-[calc(100vh-8rem)] overflow-y-auto lg:block"
         >
-            <p className="text-foreground/60 mb-3 text-xs font-semibold tracking-[0.12em] uppercase">
+            <p className="text-foreground/70 mb-3 text-xs font-semibold tracking-[0.12em] uppercase">
                 On this page
             </p>
             <TocList
