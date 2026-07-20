@@ -22,13 +22,13 @@ export default function NotFound() {
             <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
                 <Link
                     href="/"
-                    className="border-foreground/20 hover:border-foreground/50 inline-block rounded-full border px-6 py-3 text-base transition-all duration-300 hover:scale-105"
+                    className="border-foreground/20 hover:border-foreground/50 inline-block rounded-full border px-6 py-3 text-base transition-[transform,border-color] duration-300 motion-safe:hover:scale-105"
                 >
                     Back home
                 </Link>
                 <Link
                     href="/articles"
-                    className="border-foreground/20 hover:border-foreground/50 inline-block rounded-full border px-6 py-3 text-base transition-all duration-300 hover:scale-105"
+                    className="border-foreground/20 hover:border-foreground/50 inline-block rounded-full border px-6 py-3 text-base transition-[transform,border-color] duration-300 motion-safe:hover:scale-105"
                 >
                     Read articles
                 </Link>

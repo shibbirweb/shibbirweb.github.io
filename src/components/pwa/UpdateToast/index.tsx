@@ -28,7 +28,7 @@ export default function UpdateToast({ onReload, onDismiss }: UpdateToastProps) {
         >
             <span
                 aria-hidden
-                className="bg-foreground/40 size-1.5 shrink-0 animate-pulse rounded-full"
+                className="bg-foreground/40 size-1.5 shrink-0 rounded-full motion-safe:animate-pulse"
             />
             <p className="text-sm font-medium whitespace-nowrap">
                 Update available
@@ -44,7 +44,7 @@ export default function UpdateToast({ onReload, onDismiss }: UpdateToastProps) {
                 type="button"
                 onClick={onDismiss}
                 aria-label="Dismiss"
-                className="text-foreground/50 hover:bg-foreground/10 hover:text-foreground flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-md text-lg leading-none transition-colors"
+                className="text-foreground/70 hover:bg-foreground/10 hover:text-foreground flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-md text-lg leading-none transition-colors"
             >
                 &times;
             </button>

@@ -2,7 +2,7 @@ import { useId } from 'react';
 import { cn } from '@/utils/cn';
 
 export const fieldControlClassName =
-    'border-foreground/15 bg-background/60 w-full rounded-xl border px-3.5 py-2.5 text-sm outline-none transition focus:border-foreground/40';
+    'border-foreground/15 bg-background/60 focus:border-foreground/40 focus:ring-foreground/20 w-full rounded-xl border px-3.5 py-2.5 text-sm outline-none transition focus:ring-2';
 
 type InputProps = React.ComponentPropsWithRef<'input'> & {
     label: string;

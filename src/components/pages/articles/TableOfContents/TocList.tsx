@@ -31,7 +31,7 @@ export default function TocList({
                                 item.level === 3 ? 'pl-5' : 'pl-2',
                                 isActive
                                     ? 'text-[var(--accent-to)]'
-                                    : 'text-foreground/55 hover:text-foreground'
+                                    : 'text-foreground/70 hover:text-foreground'
                             )}
                         >
                             <span

@@ -35,10 +35,10 @@ export default function SeriesNav({
             )}
         >
             <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-                <p className="text-foreground/45 text-xs font-semibold tracking-[0.12em] uppercase">
+                <p className="text-foreground/60 text-xs font-semibold tracking-[0.12em] uppercase">
                     Part {position} of {series.parts.length}
                 </p>
-                <p className="text-foreground/55 text-xs">Series</p>
+                <p className="text-foreground/70 text-xs">Series</p>
             </div>
             <h2 className="mt-1 text-base font-bold sm:text-lg">
                 {series.name}
@@ -53,7 +53,7 @@ export default function SeriesNav({
                                     'flex size-6 flex-none items-center justify-center rounded-full text-xs font-semibold',
                                     part.isCurrent
                                         ? 'bg-linear-to-br from-[var(--accent-from)] to-[var(--accent-to)] text-white'
-                                        : 'border-foreground/15 text-foreground/55 border'
+                                        : 'border-foreground/15 text-foreground/70 border'
                                 )}
                             >
                                 {index + 1}

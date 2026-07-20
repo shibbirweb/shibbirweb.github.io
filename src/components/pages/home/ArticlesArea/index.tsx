@@ -29,7 +29,7 @@ export default function ArticlesArea() {
                 <div className="mt-10">
                     <Link
                         href="/articles"
-                        className="border-foreground/20 hover:border-foreground/50 inline-block rounded-full border px-6 py-2.5 text-sm transition-all duration-300 hover:scale-105"
+                        className="border-foreground/20 hover:border-foreground/50 inline-block rounded-full border px-6 py-2.5 text-sm transition-[transform,border-color] duration-300 motion-safe:hover:scale-105"
                     >
                         View all articles
                     </Link>

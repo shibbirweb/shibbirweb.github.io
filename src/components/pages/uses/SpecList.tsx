@@ -21,7 +21,7 @@ export default function SpecList({ label, specs }: SpecListProps) {
             <dl className="grid grid-cols-[repeat(auto-fill,minmax(11rem,1fr))] gap-x-6 gap-y-4">
                 {specs.map((spec) => (
                     <div key={spec.label}>
-                        <dt className="text-foreground/50 text-[0.7rem] font-semibold tracking-wide uppercase">
+                        <dt className="text-foreground/70 text-xs font-semibold tracking-wide uppercase">
                             {spec.label}
                         </dt>
                         <dd className="text-foreground/90 mt-1 font-mono text-sm leading-snug">

@@ -18,7 +18,7 @@ export default function NowBlock({ block }: { block: NowBlockData }) {
             return <BulletList items={block.items} />;
         case 'text':
             return (
-                <p className="text-foreground/70 text-sm leading-relaxed">
+                <p className="text-foreground/70 max-w-3xl text-base leading-relaxed">
                     {block.text}
                 </p>
             );

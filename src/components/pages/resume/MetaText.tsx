@@ -15,7 +15,7 @@ export default function MetaText({
     return (
         <span
             className={cn(
-                'text-foreground/50 font-mono text-[11px] print:font-[Helvetica,Arial,sans-serif] print:text-[9pt] print:text-black/70',
+                'text-foreground/70 font-mono text-[11px] print:font-[Helvetica,Arial,sans-serif] print:text-[9pt] print:text-black/70',
                 className
             )}
         >

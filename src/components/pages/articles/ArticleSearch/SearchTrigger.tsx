@@ -6,7 +6,7 @@ import { useIsMac } from '@/components/pages/articles/ArticleSearch/hooks/useIsM
 import { cn } from '@/utils/cn';
 
 const keycap =
-    'border-foreground/15 bg-foreground/[0.04] text-foreground/55 group-hover:border-foreground/30 group-hover:text-foreground/80 inline-flex h-5 min-w-5 items-center justify-center rounded-md border border-b-2 px-1 font-mono text-[0.7rem] leading-none transition-colors';
+    'border-foreground/15 bg-foreground/[0.04] text-foreground/70 group-hover:border-foreground/30 group-hover:text-foreground/80 inline-flex h-5 min-w-5 items-center justify-center rounded-md border border-b-2 px-1 font-mono text-[0.7rem] leading-none transition-colors';
 
 /**
  * The search affordance on the articles pages: a button that opens the search
@@ -33,7 +33,7 @@ export default function SearchTrigger({
             title="Search articles"
             className={cn(
                 jetBrainsMono.variable,
-                'group border-foreground/15 text-foreground/55 hover:border-foreground/40 hover:text-foreground hover:bg-foreground/[0.04] inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl border transition-colors sm:w-auto sm:justify-start sm:gap-2.5 sm:pr-2.5 sm:pl-3',
+                'group border-foreground/15 text-foreground/70 hover:border-foreground/40 hover:text-foreground hover:bg-foreground/[0.04] inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl border transition-colors sm:w-auto sm:justify-start sm:gap-2.5 sm:pr-2.5 sm:pl-3',
                 className
             )}
         >

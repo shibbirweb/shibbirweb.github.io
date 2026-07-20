@@ -27,7 +27,7 @@ export default function ProjectsArea() {
                     <ProjectGrid projects={packageProjects} />
                 </div>
 
-                <div className="mt-14 space-y-6">
+                <div className="mt-12 space-y-6">
                     <h3 className="text-foreground/60 text-center text-sm font-bold tracking-wider uppercase">
                         Personal Projects
                     </h3>

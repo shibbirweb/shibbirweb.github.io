@@ -1,12 +1,18 @@
 @reference "tailwindcss";
 
-/* Soft, top-to-bottom glow revealed on article-card hover (#articles / #work),
-   coloured to match the card's cover thumbnail. A ::before layer behind the card
-   content (the card is `relative isolate`, so z-index keeps it under the image and
-   text) holds a vertical gradient built from the cover's two colours (--cover-from
-   / --cover-to, set inline per card) fading out downward. It glows in slowly on
-   hover via a long opacity transition. Deliberately very soft, and softer still in
-   dark mode. @apply covers the utility-mappable rules; the gradient is raw CSS. */
+/* Soft accent bloom revealed on article-card hover (#articles / #work), coloured
+   to match the card's cover thumbnail. A ::before layer behind the card content
+   (the card is `relative isolate`, so z-index keeps it under the image and text)
+   holds the signature radial bloom (matching SkillCard/ProjectCard/NowCard/
+   UsesCard) built from the cover's two colours (--cover-from / --cover-to, set
+   inline per card). Both washes are wide, shallow ellipses whose hotspots sit
+   right at the cover thumbnail's bottom edge (the image fills roughly the top 45%
+   of the card): the upper half of each ellipse is hidden behind the opaque image,
+   so what shows is the accent spilling out from under the thumbnail and fading
+   downward, cover-from into cover-to, as if the image itself is glowing. It glows
+   in slowly on hover via a long opacity transition. Deliberately very soft, and
+   softer still in dark mode. @apply covers the utility-mappable rules; the
+   radial-gradient + color-mix are the sanctioned raw-CSS exceptions. */
 .card {
     --tint-strength: 8%;
 }
@@ -25,22 +31,25 @@
 
 .card::before {
     @apply pointer-events-none absolute inset-0 z-[-1] opacity-0 content-[''] motion-safe:transition-opacity motion-safe:duration-700;
-    background-image: linear-gradient(
-        to bottom,
-        color-mix(
+    background-image:
+        radial-gradient(
+            120% 50% at 50% 43%,
+            color-mix(
                 in oklab,
                 var(--cover-from, var(--foreground)) var(--tint-strength),
                 transparent
-            )
-            0%,
-        color-mix(
+            ),
+            transparent 70%
+        ),
+        radial-gradient(
+            95% 45% at 50% 58%,
+            color-mix(
                 in oklab,
-                var(--cover-to, var(--foreground)) var(--tint-strength),
+                var(--cover-to, var(--foreground)) calc(var(--tint-strength) * 0.5),
                 transparent
-            )
-            50%,
-        transparent 92%
-    );
+            ),
+            transparent 74%
+        );
 }
 
 .card:hover::before {

@@ -11,7 +11,7 @@ import { cn } from '@/utils/cn';
 import type { ArticleSummary } from '@/lib/posts';
 
 const kbd =
-    'border-foreground/20 text-foreground/50 inline-flex h-4 min-w-4 items-center justify-center rounded border px-1 text-[0.65rem]';
+    'border-foreground/20 text-foreground/70 inline-flex h-4 min-w-4 items-center justify-center rounded border px-1 text-[0.65rem]';
 
 /**
  * Command-palette style search over the pre-generated articles, shown above a
@@ -76,7 +76,7 @@ export default function SearchModal({
                 <div className="border-foreground/10 flex items-center gap-3 border-b px-4 py-3.5">
                     <Search
                         aria-hidden="true"
-                        className="text-foreground/40 size-5 shrink-0"
+                        className="text-foreground/55 size-5 shrink-0"
                     />
                     <input
                         ref={inputRef}
@@ -91,19 +91,19 @@ export default function SearchModal({
                         onChange={box.onChange}
                         onKeyDown={box.onKeyDown}
                         placeholder="Search articles by title or tag..."
-                        className="placeholder:text-foreground/40 w-full bg-transparent text-base outline-none [&::-webkit-search-cancel-button]:appearance-none"
+                        className="placeholder:text-foreground/55 w-full bg-transparent text-base outline-none [&::-webkit-search-cancel-button]:appearance-none"
                     />
                     {box.query.length > 0 ? (
                         <button
                             type="button"
                             onClick={box.clear}
                             aria-label="Clear search"
-                            className="text-foreground/40 hover:text-foreground hover:bg-foreground/10 grid size-7 shrink-0 place-items-center rounded-full transition-colors"
+                            className="text-foreground/55 hover:text-foreground hover:bg-foreground/10 grid size-7 shrink-0 place-items-center rounded-full transition-colors"
                         >
                             <Close className="size-4" />
                         </button>
                     ) : (
-                        <kbd className="border-foreground/20 text-foreground/50 hidden shrink-0 rounded border px-1.5 py-0.5 text-[0.65rem] sm:inline-block">
+                        <kbd className="border-foreground/20 text-foreground/70 hidden shrink-0 rounded border px-1.5 py-0.5 text-[0.65rem] sm:inline-block">
                             Esc
                         </kbd>
                     )}
@@ -124,7 +124,7 @@ export default function SearchModal({
                             onSelectArticle={box.goToArticle}
                             onSearchAll={box.goToResults}
                         />
-                        <div className="border-foreground/10 text-foreground/50 flex items-center justify-between gap-3 border-t px-4 py-2.5 text-xs">
+                        <div className="border-foreground/10 text-foreground/70 flex items-center justify-between gap-3 border-t px-4 py-2.5 text-xs">
                             <span>
                                 <span className="text-foreground font-medium">
                                     {box.resultCount}
@@ -145,7 +145,7 @@ export default function SearchModal({
                         </div>
                     </>
                 ) : (
-                    <p className="text-foreground/50 px-4 py-6 text-sm">
+                    <p className="text-foreground/70 px-4 py-6 text-sm">
                         Start typing to find an article by its title or a tag.
                     </p>
                 )}
