@@ -1,7 +1,6 @@
 'use client';
 
 import { cn } from '@/utils/cn';
-import GridBackground from '@/components/backgrounds/GridBackground';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Textarea from '@/components/ui/Textarea';
@@ -37,8 +36,6 @@ export default function ContactForm() {
                     'border-foreground/10 bg-background/50 relative isolate overflow-hidden rounded-3xl border p-4 shadow-sm backdrop-blur-sm sm:p-8 md:p-10'
                 )}
             >
-                <GridBackground className="opacity-60" />
-
                 <div className="relative z-10 grid grid-cols-1 gap-10 md:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] md:gap-12">
                     <ContactAside />
 
