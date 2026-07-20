@@ -6,9 +6,9 @@ import { RefObject, useEffect } from 'react';
 const REACH_TOP = 72;
 const REACH_SIDE = 56;
 const REACH_BOTTOM = 28;
-// Peak brightness of the reveal layer, reached when the pointer is over the
-// glyphs (matches the previous on-hover value).
-const MAX_OPACITY = 0.3;
+// Peak opacity of the binary reveal layer, reached when the pointer is over the
+// glyphs; enough for the thin 0/1 digits to read clearly against the solid base.
+const MAX_OPACITY = 0.6;
 
 /**
  * Lights the footer signature as the pointer approaches it, not only when the
