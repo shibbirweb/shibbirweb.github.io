@@ -2,8 +2,10 @@
    circle that follows the pointer, fading back to the dim watermark away from
    it. The reveal layer is a brighter copy of the same SVG, masked to the circle,
    so it only ever paints letters (never a visible disk or box edge). The pointer
-   vars are written by usePointerSpotlight; hover and reduced-motion are pure CSS,
-   so the pointer path never re-renders React. */
+   vars and the reveal's --spotlight-opacity are written by usePointerSpotlight
+   from the pointer's proximity to the signature (so the glow wakes as the cursor
+   nears the letters, not only over them); only the reduced-motion fade is pure
+   CSS, and the pointer path never re-renders React. */
 
 .spotlight {
     /* Size the spotlight from the signature's own width so the circle keeps the
@@ -16,6 +18,24 @@
     --spotlight-radius: 72cqw;
     --spotlight-edge: 80%;
     --spotlight-color: #a3a3a3; /* neutral-400 (light): one step up from the neutral-300 base */
+    --spotlight-opacity: 0; /* raised toward MAX_OPACITY by usePointerSpotlight as the pointer nears */
+
+    /* Dissolve the lower edge of the signature into whatever sits behind the
+       footer: the mask fades both layers to transparent toward the bottom, so
+       the fade always matches the page background without hardcoding a colour.
+       Masks nest, so this composes over the reveal layer's own radial mask. */
+    -webkit-mask-image: linear-gradient(
+        to bottom,
+        #000 78%,
+        rgba(0, 0, 0, 0.55) 90%,
+        transparent 100%
+    );
+    mask-image: linear-gradient(
+        to bottom,
+        #000 78%,
+        rgba(0, 0, 0, 0.55) 90%,
+        transparent 100%
+    );
 }
 
 /* neutral-600 (dark): one step up from the neutral-900 base. Applied via the OS
@@ -31,7 +51,7 @@
 
 .reveal {
     color: var(--spotlight-color);
-    opacity: 0;
+    opacity: var(--spotlight-opacity, 0);
     -webkit-mask-image: radial-gradient(
         circle var(--spotlight-radius) at var(--pointer-x) var(--pointer-y),
         #000 0%,
@@ -44,12 +64,6 @@
         rgba(0, 0, 0, 0.5) 50%,
         transparent var(--spotlight-edge)
     );
-}
-
-@media (hover: hover) and (pointer: fine) {
-    .spotlight:hover .reveal {
-        opacity: 0.3;
-    }
 }
 
 @media (prefers-reduced-motion: no-preference) {

@@ -13,19 +13,22 @@ import styles from '@/components/layout/Footer/SignatureSpotlight/SignatureSpotl
  * one grid cell, so the two stay perfectly aligned at any width.
  */
 export default function SignatureSpotlight() {
-    const containerRef = useRef<HTMLDivElement>(null);
-    usePointerSpotlight(containerRef);
+    const revealRef = useRef<SVGSVGElement>(null);
+    usePointerSpotlight(revealRef);
 
     return (
-        <div
-            ref={containerRef}
-            className={cn(styles.spotlight, 'relative isolate grid w-full')}
-        >
+        // The signature keeps its exact box; nothing here is sized for the glow.
+        // usePointerSpotlight measures the pointer's proximity to revealRef (the
+        // glyph layer) and drives the reveal's opacity + mask position from it,
+        // so the spotlight wakes as the cursor nears the letters from the top,
+        // left, or right, without any layout change to the signature.
+        <div className={cn(styles.spotlight, 'relative isolate grid w-full')}>
             <Shibbir
                 aria-hidden
                 className="text-neutral-300 [grid-area:1/1] dark:text-neutral-900"
             />
             <Shibbir
+                ref={revealRef}
                 aria-hidden
                 className={cn(styles.reveal, 'pointer-events-none [grid-area:1/1]')}
             />
