@@ -26,6 +26,7 @@ import styles from '@/components/pages/network-status/NetworkStatusStage/Network
 export default function NetworkStatusStage() {
     return (
         <main
+            id="main"
             data-network-root
             data-status="offline"
             // The reconnect script may flip data-status (and the text below) to the
@@ -44,7 +45,11 @@ export default function NetworkStatusStage() {
 
             <SignalRings />
 
-            <span className="border-foreground/10 bg-background/60 text-foreground/70 mt-8 inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-sm font-medium backdrop-blur-sm">
+            <span
+                role="status"
+                aria-live="polite"
+                className="border-foreground/10 bg-background/60 text-foreground/70 mt-8 inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-sm font-medium backdrop-blur-sm"
+            >
                 <span
                     aria-hidden="true"
                     className={cn(styles.dot, 'size-2 rounded-full')}
@@ -80,7 +85,7 @@ export default function NetworkStatusStage() {
                     label={AUTO_RELOAD_LABEL}
                     data-network-autoreload
                     className="accent-[var(--network-accent)]"
-                    labelClassName="text-foreground/60 hover:text-foreground/80 transition-colors"
+                    labelClassName="text-foreground/70 hover:text-foreground/80 transition-colors"
                 />
                 <span
                     data-network-countdown

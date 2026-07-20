@@ -51,7 +51,7 @@ export default function SearchSuggestionItem({
                     />
                 </span>
                 <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                    <span className="text-foreground/60 text-xs">
+                    <span className="text-foreground/70 text-xs tabular-nums">
                         {formatDate(article.date)}
                     </span>
                     {article.tags.map((tag) => (

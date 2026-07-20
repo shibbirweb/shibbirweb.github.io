@@ -46,7 +46,7 @@ export default function SearchSuggestions({
             {suggestions.length === 0 && (
                 <li
                     role="presentation"
-                    className="text-foreground/60 px-3 py-2 text-sm"
+                    className="text-foreground/70 px-3 py-2 text-sm"
                 >
                     No titles or tags match. Try the full search below.
                 </li>

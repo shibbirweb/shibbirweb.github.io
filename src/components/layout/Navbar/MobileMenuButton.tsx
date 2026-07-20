@@ -16,9 +16,19 @@ export default function MobileMenuButton({
             aria-label={open ? 'Close menu' : 'Open menu'}
             aria-expanded={open}
             onClick={onToggle}
-            className="border-foreground/10 bg-background/60 text-foreground/80 hover:text-foreground relative flex size-11 items-center justify-center rounded-full border shadow-lg shadow-black/5 backdrop-blur-lg transition-colors"
+            className="focus-ring border-foreground/10 bg-background/60 text-foreground/80 hover:text-foreground relative flex size-11 cursor-pointer items-center justify-center rounded-full border shadow-lg shadow-black/5 backdrop-blur-lg transition-colors"
         >
-            {open ? <Close className="size-6" /> : <Menu className="size-6" />}
+            {open ? (
+                <Close
+                    aria-hidden="true"
+                    className="size-6"
+                />
+            ) : (
+                <Menu
+                    aria-hidden="true"
+                    className="size-6"
+                />
+            )}
         </button>
     );
 }

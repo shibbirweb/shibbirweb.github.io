@@ -19,7 +19,7 @@ function PagerLink({ article, direction, alignEnd = false }: PagerLinkProps) {
             href={`/articles/${article.slug}`}
             rel={isNext ? 'next' : 'prev'}
             className={cn(
-                'border-foreground/10 hover:border-foreground/30 hover:bg-foreground/[0.02] group flex flex-col gap-2 rounded-xl border p-5 transition-colors',
+                'focus-ring border-foreground/10 hover:border-foreground/30 hover:bg-foreground/[0.02] group flex flex-col gap-2 rounded-xl border p-5 transition-colors',
                 alignEnd ? 'sm:col-start-2 sm:items-end sm:text-right' : ''
             )}
         >

@@ -58,6 +58,7 @@ export default function ResumePage() {
         // inherit and win over :root[data-theme='dark']), so all `text-foreground`
         // prints dark-on-white; browsers already drop backgrounds in print.
         <main
+            id="main"
             className={cn(
                 jetBrainsMono.variable,
                 'container mx-auto px-4 py-20 sm:py-28',

@@ -60,7 +60,7 @@ export default function NavLogo({
             href="/"
             aria-label="Home"
             onClick={scrollToTop}
-            className={className}
+            className={cn('focus-ring rounded-sm', className)}
         >
             {collapsible ? (
                 // The wordmark (viewBox 588.6 x 82.601) is ~8.91rem wide at h-5;

@@ -1,11 +1,12 @@
 'use client';
 
-import { cn } from '@/utils/cn';
+import Button from '@/components/ui/Button';
 
 /**
  * Opens the browser print dialog (Save as PDF). The print stylesheet on the
  * resume page restyles the document into a clean light single column, so the
- * saved PDF matches the on-page content minus the site chrome.
+ * saved PDF matches the on-page content minus the site chrome. Built on the
+ * shared Button so it inherits the site's 44px target, focus ring, and styling.
  */
 export default function DownloadPdfButton({
     className,
@@ -13,13 +14,10 @@ export default function DownloadPdfButton({
     className?: string;
 }) {
     return (
-        <button
-            type="button"
+        <Button
+            variant="outline"
             onClick={() => window.print()}
-            className={cn(
-                'border-foreground/15 text-foreground/80 hover:border-foreground/30 hover:text-foreground inline-flex items-center gap-2 rounded-md border px-4 py-2 text-sm font-medium transition-colors',
-                className
-            )}
+            className={className}
         >
             <svg
                 aria-hidden="true"
@@ -36,6 +34,6 @@ export default function DownloadPdfButton({
                 <path d="M12 15V3" />
             </svg>
             Download PDF
-        </button>
+        </Button>
     );
 }

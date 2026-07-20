@@ -25,7 +25,10 @@ export default function Checkbox({
         >
             <input
                 type="checkbox"
-                className={cn('accent-foreground size-4 rounded', className)}
+                className={cn(
+                    'accent-foreground focus-ring size-4 rounded',
+                    className
+                )}
                 {...rest}
             />
             {label}

@@ -152,7 +152,10 @@ export default function ArticleEditor({
     }
 
     return (
-        <main className="mx-auto w-full max-w-[112rem] px-4 py-24 sm:px-6 lg:px-8">
+        <main
+            id="main"
+            className="mx-auto w-full max-w-[112rem] px-4 py-24 sm:px-6 lg:px-8"
+        >
             <header className="mb-8">
                 <div className="flex flex-wrap items-center gap-3">
                     <p className="text-foreground/50 text-sm font-semibold tracking-[0.2em] uppercase">

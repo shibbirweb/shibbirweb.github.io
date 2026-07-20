@@ -17,7 +17,7 @@ export default function TechStack({
 
     return (
         <div className={cn('flex flex-wrap items-center gap-2', className)}>
-            <span className="text-foreground/60 text-xs font-semibold tracking-[0.1em] uppercase">
+            <span className="text-foreground/70 text-xs font-semibold tracking-[0.1em] uppercase">
                 Stack
             </span>
             <ul className="flex flex-wrap gap-2">

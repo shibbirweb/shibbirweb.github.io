@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useId, useRef } from 'react';
+import { useId, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import Search from '@/components/icons/search';
 import Close from '@/components/icons/close';
 import SearchSuggestions from '@/components/pages/articles/ArticleSearch/SearchSuggestions';
+import { useModalChrome } from '@/components/pages/articles/hooks/useModalChrome';
 import { useArticleSearchBox } from '@/components/pages/articles/ArticleSearch/hooks/useArticleSearchBox';
 import styles from '@/components/pages/articles/ArticleSearch/SearchModal.module.css';
 import { cn } from '@/utils/cn';
@@ -31,31 +32,19 @@ export default function SearchModal({
 }) {
     const box = useArticleSearchBox({ articles, initialQuery, onClose });
     const inputRef = useRef<HTMLInputElement>(null);
+    const dialogRef = useRef<HTMLDivElement>(null);
     const listboxId = useId();
     const optionId = (index: number) => `${listboxId}-option-${index}`;
     const activeDescendant =
         box.activeIndex >= 0 ? optionId(box.activeIndex) : undefined;
 
-    useEffect(() => {
-        const previouslyFocused = document.activeElement as HTMLElement | null;
-        const previousOverflow = document.body.style.overflow;
-        document.body.style.overflow = 'hidden';
-        inputRef.current?.focus();
-
-        const onKeyDown = (event: KeyboardEvent) => {
-            if (event.key === 'Escape') onClose();
-        };
-        document.addEventListener('keydown', onKeyDown);
-
-        return () => {
-            document.removeEventListener('keydown', onKeyDown);
-            document.body.style.overflow = previousOverflow;
-            previouslyFocused?.focus?.();
-        };
-    }, [onClose]);
+    // Body scroll lock, focus into the input, Escape to close, focus restore, and
+    // Tab focus trapping are shared with the article overlays via the modal hook.
+    useModalChrome(onClose, inputRef, dialogRef);
 
     return createPortal(
         <div
+            ref={dialogRef}
             role="dialog"
             aria-modal="true"
             aria-label="Search articles"
@@ -84,7 +73,7 @@ export default function SearchModal({
                         role="combobox"
                         aria-label="Search articles"
                         aria-expanded={box.hasQuery}
-                        aria-controls={listboxId}
+                        aria-controls={box.hasQuery ? listboxId : undefined}
                         aria-autocomplete="list"
                         aria-activedescendant={activeDescendant}
                         value={box.query}
@@ -98,7 +87,7 @@ export default function SearchModal({
                             type="button"
                             onClick={box.clear}
                             aria-label="Clear search"
-                            className="text-foreground/55 hover:text-foreground hover:bg-foreground/10 grid size-7 shrink-0 place-items-center rounded-full transition-colors"
+                            className="focus-ring text-foreground/55 hover:text-foreground hover:bg-foreground/10 grid size-10 shrink-0 place-items-center rounded-full transition-colors"
                         >
                             <Close className="size-4" />
                         </button>
@@ -125,7 +114,10 @@ export default function SearchModal({
                             onSearchAll={box.goToResults}
                         />
                         <div className="border-foreground/10 text-foreground/70 flex items-center justify-between gap-3 border-t px-4 py-2.5 text-xs">
-                            <span>
+                            <span
+                                role="status"
+                                aria-live="polite"
+                            >
                                 <span className="text-foreground font-medium">
                                     {box.resultCount}
                                 </span>{' '}

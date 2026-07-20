@@ -14,7 +14,7 @@ export default function TagLink({
             <Link
                 href={`/articles?tag=${encodeURIComponent(tag)}`}
                 className={cn(
-                    'border-foreground/15 text-foreground/70 hover:border-foreground/50 hover:text-foreground inline-block rounded-full border transition-colors',
+                    'focus-ring border-foreground/15 text-foreground/70 hover:border-foreground/50 hover:text-foreground inline-block rounded-full border transition-colors',
                     className
                 )}
             >

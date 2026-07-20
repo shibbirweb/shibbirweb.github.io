@@ -15,7 +15,10 @@ export const metadata = buildPageMetadata({
 
 export default function UsesPage() {
     return (
-        <main className="container mx-auto px-4 py-20 sm:py-28">
+        <main
+            id="main"
+            className="container mx-auto px-4 py-20 sm:py-28"
+        >
             <Breadcrumb />
             <SectionHeading as="h1">Uses</SectionHeading>
             <p className="text-foreground/70 mt-6 max-w-3xl text-lg leading-relaxed">

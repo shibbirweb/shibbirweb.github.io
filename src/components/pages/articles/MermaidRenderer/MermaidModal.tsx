@@ -21,11 +21,13 @@ interface MermaidModalProps {
  */
 export default function MermaidModal({ svg, source, onClose }: MermaidModalProps) {
     const closeRef = useRef<HTMLButtonElement>(null);
+    const dialogRef = useRef<HTMLDivElement>(null);
 
-    useModalChrome(onClose, closeRef);
+    useModalChrome(onClose, closeRef, dialogRef);
 
     return createPortal(
         <div
+            ref={dialogRef}
             role="dialog"
             aria-modal="true"
             aria-label="Diagram, full view"

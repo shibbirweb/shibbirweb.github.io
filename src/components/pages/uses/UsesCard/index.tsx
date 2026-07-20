@@ -6,7 +6,7 @@ import { cn } from '@/utils/cn';
 
 /**
  * A single /uses section rendered as a field-guide catalog entry: a monospace
- * index in the corner, an accent-tinted emoji badge and title, an optional intro,
+ * index in the corner, an accent-tinted icon badge and title, an optional intro,
  * then the section's content blocks. Each card is given its own accent hue derived
  * from its position with the golden angle, so consecutive cards land far apart on
  * the colour wheel and any section added to contents.ts gets a distinct accent
@@ -44,11 +44,11 @@ export default function UsesCard({
             </span>
 
             <div className="flex items-center gap-3.5 pr-8">
-                <span
-                    aria-hidden="true"
-                    className={styles.badge}
-                >
-                    {section.emoji}
+                <span className={styles.badge}>
+                    <section.Icon
+                        aria-hidden="true"
+                        className="text-foreground/80 size-5"
+                    />
                 </span>
                 <h2 className="text-lg font-bold sm:text-xl">
                     {section.title}

@@ -28,7 +28,7 @@ interface PaginationProps {
 }
 
 const itemBase =
-    'inline-flex h-9 min-w-9 items-center justify-center rounded-full border px-3 text-sm transition-colors';
+    'focus-ring inline-flex h-11 min-w-11 items-center justify-center rounded-full border px-3 text-sm transition-colors';
 const itemInactive =
     'border-foreground/15 text-foreground/70 hover:text-foreground hover:bg-foreground/5';
 

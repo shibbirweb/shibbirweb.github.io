@@ -17,7 +17,7 @@ export default function ProjectLink({
             target="_blank"
             rel="noopener noreferrer"
             aria-label={ariaLabel}
-            className="hover:text-foreground/60 inline-flex items-center gap-2 transition-colors"
+            className="focus-ring hover:text-foreground/60 inline-flex min-h-11 items-center gap-2 rounded-sm transition-colors"
         >
             <Icon
                 className="size-5"

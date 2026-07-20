@@ -1,3 +1,5 @@
+import type { ComponentType, SVGProps } from 'react';
+
 export type NowBlockData =
     | { kind: 'tags'; label?: string; tags: string[] }
     | { kind: 'list'; items: string[] }
@@ -5,7 +7,8 @@ export type NowBlockData =
 
 export type NowSectionData = {
     title: string;
-    emoji: string;
+    /** Section badge icon (an SVG icon component from `@/components/icons`). */
+    Icon: ComponentType<SVGProps<SVGSVGElement>>;
     intro?: string;
     outro?: string;
     /**

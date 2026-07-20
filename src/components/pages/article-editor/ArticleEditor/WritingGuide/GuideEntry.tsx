@@ -27,7 +27,7 @@ export default function GuideEntry({
             <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
                 <p className="font-mono text-sm font-semibold">{entry.label}</p>
             </div>
-            <p className="text-foreground/60 mt-1 text-xs leading-relaxed">
+            <p className="text-foreground/70 mt-1 text-xs leading-relaxed">
                 {entry.note}
             </p>
             <pre className="border-foreground/10 bg-foreground/[0.03] mt-3 overflow-x-auto rounded-lg border p-3 font-mono text-[12px] leading-5">

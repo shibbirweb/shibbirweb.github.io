@@ -43,7 +43,7 @@ export default function StudioMenu({ items, isActive }: StudioMenuProps) {
                 aria-haspopup="menu"
                 aria-expanded={open}
                 className={cn(
-                    'flex cursor-pointer items-center gap-1 rounded-full py-1.5 pr-2 pl-3 text-sm transition-colors',
+                    'focus-ring flex cursor-pointer items-center gap-1 rounded-full py-1.5 pr-2 pl-3 text-sm transition-colors',
                     open || groupActive
                         ? 'bg-foreground/10 text-foreground font-semibold'
                         : 'text-foreground/70 hover:text-foreground'
@@ -92,7 +92,7 @@ export default function StudioMenu({ items, isActive }: StudioMenuProps) {
                                     }
                                     onClick={close}
                                     className={cn(
-                                        'block rounded-xl px-4 py-2.5 text-sm transition-colors',
+                                        'focus-ring flex min-h-11 items-center rounded-xl px-4 text-sm transition-colors',
                                         isActive(item)
                                             ? 'bg-foreground/10 text-foreground font-semibold'
                                             : 'text-foreground/70 hover:text-foreground hover:bg-foreground/5'

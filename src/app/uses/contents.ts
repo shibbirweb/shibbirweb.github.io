@@ -1,9 +1,20 @@
 import type { UsesSectionData } from '@/components/pages/uses/types';
+import Cpu from '@/components/icons/cpu';
+import Monitor from '@/components/icons/monitor';
+import Keyboard from '@/components/icons/keyboard';
+import Mouse from '@/components/icons/mouse';
+import Speaker from '@/components/icons/speaker';
+import Server from '@/components/icons/server';
+import Cloud from '@/components/icons/cloud';
+import Code from '@/components/icons/code';
+import Bot from '@/components/icons/bot';
+import Box from '@/components/icons/box';
+import Wrench from '@/components/icons/wrench';
 
 export const usesSections: UsesSectionData[] = [
     {
         title: 'Development Workstation',
-        emoji: '💻',
+        Icon: Cpu,
         intro: 'My primary machine for software development, AI experimentation, and gaming.',
         wide: true,
         blocks: [
@@ -39,7 +50,7 @@ export const usesSections: UsesSectionData[] = [
     },
     {
         title: 'Displays',
-        emoji: '🖥️',
+        Icon: Monitor,
         blocks: [
             {
                 kind: 'specs',
@@ -58,7 +69,7 @@ export const usesSections: UsesSectionData[] = [
     },
     {
         title: 'Keyboards',
-        emoji: '⌨️',
+        Icon: Keyboard,
         blocks: [
             {
                 kind: 'gear',
@@ -79,7 +90,7 @@ export const usesSections: UsesSectionData[] = [
     },
     {
         title: 'Mouse',
-        emoji: '🖱️',
+        Icon: Mouse,
         blocks: [
             {
                 kind: 'gear',
@@ -95,7 +106,7 @@ export const usesSections: UsesSectionData[] = [
     },
     {
         title: 'Audio',
-        emoji: '🔊',
+        Icon: Speaker,
         intro: 'Perfect for music while coding, online meetings, and watching technical talks.',
         blocks: [
             {
@@ -106,7 +117,7 @@ export const usesSections: UsesSectionData[] = [
     },
     {
         title: 'Home Lab',
-        emoji: '🏠',
+        Icon: Server,
         intro: 'One of my favorite projects is my self-hosted home lab, where I experiment with infrastructure, networking, virtualization, automation, and self-hosting technologies.',
         wide: true,
         blocks: [
@@ -148,7 +159,7 @@ export const usesSections: UsesSectionData[] = [
     },
     {
         title: 'Cloud Infrastructure',
-        emoji: '☁️',
+        Icon: Cloud,
         intro: 'Alongside my home lab, I maintain a cloud server that hosts public-facing services and securely connects to my home network.',
         blocks: [
             {
@@ -174,7 +185,7 @@ export const usesSections: UsesSectionData[] = [
     },
     {
         title: 'Development',
-        emoji: '👨‍💻',
+        Icon: Code,
         wide: true,
         blocks: [
             {
@@ -217,7 +228,7 @@ export const usesSections: UsesSectionData[] = [
     },
     {
         title: 'AI',
-        emoji: '🤖',
+        Icon: Bot,
         intro: 'AI has become part of my daily development workflow.',
         blocks: [
             {
@@ -243,7 +254,7 @@ export const usesSections: UsesSectionData[] = [
     },
     {
         title: 'Infrastructure & DevOps',
-        emoji: '🐳',
+        Icon: Box,
         blocks: [
             {
                 kind: 'tags',
@@ -269,7 +280,7 @@ export const usesSections: UsesSectionData[] = [
     },
     {
         title: 'Developer Tools',
-        emoji: '🛠️',
+        Icon: Wrench,
         wide: true,
         blocks: [
             {

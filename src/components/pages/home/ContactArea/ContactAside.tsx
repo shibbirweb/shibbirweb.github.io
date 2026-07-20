@@ -18,7 +18,7 @@ export default function ContactAside() {
     return (
         <div className="flex flex-col gap-6 text-left">
             <div className="flex flex-col gap-3">
-                <span className="text-foreground/60 text-xs font-semibold tracking-[0.22em] uppercase">
+                <span className="text-foreground/70 text-xs font-semibold tracking-[0.22em] uppercase">
                     {asideEyebrow}
                 </span>
                 <SectionHeading

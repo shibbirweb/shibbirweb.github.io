@@ -57,7 +57,7 @@ export default function Breadcrumb({ currentName }: BreadcrumbProps) {
             aria-label="Breadcrumb"
             className={cn(
                 jetBrainsMono.variable,
-                'text-foreground/60 mb-6 font-mono text-sm sm:text-base'
+                'text-foreground/70 mb-6 font-mono text-sm sm:text-base'
             )}
         >
             <ol className="flex flex-wrap items-center gap-x-2 gap-y-1">

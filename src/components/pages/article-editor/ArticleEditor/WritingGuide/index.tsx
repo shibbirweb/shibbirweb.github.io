@@ -47,7 +47,7 @@ export default function WritingGuide({
                         <h2 className="mt-1 text-xl font-semibold">
                             Article anatomy
                         </h2>
-                        <p className="text-foreground/60 mt-1 text-sm">
+                        <p className="text-foreground/70 mt-1 text-sm">
                             The frontmatter fields and body features an article can
                             use. Insert a body snippet at your cursor, or load the
                             full example.

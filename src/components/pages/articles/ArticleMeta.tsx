@@ -21,7 +21,7 @@ export default function ArticleMeta({
     const wasUpdated = updated && updated !== date ? updated : null;
 
     return (
-        <div className="text-foreground/60 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm">
+        <div className="text-foreground/70 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm tabular-nums">
             {difficulty && <DifficultyBadge level={difficulty} />}
             {date && <time dateTime={date}>{formatDate(date)}</time>}
             <span aria-hidden>·</span>

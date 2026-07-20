@@ -1,4 +1,11 @@
 import type { NowSectionData } from '@/components/pages/now/types';
+import Briefcase from '@/components/icons/briefcase';
+import Bot from '@/components/icons/bot';
+import BookOpen from '@/components/icons/book-open';
+import Server from '@/components/icons/server';
+import Pencil from '@/components/icons/pencil';
+import Book from '@/components/icons/book';
+import Target from '@/components/icons/target';
 
 export const nowMeta = {
     title: "What I'm Doing Now",
@@ -10,7 +17,7 @@ export const nowMeta = {
 export const nowSections: NowSectionData[] = [
     {
         title: 'Work',
-        emoji: '👨‍💻',
+        Icon: Briefcase,
         intro: 'Currently working as a Senior Software Engineer, building scalable web applications and backend systems. My daily work focuses on:',
         blocks: [
             {
@@ -28,7 +35,7 @@ export const nowSections: NowSectionData[] = [
     },
     {
         title: 'Building',
-        emoji: '🤖',
+        Icon: Bot,
         intro: 'Exploring practical AI applications. Current interests:',
         wide: true,
         blocks: [
@@ -48,7 +55,7 @@ export const nowSections: NowSectionData[] = [
     },
     {
         title: 'Learning',
-        emoji: '📚',
+        Icon: BookOpen,
         intro: "I'm currently investing time in becoming a stronger backend engineer. Topics I'm studying:",
         blocks: [
             {
@@ -67,7 +74,7 @@ export const nowSections: NowSectionData[] = [
     },
     {
         title: 'Home Lab',
-        emoji: '🏠',
+        Icon: Server,
         intro: "I'm constantly experimenting with my self-hosted infrastructure. Current playground:",
         outro: 'I enjoy building infrastructure almost as much as building applications.',
         wide: true,
@@ -88,7 +95,7 @@ export const nowSections: NowSectionData[] = [
     },
     {
         title: 'Writing',
-        emoji: '📝',
+        Icon: Pencil,
         intro: 'Working on documenting what I learn. Topics I want to write about:',
         blocks: [
             {
@@ -108,7 +115,7 @@ export const nowSections: NowSectionData[] = [
     },
     {
         title: 'Reading',
-        emoji: '📖',
+        Icon: Book,
         intro: 'Books currently on my reading list:',
         blocks: [
             {
@@ -124,7 +131,7 @@ export const nowSections: NowSectionData[] = [
     },
     {
         title: 'Goals',
-        emoji: '🎯',
+        Icon: Target,
         intro: 'Current goals include:',
         blocks: [
             {

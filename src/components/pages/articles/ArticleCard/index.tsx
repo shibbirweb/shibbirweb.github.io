@@ -47,7 +47,7 @@ export default function ArticleCard({
                 >
                     <p
                         className={cn(
-                            'text-foreground/60',
+                            'text-foreground/70 tabular-nums',
                             compact ? 'text-xs' : 'text-sm'
                         )}
                     >

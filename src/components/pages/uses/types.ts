@@ -1,3 +1,5 @@
+import type { ComponentType, SVGProps } from 'react';
+
 export type UsesBlockData =
     | {
           kind: 'specs';
@@ -10,7 +12,8 @@ export type UsesBlockData =
 
 export type UsesSectionData = {
     title: string;
-    emoji: string;
+    /** Section badge icon (an SVG icon component from `@/components/icons`). */
+    Icon: ComponentType<SVGProps<SVGSVGElement>>;
     intro?: string;
     /**
      * Marks a content-heavy section as a feature card that spans two columns in

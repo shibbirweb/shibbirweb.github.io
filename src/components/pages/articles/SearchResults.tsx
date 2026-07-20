@@ -62,7 +62,7 @@ export default function SearchResults({
             </div>
 
             {query.length === 0 ? (
-                <p className="text-foreground/60 mt-12 text-base">
+                <p className="text-foreground/70 mt-12 text-base">
                     Open search to find an article by its title or a tag.
                 </p>
             ) : results.length > 0 ? (
@@ -75,7 +75,7 @@ export default function SearchResults({
                     />
                 </>
             ) : (
-                <p className="text-foreground/60 mt-12 text-base">
+                <p className="text-foreground/70 mt-12 text-base">
                     Nothing matched. Try a different title or tag.
                 </p>
             )}

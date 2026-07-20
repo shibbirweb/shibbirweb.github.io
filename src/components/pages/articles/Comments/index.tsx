@@ -31,7 +31,12 @@ export default function Comments() {
             aria-label="Comments"
             className={cn('border-foreground/10 mt-16 border-t pt-10')}
         >
-            <div ref={containerRef} />
+            {/* Reserve height so the lazy giscus iframe does not collapse then
+                expand (CLS) when it injects at the foot of the article. */}
+            <div
+                ref={containerRef}
+                className="min-h-60"
+            />
         </section>
     );
 }

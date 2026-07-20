@@ -25,7 +25,7 @@ export default function BreadcrumbItem({ item, isCurrent }: BreadcrumbItemProps)
             href={item.href}
             aria-label={item.name ?? item.label}
             className={cn(
-                'hover:text-foreground transition-colors motion-reduce:transition-none'
+                'focus-ring hover:text-foreground rounded-sm transition-colors motion-reduce:transition-none'
             )}
         >
             {item.label}

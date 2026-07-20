@@ -26,7 +26,7 @@ export default function ProjectItem({ entry }: { entry: ProjectEntry }) {
                         >
                             {' · '}
                         </span>
-                        <span className="text-foreground/60 font-normal italic">
+                        <span className="text-foreground/70 font-normal italic">
                             {entry.tagline}
                         </span>
                     </>
