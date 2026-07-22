@@ -18,6 +18,8 @@ import {
 import DeferredGoogleTagManager from '@/components/analytics/DeferredGoogleTagManager';
 import PageviewTracker from '@/components/analytics/PageviewTracker';
 import { JsonLdScript } from '@/components/seo/JsonLdScript';
+import { JsonLd } from '@/components/seo/JsonLd';
+import { websiteJsonLd, siteNavigationJsonLd } from '@/utils/siteJsonLd';
 import { ThemeScript } from '@/components/layout/ThemeToggle/ThemeScript';
 import HashScroll from '@/components/layout/HashScroll';
 import Navbar from '@/components/layout/Navbar';
@@ -130,7 +132,11 @@ export default function RootLayout({
                     content={facebookPageId}
                 ></meta>
                 {process.env.NODE_ENV === 'production' ? (
-                    <JsonLdScript />
+                    <>
+                        <JsonLdScript />
+                        <JsonLd data={websiteJsonLd} />
+                        <JsonLd data={siteNavigationJsonLd} />
+                    </>
                 ) : null}
             </head>
             {process.env.NODE_ENV === 'production' && (
