@@ -1,10 +1,12 @@
 'use client';
 
+import { useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import ArticleGrid from '@/components/pages/articles/ArticleGrid';
 import Pagination from '@/components/pages/articles/Pagination';
 import TagFilter from '@/components/pages/articles/TagFilter';
 import { buildPageHref } from '@/utils/pageHref';
+import { buildSeriesTotals } from '@/utils/seriesTotals';
 import type { ArticleSummary } from '@/lib/posts';
 
 interface ArticlesListProps {
@@ -23,6 +25,10 @@ export default function ArticlesList({
     const filtered = activeTag
         ? articles.filter((article) => article.tags.includes(activeTag))
         : articles;
+
+    // Count parts from the full set, not the filtered/paged slice, so "Part N of
+    // M" stays correct even when a tag filter hides some parts of a series.
+    const seriesTotals = useMemo(() => buildSeriesTotals(articles), [articles]);
 
     const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
     const requested = Number(searchParams.get('page'));
@@ -50,6 +56,7 @@ export default function ArticlesList({
                 <>
                     <ArticleGrid
                         articles={filtered.slice(start, start + perPage)}
+                        seriesTotals={seriesTotals}
                     />
                     <Pagination
                         current={current}

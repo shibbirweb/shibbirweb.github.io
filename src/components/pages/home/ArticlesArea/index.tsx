@@ -1,11 +1,15 @@
 import Link from 'next/link';
 import ArticleCard from '@/components/pages/articles/ArticleCard';
 import SectionHeading from '@/components/pages/common/SectionHeading';
-import { getLatestArticles } from '@/lib/posts';
+import { buildSeriesTotals } from '@/utils/seriesTotals';
+import { getAllArticles, getLatestArticles } from '@/lib/posts';
 
 export default function ArticlesArea() {
     const latest = getLatestArticles(3);
     if (latest.length === 0) return null;
+
+    // Totals come from the whole corpus so a teased part still reads "of M".
+    const seriesTotals = buildSeriesTotals(getAllArticles());
 
     return (
         <section
@@ -22,6 +26,11 @@ export default function ArticlesArea() {
                         <ArticleCard
                             key={article.slug}
                             article={article}
+                            seriesTotal={
+                                article.series
+                                    ? seriesTotals[article.series.name]
+                                    : undefined
+                            }
                         />
                     ))}
                 </ul>

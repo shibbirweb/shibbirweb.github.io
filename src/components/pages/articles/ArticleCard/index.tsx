@@ -1,7 +1,9 @@
 import Link from 'next/link';
 import ArticleCover from '@/components/pages/articles/ArticleCover';
 import styles from '@/components/pages/articles/ArticleCard/ArticleCard.module.css';
+import SeriesBadge from '@/components/pages/articles/ArticleCard/SeriesBadge';
 import TagLink from '@/components/pages/articles/TagLink';
+import { accentStyle } from '@/utils/accentStyle';
 import { cn } from '@/utils/cn';
 import { formatDate } from '@/utils/formatDate';
 import type { ArticleSummary } from '@/lib/posts';
@@ -10,15 +12,21 @@ import type { CSSProperties } from 'react';
 export default function ArticleCard({
     article,
     compact = false,
+    seriesTotal,
 }: {
     article: ArticleSummary;
     compact?: boolean;
+    /** Published part count for this article's series, for the "of M" label. */
+    seriesTotal?: number;
 }) {
     // Tint the card to match its cover thumbnail; the glow itself fades in on
-    // hover (see ArticleCard.module.css).
+    // hover (see ArticleCard.module.css). The same two colours are exposed as the
+    // accent custom properties so the series marker can pick up the card's
+    // identity, matching the rest of the article UI (accentStyle).
     const coverColors = {
         '--cover-from': article.coverColors[0],
         '--cover-to': article.coverColors[1],
+        ...accentStyle(article.coverColors),
     } as CSSProperties;
 
     return (
@@ -45,6 +53,14 @@ export default function ArticleCard({
                     href={`/articles/${article.slug}`}
                     className="flex grow flex-col after:absolute after:inset-0 after:content-['']"
                 >
+                    {article.series && (
+                        <SeriesBadge
+                            order={article.series.order}
+                            total={seriesTotal}
+                            name={article.series.name}
+                            compact={compact}
+                        />
+                    )}
                     <p
                         className={cn(
                             'text-foreground/70 tabular-nums',
