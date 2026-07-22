@@ -11,9 +11,12 @@ export const FIELD_CHARACTERS: readonly string[] = ['0', '1'];
 
 // Rows and columns are chosen once and scaled by the reveal's font size (in
 // container-query units), so the same character counts fill the wordmark at
-// every width. They over-cover slightly; the letterform mask crops the rest.
+// every width. The grid is anchored at the left and the letterform mask crops
+// the overflow, so the column count over-covers generously on purpose: the last
+// glyph (the "D") sits flush against the right edge, so a narrow monospace
+// fallback (whatever ui-monospace resolves to) must never leave it short.
 export const BINARY_FIELD_ROWS = 26;
-export const BINARY_FIELD_COLS = 220;
+export const BINARY_FIELD_COLS = 300;
 export const BINARY_FIELD_SEED = 0x5f3759df;
 
 // Small deterministic PRNG (mulberry32): same seed, same sequence, everywhere.
