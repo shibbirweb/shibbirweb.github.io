@@ -7,6 +7,7 @@ import ArticlesList from '@/components/pages/articles/ArticlesList';
 import Pagination from '@/components/pages/articles/Pagination';
 import TagFilter from '@/components/pages/articles/TagFilter';
 import { buildPageHref } from '@/utils/pageHref';
+import { buildSeriesTotals } from '@/utils/seriesTotals';
 import { ARTICLES_PER_PAGE, type ArticleSummary } from '@/lib/posts';
 
 export default function ArticlesIndex({
@@ -20,6 +21,7 @@ export default function ArticlesIndex({
         1,
         Math.ceil(articles.length / ARTICLES_PER_PAGE)
     );
+    const seriesTotals = buildSeriesTotals(articles);
 
     return (
         <main
@@ -48,6 +50,7 @@ export default function ArticlesIndex({
                         />
                         <ArticleGrid
                             articles={articles.slice(0, ARTICLES_PER_PAGE)}
+                            seriesTotals={seriesTotals}
                         />
                         <Pagination
                             current={1}
