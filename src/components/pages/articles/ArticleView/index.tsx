@@ -121,7 +121,10 @@ export default function ArticleView({
                             accentColors={article.coverColors}
                         />
 
-                        <ArticleContent html={article.html} />
+                        <ArticleContent
+                            html={article.html}
+                            accentColors={article.coverColors}
+                        />
 
                         <MermaidRenderer />
                         <CodeBlockCopy />

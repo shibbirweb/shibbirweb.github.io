@@ -82,20 +82,23 @@
     background-color: var(--shiki-light-bg);
 }
 
-/* Signature accent bloom on the code preview window, mirroring the /uses terminal
-   and the ContactForm panel: a soft emerald radial wash that is absent at rest and
-   blooms in only on hover, stepped up a touch in dark mode. Emerald ties the glow
-   to the terminal/code aesthetic. The figure background is opaque (the Shiki
-   palette), so the wash sits on a pointer-safe overlay above the surface, kept low
-   and top-anchored so code legibility is untouched. radial-gradient + color-mix
-   are the sanctioned raw-CSS exceptions; the rest is @apply. */
+/* Signature accent bloom on the code preview window: a soft radial wash that is
+   absent at rest and blooms in only on hover, stepped up a touch in dark mode.
+   Coloured from the article's cover accent (--accent-to, the same colour the
+   active "On this page" marker uses; set on the content root via accentStyle), so
+   the code block matches the page's per-article identity. Where no cover accent is
+   in scope (the editor preview), it falls back to emerald, tying the glow to the
+   terminal/code aesthetic. The figure background is opaque (the Shiki palette), so
+   the wash sits on a pointer-safe overlay above the surface, kept low and
+   top-anchored so code legibility is untouched. radial-gradient + color-mix are
+   the sanctioned raw-CSS exceptions; the rest is @apply. */
 .content :global(.code-block)::before {
     @apply pointer-events-none absolute inset-0 z-10 opacity-0 content-[''] motion-safe:transition-opacity motion-safe:duration-700 motion-safe:ease-out;
     background-image: radial-gradient(
         70% 70% at 50% 0%,
         color-mix(
             in oklab,
-            var(--color-emerald-500) var(--code-glow),
+            var(--accent-to, var(--color-emerald-500)) var(--code-glow),
             transparent
         ),
         transparent 72%
