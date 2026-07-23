@@ -13,9 +13,9 @@ export default function ProjectsArea() {
             className="py-20 sm:py-28"
         >
             <div className="container mx-auto px-4">
-                <div className="space-y-3 text-center">
+                <div className="flex w-full flex-col items-center space-y-3 text-center">
                     <SectionHeading>Open Source</SectionHeading>
-                    <p className="text-foreground/70 mx-auto max-w-xl">
+                    <p className="text-foreground/70 max-w-xl">
                         Tools, plugins, and experiments I build in the open.
                     </p>
                 </div>
