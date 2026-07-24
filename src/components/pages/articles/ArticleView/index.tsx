@@ -8,6 +8,7 @@ import ArticlePager from '@/components/pages/articles/ArticlePager';
 import ImageLightbox from '@/components/pages/articles/ImageLightbox';
 import ReadingProgress from '@/components/pages/articles/ReadingProgress';
 import SeriesNav from '@/components/pages/articles/SeriesNav';
+import ShareMenu from '@/components/pages/articles/ShareMenu';
 import TableOfContents from '@/components/pages/articles/TableOfContents';
 import MobileTableOfContents from '@/components/pages/articles/TableOfContents/MobileTableOfContents';
 import TagLink from '@/components/pages/articles/TagLink';
@@ -129,6 +130,17 @@ export default function ArticleView({
                         <MermaidRenderer />
                         <CodeBlockCopy />
                         <ImageLightbox />
+
+                        <div className="border-foreground/10 mt-12 flex flex-wrap items-center gap-x-4 gap-y-3 border-t pt-8">
+                            <span className="text-foreground/70 text-sm font-medium">
+                                Share this article
+                            </span>
+                            <ShareMenu
+                                title={article.title}
+                                description={article.description}
+                                accentColors={article.coverColors}
+                            />
+                        </div>
 
                         <ArticlePager
                             previous={previous}
