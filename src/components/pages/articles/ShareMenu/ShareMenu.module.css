@@ -1,0 +1,42 @@
+@reference "tailwindcss";
+
+/* The Share trigger carries the same signature accent bloom as the Shiki code
+   preview window: a soft radial wash that is absent at rest and blooms in only
+   on hover (and while its menu is open), stepped up a touch in dark mode. It is
+   coloured from the article's cover accent (--accent-to, the same colour the
+   code block and the active "On this page" marker use; set on the wrapper via
+   accentStyle), and falls back to emerald where no cover accent is in scope (the
+   editor preview), matching the code block. The button is `relative isolate` in
+   the component, so the negative z-index keeps the wash under the label.
+   radial-gradient + color-mix are the sanctioned raw-CSS exceptions; the rest is
+   @apply. */
+.trigger {
+    --glow-strength: 9%;
+}
+
+@media (prefers-color-scheme: dark) {
+    :global(html:not([data-theme])) .trigger {
+        --glow-strength: 16%;
+    }
+}
+:global(html[data-theme='dark']) .trigger {
+    --glow-strength: 16%;
+}
+
+.trigger::before {
+    @apply pointer-events-none absolute inset-0 z-[-1] rounded-[inherit] opacity-0 content-[''] motion-safe:transition-opacity motion-safe:duration-700 motion-safe:ease-out;
+    background-image: radial-gradient(
+        70% 70% at 50% 0%,
+        color-mix(
+            in oklab,
+            var(--accent-to, var(--color-emerald-500)) var(--glow-strength),
+            transparent
+        ),
+        transparent 72%
+    );
+}
+
+.trigger:hover::before,
+.trigger[aria-expanded='true']::before {
+    @apply opacity-100;
+}
