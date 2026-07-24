@@ -20,7 +20,7 @@ const ShinyTextAnimation: React.FC<ShinyTextAnimationProps> = ({
     return (
         <div
             className={cn(
-                'inline-block bg-linear-120 from-black/70 from-40% via-black via-50% to-black/70 to-60% bg-clip-text not-supports-[text-box-trim:trim-both]:!text-[var(--foreground)] motion-safe:text-black/30 dark:from-white/30 dark:via-white dark:to-white/30 motion-safe:dark:text-white/70',
+                'inline-block bg-linear-120 from-black/80 from-40% via-black via-50% to-black/80 to-60% bg-clip-text not-supports-[text-box-trim:trim-both]:!text-[var(--foreground)] motion-safe:text-transparent dark:from-white/80 dark:via-white dark:to-white/80',
                 disabled ? '' : styles.shine,
                 className
             )}
