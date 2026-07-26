@@ -1,7 +1,7 @@
 import { cn } from '@/utils/cn';
 import Spinner from '@/components/ui/Spinner';
 
-export type ButtonVariant = 'primary' | 'outline';
+export type ButtonVariant = 'primary' | 'outline' | 'text';
 
 const buttonBaseClassName =
     'focus-ring inline-flex min-h-11 cursor-pointer touch-manipulation items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition-colors';
@@ -11,6 +11,10 @@ const variantClassNames: Record<ButtonVariant, string> = {
         'bg-foreground text-background hover:bg-foreground/85 disabled:cursor-not-allowed disabled:opacity-60',
     outline:
         'border-foreground/15 border hover:bg-foreground/5 disabled:cursor-not-allowed disabled:opacity-60',
+    // Reads as an underlined text link while staying a real button. For quiet,
+    // in-flow actions (a "Show more" reveal) that should not compete with the
+    // filled and outlined actions around them.
+    text: 'text-foreground/70 decoration-foreground/30 hover:text-foreground hover:decoration-foreground underline underline-offset-4 disabled:cursor-not-allowed disabled:opacity-60',
 };
 
 /**
