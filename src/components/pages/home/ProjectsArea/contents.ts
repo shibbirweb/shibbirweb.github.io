@@ -20,6 +20,12 @@ export type Project = {
     links?: ProjectExternalLink[];
 };
 
+/**
+ * How many package projects stay on screen before the "Show more" toggle.
+ * Bump this when a project should be visible without a click.
+ */
+export const collapsedPackageProjectCount = 4;
+
 // Reusable tools published for others (VS Code Marketplace, npm). These carry
 // `links` to their distribution page alongside the source repo.
 export const packageProjects: Project[] = [
@@ -73,6 +79,28 @@ export const packageProjects: Project[] = [
         ],
     },
     {
+        name: 'Al-Quran Quote',
+        category: 'Rainmeter Skin',
+        description:
+            'A Rainmeter desktop skin for Windows that displays Al-Quran verses with their reference on a customizable panel, working offline from bundled verse data with optional live fetching from the quran.com API.',
+        tech: ['Rainmeter', 'Lua'],
+        repoURL: 'https://github.com/shibbirweb/rainmeter-skin-al-quran-quote',
+        links: [
+            {
+                url: 'https://www.deviantart.com/shibbirweb/art/1360611014',
+                label: 'DeviantArt',
+            },
+            {
+                url: 'https://github.com/shibbirweb/rainmeter-skin-al-quran-quote/releases',
+                label: 'Releases',
+            },
+            {
+                url: 'https://github.com/shibbirweb/rainmeter-skin-al-quran-quote/wiki',
+                label: 'Docs',
+            },
+        ],
+    },
+    {
         name: 'Shibbir CLI',
         category: 'CLI Tool',
         description:
@@ -85,14 +113,6 @@ export const packageProjects: Project[] = [
 // Public repos built for personal use, learning, or practice. Source only, no
 // distribution page.
 export const personalProjects: Project[] = [
-    {
-        name: 'Nginx Load Balancer',
-        category: 'DevOps / Infrastructure',
-        description:
-            'An nginx-based load-balancing setup exploring traffic distribution across multiple upstream application instances.',
-        tech: ['Nginx', 'JavaScript', 'Docker'],
-        repoURL: 'https://github.com/shibbirweb/p-nginx-load-balancer',
-    },
     {
         name: 'Cloudflare DNS & Server Manager',
         category: 'Control Panel',
@@ -108,5 +128,13 @@ export const personalProjects: Project[] = [
             'WordPress',
         ],
         repoURL: 'https://github.com/shibbirweb/dns-manager',
+    },
+    {
+        name: 'Nginx Load Balancer',
+        category: 'DevOps / Infrastructure',
+        description:
+            'An nginx-based load-balancing setup exploring traffic distribution across multiple upstream application instances.',
+        tech: ['Nginx', 'JavaScript', 'Docker'],
+        repoURL: 'https://github.com/shibbirweb/p-nginx-load-balancer',
     },
 ];
