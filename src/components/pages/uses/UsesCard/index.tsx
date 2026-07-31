@@ -1,4 +1,6 @@
 import type { CSSProperties } from 'react';
+import SpotlightBorder from '@/components/pages/common/SpotlightBorder';
+import { spotlightSurfaceProps } from '@/components/pages/common/spotlightSurface';
 import type { UsesSectionData } from '@/components/pages/uses/types';
 import UsesBlock from '@/components/pages/uses/UsesBlock';
 import styles from '@/components/pages/uses/UsesCard/UsesCard.module.css';
@@ -29,6 +31,7 @@ export default function UsesCard({
 
     return (
         <li
+            {...spotlightSurfaceProps}
             style={accent}
             className={cn(
                 styles.card,
@@ -69,6 +72,10 @@ export default function UsesCard({
                     />
                 ))}
             </div>
+
+            <SpotlightBorder
+                className={styles.spotlightBorder}
+            />
         </li>
     );
 }

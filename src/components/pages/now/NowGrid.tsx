@@ -1,3 +1,4 @@
+import SpotlightList from '@/components/pages/common/SpotlightList';
 import type { NowSectionData } from '@/components/pages/now/types';
 import NowCard from '@/components/pages/now/NowCard';
 
@@ -9,13 +10,9 @@ import NowCard from '@/components/pages/now/NowCard';
  * different amounts of content. grid-flow-row-dense backfills the slot a wide card
  * would otherwise leave open at a row's end.
  */
-export default function NowGrid({
-    sections,
-}: {
-    sections: NowSectionData[];
-}) {
+export default function NowGrid({ sections }: { sections: NowSectionData[] }) {
     return (
-        <ul className="grid grid-flow-row-dense gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <SpotlightList className="grid grid-flow-row-dense gap-6 md:grid-cols-2 lg:grid-cols-3">
             {sections.map((section, index) => (
                 <NowCard
                     key={section.title}
@@ -23,6 +20,6 @@ export default function NowGrid({
                     index={index}
                 />
             ))}
-        </ul>
+        </SpotlightList>
     );
 }

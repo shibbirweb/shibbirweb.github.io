@@ -71,15 +71,38 @@
 
 /* Code block wrapper: a header bar (language/extension badge + optional file
    path + copy button) sits above the Shiki body. */
+/* No overflow clip on the figure: the header bar and the Shiki body round their own
+   corners below instead. Clipping here would cut the padding box and so swallow the
+   lit border ring, which sits a pixel out to land on the figure's real border rather
+   than just inside it (where it would read as a second border). */
 .content :global(.code-block) {
     --code-glow: 9%;
+    /* Cursor spotlight knobs; the wash and the ring below both centre on
+       --pointer-x/y, which useSpotlightSurfaces writes to this figure from the
+       SpotlightGroup around the article body. The 50% defaults are what touch
+       devices, reduced-motion visitors, and the frames before the first pointermove
+       get: a centred bloom. */
+    --pointer-x: 50%;
+    --pointer-y: 50%;
+    --spotlight-radius: 20rem;
+    --spotlight-strength: 2.2%;
+    --spotlight-border-reach: 14rem;
+    --spotlight-border-strength: 50%;
     position: relative;
     isolation: isolate;
     margin: 1.6em 0;
     border: 1px solid color-mix(in srgb, var(--foreground) 12%, transparent);
     border-radius: 0.75rem;
-    overflow: hidden;
     background-color: var(--shiki-light-bg);
+}
+
+/* The two children take over the rounding the figure's overflow clip used to do.
+   Each radius is the figure's less the 1px border they sit inside. */
+.content :global(.code-block) :global(.code-block__bar) {
+    border-radius: calc(0.75rem - 1px) calc(0.75rem - 1px) 0 0;
+}
+.content :global(.code-block) pre:global(.shiki) {
+    border-radius: 0 0 calc(0.75rem - 1px) calc(0.75rem - 1px);
 }
 
 /* Signature accent bloom on the code preview window: a soft radial wash that is
@@ -94,17 +117,76 @@
    the sanctioned raw-CSS exceptions; the rest is @apply. */
 .content :global(.code-block)::before {
     @apply pointer-events-none absolute inset-0 z-10 opacity-0 content-[''] motion-safe:transition-opacity motion-safe:duration-700 motion-safe:ease-out;
-    background-image: radial-gradient(
-        70% 70% at 50% 0%,
-        color-mix(
-            in oklab,
-            var(--accent-to, var(--color-emerald-500)) var(--code-glow),
+    border-radius: calc(0.75rem - 1px);
+    /* Two washes on one layer: the cursor spotlight on top, then the static
+       top-anchored ambient bloom. They share this layer (rather than the spotlight
+       taking ::after) so ::after is free for the lit border, and so both fade in
+       together on hover as one light source. --pointer-x/y come from
+       useSpotlightSurfaces, written straight to the figure's inline style once per
+       animation frame (never through React); unregistered custom properties are not
+       interpolable, so nothing can smear them and the wash tracks the cursor
+       exactly. */
+    background-image:
+        radial-gradient(
+            circle var(--spotlight-radius) at var(--pointer-x) var(--pointer-y),
+            color-mix(
+                in oklab,
+                var(--accent-to, var(--color-emerald-500))
+                    var(--spotlight-strength),
+                transparent
+            ),
             transparent
         ),
-        transparent 72%
-    );
+        radial-gradient(
+            70% 70% at 50% 0%,
+            color-mix(
+                in oklab,
+                var(--accent-to, var(--color-emerald-500)) var(--code-glow),
+                transparent
+            ),
+            transparent 72%
+        );
 }
 .content :global(.code-block):hover::before {
+    @apply opacity-100;
+}
+
+/* The lit edge. This surface is injected HTML, so it cannot take the shared
+   SpotlightBorder span; ::after stands in, offset a pixel out so it lands on the
+   figure's real border rather than just inside it (where it would read as a second
+   border), which is what freeing the figure of its overflow clip above allows. A
+   radial mask crops it to a soft circle at the pointer, so only the stretch of edge
+   nearest the cursor brightens; the circle is deliberately tighter than
+   --spotlight-radius, keeping the lit run a localised arc instead of the whole
+   perimeter. Both mask prefixes ship, matching SignatureSpotlight. */
+.content :global(.code-block)::after {
+    @apply pointer-events-none absolute z-20 border opacity-0 content-[''] motion-safe:transition-opacity motion-safe:duration-500 motion-safe:ease-out;
+    /* -1px from the padding box is exactly the border box, whose outer curve is the
+       figure's own border-radius. */
+    inset: -1px;
+    border-radius: 0.75rem;
+    border-color: color-mix(
+        in oklab,
+        var(--accent-to, var(--color-emerald-500))
+            var(--spotlight-border-strength),
+        transparent
+    );
+    -webkit-mask-image: radial-gradient(
+        circle var(--spotlight-border-reach) at var(--pointer-x)
+            var(--pointer-y),
+        #000,
+        rgba(0, 0, 0, 0.35),
+        transparent
+    );
+    mask-image: radial-gradient(
+        circle var(--spotlight-border-reach) at var(--pointer-x)
+            var(--pointer-y),
+        #000,
+        rgba(0, 0, 0, 0.35),
+        transparent
+    );
+}
+.content :global(.code-block):hover::after {
     @apply opacity-100;
 }
 .content :global(.code-block__bar) {
@@ -154,6 +236,8 @@
     }
     :global(html:not([data-theme])) .content :global(.code-block) {
         --code-glow: 16%;
+        --spotlight-strength: 4%;
+        --spotlight-border-strength: 68%;
         background-color: var(--shiki-dark-bg);
     }
     :global(html:not([data-theme])) .content :global(.code-block__bar) {
@@ -169,6 +253,8 @@
 }
 :global(html[data-theme='dark']) .content :global(.code-block) {
     --code-glow: 16%;
+    --spotlight-strength: 4%;
+    --spotlight-border-strength: 68%;
     background-color: var(--shiki-dark-bg);
 }
 :global(html[data-theme='dark']) .content :global(.code-block__bar) {
@@ -225,7 +311,9 @@
     color: #6e7681;
     background-color: #0d1117;
 }
-:global(html[data-theme='dark']) .content :global(.gist-embed .blob-code-inner) {
+:global(html[data-theme='dark'])
+    .content
+    :global(.gist-embed .blob-code-inner) {
     color: #e6edf3;
 }
 :global(html[data-theme='dark']) .content :global(.gist-embed .gist-meta) {
@@ -387,7 +475,9 @@
     :global(html:not([data-theme])) .content :global(.markdown-alert-tip) {
         --alert-accent: #3fb950;
     }
-    :global(html:not([data-theme])) .content :global(.markdown-alert-important) {
+    :global(html:not([data-theme]))
+        .content
+        :global(.markdown-alert-important) {
         --alert-accent: #ab7df8;
     }
     :global(html:not([data-theme])) .content :global(.markdown-alert-warning) {
@@ -413,19 +503,85 @@
     --alert-accent: #f85149;
 }
 
-/* Tables. renderMarkdown wraps each <table> in a .table-scroll.not-prose div, so
-   wide tables scroll within the column and Typography does not restyle them; the
-   cell borders and header fill live here. */
-/* The scroll container is the rounded window (mirroring the code previewer): a
-   12% border, 0.75rem radius, and overflow that clips the corners. The table uses
-   separate borders so only internal grid lines are drawn (right + bottom per cell,
-   dropped on the last column/row), keeping a clean single edge against the rounded
-   container instead of doubling up. */
-.content :global(.table-scroll) {
+/* Tables. renderMarkdown wraps each <table> in a .table-window > .table-scroll pair
+   (both not-prose, so Typography does not restyle them); the cell borders and header
+   fill live here. The table uses separate borders so only internal grid lines are
+   drawn (right + bottom per cell, dropped on the last column/row), keeping a clean
+   single edge against the rounded container instead of doubling up. */
+
+/* The outer window is the rounded frame (mirroring the code previewer): a 12%
+   border and a 0.75rem radius. It draws no background and does not scroll, so the
+   cursor-lit border below can sit a pixel outside its padding box. */
+.content :global(.table-window) {
+    position: relative;
+    isolation: isolate;
     margin: 1.6em 0;
-    overflow-x: auto;
     border: 1px solid color-mix(in srgb, var(--foreground) 12%, transparent);
     border-radius: 0.75rem;
+    /* Cursor spotlight knobs. Deliberately border-only: no inner wash, so a table's
+       cells stay flat and legible and only its frame lights up. --pointer-x/y are
+       written to this element by useSpotlightSurfaces from the SpotlightGroup around
+       the article body; the 50% defaults are what touch devices, reduced-motion
+       visitors, and the frames before the first pointermove get. */
+    --pointer-x: 50%;
+    --pointer-y: 50%;
+    /* Viewport-space pointer, for the cell grid lines below. Defaults to the middle
+       of the screen for the no-JS / touch / reduced-motion case. */
+    --pointer-viewport-x: 50vw;
+    --pointer-viewport-y: 50vh;
+    --spotlight-border-reach: 14rem;
+    --spotlight-border-strength: 50%;
+}
+
+/* The inner scroller only scrolls. Its radius is the frame's less the 1px border it
+   sits inside, so its own overflow clip keeps the header fill and the grid lines
+   inside the rounded frame. */
+.content :global(.table-scroll) {
+    overflow-x: auto;
+    border-radius: calc(0.75rem - 1px);
+}
+
+/* The lit edge, matching the code previewer: injected HTML, so ::after stands in for
+   the shared SpotlightBorder span, offset a pixel out to land on the frame's real
+   border rather than just inside it (where it would read as a second border). A
+   radial mask crops it to a soft circle at the pointer, so only the stretch of edge
+   nearest the cursor brightens. Both mask prefixes ship, matching SignatureSpotlight. */
+.content :global(.table-window)::after {
+    @apply pointer-events-none absolute z-10 border opacity-0 content-[''] motion-safe:transition-opacity motion-safe:duration-500 motion-safe:ease-out;
+    inset: -1px;
+    border-radius: 0.75rem;
+    border-color: color-mix(
+        in oklab,
+        var(--accent-to, var(--color-emerald-500))
+            var(--spotlight-border-strength),
+        transparent
+    );
+    -webkit-mask-image: radial-gradient(
+        circle var(--spotlight-border-reach) at var(--pointer-x)
+            var(--pointer-y),
+        #000,
+        rgba(0, 0, 0, 0.35),
+        transparent
+    );
+    mask-image: radial-gradient(
+        circle var(--spotlight-border-reach) at var(--pointer-x)
+            var(--pointer-y),
+        #000,
+        rgba(0, 0, 0, 0.35),
+        transparent
+    );
+}
+.content :global(.table-window):hover::after {
+    @apply opacity-100;
+}
+
+@media (prefers-color-scheme: dark) {
+    :global(html:not([data-theme])) .content :global(.table-window) {
+        --spotlight-border-strength: 68%;
+    }
+}
+:global(html[data-theme='dark']) .content :global(.table-window) {
+    --spotlight-border-strength: 68%;
 }
 .content :global(.table-scroll) table {
     width: 100%;
@@ -436,8 +592,10 @@
 }
 .content :global(.table-scroll) th,
 .content :global(.table-scroll) td {
+    position: relative;
     padding: 0.5rem 0.85rem;
-    border-right: 1px solid color-mix(in srgb, var(--foreground) 15%, transparent);
+    border-right: 1px solid
+        color-mix(in srgb, var(--foreground) 15%, transparent);
     border-bottom: 1px solid
         color-mix(in srgb, var(--foreground) 15%, transparent);
     text-align: left;
@@ -448,6 +606,86 @@
 }
 .content :global(.table-scroll) tbody tr:last-child td {
     border-bottom: none;
+}
+
+/* The cursor also lights the internal grid lines, not just the outer frame, so the
+   whole table reads as one lit object. Each cell overlays its own right and bottom
+   border strips with the accent, and the accent's brightness comes from a radial
+   gradient drawn with `background-attachment: fixed`: that resolves the gradient
+   against the viewport instead of each cell's own box, so every cell samples the
+   same pointer-centred light and the lines fade coherently across the table rather
+   than each cell lighting up on its own. That is why the surface publishes
+   --pointer-viewport-x/y alongside the element-relative pair.
+
+   The mask is two static 1px strips (right edge, bottom edge), so only the grid
+   lines take colour and cell text and fills are untouched. The overlay reaches a
+   pixel past the padding box on those two sides, since that is where the cell's
+   borders actually sit; the edge-of-table rules below pull that overhang back in,
+   because a pixel hanging outside the last column or row would be overflow inside
+   the scroll container and would show a scrollbar on every table. */
+.content :global(.table-scroll) th::after,
+.content :global(.table-scroll) td::after {
+    @apply pointer-events-none absolute opacity-0 content-[''] motion-safe:transition-opacity motion-safe:duration-500 motion-safe:ease-out;
+    inset: 0 -1px -1px 0;
+    background-attachment: fixed;
+    background-image: radial-gradient(
+        circle var(--spotlight-border-reach) at var(--pointer-viewport-x)
+            var(--pointer-viewport-y),
+        color-mix(
+            in oklab,
+            var(--accent-to, var(--color-emerald-500))
+                var(--spotlight-border-strength),
+            transparent
+        ),
+        transparent
+    );
+    -webkit-mask-image:
+        linear-gradient(#000, #000), linear-gradient(#000, #000);
+    -webkit-mask-size:
+        1px 100%,
+        100% 1px;
+    -webkit-mask-position:
+        right top,
+        left bottom;
+    -webkit-mask-repeat: no-repeat;
+    mask-image: linear-gradient(#000, #000), linear-gradient(#000, #000);
+    mask-size:
+        1px 100%,
+        100% 1px;
+    mask-position:
+        right top,
+        left bottom;
+    mask-repeat: no-repeat;
+}
+.content :global(.table-window):hover th::after,
+.content :global(.table-window):hover td::after {
+    @apply opacity-100;
+}
+
+/* Mirror the base grid: no lit strip where the table draws no line, and no overhang
+   past the table's own edges, so the scroll container sees no extra pixel. */
+.content :global(.table-scroll) th:last-child::after,
+.content :global(.table-scroll) td:last-child::after {
+    inset: 0 0 -1px 0;
+    -webkit-mask-image: linear-gradient(#000, #000);
+    -webkit-mask-size: 100% 1px;
+    -webkit-mask-position: left bottom;
+    mask-image: linear-gradient(#000, #000);
+    mask-size: 100% 1px;
+    mask-position: left bottom;
+}
+.content :global(.table-scroll) tbody tr:last-child td::after {
+    inset: 0 -1px 0 0;
+    -webkit-mask-image: linear-gradient(#000, #000);
+    -webkit-mask-size: 1px 100%;
+    -webkit-mask-position: right top;
+    mask-image: linear-gradient(#000, #000);
+    mask-size: 1px 100%;
+    mask-position: right top;
+}
+/* The last row's last cell has neither line, so it gets no overlay at all. */
+.content :global(.table-scroll) tbody tr:last-child td:last-child::after {
+    content: none;
 }
 .content :global(.table-scroll) thead th {
     font-weight: 600;

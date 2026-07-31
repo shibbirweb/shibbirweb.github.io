@@ -14,15 +14,31 @@
    variable are raw CSS. */
 .card {
     --glow-strength: 5%;
+
+    /* Cursor spotlight knobs; see the block above .card::after. --pointer-x/y are
+       overwritten per frame by useSpotlightSurfaces, and these 50% defaults are what
+       touch devices, reduced-motion visitors, and the frames before the first
+       pointermove get: a centred bloom, matching how the corner aurora already
+       behaves on tap. */
+    --pointer-x: 50%;
+    --pointer-y: 50%;
+    --spotlight-radius: 21rem;
+    --spotlight-strength: 1%;
+    --spotlight-border-reach: 15rem;
+    --spotlight-border-strength: 50%;
 }
 
 @media (prefers-color-scheme: dark) {
     :global(html:not([data-theme])) .card {
         --glow-strength: 6%;
+        --spotlight-strength: 2.2%;
+        --spotlight-border-strength: 68%;
     }
 }
 :global(html[data-theme='dark']) .card {
     --glow-strength: 6%;
+    --spotlight-strength: 2.2%;
+    --spotlight-border-strength: 68%;
 }
 
 .card::before {
@@ -58,5 +74,81 @@
 }
 
 .card:hover::before {
+    @apply opacity-100;
+}
+
+/* Cursor spotlight, part one: a soft highlight that tracks the pointer across the
+   card surface. It rides ::after, which sits in the same z-[-1] bucket as the
+   aurora on ::before but later in tree order, so the moving highlight reads on top
+   of the static corner wash while the card's text stays above both. --pointer-x/y
+   come from useSpotlightSurfaces, written straight to the card's inline style once per
+   animation frame (never through React); unregistered custom properties are not
+   interpolable, so the card's transition-all cannot smear them and the glow
+   tracks the cursor exactly.
+
+   The tint reuses the card's own golden-angle hues, --glow-b into --glow-c, so the
+   highlight belongs to the same palette as the aurora without repeating the
+   --glow-a that anchors its corner. It is pitched wide and very faint on purpose:
+   a radius large enough to wash most of the card, at a low strength, so the
+   surface reads as gently lit from wherever the cursor is rather than as a bright
+   disc chasing it. Steps up in dark mode like every other glow here.
+   It also fades a little slower than the aurora's 300ms, so the corner wash lands
+   first and the highlight settles after rather than the two arriving as one
+   smudge. As with ::before, only the gradient stack and its strength variables
+   are raw CSS. */
+.card::after {
+    @apply pointer-events-none absolute inset-0 z-[-1] rounded-[inherit] opacity-0 content-[''] motion-safe:transition-opacity motion-safe:duration-500 motion-safe:ease-out;
+    background-image: radial-gradient(
+        circle var(--spotlight-radius) at var(--pointer-x) var(--pointer-y),
+        color-mix(
+            in oklab,
+            var(--glow-b, var(--foreground)) var(--spotlight-strength),
+            transparent
+        ),
+        color-mix(
+            in oklab,
+            var(--glow-c, var(--foreground))
+                calc(var(--spotlight-strength) * 0.4),
+            transparent
+        ),
+        transparent
+    );
+}
+
+.card:hover::after {
+    @apply opacity-100;
+}
+
+/* Cursor spotlight, part two: the lit edge, on the SpotlightBorder span (both
+   pseudo-elements are already spoken for). The span paints nothing but its
+   hairline border, which a radial mask crops to a soft circle at the pointer, so
+   only the stretch of edge nearest the cursor brightens. The mask circle is
+   deliberately tighter than --spotlight-radius, keeping the lit run a localised
+   arc instead of the whole perimeter. Both mask prefixes ship, matching
+   SignatureSpotlight. */
+.spotlightBorder {
+    @apply opacity-0 motion-safe:transition-opacity motion-safe:duration-500 motion-safe:ease-out;
+    border-color: color-mix(
+        in oklab,
+        var(--glow-a, var(--foreground)) var(--spotlight-border-strength),
+        transparent
+    );
+    -webkit-mask-image: radial-gradient(
+        circle var(--spotlight-border-reach) at var(--pointer-x)
+            var(--pointer-y),
+        #000,
+        rgba(0, 0, 0, 0.35),
+        transparent
+    );
+    mask-image: radial-gradient(
+        circle var(--spotlight-border-reach) at var(--pointer-x)
+            var(--pointer-y),
+        #000,
+        rgba(0, 0, 0, 0.35),
+        transparent
+    );
+}
+
+.card:hover .spotlightBorder {
     @apply opacity-100;
 }

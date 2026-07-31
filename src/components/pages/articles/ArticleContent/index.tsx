@@ -1,4 +1,5 @@
 import { jetBrainsMono } from '@/config/monoFont';
+import SpotlightGroup from '@/components/pages/common/SpotlightGroup';
 import { accentStyle } from '@/utils/accentStyle';
 import { cn } from '@/utils/cn';
 import styles from '@/components/pages/articles/ArticleContent/ArticleContent.module.css';
@@ -21,17 +22,23 @@ export default function ArticleContent({
     accentColors?: readonly [string, string];
 }) {
     return (
-        <div
-            style={accentColors ? accentStyle(accentColors) : undefined}
-            className={cn(
-                jetBrainsMono.variable,
-                // Cap the reading measure at ~75ch so body lines stay in the
-                // 65-75ch readability range on wide (xl/2xl) screens instead of
-                // stretching to the full content column.
-                'prose prose-lg dark:prose-invert mt-10 max-w-[75ch]',
-                styles.content
-            )}
-            dangerouslySetInnerHTML={{ __html: html }}
-        />
+        // The group owns the one delegated pointer listener that lights each code
+        // block's cursor spotlight (the blocks carry the surface attribute from
+        // markdown.ts, since they are injected HTML rather than JSX). It is
+        // `contents`, so it generates no box and the prose layout is unchanged.
+        <SpotlightGroup className="contents">
+            <div
+                style={accentColors ? accentStyle(accentColors) : undefined}
+                className={cn(
+                    jetBrainsMono.variable,
+                    // Cap the reading measure at ~75ch so body lines stay in the
+                    // 65-75ch readability range on wide (xl/2xl) screens instead of
+                    // stretching to the full content column.
+                    'prose prose-lg dark:prose-invert mt-10 max-w-[75ch]',
+                    styles.content
+                )}
+                dangerouslySetInnerHTML={{ __html: html }}
+            />
+        </SpotlightGroup>
     );
 }

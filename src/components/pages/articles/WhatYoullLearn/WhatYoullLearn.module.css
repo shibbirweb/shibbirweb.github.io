@@ -1,0 +1,89 @@
+@reference "tailwindcss";
+
+/* Cursor spotlight for the takeaways card, matching the project cards and the other
+   card surfaces on the site. Two layers, both centred on --pointer-x/y, which
+   useSpotlightSurfaces writes to the card once per animation frame from the
+   enclosing SpotlightGroup (never through React); unregistered custom properties are
+   not interpolable, so nothing can smear them and the glow tracks the cursor
+   exactly. The 50% defaults are what touch devices, reduced-motion visitors, and the
+   frames before the first pointermove get: a centred bloom.
+
+   Tinted with the article's cover accent (--accent-from into --accent-to, set inline
+   by accentStyle), so the wash, the leading edge bar, and the check marks all read as
+   one accent. Kept faint, and stepped up in dark mode like every other glow here. */
+.card {
+    --pointer-x: 50%;
+    --pointer-y: 50%;
+    --spotlight-radius: 20rem;
+    --spotlight-strength: 2%;
+    --spotlight-border-reach: 14rem;
+    --spotlight-border-strength: 50%;
+}
+
+@media (prefers-color-scheme: dark) {
+    :global(html:not([data-theme])) .card {
+        --spotlight-strength: 3.5%;
+        --spotlight-border-strength: 68%;
+    }
+}
+:global(html[data-theme='dark']) .card {
+    --spotlight-strength: 3.5%;
+    --spotlight-border-strength: 68%;
+}
+
+/* The cursor wash, behind the card's content (the card is `relative isolate`, so the
+   negative z-index keeps it under the heading and the list). */
+.card::after {
+    @apply pointer-events-none absolute inset-0 z-[-1] rounded-[inherit] opacity-0 content-[''] motion-safe:transition-opacity motion-safe:duration-500 motion-safe:ease-out;
+    background-image: radial-gradient(
+        circle var(--spotlight-radius) at var(--pointer-x) var(--pointer-y),
+        color-mix(
+            in oklab,
+            var(--accent-from, var(--foreground)) var(--spotlight-strength),
+            transparent
+        ),
+        color-mix(
+            in oklab,
+            var(--accent-to, var(--foreground))
+                calc(var(--spotlight-strength) * 0.4),
+            transparent
+        ),
+        transparent
+    );
+}
+
+.card:hover::after {
+    @apply opacity-100;
+}
+
+/* The lit edge, on the shared SpotlightBorder span. It paints nothing but its
+   hairline border, which a radial mask crops to a soft circle at the pointer, so only
+   the stretch of edge nearest the cursor brightens. The mask circle is deliberately
+   tighter than --spotlight-radius, keeping the lit run a localised arc instead of the
+   whole perimeter. Both mask prefixes ship, matching SignatureSpotlight. */
+.spotlightBorder {
+    @apply opacity-0 motion-safe:transition-opacity motion-safe:duration-500 motion-safe:ease-out;
+    border-color: color-mix(
+        in oklab,
+        var(--accent-from, var(--foreground)) var(--spotlight-border-strength),
+        transparent
+    );
+    -webkit-mask-image: radial-gradient(
+        circle var(--spotlight-border-reach) at var(--pointer-x)
+            var(--pointer-y),
+        #000,
+        rgba(0, 0, 0, 0.35),
+        transparent
+    );
+    mask-image: radial-gradient(
+        circle var(--spotlight-border-reach) at var(--pointer-x)
+            var(--pointer-y),
+        #000,
+        rgba(0, 0, 0, 0.35),
+        transparent
+    );
+}
+
+.card:hover .spotlightBorder {
+    @apply opacity-100;
+}

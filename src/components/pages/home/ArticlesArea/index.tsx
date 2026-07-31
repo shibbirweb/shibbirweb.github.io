@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import ArticleCard from '@/components/pages/articles/ArticleCard';
 import SectionHeading from '@/components/pages/common/SectionHeading';
+import SpotlightList from '@/components/pages/common/SpotlightList';
 import { buildSeriesTotals } from '@/utils/seriesTotals';
 import { getAllArticles, getLatestArticles } from '@/lib/posts';
 
@@ -21,7 +22,7 @@ export default function ArticlesArea() {
                     Latest Articles
                 </SectionHeading>
 
-                <ul className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <SpotlightList className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {latest.map((article) => (
                         <ArticleCard
                             key={article.slug}
@@ -33,7 +34,7 @@ export default function ArticlesArea() {
                             }
                         />
                     ))}
-                </ul>
+                </SpotlightList>
 
                 <div className="mt-10">
                     <Link

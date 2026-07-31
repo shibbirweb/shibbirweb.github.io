@@ -1,4 +1,5 @@
 import SectionHeading from '@/components/pages/common/SectionHeading';
+import SpotlightList from '@/components/pages/common/SpotlightList';
 import SkillCard from '@/components/pages/home/SkillsArea/SkillCard';
 import { skills } from '@/components/pages/home/SkillsArea/contents';
 
@@ -13,14 +14,14 @@ export default function SkillsArea() {
                     Skills &amp; Tech
                 </SectionHeading>
 
-                <ul className="mt-12 flex flex-wrap justify-center gap-3 sm:gap-4">
+                <SpotlightList className="mt-12 flex flex-wrap justify-center gap-3 sm:gap-4">
                     {skills.map((skill) => (
                         <SkillCard
                             key={skill.name}
                             skill={skill}
                         />
                     ))}
-                </ul>
+                </SpotlightList>
             </div>
         </section>
     );

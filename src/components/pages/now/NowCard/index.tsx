@@ -1,4 +1,6 @@
 import type { CSSProperties } from 'react';
+import SpotlightBorder from '@/components/pages/common/SpotlightBorder';
+import { spotlightSurfaceProps } from '@/components/pages/common/spotlightSurface';
 import type { NowSectionData } from '@/components/pages/now/types';
 import NowBlock from '@/components/pages/now/NowBlock';
 import styles from '@/components/pages/now/NowCard/NowCard.module.css';
@@ -30,6 +32,7 @@ export default function NowCard({
 
     return (
         <li
+            {...spotlightSurfaceProps}
             style={accent}
             className={cn(
                 styles.card,
@@ -76,6 +79,10 @@ export default function NowCard({
                     {section.outro}
                 </p>
             )}
+
+            <SpotlightBorder
+                className={styles.spotlightBorder}
+            />
         </li>
     );
 }

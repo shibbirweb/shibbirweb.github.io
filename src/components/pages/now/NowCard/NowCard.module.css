@@ -11,15 +11,31 @@
    badge tints are raw CSS. */
 .card {
     --glow-strength: 9%;
+
+    /* Cursor spotlight knobs; see the block above .card::after. --pointer-x/y are
+       overwritten per frame by useSpotlightSurfaces on the enclosing list, and
+       these 50% defaults are what touch devices, reduced-motion visitors, and the
+       frames before the first pointermove get: a centred bloom, matching how the
+       ambient wash already behaves on tap. */
+    --pointer-x: 50%;
+    --pointer-y: 50%;
+    --spotlight-radius: 20rem;
+    --spotlight-strength: 3%;
+    --spotlight-border-reach: 14rem;
+    --spotlight-border-strength: 50%;
 }
 
 @media (prefers-color-scheme: dark) {
     :global(html:not([data-theme])) .card {
         --glow-strength: 16%;
+        --spotlight-strength: 5.5%;
+        --spotlight-border-strength: 68%;
     }
 }
 :global(html[data-theme='dark']) .card {
     --glow-strength: 16%;
+    --spotlight-strength: 5.5%;
+    --spotlight-border-strength: 68%;
 }
 
 .card::before {
@@ -36,6 +52,70 @@
 }
 
 .card:hover::before {
+    @apply opacity-100;
+}
+
+/* Cursor spotlight, part one: a soft highlight that tracks the pointer across the
+   card, matching the project cards and the /uses sibling. It rides ::after, which
+   sits in the same z-[-1] bucket as the ambient wash on ::before but later in tree
+   order, so the moving highlight reads on top of that wash while the card's content
+   stays above both. --pointer-x/y come from useSpotlightSurfaces, written straight
+   to the card's inline style once per animation frame (never through React);
+   unregistered custom properties are not interpolable, so nothing can smear them
+   and the glow tracks the cursor exactly.
+
+   Tinted with the card's own golden-angle --card-accent so it stays the same light
+   source as the ambient wash and the badge, kept faint, and stepped up in dark mode
+   like every other glow here. Only the gradient and its strength variable are raw
+   CSS. */
+.card::after {
+    @apply pointer-events-none absolute inset-0 z-[-1] rounded-[inherit] opacity-0 content-[''] motion-safe:transition-opacity motion-safe:duration-500 motion-safe:ease-out;
+    background-image: radial-gradient(
+        circle var(--spotlight-radius) at var(--pointer-x) var(--pointer-y),
+        color-mix(
+            in oklab,
+            var(--card-accent, var(--foreground)) var(--spotlight-strength),
+            transparent
+        ),
+        transparent
+    );
+}
+
+.card:hover::after {
+    @apply opacity-100;
+}
+
+/* Cursor spotlight, part two: the lit edge, on the shared SpotlightBorder span
+   (both pseudo-elements are already spoken for). The span paints nothing but its
+   hairline border, which a radial mask crops to a soft circle at the pointer, so
+   only the stretch of edge nearest the cursor brightens. The mask circle is
+   deliberately tighter than --spotlight-radius, keeping the lit run a localised arc
+   instead of the whole perimeter. Both mask prefixes ship, matching
+   SignatureSpotlight. */
+.spotlightBorder {
+    @apply opacity-0 motion-safe:transition-opacity motion-safe:duration-500 motion-safe:ease-out;
+    border-color: color-mix(
+        in oklab,
+        var(--card-accent, var(--foreground)) var(--spotlight-border-strength),
+        transparent
+    );
+    -webkit-mask-image: radial-gradient(
+        circle var(--spotlight-border-reach) at var(--pointer-x)
+            var(--pointer-y),
+        #000,
+        rgba(0, 0, 0, 0.35),
+        transparent
+    );
+    mask-image: radial-gradient(
+        circle var(--spotlight-border-reach) at var(--pointer-x)
+            var(--pointer-y),
+        #000,
+        rgba(0, 0, 0, 0.35),
+        transparent
+    );
+}
+
+.card:hover .spotlightBorder {
     @apply opacity-100;
 }
 

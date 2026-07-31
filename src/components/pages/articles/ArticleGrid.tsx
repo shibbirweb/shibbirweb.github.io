@@ -1,3 +1,4 @@
+import SpotlightList from '@/components/pages/common/SpotlightList';
 import ArticleCard from '@/components/pages/articles/ArticleCard';
 import { cn } from '@/utils/cn';
 import type { SeriesTotals } from '@/utils/seriesTotals';
@@ -16,7 +17,7 @@ export default function ArticleGrid({
     seriesTotals?: SeriesTotals;
 }) {
     return (
-        <ul
+        <SpotlightList
             className={cn(
                 'mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3',
                 className
@@ -34,6 +35,6 @@ export default function ArticleGrid({
                     }
                 />
             ))}
-        </ul>
+        </SpotlightList>
     );
 }

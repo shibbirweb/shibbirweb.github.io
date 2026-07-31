@@ -1,14 +1,40 @@
 @reference "tailwindcss";
 
+/* No overflow-hidden here on purpose: the two gradient layers below round their own
+   corners with rounded-[inherit] instead. Clipping to the padding box would swallow
+   the lit border ring, which has to sit one pixel out to land on the card's real
+   border rather than just inside it (which read as a second border). */
 .card {
-    @apply relative overflow-hidden;
+    @apply relative;
+
+    /* Cursor spotlight knobs; see the block above .spotlight. --pointer-x/y are
+       overwritten per frame by useSpotlightSurfaces on the enclosing group, and
+       these 50% defaults are what touch devices, reduced-motion visitors, and the
+       frames before the first pointermove get: a centred bloom. */
+    --pointer-x: 50%;
+    --pointer-y: 50%;
+    --spotlight-radius: 16rem;
+    --spotlight-strength: 2.5%;
+    --spotlight-border-reach: 11rem;
+    --spotlight-border-strength: 50%;
+}
+
+@media (prefers-color-scheme: dark) {
+    :global(html:not([data-theme])) .card {
+        --spotlight-strength: 4.5%;
+        --spotlight-border-strength: 68%;
+    }
+}
+:global(html[data-theme='dark']) .card {
+    --spotlight-strength: 4.5%;
+    --spotlight-border-strength: 68%;
 }
 
 /* A soft accent gradient that grows in from the corner where the connector line
    attaches (--facet-origin), tinted with that line's colour (--facet-accent).
    Hidden until hover; held a touch stronger in dark mode. */
 .glow {
-    @apply pointer-events-none absolute inset-0 opacity-0;
+    @apply pointer-events-none absolute inset-0 rounded-[inherit] opacity-0;
     transform-origin: var(--facet-origin);
     background: radial-gradient(
         120% 120% at var(--facet-origin),
@@ -33,6 +59,66 @@
 /* For the bento tiles (no hover on touch), keep a faint always-on tint. */
 .persistent .glow {
     @apply opacity-60;
+}
+
+/* Cursor spotlight, part one: a soft highlight that tracks the pointer across the
+   card, layered over the corner glow. Unlike the project cards and skill tiles this
+   rides a real span rather than a ::before/::after, because the card carries an
+   opaque bg-background (a negative-z layer would hide behind it) and its content
+   sits in a positioned wrapper that a ::after would paint over. Placed before that
+   wrapper in FacetCard, so it lands above the background and below the text.
+
+   Tinted with the card's own --facet-accent so it stays the same light source as
+   the corner glow, kept faint, and stepped up in dark mode like the glow itself.
+   Only the gradient and its strength variable are raw CSS. */
+.spotlight {
+    @apply pointer-events-none absolute inset-0 rounded-[inherit] opacity-0 motion-safe:transition-opacity motion-safe:duration-500 motion-safe:ease-out;
+    background-image: radial-gradient(
+        circle var(--spotlight-radius) at var(--pointer-x) var(--pointer-y),
+        color-mix(
+            in oklab,
+            var(--facet-accent) var(--spotlight-strength),
+            transparent
+        ),
+        transparent
+    );
+}
+
+.card:hover .spotlight {
+    @apply opacity-100;
+}
+
+/* Cursor spotlight, part two: the lit edge, on the shared SpotlightBorder span. It
+   paints nothing but its hairline border, which a radial mask crops to a soft
+   circle at the pointer, so only the stretch of edge nearest the cursor brightens.
+   The mask circle is deliberately tighter than --spotlight-radius, keeping the lit
+   run a localised arc instead of the whole perimeter. Both mask prefixes ship,
+   matching SignatureSpotlight. */
+.spotlightBorder {
+    @apply opacity-0 motion-safe:transition-opacity motion-safe:duration-500 motion-safe:ease-out;
+    border-color: color-mix(
+        in oklab,
+        var(--facet-accent) var(--spotlight-border-strength),
+        transparent
+    );
+    -webkit-mask-image: radial-gradient(
+        circle var(--spotlight-border-reach) at var(--pointer-x)
+            var(--pointer-y),
+        #000,
+        rgba(0, 0, 0, 0.35),
+        transparent
+    );
+    mask-image: radial-gradient(
+        circle var(--spotlight-border-reach) at var(--pointer-x)
+            var(--pointer-y),
+        #000,
+        rgba(0, 0, 0, 0.35),
+        transparent
+    );
+}
+
+.card:hover .spotlightBorder {
+    @apply opacity-100;
 }
 
 @media (prefers-color-scheme: dark) {
