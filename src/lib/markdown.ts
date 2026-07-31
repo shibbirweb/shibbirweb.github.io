@@ -9,6 +9,7 @@ import markedFootnote from 'marked-footnote';
 import markedAlert from 'marked-alert';
 import { markedEmoji } from 'marked-emoji';
 import { nameToEmoji } from 'gemoji';
+import { spotlightSurfaceAttribute } from '@/components/pages/common/spotlightSurface';
 
 /** A heading in the article body, used to build the table of contents. */
 export interface TocItem {
@@ -249,7 +250,10 @@ function renderCodeBlock(
         ? `<span class="code-block__path">${escapeHtml(filePath)}</span>`
         : '';
     return (
-        `<figure class="code-block not-prose">` +
+        // The surface attribute marks the block for the cursor spotlight, which the
+        // SpotlightGroup around the article body delegates to. Emitted here rather
+        // than applied by a client hook so it ships in the static HTML.
+        `<figure class="code-block not-prose" ${spotlightSurfaceAttribute}="true">` +
         `<figcaption class="code-block__bar">` +
         `<span class="code-block__meta">` +
         `<span class="code-block__lang">${escapeHtml(codeLabel(lang, filePath))}</span>` +
@@ -418,11 +422,19 @@ function addHeadingIdsAndExtractToc(html: string): {
  * Matches the opening and closing tag as a pair, and only the bare `<table>` that
  * `marked` emits, so tables inside embedded HTML (e.g. a gist's `<table class=...>`)
  * are left untouched and their `</table>` never gets an orphaned closing div.
+ *
+ * Two nested wrappers, not one: the outer .table-window draws the rounded frame and
+ * carries the cursor-lit border (hence the surface attribute, which the
+ * SpotlightGroup around the article body delegates to), while the inner .table-scroll
+ * does the scrolling. They have to be separate elements because a scroll container
+ * clips to its padding box, which would swallow a ring sitting on the frame's border.
  */
 function wrapTables(html: string): string {
     return html.replace(
         /<table>([\s\S]*?)<\/table>/g,
-        '<div class="table-scroll not-prose"><table>$1</table></div>'
+        `<div class="table-window not-prose" ${spotlightSurfaceAttribute}="true">` +
+            '<div class="table-scroll"><table>$1</table></div>' +
+            '</div>'
     );
 }
 

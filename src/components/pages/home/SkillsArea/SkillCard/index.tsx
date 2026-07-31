@@ -1,4 +1,6 @@
 import { cn } from '@/utils/cn';
+import SpotlightBorder from '@/components/pages/common/SpotlightBorder';
+import { spotlightSurfaceProps } from '@/components/pages/common/spotlightSurface';
 import styles from '@/components/pages/home/SkillsArea/SkillCard/SkillCard.module.css';
 import type { Skill } from '@/components/pages/home/SkillsArea/contents';
 import type { CSSProperties } from 'react';
@@ -8,15 +10,18 @@ import type { CSSProperties } from 'react';
  * icon is muted at rest so the grid reads as one cohesive set, then blooms to
  * its brand colour on hover (or to the theme foreground for monochrome brand
  * logos), while a very soft brand-tinted glow fades in behind it (the `.tile`
- * ::before in SkillCard.module.css). Fixed width so the tiles stay compact and
- * the flex-wrap row (and the orphan last row) can centre. Rendered as an <li>
- * inside the <ul>.
+ * ::before in SkillCard.module.css). On top of that ambient bloom the tile is lit
+ * by the cursor, matching the project cards: a faint wash on ::after plus a lit
+ * edge on SpotlightBorder, both centred on the pointer. Fixed width so the tiles
+ * stay compact and the flex-wrap row (and the orphan last row) can centre.
+ * Rendered as an <li> inside the <ul>.
  */
 export default function SkillCard({ skill }: { skill: Skill }) {
     const { name, Icon, color } = skill;
 
     return (
         <li
+            {...spotlightSurfaceProps}
             style={
                 color
                     ? ({ '--brand-color': color } as CSSProperties)
@@ -38,6 +43,10 @@ export default function SkillCard({ skill }: { skill: Skill }) {
             <span className="text-foreground/75 group-hover:text-foreground text-xs leading-tight font-medium transition-colors duration-300">
                 {name}
             </span>
+
+            <SpotlightBorder
+                className={styles.spotlightBorder}
+            />
         </li>
     );
 }

@@ -1,3 +1,4 @@
+import SpotlightList from '@/components/pages/common/SpotlightList';
 import type { UsesSectionData } from '@/components/pages/uses/types';
 import UsesCard from '@/components/pages/uses/UsesCard';
 
@@ -15,7 +16,7 @@ export default function UsesGrid({
     sections: UsesSectionData[];
 }) {
     return (
-        <ul className="grid grid-flow-row-dense gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <SpotlightList className="grid grid-flow-row-dense gap-6 md:grid-cols-2 lg:grid-cols-3">
             {sections.map((section, index) => (
                 <UsesCard
                     key={section.title}
@@ -23,6 +24,6 @@ export default function UsesGrid({
                     index={index}
                 />
             ))}
-        </ul>
+        </SpotlightList>
     );
 }

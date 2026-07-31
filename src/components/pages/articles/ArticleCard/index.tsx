@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import SpotlightBorder from '@/components/pages/common/SpotlightBorder';
+import { spotlightSurfaceProps } from '@/components/pages/common/spotlightSurface';
 import ArticleCover from '@/components/pages/articles/ArticleCover';
 import styles from '@/components/pages/articles/ArticleCard/ArticleCard.module.css';
 import SeriesBadge from '@/components/pages/articles/ArticleCard/SeriesBadge';
@@ -31,15 +33,21 @@ export default function ArticleCard({
 
     return (
         <li
+            {...spotlightSurfaceProps}
             style={coverColors}
             className={cn(
                 styles.card,
-                'border-foreground/10 hover:border-foreground/30 relative isolate flex h-full flex-col overflow-hidden rounded-2xl border transition-all duration-300 hover:shadow-lg'
+                'border-foreground/10 hover:border-foreground/30 relative isolate flex h-full flex-col rounded-2xl border transition-all duration-300 hover:shadow-lg'
             )}
         >
+            {/* The cover rounds its own top corners instead of the card clipping
+                with overflow-hidden, which would swallow the lit border ring: the
+                ring has to sit a pixel out to land on the card's real border rather
+                than just inside it, where it would read as a second border. Its
+                radius is the card's less the 1px border it sits inside. */}
             <ArticleCover
                 src={article.cover}
-                className="aspect-video"
+                className="aspect-video rounded-t-[calc(1rem-1px)]"
             />
             <div
                 className={cn(
@@ -111,6 +119,10 @@ export default function ArticleCard({
                     ))}
                 </ul>
             </div>
+
+            <SpotlightBorder
+                className={styles.spotlightBorder}
+            />
         </li>
     );
 }

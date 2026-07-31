@@ -1,9 +1,13 @@
 'use client';
 
+import { useRef } from 'react';
 import { cn } from '@/utils/cn';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Textarea from '@/components/ui/Textarea';
+import SpotlightBorder from '@/components/pages/common/SpotlightBorder';
+import { useSpotlightSurfaces } from '@/components/pages/common/hooks/useSpotlightSurfaces';
+import { spotlightSurfaceProps } from '@/components/pages/common/spotlightSurface';
 import ContactAside from '@/components/pages/home/ContactArea/ContactAside';
 import ContactSuccess from '@/components/pages/home/ContactArea/ContactSuccess';
 import styles from '@/components/pages/home/ContactArea/ContactForm.module.css';
@@ -28,12 +32,24 @@ export default function ContactForm() {
 
     const isSubmitting = status === 'submitting';
 
+    // The panel is its own spotlight group: one delegated pointer listener here
+    // writes --pointer-x/y to the panel, which the cursor glow and the lit border in
+    // ContactForm.module.css both read.
+    const panelRef = useRef<HTMLDivElement>(null);
+    useSpotlightSurfaces(panelRef);
+
     return (
         <div className="w-full max-w-4xl">
+            {/* No overflow-hidden: ::before and ::after round their own corners, the
+                hCaptcha widget has its own clipping wrapper below, and clipping to the
+                padding box would swallow the lit border ring, which sits a pixel out
+                to land on the panel's real border rather than just inside it. */}
             <div
+                ref={panelRef}
+                {...spotlightSurfaceProps}
                 className={cn(
                     styles.panel,
-                    'border-foreground/10 bg-background/50 relative isolate overflow-hidden rounded-3xl border p-4 shadow-sm backdrop-blur-sm sm:p-8 md:p-10'
+                    'border-foreground/10 bg-background/50 relative isolate rounded-3xl border p-4 shadow-sm backdrop-blur-sm sm:p-8 md:p-10'
                 )}
             >
                 <div className="relative z-10 grid grid-cols-1 gap-10 md:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] md:gap-12">
@@ -75,7 +91,10 @@ export default function ContactForm() {
                                     required
                                     value={values.message}
                                     onChange={(event) =>
-                                        updateField('message', event.target.value)
+                                        updateField(
+                                            'message',
+                                            event.target.value
+                                        )
                                     }
                                 />
 
@@ -136,6 +155,10 @@ export default function ContactForm() {
                         )}
                     </div>
                 </div>
+
+                <SpotlightBorder
+                    className={styles.spotlightBorder}
+                />
             </div>
         </div>
     );

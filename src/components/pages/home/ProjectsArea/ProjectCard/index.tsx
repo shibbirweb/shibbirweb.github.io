@@ -1,6 +1,8 @@
 import ExternalLinkIcon from '@/components/icons/external-link';
 import GithubIcon from '@/components/icons/github';
 import Tag from '@/components/pages/common/Tag';
+import SpotlightBorder from '@/components/pages/common/SpotlightBorder';
+import { spotlightSurfaceProps } from '@/components/pages/common/spotlightSurface';
 import ProjectLink from '@/components/pages/home/ProjectsArea/ProjectLink';
 import styles from '@/components/pages/home/ProjectsArea/ProjectCard/ProjectCard.module.css';
 import { Project } from '@/components/pages/home/ProjectsArea/contents';
@@ -28,6 +30,7 @@ export default function ProjectCard({
 
     return (
         <li
+            {...spotlightSurfaceProps}
             style={glow}
             className={cn(
                 styles.card,
@@ -72,6 +75,10 @@ export default function ProjectCard({
                     />
                 ))}
             </div>
+
+            <SpotlightBorder
+                className={styles.spotlightBorder}
+            />
         </li>
     );
 }

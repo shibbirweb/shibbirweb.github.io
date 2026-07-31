@@ -1,5 +1,6 @@
 'use client';
 
+import { useSpotlightSurfaces } from '@/components/pages/common/hooks/useSpotlightSurfaces';
 import Core from '@/components/pages/home/AboutMeArea/Core';
 import FacetCard from '@/components/pages/home/AboutMeArea/FacetCard';
 import { facets } from '@/components/pages/home/AboutMeArea/contents';
@@ -7,6 +8,10 @@ import { useDrawOnScroll } from '@/components/pages/home/AboutMeArea/hooks/useDr
 
 export default function SystemDiagram() {
     const { ref, state } = useDrawOnScroll<HTMLDivElement>();
+    // The diagram grid doubles as the spotlight group for the facet cards placed
+    // around it, so it shares the draw-on-scroll ref instead of nesting a wrapper
+    // that would break their lg grid placement.
+    useSpotlightSurfaces(ref);
     const collapsed = state === 'collapsed';
 
     return (
