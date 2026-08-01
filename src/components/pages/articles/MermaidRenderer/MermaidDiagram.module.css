@@ -1,0 +1,153 @@
+@reference "tailwindcss";
+
+/* Chrome for a standalone ```mermaid block. Deliberately the same surface a
+   FlowDiagram frame gets: a reader scrolling an article should not be able to tell
+   which diagrams happen to be interactive from the box around them.
+
+   The `--background` / `--foreground` tokens come from the @theme inline block in
+   globals.css, which a module's @reference does not pull in, so utilities like
+   `bg-background` do not resolve here. They are written as var() plus color-mix()
+   instead, matching the other modules in this project. */
+.frame {
+    --bloom-strength: 9%;
+
+    /* Cursor spotlight knobs, matching FlowDiagram: this is a large panel, so the
+       reaches are the code block's rather than a small tile's. --pointer-x/y are
+       overwritten per frame by useSpotlightSurfaces; the 50% defaults are what
+       touch devices, reduced-motion visitors and the frames before the first
+       pointermove get, a centred bloom. */
+    --pointer-x: 50%;
+    --pointer-y: 50%;
+    --spotlight-radius: 20rem;
+    --spotlight-strength: 2.2%;
+    --spotlight-border-reach: 14rem;
+    --spotlight-border-strength: 50%;
+
+    /* `not-prose` belongs to the typography plugin, out of @reference scope, so
+       the component applies it as a literal class alongside this one.
+       Deliberately not `overflow-hidden`: the lit border sits a pixel outside the
+       padding box and a clip here would swallow it, so the clipping moves inward
+       to the stage instead. */
+    @apply relative isolate my-6 rounded-xl border p-3 sm:p-4;
+    background-color: var(--background);
+    border-color: color-mix(in oklab, var(--foreground) 10%, transparent);
+}
+
+/* Signature accent bloom: rests quiet, blooms gently on hover.
+
+   Tinted with the article's cover accent rather than a fixed colour, so a diagram
+   reads as part of its own page. `--accent-to` / `--accent-from` are set inline on
+   the ArticleContent wrapper by `accentStyle`, and these diagrams are portaled into
+   hosts inside that wrapper, so the values arrive by inheritance with nothing to
+   pass down. The emerald fallback is what the editor preview gets, where no article
+   accent exists; it matches the code-block and table glows exactly. */
+.frame::before {
+    @apply pointer-events-none absolute inset-0 z-[-1] rounded-[inherit] opacity-55 content-[''] motion-safe:transition-opacity motion-safe:duration-700 motion-safe:ease-out;
+    background-image: radial-gradient(
+        120% 90% at 50% 0%,
+        color-mix(
+            in oklab,
+            var(--accent-to, var(--color-emerald-500)) var(--bloom-strength),
+            transparent
+        ),
+        color-mix(
+            in oklab,
+            var(--accent-from, var(--color-emerald-500))
+                calc(var(--bloom-strength) * 0.45),
+            transparent
+        ),
+        transparent 72%
+    );
+}
+
+.frame:hover::before {
+    @apply opacity-100;
+}
+
+/* The cursor spotlight, on ::after because ::before is spent on the ambient bloom.
+   The same accent, kept fainter and tracking the pointer, so the two layers read as
+   one light source rather than two. It fades in on hover, exactly like the bloom,
+   which is why the hook never writes opacity. */
+.frame::after {
+    @apply pointer-events-none absolute inset-0 z-[-1] rounded-[inherit] opacity-0 content-[''] motion-safe:transition-opacity motion-safe:duration-500 motion-safe:ease-out;
+    background-image: radial-gradient(
+        circle var(--spotlight-radius) at var(--pointer-x) var(--pointer-y),
+        color-mix(
+            in oklab,
+            var(--accent-to, var(--color-emerald-500)) var(--spotlight-strength),
+            transparent
+        ),
+        transparent
+    );
+}
+
+.frame:hover::after {
+    @apply opacity-100;
+}
+
+/* The lit edge, on the shared SpotlightBorder span since both pseudo-elements are
+   already spoken for. It paints nothing but its hairline border, which a radial
+   mask crops to a soft circle at the pointer, so only the stretch of edge nearest
+   the cursor brightens. The mask circle is tighter than --spotlight-radius, keeping
+   the lit run a localised arc rather than the whole perimeter. */
+.spotlightBorder {
+    @apply opacity-0 motion-safe:transition-opacity motion-safe:duration-500 motion-safe:ease-out;
+    border-color: color-mix(
+        in oklab,
+        var(--accent-to, var(--color-emerald-500))
+            var(--spotlight-border-strength),
+        transparent
+    );
+    -webkit-mask-image: radial-gradient(
+        circle var(--spotlight-border-reach) at var(--pointer-x)
+            var(--pointer-y),
+        #000,
+        rgba(0, 0, 0, 0.35),
+        transparent
+    );
+    mask-image: radial-gradient(
+        circle var(--spotlight-border-reach) at var(--pointer-x)
+            var(--pointer-y),
+        #000,
+        rgba(0, 0, 0, 0.35),
+        transparent
+    );
+}
+
+.frame:hover .spotlightBorder {
+    @apply opacity-100;
+}
+
+@media (prefers-color-scheme: dark) {
+    :global(html:not([data-theme])) .frame {
+        --bloom-strength: 16%;
+        --spotlight-strength: 4%;
+        --spotlight-border-strength: 68%;
+    }
+}
+:global(html[data-theme='dark']) .frame {
+    --bloom-strength: 16%;
+    --spotlight-strength: 4%;
+    --spotlight-border-strength: 68%;
+}
+
+/* Carries the clip the frame gave up so the lit border can sit outside it. Rounded
+   a touch less than the frame, so the corners nest instead of colliding. */
+.stage {
+    @apply relative h-[28rem] w-full overflow-hidden rounded-lg;
+}
+
+/* Full view and copy, positioned to clear the frame's padding. */
+.tools {
+    @apply top-2 right-2;
+}
+
+/* What a reader gets when mermaid cannot parse the block: the source itself,
+   styled like the static view's fallback rather than left as a bare <pre>.
+   `not-prose` is applied as a literal class by the component, as on the frame. */
+.fallback {
+    @apply my-6 overflow-auto rounded-xl border p-4 font-mono text-xs;
+    color: color-mix(in oklab, var(--foreground) 70%, transparent);
+    border-color: color-mix(in oklab, var(--foreground) 10%, transparent);
+    background-color: color-mix(in oklab, var(--foreground) 4%, transparent);
+}

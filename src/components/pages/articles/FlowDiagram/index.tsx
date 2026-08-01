@@ -14,11 +14,7 @@ export default function FlowDiagrams() {
     return (
         <>
             {islands.map(({ host, definition, key }) =>
-                createPortal(
-                    <FlowDiagram definition={definition} />,
-                    host,
-                    key
-                )
+                createPortal(<FlowDiagram definition={definition} />, host, key)
             )}
         </>
     );

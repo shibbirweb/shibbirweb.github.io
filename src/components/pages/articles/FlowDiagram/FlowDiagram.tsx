@@ -1,30 +1,27 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import dynamic from 'next/dynamic';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { cn } from '@/utils/cn';
 import SpotlightBorder from '@/components/pages/common/SpotlightBorder';
 import { spotlightSurfaceProps } from '@/components/pages/common/spotlightSurface';
 import styles from '@/components/pages/articles/FlowDiagram/FlowDiagram.module.css';
 import FlowCaption from '@/components/pages/articles/FlowDiagram/FlowCaption';
 import FlowControls from '@/components/pages/articles/FlowDiagram/FlowControls';
+import {
+    resolveCaption,
+    resolveHint,
+} from '@/components/pages/articles/FlowDiagram/captions';
 import { useFlowPlayback } from '@/components/pages/articles/FlowDiagram/hooks/useFlowPlayback';
 import { useInViewport } from '@/components/pages/articles/FlowDiagram/hooks/useInViewport';
 import { useSmilPlayback } from '@/components/pages/articles/FlowDiagram/hooks/useSmilPlayback';
 import { usePrefersReducedMotion } from '@/components/pages/articles/hooks/usePrefersReducedMotion';
+import FlowInteractiveView from '@/components/pages/articles/FlowDiagram/FlowInteractiveView';
 import FlowStaticView from '@/components/pages/articles/FlowDiagram/FlowStaticView';
+import { flowMermaidSource } from '@/components/pages/articles/FlowDiagram/toMermaid';
 import type {
     FlowDiagramDefinition,
     FlowView,
 } from '@/components/pages/articles/FlowDiagram/types';
-
-// React Flow and dagre are a large dependency for a page that may have no diagram
-// on it, so the canvas is split out and loaded on demand, mirroring how mermaid is
-// dynamically imported. ssr:false because React Flow measures the DOM.
-const FlowCanvas = dynamic(
-    () => import('@/components/pages/articles/FlowDiagram/FlowCanvas'),
-    { ssr: false }
-);
 
 /**
  * One interactive diagram: a scenario switch, an animated React Flow canvas, and a
@@ -53,9 +50,17 @@ export default function FlowDiagram({
         definition.scenarios.find((entry) => entry.id === scenarioId) ??
         definition.scenarios[0];
 
-    // Same test FlowControls uses to decide whether to render the switch, derived
-    // from the same array, so the hint below cannot describe a missing control.
+    // Derived once and passed to the control bar, so the hint below cannot promise
+    // a switch the bar decided not to render.
     const hasScenarioChoice = definition.scenarios.length > 1;
+
+    // Resolved here rather than inside the static view because both views want it:
+    // one draws it, the other hands it to its copy button, and a reader should get
+    // identical text out of either.
+    const mermaidSource = useMemo(
+        () => flowMermaidSource(definition, scenario),
+        [definition, scenario]
+    );
 
     const playback = useFlowPlayback({
         hopCount: scenario.edgeIds.length,
@@ -101,26 +106,15 @@ export default function FlowDiagram({
         (edge) => edge.id === scenario.edgeIds[stepIndex]
     );
 
-    // Describe only the controls this diagram actually renders, and never its
-    // subject. Wording tied to one diagram's story goes stale the moment another
-    // is added.
-    const hint =
-        view === 'static'
-            ? hasScenarioChoice
-                ? 'Switch scenarios, or press Interactive to step through the diagram.'
-                : 'Press Interactive to step through the diagram a piece at a time.'
-            : hasScenarioChoice
-              ? 'Switch scenarios, step through the diagram, or select a box to see what it does.'
-              : 'Step through the diagram, or select a box to see what it does.';
-
-    const caption =
-        view === 'static'
-            ? { source: scenario.label, text: scenario.summary ?? '' }
-            : selectedNode?.description
-            ? { source: selectedNode.label, text: selectedNode.description }
-            : playback.isStepping && activeHop?.caption
-              ? { source: `Step ${stepIndex + 1}`, text: activeHop.caption }
-              : { source: scenario.label, text: scenario.summary ?? '' };
+    const hint = resolveHint(view, hasScenarioChoice);
+    const caption = resolveCaption({
+        view,
+        scenario,
+        selectedNode,
+        isStepping: playback.isStepping,
+        activeHop,
+        stepIndex,
+    });
 
     return (
         // The surface attribute opts this frame into the delegated pointer
@@ -131,7 +125,7 @@ export default function FlowDiagram({
         <figure
             ref={frameRef}
             {...spotlightSurfaceProps}
-            className={cn('not-prose', styles.frame)}
+            className={cn('not-prose', styles.tones, styles.frame)}
         >
             <FlowControls
                 view={view}
@@ -139,6 +133,7 @@ export default function FlowDiagram({
                 scenarios={definition.scenarios}
                 activeScenarioId={scenario.id}
                 onSelectScenario={setScenarioId}
+                hasScenarioChoice={hasScenarioChoice}
                 isPlaying={playback.isPlaying}
                 isStepping={playback.isStepping}
                 stepIndex={stepIndex}
@@ -148,20 +143,26 @@ export default function FlowDiagram({
                 onStepForward={playback.stepForward}
                 onStepBackward={playback.stepBackward}
                 showPlayControl={
-                    !prefersReducedMotion &&
-                    definition.showPackets !== false
+                    !prefersReducedMotion && definition.showPackets !== false
                 }
             />
 
-            <div ref={stageRef} className={styles.stage}>
+            <div
+                ref={stageRef}
+                className={styles.stage}
+            >
                 {view === 'interactive' ? (
-                    <FlowCanvas
+                    <FlowInteractiveView
                         definition={definition}
                         scenario={scenario}
+                        mermaidSource={mermaidSource}
                         selectedNodeId={selectedNodeId}
                         isStepping={playback.isStepping}
                         stepIndex={stepIndex}
-                        animate={!prefersReducedMotion && definition.showPackets !== false}
+                        animate={
+                            !prefersReducedMotion &&
+                            definition.showPackets !== false
+                        }
                         onSelectNode={(nodeId) =>
                             setSelectedNodeId((current) =>
                                 current === nodeId ? null : nodeId
@@ -169,16 +170,16 @@ export default function FlowDiagram({
                         }
                     />
                 ) : (
-                    <FlowStaticView
-                        definition={definition}
-                        scenario={scenario}
-                    />
+                    <FlowStaticView source={mermaidSource} />
                 )}
             </div>
 
             <figcaption>
                 {caption.text && (
-                    <FlowCaption source={caption.source} text={caption.text} />
+                    <FlowCaption
+                        source={caption.source}
+                        text={caption.text}
+                    />
                 )}
                 <span className={styles.hint}>{hint}</span>
             </figcaption>

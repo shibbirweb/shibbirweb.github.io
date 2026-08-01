@@ -77,7 +77,10 @@ export function usePanZoom({ enableWheel, allowTouchPan }: PanZoomOptions) {
     );
 
     const zoomIn = useCallback(() => zoomFromCenter(1.3), [zoomFromCenter]);
-    const zoomOut = useCallback(() => zoomFromCenter(1 / 1.3), [zoomFromCenter]);
+    const zoomOut = useCallback(
+        () => zoomFromCenter(1 / 1.3),
+        [zoomFromCenter]
+    );
 
     const onPointerDown = useCallback(
         (event: React.PointerEvent) => {

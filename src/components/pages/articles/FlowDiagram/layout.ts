@@ -26,6 +26,15 @@ export interface Point {
 export const ESTIMATED_NODE_SIZE: NodeSize = { width: 180, height: 68 };
 
 /**
+ * Breathing room left around the graph when the canvas fits it to the viewport.
+ *
+ * One value, because every fit has to agree: the initial one, the reset button and
+ * the `0` key all claim to return the reader to the same view, and separate
+ * literals would only look identical until one of them was tuned.
+ */
+export const FIT_VIEW_PADDING = 0.18;
+
+/**
  * Runs dagre over the whole graph and returns each node's top-left corner.
  * dagre reports node centres, React Flow positions by corner, hence the offset.
  */

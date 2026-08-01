@@ -1,4 +1,5 @@
 import { slugify } from '@/components/pages/articles/FlowDiagram/parseFlowDiagram';
+import { DIAGRAM_TONE_HEX } from '@/components/pages/articles/diagramTones';
 import type {
     FlowDiagramDefinition,
     FlowScenario,
@@ -11,17 +12,11 @@ import type {
 // moment one is edited.
 
 /**
- * Tone colours as literals. Mermaid parses `classDef` into inline styles on its
- * own SVG, well outside this component's stylesheet, so it cannot read the CSS
- * custom properties the interactive view uses. Kept in step with the module by
- * hand; they are the same four values the arrowhead markers use.
+ * Mermaid parses `classDef` into inline styles on its own SVG, well outside this
+ * component's stylesheet, so it cannot read the CSS custom properties the
+ * interactive view uses and takes the literal palette instead.
  */
-const TONE_STROKE: Record<FlowTone, string> = {
-    neutral: '#64748b',
-    secure: '#10b981',
-    blocked: '#f43f5e',
-    allowed: '#0ea5e9',
-};
+const TONE_STROKE = DIAGRAM_TONE_HEX;
 
 /** Mermaid node ids may not contain punctuation that would end a statement. */
 function mermaidId(id: string): string {
@@ -65,9 +60,7 @@ export function toMermaid(
     }
 
     for (const edge of routedEdges) {
-        const arrow = edge.label
-            ? `-->|"${label(edge.label)}"|`
-            : '-->';
+        const arrow = edge.label ? `-->|"${label(edge.label)}"|` : '-->';
         lines.push(
             `    ${mermaidId(edge.source)} ${arrow} ${mermaidId(edge.target)}`
         );
@@ -82,9 +75,34 @@ export function toMermaid(
         byTone.set(node.tone, bucket);
     }
     for (const [tone, ids] of byTone) {
-        lines.push(`    classDef ${tone} stroke:${TONE_STROKE[tone]},stroke-width:2px`);
+        lines.push(
+            `    classDef ${tone} stroke:${TONE_STROKE[tone]},stroke-width:2px`
+        );
         lines.push(`    class ${ids.join(',')} ${tone}`);
     }
 
     return lines.join('\n');
+}
+
+/**
+ * The mermaid a diagram resolves to, whichever view is on screen.
+ *
+ * Hand-written mermaid wins: it can say things the generator cannot, such as a
+ * sequence diagram or grouped subgraphs. A scenario's own block beats the
+ * diagram-level one, and generating from the DSL is the last resort, so a diagram
+ * that never declares any mermaid still has something to draw and copy.
+ *
+ * Lives here rather than in the static view because both views need it now: the
+ * static one renders it, and the interactive one hands it to its copy button so a
+ * reader gets the same portable text out of either.
+ */
+export function flowMermaidSource(
+    definition: FlowDiagramDefinition,
+    scenario: FlowScenario
+): string {
+    return (
+        scenario.mermaid ??
+        definition.mermaid ??
+        toMermaid(definition, scenario)
+    );
 }

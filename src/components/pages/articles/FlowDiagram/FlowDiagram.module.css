@@ -8,13 +8,30 @@
    `bg-background` do not resolve here. They are written as var() plus color-mix()
    instead, matching the other modules in this project.
 
-   Tone tokens are declared on the frame and read by nodes and edges, so an arrow
-   and the box it lands on always agree about what kind of hop it was. */
-.frame {
+   Tone tokens are read by nodes and edges, so an arrow and the box it lands on
+   always agree about what kind of hop it was. They live on their own class rather
+   than on the frame because the full-view modal portals to document.body, outside
+   the frame entirely: left to inherit, every color-mix() referring to them would
+   resolve against nothing and the boxes would come out unstyled. Both the frame
+   and the modal's canvas wear this class, so a diagram is toned wherever it is
+   mounted. */
+.tones {
     --tone-neutral: var(--color-slate-500);
     --tone-secure: var(--color-emerald-500);
     --tone-blocked: var(--color-rose-500);
     --tone-allowed: var(--color-sky-500);
+}
+
+@media (prefers-color-scheme: dark) {
+    :global(html:not([data-theme])) .tones {
+        --tone-neutral: var(--color-slate-400);
+    }
+}
+:global(html[data-theme='dark']) .tones {
+    --tone-neutral: var(--color-slate-400);
+}
+
+.frame {
     --bloom-strength: 9%;
 
     /* Cursor spotlight knobs, matching the code preview's tuning: these are large
@@ -80,8 +97,7 @@
         circle var(--spotlight-radius) at var(--pointer-x) var(--pointer-y),
         color-mix(
             in oklab,
-            var(--accent-to, var(--color-emerald-500))
-                var(--spotlight-strength),
+            var(--accent-to, var(--color-emerald-500)) var(--spotlight-strength),
             transparent
         ),
         transparent
@@ -130,14 +146,12 @@
         --bloom-strength: 16%;
         --spotlight-strength: 4%;
         --spotlight-border-strength: 68%;
-        --tone-neutral: var(--color-slate-400);
     }
 }
 :global(html[data-theme='dark']) .frame {
     --bloom-strength: 16%;
     --spotlight-strength: 4%;
     --spotlight-border-strength: 68%;
-    --tone-neutral: var(--color-slate-400);
 }
 
 /* Control bar */
@@ -193,20 +207,37 @@
     @apply h-[22rem] w-full overflow-hidden rounded-lg sm:h-[26rem];
 }
 
+/* The box a rendering fills, whichever rendering it is. Both views and the React
+   Flow canvas inside the interactive one want the same thing, so switching views
+   does not resize the page. `relative` anchors the tool buttons; the stage itself
+   handles the panning within. */
+.viewStage {
+    @apply relative h-full w-full overflow-hidden;
+}
+
 .canvas {
     @apply h-full w-full;
 }
 
-/* Static (mermaid) view. Fills the same stage the interactive canvas uses, so
-   switching between them does not resize the page. `relative` anchors the tool
-   buttons; MermaidStage handles the panning inside. */
-.staticStage {
-    @apply relative h-full w-full overflow-hidden;
+/* Grab cursor on the pane only. The whole canvas would claim it over the boxes
+   too, and a box answers a click by explaining itself, so it keeps the pointer
+   FlowNode gives it. */
+.canvas :global(.react-flow__pane) {
+    @apply cursor-grab;
+}
+
+.canvas :global(.react-flow__pane.dragging) {
+    @apply cursor-grabbing;
+}
+
+/* Pan / zoom / reset, in the corner a mermaid diagram puts them. */
+.canvasControls {
+    @apply absolute right-3 bottom-3 z-10;
 }
 
 /* Full view and copy, positioned exactly as they sit on a plain mermaid block. */
-.staticTools {
-    @apply absolute top-2 right-2 z-10 flex gap-1;
+.stageTools {
+    @apply top-2 right-2;
 }
 
 .staticFallback {
@@ -219,12 +250,11 @@
    the frame's surface and bloom show through. */
 .canvas :global(.react-flow__pane),
 .canvas :global(.react-flow__renderer) {
-    background: transparent;
+    @apply bg-transparent;
 }
 
 .canvas :global(.react-flow__attribution) {
-    @apply text-[10px];
-    background: transparent;
+    @apply bg-transparent text-[10px];
     color: color-mix(in oklab, var(--foreground) 35%, transparent);
 }
 
@@ -235,7 +265,7 @@
 }
 
 .node {
-    @apply flex min-w-[8rem] max-w-[13rem] flex-col gap-0.5 rounded-xl border-2 px-3 py-2 text-center motion-safe:transition-opacity motion-safe:duration-300;
+    @apply flex max-w-[13rem] min-w-[8rem] flex-col gap-0.5 rounded-xl border-2 px-3 py-2 text-center motion-safe:transition-opacity motion-safe:duration-300;
     background-color: var(--background);
     border-color: color-mix(in oklab, var(--tone-neutral) 45%, transparent);
 }
@@ -295,8 +325,8 @@
 }
 
 .edge :global(.react-flow__edge-path) {
+    @apply [stroke-width:1.75];
     stroke: var(--tone-neutral);
-    stroke-width: 1.75;
 }
 
 .edge[data-tone='secure'] :global(.react-flow__edge-path) {
@@ -310,7 +340,7 @@
 }
 
 .edge[data-active] :global(.react-flow__edge-path) {
-    stroke-width: 3;
+    @apply [stroke-width:3];
 }
 
 .edgeLabel {

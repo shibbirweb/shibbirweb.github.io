@@ -53,6 +53,7 @@ Section folders carry their own component-wise `contents.ts` (e.g. `HeroArea/con
 - Reuse the shared `cn()` helper and existing primitives before creating new ones; avoid premature abstraction for genuinely one-off markup.
 - A component that spans more than one file (e.g. a co-located CSS Module, subcomponents, or its own `contents.ts`) gets its **own folder** with the entry point as `index.tsx` and its files beside it, e.g. `components/animations/AnimatedUnderline/index.tsx` + `AnimatedUnderline.module.css`. Keep genuinely single-file components as a single `.tsx`.
 - Put stateful and side-effecting logic (`useEffect`, IntersectionObservers, event listeners, disclosure/toggle state) in **named custom hooks** (`useXxx`) instead of inlining it in components. Colocate them in a `hooks/` folder beside the component (e.g. `components/layout/Navbar/hooks/useScrollSpy.ts`) and keep generic ones (`useDisclosure`, `useCloseOnEscape`, `useScrollSpy`) reusable. A component should read top-down: call hooks, then return JSX.
+- **Never nest ternaries.** A single `condition ? a : b` is fine, including in JSX. Anything that would nest becomes a **named pure helper with early returns** (colocated beside the component, e.g. `FlowDiagram/captions.ts`), or a lookup keyed on the inputs. A nested ternary hides which branch actually runs, and reads worse with every case added. This applies to derived values and JSX alike; when the branches pick between whole elements, prefer separate components or an early `return`.
 
 ### Imports & file placement
 
@@ -67,7 +68,7 @@ Section folders carry their own component-wise `contents.ts` (e.g. `HeroArea/con
 - Avoid cryptic abbreviations and one/two-letter identifiers (e.g. `--au-c`, `d`, `tmp`); spell out the intent (`underlineColor`, `delayMs`, `sectionRef`).
 - Short, idiomatic names are still fine where they are unambiguous: a loop `i`, the shared `cn()` helper, a mapped `item`/`group`.
 - This applies project-wide, to **TypeScript identifiers and CSS variable/class names alike**.
-- **Directories**: grouping/category folders are lowercase (`animations/`, `icons/`, `layout/`, `pages/`); a folder that *is* one component is PascalCase and matches its exported component (`HeroArea/`, `Navbar/`, `ArticleContent/`).
+- **Directories**: grouping/category folders are lowercase (`animations/`, `icons/`, `layout/`, `pages/`); a folder that _is_ one component is PascalCase and matches its exported component (`HeroArea/`, `Navbar/`, `ArticleContent/`).
 - Do not suffix a component with `Component` (redundant under `src/components/`): name it `GridBackground`, not `GridBackgroundComponent`.
 
 ### Copy & punctuation
