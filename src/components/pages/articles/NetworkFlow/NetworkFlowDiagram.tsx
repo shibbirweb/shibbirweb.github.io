@@ -32,6 +32,11 @@ export default function NetworkFlowDiagram({
         definition.scenarios.find((entry) => entry.id === scenarioId) ??
         definition.scenarios[0];
 
+    // Same test NetworkFlowControls uses to decide whether to render the switch,
+    // derived from the same array, so the hint below cannot describe a control
+    // that is not on screen.
+    const hasScenarioChoice = definition.scenarios.length > 1;
+
     const playback = useNetworkFlowPlayback({
         edgeCount: scenario.edges.length,
         scenarioId: scenario.id,
@@ -59,6 +64,13 @@ export default function NetworkFlowDiagram({
     const selectedNode = selectedNodeId
         ? scenario.nodes.find((node) => node.id === selectedNodeId)
         : undefined;
+
+    // Describe only the controls this diagram actually renders, and never its
+    // subject. Wording tied to one diagram's story (or to a switch that a
+    // single-scenario diagram hides) goes stale the moment another is added.
+    const hint = hasScenarioChoice
+        ? 'Switch between the routes, step through the hops, or select a box to see what it does.'
+        : 'Step through the hops, or select a box to see what it does.';
 
     const caption = selectedNode
         ? { source: selectedNode.label, text: selectedNode.description }
@@ -106,10 +118,7 @@ export default function NetworkFlowDiagram({
                     source={caption.source}
                     text={caption.text}
                 />
-                <span className={styles.hint}>
-                    Switch the tunnel on and off, step through the hops, or
-                    select a box to see what it does.
-                </span>
+                <span className={styles.hint}>{hint}</span>
             </figcaption>
         </figure>
     );
