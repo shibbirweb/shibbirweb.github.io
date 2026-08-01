@@ -17,6 +17,9 @@ const LOOP_STAGGER = 0.42;
 /** A single stepped hop is quicker, since the reader asked for exactly one. */
 const STEP_DURATION = 0.9;
 
+/** 'loop' rides forever, 'step' runs once, 'still' does not move at all. */
+export type PacketMotion = 'loop' | 'step' | 'still';
+
 export interface FlowEdgeData extends Record<string, unknown> {
     tone?: FlowTone;
     label?: string;
@@ -24,8 +27,7 @@ export interface FlowEdgeData extends Record<string, unknown> {
     isDimmed: boolean;
     /** Position in the scenario, used to stagger the looping packets. */
     hopIndex: number;
-    /** 'loop' rides forever, 'step' runs once, 'still' does not move at all. */
-    motion: 'loop' | 'step' | 'still';
+    motion: PacketMotion;
     /** Restarts the single-run animation when the reader steps again. */
     stepToken: string;
 }
@@ -75,7 +77,11 @@ export default function FlowPacketEdge({
             data-dimmed={data?.isDimmed || undefined}
             className={styles.edge}
         >
-            <BaseEdge id={id} path={path} markerEnd={markerEnd} />
+            <BaseEdge
+                id={id}
+                path={path}
+                markerEnd={markerEnd}
+            />
             {motion !== 'still' && (
                 // A circle with no cx/cy sits at the origin, and animateMotion only
                 // takes over at its begin time. Without the opacity gate a staggered

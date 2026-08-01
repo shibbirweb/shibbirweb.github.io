@@ -97,8 +97,7 @@
         circle var(--spotlight-radius) at var(--pointer-x) var(--pointer-y),
         color-mix(
             in oklab,
-            var(--accent-to, var(--color-emerald-500))
-                var(--spotlight-strength),
+            var(--accent-to, var(--color-emerald-500)) var(--spotlight-strength),
             transparent
         ),
         transparent
@@ -208,10 +207,11 @@
     @apply h-[22rem] w-full overflow-hidden rounded-lg sm:h-[26rem];
 }
 
-/* Interactive (React Flow) view, matching .staticStage so the two views are the
-   same box with the same furniture in the same corners. */
-.interactiveStage,
-.canvasViewport {
+/* The box a rendering fills, whichever rendering it is. Both views and the React
+   Flow canvas inside the interactive one want the same thing, so switching views
+   does not resize the page. `relative` anchors the tool buttons; the stage itself
+   handles the panning within. */
+.viewStage {
     @apply relative h-full w-full overflow-hidden;
 }
 
@@ -230,28 +230,13 @@
     @apply cursor-grabbing;
 }
 
-/* The canvas is focusable so the arrow keys can pan it, which means it needs to
-   show where the focus went, like the mermaid stage's viewport does. */
-.canvas:focus-visible {
-    @apply outline-none;
-    box-shadow: inset 0 0 0 2px
-        color-mix(in oklab, var(--foreground) 30%, transparent);
-}
-
 /* Pan / zoom / reset, in the corner a mermaid diagram puts them. */
 .canvasControls {
     @apply absolute right-3 bottom-3 z-10;
 }
 
-/* Static (mermaid) view. Fills the same stage the interactive canvas uses, so
-   switching between them does not resize the page. `relative` anchors the tool
-   buttons; MermaidStage handles the panning inside. */
-.staticStage {
-    @apply relative h-full w-full overflow-hidden;
-}
-
 /* Full view and copy, positioned exactly as they sit on a plain mermaid block. */
-.staticTools {
+.stageTools {
     @apply top-2 right-2;
 }
 
@@ -265,12 +250,11 @@
    the frame's surface and bloom show through. */
 .canvas :global(.react-flow__pane),
 .canvas :global(.react-flow__renderer) {
-    background: transparent;
+    @apply bg-transparent;
 }
 
 .canvas :global(.react-flow__attribution) {
-    @apply text-[10px];
-    background: transparent;
+    @apply bg-transparent text-[10px];
     color: color-mix(in oklab, var(--foreground) 35%, transparent);
 }
 
@@ -281,7 +265,7 @@
 }
 
 .node {
-    @apply flex min-w-[8rem] max-w-[13rem] flex-col gap-0.5 rounded-xl border-2 px-3 py-2 text-center motion-safe:transition-opacity motion-safe:duration-300;
+    @apply flex max-w-[13rem] min-w-[8rem] flex-col gap-0.5 rounded-xl border-2 px-3 py-2 text-center motion-safe:transition-opacity motion-safe:duration-300;
     background-color: var(--background);
     border-color: color-mix(in oklab, var(--tone-neutral) 45%, transparent);
 }
@@ -341,8 +325,8 @@
 }
 
 .edge :global(.react-flow__edge-path) {
+    @apply [stroke-width:1.75];
     stroke: var(--tone-neutral);
-    stroke-width: 1.75;
 }
 
 .edge[data-tone='secure'] :global(.react-flow__edge-path) {
@@ -356,7 +340,7 @@
 }
 
 .edge[data-active] :global(.react-flow__edge-path) {
-    stroke-width: 3;
+    @apply [stroke-width:3];
 }
 
 .edgeLabel {

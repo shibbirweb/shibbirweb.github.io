@@ -64,7 +64,7 @@ export default function FlowInteractiveView({
 
     return (
         <>
-            <div className={styles.interactiveStage}>
+            <div className={styles.viewStage}>
                 <FlowCanvas
                     {...canvasProps}
                     // The modal's canvas carries the packets while it is open, so
@@ -76,7 +76,7 @@ export default function FlowInteractiveView({
                 <DiagramTools
                     source={mermaidSource}
                     onOpenFullView={() => setIsModalOpen(true)}
-                    className={styles.staticTools}
+                    className={styles.stageTools}
                 />
             </div>
             {isModalOpen && (

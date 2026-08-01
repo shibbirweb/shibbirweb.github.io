@@ -3,8 +3,10 @@
 import { useEffect } from 'react';
 import MermaidControls from '@/components/pages/articles/MermaidRenderer/MermaidControls';
 import { usePanZoom } from '@/components/pages/articles/MermaidRenderer/hooks/usePanZoom';
-
-const PAN_STEP = 48;
+import {
+    PAN_STEP,
+    useDiagramViewportKeys,
+} from '@/components/pages/articles/hooks/useDiagramViewportKeys';
 
 interface MermaidStageProps {
     svg: string;
@@ -43,36 +45,12 @@ export default function MermaidStage({
         return () => cancelAnimationFrame(frame);
     }, [svg, fit]);
 
-    const handleKeyDown = (event: React.KeyboardEvent) => {
-        switch (event.key) {
-            case 'ArrowUp':
-                panBy(0, PAN_STEP);
-                break;
-            case 'ArrowDown':
-                panBy(0, -PAN_STEP);
-                break;
-            case 'ArrowLeft':
-                panBy(PAN_STEP, 0);
-                break;
-            case 'ArrowRight':
-                panBy(-PAN_STEP, 0);
-                break;
-            case '+':
-            case '=':
-                zoomIn();
-                break;
-            case '-':
-            case '_':
-                zoomOut();
-                break;
-            case '0':
-                reset();
-                break;
-            default:
-                return;
-        }
-        event.preventDefault();
-    };
+    const handleKeyDown = useDiagramViewportKeys({
+        panBy,
+        zoomIn,
+        zoomOut,
+        reset,
+    });
 
     return (
         <div className="relative h-full w-full">

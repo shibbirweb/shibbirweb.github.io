@@ -7,6 +7,10 @@ import { spotlightSurfaceProps } from '@/components/pages/common/spotlightSurfac
 import styles from '@/components/pages/articles/FlowDiagram/FlowDiagram.module.css';
 import FlowCaption from '@/components/pages/articles/FlowDiagram/FlowCaption';
 import FlowControls from '@/components/pages/articles/FlowDiagram/FlowControls';
+import {
+    resolveCaption,
+    resolveHint,
+} from '@/components/pages/articles/FlowDiagram/captions';
 import { useFlowPlayback } from '@/components/pages/articles/FlowDiagram/hooks/useFlowPlayback';
 import { useInViewport } from '@/components/pages/articles/FlowDiagram/hooks/useInViewport';
 import { useSmilPlayback } from '@/components/pages/articles/FlowDiagram/hooks/useSmilPlayback';
@@ -46,8 +50,8 @@ export default function FlowDiagram({
         definition.scenarios.find((entry) => entry.id === scenarioId) ??
         definition.scenarios[0];
 
-    // Same test FlowControls uses to decide whether to render the switch, derived
-    // from the same array, so the hint below cannot describe a missing control.
+    // Derived once and passed to the control bar, so the hint below cannot promise
+    // a switch the bar decided not to render.
     const hasScenarioChoice = definition.scenarios.length > 1;
 
     // Resolved here rather than inside the static view because both views want it:
@@ -102,26 +106,15 @@ export default function FlowDiagram({
         (edge) => edge.id === scenario.edgeIds[stepIndex]
     );
 
-    // Describe only the controls this diagram actually renders, and never its
-    // subject. Wording tied to one diagram's story goes stale the moment another
-    // is added.
-    const hint =
-        view === 'static'
-            ? hasScenarioChoice
-                ? 'Switch scenarios, or press Interactive to step through the diagram.'
-                : 'Press Interactive to step through the diagram a piece at a time.'
-            : hasScenarioChoice
-              ? 'Switch scenarios, step through the diagram, or select a box to see what it does.'
-              : 'Step through the diagram, or select a box to see what it does.';
-
-    const caption =
-        view === 'static'
-            ? { source: scenario.label, text: scenario.summary ?? '' }
-            : selectedNode?.description
-            ? { source: selectedNode.label, text: selectedNode.description }
-            : playback.isStepping && activeHop?.caption
-              ? { source: `Step ${stepIndex + 1}`, text: activeHop.caption }
-              : { source: scenario.label, text: scenario.summary ?? '' };
+    const hint = resolveHint(view, hasScenarioChoice);
+    const caption = resolveCaption({
+        view,
+        scenario,
+        selectedNode,
+        isStepping: playback.isStepping,
+        activeHop,
+        stepIndex,
+    });
 
     return (
         // The surface attribute opts this frame into the delegated pointer
@@ -140,6 +133,7 @@ export default function FlowDiagram({
                 scenarios={definition.scenarios}
                 activeScenarioId={scenario.id}
                 onSelectScenario={setScenarioId}
+                hasScenarioChoice={hasScenarioChoice}
                 isPlaying={playback.isPlaying}
                 isStepping={playback.isStepping}
                 stepIndex={stepIndex}
@@ -149,12 +143,14 @@ export default function FlowDiagram({
                 onStepForward={playback.stepForward}
                 onStepBackward={playback.stepBackward}
                 showPlayControl={
-                    !prefersReducedMotion &&
-                    definition.showPackets !== false
+                    !prefersReducedMotion && definition.showPackets !== false
                 }
             />
 
-            <div ref={stageRef} className={styles.stage}>
+            <div
+                ref={stageRef}
+                className={styles.stage}
+            >
                 {view === 'interactive' ? (
                     <FlowInteractiveView
                         definition={definition}
@@ -180,7 +176,10 @@ export default function FlowDiagram({
 
             <figcaption>
                 {caption.text && (
-                    <FlowCaption source={caption.source} text={caption.text} />
+                    <FlowCaption
+                        source={caption.source}
+                        text={caption.text}
+                    />
                 )}
                 <span className={styles.hint}>{hint}</span>
             </figcaption>

@@ -3,9 +3,7 @@
 import { useCallback } from 'react';
 import { useReactFlow } from '@xyflow/react';
 import MermaidControls from '@/components/pages/articles/MermaidRenderer/MermaidControls';
-
-/** Fit padding, kept in step with the canvas's initial fitView. */
-const FIT_PADDING = 0.18;
+import { FIT_VIEW_PADDING } from '@/components/pages/articles/FlowDiagram/layout';
 
 /**
  * The same 3x3 pan / zoom / reset cluster a mermaid diagram carries, driving React
@@ -42,7 +40,7 @@ export default function FlowCanvasControls({
     );
 
     const handleReset = useCallback(() => {
-        void fitView({ padding: FIT_PADDING, duration: 0 });
+        void fitView({ padding: FIT_VIEW_PADDING, duration: 0 });
     }, [fitView]);
 
     return (

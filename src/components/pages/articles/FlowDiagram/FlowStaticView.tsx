@@ -28,7 +28,7 @@ export default function FlowStaticView({ source }: { source: string }) {
 
     return (
         <>
-            <div className={styles.staticStage}>
+            <div className={styles.viewStage}>
                 <MermaidStage
                     svg={svg}
                     enableWheel={false}
@@ -37,7 +37,7 @@ export default function FlowStaticView({ source }: { source: string }) {
                 <DiagramTools
                     source={source}
                     onOpenFullView={() => setIsModalOpen(true)}
-                    className={styles.staticTools}
+                    className={styles.stageTools}
                 />
             </div>
             {isModalOpen && (
