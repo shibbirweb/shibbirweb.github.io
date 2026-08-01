@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { cn } from '@/utils/cn';
+import SpotlightBorder from '@/components/pages/common/SpotlightBorder';
+import { spotlightSurfaceProps } from '@/components/pages/common/spotlightSurface';
 import styles from '@/components/pages/articles/FlowDiagram/FlowDiagram.module.css';
 import FlowCaption from '@/components/pages/articles/FlowDiagram/FlowCaption';
 import FlowControls from '@/components/pages/articles/FlowDiagram/FlowControls';
@@ -121,7 +123,16 @@ export default function FlowDiagram({
               : { source: scenario.label, text: scenario.summary ?? '' };
 
     return (
-        <figure ref={frameRef} className={cn('not-prose', styles.frame)}>
+        // The surface attribute opts this frame into the delegated pointer
+        // listener the SpotlightGroup around the article body already runs, so the
+        // cursor spotlight costs no listener of its own. It resolves surfaces with
+        // closest() on every move, which is why a diagram portaled in after mount
+        // is picked up with nothing to register.
+        <figure
+            ref={frameRef}
+            {...spotlightSurfaceProps}
+            className={cn('not-prose', styles.frame)}
+        >
             <FlowControls
                 view={view}
                 onSelectView={setView}
@@ -168,6 +179,7 @@ export default function FlowDiagram({
                 )}
                 <span className={styles.hint}>{hint}</span>
             </figcaption>
+            <SpotlightBorder className={styles.spotlightBorder} />
         </figure>
     );
 }
