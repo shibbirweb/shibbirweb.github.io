@@ -1,0 +1,250 @@
+@reference "tailwindcss";
+
+/* Styling for the interactive network-flow diagram. Everything expressible as a
+   Tailwind utility uses @apply; the raw CSS here is limited to what a module
+   cannot say. Two kinds of exception show up a lot below:
+
+   1. The `--background` / `--foreground` tokens come from the @theme inline block
+      in globals.css, which a module's @reference does not pull in, so utilities
+      like `bg-background` or `text-foreground/60` do not resolve here. They are
+      written as var() plus color-mix() instead, which is what the other modules
+      in this project do.
+   2. SVG presentation properties (stroke-width, paint-order, text-anchor) have no
+      utility equivalent at all.
+
+   Tone tokens drive both the arrows and the boxes, so an edge and the node it
+   lands on always agree about what kind of hop it was. They are declared on the
+   frame and read by descendants, keeping the per-tone rules to a single lookup. */
+.frame {
+    --tone-neutral: var(--color-slate-500);
+    --tone-secure: var(--color-emerald-500);
+    --tone-blocked: var(--color-rose-500);
+    --tone-allowed: var(--color-sky-500);
+    --bloom-strength: 9%;
+
+    /* `not-prose` belongs to the typography plugin, also out of @reference scope,
+       so the component applies it as a literal class alongside this one. */
+    @apply relative isolate my-6 overflow-hidden rounded-xl border p-3 sm:p-4;
+    background-color: var(--background);
+    border-color: color-mix(in oklab, var(--foreground) 10%, transparent);
+}
+
+/* Signature accent bloom: rests quiet, blooms gently on hover. Tied to the
+   diagram's own accent (the secure/tunnel green) so the surface stays on-theme
+   with the story it illustrates. */
+.frame::before {
+    @apply pointer-events-none absolute inset-0 z-[-1] rounded-[inherit] opacity-55 content-[''] motion-safe:transition-opacity motion-safe:duration-700 motion-safe:ease-out;
+    background-image: radial-gradient(
+        120% 90% at 50% 0%,
+        color-mix(
+            in oklab,
+            var(--tone-secure) var(--bloom-strength),
+            transparent
+        ),
+        transparent 70%
+    );
+}
+
+.frame:hover::before {
+    @apply opacity-100;
+}
+
+@media (prefers-color-scheme: dark) {
+    :global(html:not([data-theme])) .frame {
+        --bloom-strength: 16%;
+        --tone-neutral: var(--color-slate-400);
+    }
+}
+:global(html[data-theme='dark']) .frame {
+    --bloom-strength: 16%;
+    --tone-neutral: var(--color-slate-400);
+}
+
+/* Control bar */
+
+.controls {
+    @apply mb-2 flex flex-wrap items-center justify-between gap-2;
+}
+
+.scenarioSwitch {
+    @apply flex gap-0.5 rounded-lg border p-0.5;
+    border-color: color-mix(in oklab, var(--foreground) 10%, transparent);
+}
+
+.scenarioButton {
+    @apply cursor-pointer rounded-md px-3 py-1.5 text-xs font-semibold motion-safe:transition-colors sm:text-sm;
+    color: color-mix(in oklab, var(--foreground) 60%, transparent);
+}
+
+.scenarioButton:hover {
+    color: var(--foreground);
+}
+
+.scenarioButton[aria-pressed='true'] {
+    background-color: color-mix(in oklab, var(--foreground) 10%, transparent);
+    color: var(--foreground);
+}
+
+.playback {
+    @apply flex items-center gap-1;
+}
+
+.stepCounter {
+    @apply mr-1 font-mono text-[0.7rem] tabular-nums sm:text-xs;
+    color: color-mix(in oklab, var(--foreground) 50%, transparent);
+}
+
+.iconButton {
+    @apply flex cursor-pointer items-center justify-center rounded-md p-1.5 motion-safe:transition-colors;
+    color: color-mix(in oklab, var(--foreground) 60%, transparent);
+}
+
+.iconButton:hover {
+    background-color: color-mix(in oklab, var(--foreground) 10%, transparent);
+    color: var(--foreground);
+}
+
+/* Canvas */
+
+.canvas {
+    @apply h-auto w-full touch-pan-y select-none;
+}
+
+/* Edges */
+
+.edge {
+    @apply motion-safe:transition-opacity motion-safe:duration-300;
+}
+
+.edge[data-dimmed] {
+    @apply opacity-25;
+}
+
+.edgeLine {
+    @apply fill-none;
+    stroke: var(--tone-neutral);
+    stroke-width: 1.75;
+}
+
+.edge[data-tone='secure'] .edgeLine {
+    stroke: var(--tone-secure);
+}
+.edge[data-tone='blocked'] .edgeLine {
+    stroke: var(--tone-blocked);
+}
+.edge[data-tone='allowed'] .edgeLine {
+    stroke: var(--tone-allowed);
+}
+
+.edge[data-active] .edgeLine {
+    stroke-width: 3;
+}
+
+.arrowhead {
+    fill: var(--tone-neutral);
+}
+.arrowhead[data-tone='secure'] {
+    fill: var(--tone-secure);
+}
+.arrowhead[data-tone='blocked'] {
+    fill: var(--tone-blocked);
+}
+.arrowhead[data-tone='allowed'] {
+    fill: var(--tone-allowed);
+}
+
+/* The label sits on top of its own line, so it is painted with a fat
+   background-coloured stroke behind the glyphs to punch a gap in the arrow. */
+.edgeLabel {
+    @apply font-mono text-[9px];
+    fill: color-mix(in oklab, var(--foreground) 70%, transparent);
+    text-anchor: middle;
+    paint-order: stroke;
+    stroke: var(--background);
+    stroke-width: 4;
+    stroke-linejoin: round;
+}
+
+/* Nodes */
+
+.node {
+    @apply cursor-pointer outline-none motion-safe:transition-opacity motion-safe:duration-300;
+}
+
+.node[data-dimmed] {
+    @apply opacity-30;
+}
+
+.nodeBox {
+    fill: var(--background);
+    stroke: color-mix(in oklab, var(--tone-neutral) 45%, transparent);
+    stroke-width: 1.5;
+}
+
+.node[data-tone='secure'] .nodeBox {
+    stroke: color-mix(in oklab, var(--tone-secure) 60%, transparent);
+}
+.node[data-tone='blocked'] .nodeBox {
+    stroke: color-mix(in oklab, var(--tone-blocked) 60%, transparent);
+}
+.node[data-tone='allowed'] .nodeBox {
+    stroke: color-mix(in oklab, var(--tone-allowed) 60%, transparent);
+}
+
+.node:hover .nodeBox {
+    fill: color-mix(in oklab, var(--tone-neutral) 8%, var(--background));
+}
+
+.node[data-selected] .nodeBox {
+    fill: color-mix(in oklab, var(--tone-neutral) 12%, var(--background));
+    stroke-width: 2.5;
+}
+
+.node:focus-visible .nodeBox {
+    stroke: var(--foreground);
+    stroke-width: 2.5;
+}
+
+.nodeLabel {
+    @apply text-[13px] font-semibold;
+    fill: var(--foreground);
+    text-anchor: middle;
+}
+
+.nodeDetail {
+    @apply font-mono text-[9.5px];
+    fill: color-mix(in oklab, var(--foreground) 55%, transparent);
+    text-anchor: middle;
+}
+
+/* Packets */
+
+.packet {
+    fill: var(--tone-neutral);
+}
+.packet[data-tone='secure'] {
+    fill: var(--tone-secure);
+}
+.packet[data-tone='blocked'] {
+    fill: var(--tone-blocked);
+}
+.packet[data-tone='allowed'] {
+    fill: var(--tone-allowed);
+}
+
+/* Caption */
+
+.caption {
+    @apply mt-2 flex flex-col gap-0.5 text-sm sm:flex-row sm:gap-2;
+    color: color-mix(in oklab, var(--foreground) 75%, transparent);
+}
+
+.captionSource {
+    @apply shrink-0 font-semibold;
+    color: var(--foreground);
+}
+
+.hint {
+    @apply mt-1.5 block text-xs;
+    color: color-mix(in oklab, var(--foreground) 40%, transparent);
+}

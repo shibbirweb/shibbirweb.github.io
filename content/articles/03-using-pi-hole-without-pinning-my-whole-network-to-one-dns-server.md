@@ -31,14 +31,9 @@ Pi-hole is a DNS server that lies on purpose. When the question is about an ad o
 
 My setup was the normal one. Pi-hole runs in an LXC container on my Proxmox server with a fixed address, `192.168.0.20`. In my router settings, I removed my ISP's DNS servers and put that one address instead. From then on, the router told every device that joined the WiFi to use Pi-hole.
 
-```mermaid
-flowchart LR
-    Phone["Phone"] --> Router
-    Desktop["Desktop"] --> Router
-    NewDevice["Any new device"] --> Router
-    Router["Router<br/>tells everyone: use 192.168.0.20"] -->|"every DNS question"| Pihole["Pi-hole<br/>192.168.0.20"]
-    Pihole -->|"it is an ad"| Blocked["Answers: nothing here"]
-    Pihole -->|"everything else"| Upstream["Normal DNS server"]
+```netflow
+router-pihole
+Every device on the network is handed Pi-hole as its DNS server, so ad domains are answered with nothing usable and everything else resolves normally.
 ```
 
 One setting, and everything on the network was covered. Devices I never touched. Devices that have no way to block ads on their own. Anything that connected later, without me doing a thing.
@@ -55,16 +50,9 @@ So on paper, a power cut leaves me with a working router and no Pi-hole. And Pi-
 
 I wanted to see it rather than assume it, so I switched the server off myself and picked up my phone.
 
-```mermaid
-sequenceDiagram
-    participant Phone
-    participant Router as Router (on UPS, still running)
-    participant Pihole as Pi-hole (server has no power)
-    Phone->>Router: Where is example.com?
-    Router->>Pihole: Where is example.com?
-    Note over Pihole: server is off
-    Router--xPhone: no answer, then a timeout
-    Note over Phone: WiFi works. Router works.<br/>But no website opens.
+```netflow
+pihole-outage
+With the server off, the DNS path dies while everything else keeps working: the router stays up on its UPS, anything addressed by IP still replies, and only name lookups time out.
 ```
 
 It was worse than I expected, and that is the useful part of doing the test.
@@ -83,11 +71,9 @@ That sounds right, but it is not how it works.
 
 A second DNS server is not a backup that waits its turn. Your device is free to use either one, whenever it wants. Some devices try them in order. Some ask both at the same time and use whichever replies first. Some remember which one was faster and keep using that one. A big public DNS server is usually faster than a small container in your house.
 
-```mermaid
-flowchart LR
-    Device["Phone"] --> Router["Router<br/>first: 192.168.0.20<br/>second: 1.1.1.1"]
-    Router -->|"sometimes"| Pihole["Pi-hole<br/>ad blocked"]
-    Router -->|"sometimes"| Public["Public DNS<br/>ad shows up"]
+```netflow
+secondary-dns
+With two DNS servers configured, a device may use either one at any moment, so some questions reach Pi-hole and get filtered while others go straight to the public resolver and the ad loads.
 ```
 
 So you do not get a backup. You get leaks. Some questions skip Pi-hole completely. Ads come back, but only sometimes. A local name works on one device and not on another. And because answers get cached, the same website is blocked in the morning and not blocked in the afternoon.
@@ -202,19 +188,11 @@ That `/32` on the end matters more than it looks. It means "this one address onl
 
 Everything else at home stays directly reachable, because you are already on the same network as it. The tunnel is not there to carry you home. It is there to change which DNS server you use.
 
-```mermaid
-flowchart TB
-    subgraph vpnOff["VPN off"]
-        DeviceOff["Desktop"] --> RouterOff["Router"]
-        RouterOff --> IspDns["ISP DNS<br/>ads show up"]
-    end
-    subgraph vpnOn["VPN on"]
-        DeviceOn["Desktop"] -->|"encrypted"| Wg["wg-easy<br/>10.8.0.1"]
-        Wg -->|"DNS = 192.168.0.20"| PiholeOn["Pi-hole"]
-        PiholeOn -->|"normal site"| UpstreamOn["Normal DNS server"]
-        PiholeOn -->|"ad"| Nothing["Answers: nothing here"]
-        PiholeOn -.->|"my own names"| LocalHosts["pve.home,<br/>pihole.home"]
-    end
+Here is the whole thing in one picture. Flip the tunnel on and off to see the route change, step through it a hop at a time, or select any box to read what it does:
+
+```netflow
+dns-vpn
+With the VPN off, DNS questions go to the ISP server through the router and nothing is filtered. With it on, they travel the tunnel to Pi-hole, which answers ad domains with nothing usable and passes everything else through.
 ```
 
 And my router went back to my ISP's DNS servers. Nothing in the house depends on the Proxmox box any more.

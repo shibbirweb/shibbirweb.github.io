@@ -238,6 +238,19 @@ function codeLabel(lang: string, filePath?: string): string {
 }
 
 /**
+ * Splits a `netflow` fence into the diagram id (first non-empty line) and the
+ * caption that follows it. The caption is what a visitor without JavaScript sees
+ * in place of the interactive diagram, so it should read as a full sentence.
+ */
+function parseNetworkFlowBlock(text: string): { id: string; caption: string } {
+    const [firstLine = '', ...rest] = text.trim().split('\n');
+    return {
+        id: firstLine.trim(),
+        caption: rest.join(' ').trim(),
+    };
+}
+
+/**
  * Wraps highlighted code in a header (language/extension badge + optional file
  * path) with a copy-button slot the client fills in (see CodeBlock).
  */
@@ -298,6 +311,9 @@ marked.use({
             // Mermaid blocks render to SVG in the browser (see MermaidRenderer),
             // so skip Shiki and let the code renderer emit a <pre class="mermaid">.
             if (lang === 'mermaid') return;
+            // Likewise netflow blocks, which the browser turns into an interactive
+            // diagram (see NetworkFlow); their body is a caption, not code.
+            if (lang === 'netflow') return;
             codeToken.highlighted = await highlightCode(codeToken.text, lang);
         }
         if (token.type === 'gist') {
@@ -315,6 +331,13 @@ marked.use({
                 return `<pre class="mermaid not-prose">${escapeHtml(
                     codeToken.text
                 )}</pre>`;
+            }
+            if (lang === 'netflow') {
+                const { id, caption } = parseNetworkFlowBlock(codeToken.text);
+                return (
+                    `<pre class="netflow not-prose" data-netflow-id="${escapeHtml(id)}">` +
+                    `${escapeHtml(caption)}</pre>`
+                );
             }
             const highlighted =
                 codeToken.highlighted ??
