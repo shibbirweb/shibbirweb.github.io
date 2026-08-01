@@ -26,9 +26,7 @@ export default function MermaidDiagram({ source }: { source: string }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     if (!svg) {
-        return (
-            <pre className={cn('not-prose', styles.fallback)}>{source}</pre>
-        );
+        return <pre className={cn('not-prose', styles.fallback)}>{source}</pre>;
     }
 
     return (

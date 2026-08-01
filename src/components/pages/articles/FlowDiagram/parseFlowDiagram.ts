@@ -190,7 +190,10 @@ export function parseFlowDiagram(source: string): FlowDiagramDefinition {
         }
 
         if (/^default\s*:/i.test(line)) {
-            const value = line.replace(/^default\s*:/i, '').trim().toLowerCase();
+            const value = line
+                .replace(/^default\s*:/i, '')
+                .trim()
+                .toLowerCase();
             if (value !== 'static' && value !== 'interactive') {
                 throw new FlowDiagramParseError(
                     `default must be "static" or "interactive", got "${value}"`,
@@ -204,7 +207,10 @@ export function parseFlowDiagram(source: string): FlowDiagramDefinition {
         }
 
         if (/^packets\s*:/i.test(line)) {
-            const value = line.replace(/^packets\s*:/i, '').trim().toLowerCase();
+            const value = line
+                .replace(/^packets\s*:/i, '')
+                .trim()
+                .toLowerCase();
             if (value !== 'on' && value !== 'off') {
                 throw new FlowDiagramParseError(
                     `packets must be "on" or "off", got "${value}"`,

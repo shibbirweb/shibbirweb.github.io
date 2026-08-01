@@ -22,7 +22,10 @@ export default function DiagramTools({
 }) {
     return (
         <div className={cn('absolute z-10 flex gap-1', className)}>
-            <MermaidIconButton aria-label="Full view" onClick={onOpenFullView}>
+            <MermaidIconButton
+                aria-label="Full view"
+                onClick={onOpenFullView}
+            >
                 <ExpandIcon className="size-4" />
             </MermaidIconButton>
             <MermaidCopyButton source={source} />

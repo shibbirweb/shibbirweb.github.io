@@ -25,7 +25,11 @@ export default function MermaidModal({
             label="Diagram, full view"
             onClose={onClose}
         >
-            <MermaidStage svg={svg} enableWheel allowTouchPan />
+            <MermaidStage
+                svg={svg}
+                enableWheel
+                allowTouchPan
+            />
         </DiagramModal>
     );
 }

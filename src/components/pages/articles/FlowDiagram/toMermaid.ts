@@ -60,9 +60,7 @@ export function toMermaid(
     }
 
     for (const edge of routedEdges) {
-        const arrow = edge.label
-            ? `-->|"${label(edge.label)}"|`
-            : '-->';
+        const arrow = edge.label ? `-->|"${label(edge.label)}"|` : '-->';
         lines.push(
             `    ${mermaidId(edge.source)} ${arrow} ${mermaidId(edge.target)}`
         );
@@ -77,7 +75,9 @@ export function toMermaid(
         byTone.set(node.tone, bucket);
     }
     for (const [tone, ids] of byTone) {
-        lines.push(`    classDef ${tone} stroke:${TONE_STROKE[tone]},stroke-width:2px`);
+        lines.push(
+            `    classDef ${tone} stroke:${TONE_STROKE[tone]},stroke-width:2px`
+        );
         lines.push(`    class ${ids.join(',')} ${tone}`);
     }
 
@@ -101,6 +101,8 @@ export function flowMermaidSource(
     scenario: FlowScenario
 ): string {
     return (
-        scenario.mermaid ?? definition.mermaid ?? toMermaid(definition, scenario)
+        scenario.mermaid ??
+        definition.mermaid ??
+        toMermaid(definition, scenario)
     );
 }

@@ -15,7 +15,10 @@ interface FlowCaptionProps {
  */
 export default function FlowCaption({ source, text }: FlowCaptionProps) {
     return (
-        <p className={styles.caption} aria-live="polite">
+        <p
+            className={styles.caption}
+            aria-live="polite"
+        >
             <span className={styles.captionSource}>{source}</span>
             <span>{text}</span>
         </p>

@@ -32,11 +32,20 @@ export default function MermaidControls({
     return (
         <div className={cn('grid grid-cols-3 gap-1', className)}>
             {/* row 1: up, zoom in */}
-            <span aria-hidden="true" className="size-8" />
-            <MermaidIconButton aria-label="Pan up" onClick={() => onPan(0, step)}>
+            <span
+                aria-hidden="true"
+                className="size-8"
+            />
+            <MermaidIconButton
+                aria-label="Pan up"
+                onClick={() => onPan(0, step)}
+            >
                 <ChevronIcon className="size-4" />
             </MermaidIconButton>
-            <MermaidIconButton aria-label="Zoom in" onClick={onZoomIn}>
+            <MermaidIconButton
+                aria-label="Zoom in"
+                onClick={onZoomIn}
+            >
                 <ZoomInIcon className="size-4" />
             </MermaidIconButton>
 
@@ -47,7 +56,10 @@ export default function MermaidControls({
             >
                 <ChevronIcon className="size-4 -rotate-90" />
             </MermaidIconButton>
-            <MermaidIconButton aria-label="Reset view" onClick={onReset}>
+            <MermaidIconButton
+                aria-label="Reset view"
+                onClick={onReset}
+            >
                 <ResetIcon className="size-4" />
             </MermaidIconButton>
             <MermaidIconButton
@@ -58,14 +70,20 @@ export default function MermaidControls({
             </MermaidIconButton>
 
             {/* row 3: down, zoom out */}
-            <span aria-hidden="true" className="size-8" />
+            <span
+                aria-hidden="true"
+                className="size-8"
+            />
             <MermaidIconButton
                 aria-label="Pan down"
                 onClick={() => onPan(0, -step)}
             >
                 <ChevronIcon className="size-4 rotate-180" />
             </MermaidIconButton>
-            <MermaidIconButton aria-label="Zoom out" onClick={onZoomOut}>
+            <MermaidIconButton
+                aria-label="Zoom out"
+                onClick={onZoomOut}
+            >
                 <ZoomOutIcon className="size-4" />
             </MermaidIconButton>
         </div>
