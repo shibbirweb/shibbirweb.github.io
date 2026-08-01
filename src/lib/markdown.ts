@@ -298,6 +298,10 @@ marked.use({
             // Mermaid blocks render to SVG in the browser (see MermaidRenderer),
             // so skip Shiki and let the code renderer emit a <pre class="mermaid">.
             if (lang === 'mermaid') return;
+            // Likewise reactflow blocks, which the browser turns into an
+            // interactive diagram (see FlowDiagram); their body is a diagram
+            // description, not code.
+            if (lang === 'reactflow') return;
             codeToken.highlighted = await highlightCode(codeToken.text, lang);
         }
         if (token.type === 'gist') {
@@ -313,6 +317,14 @@ marked.use({
             const { lang, filePath } = parseCodeMeta(codeToken);
             if (lang === 'mermaid') {
                 return `<pre class="mermaid not-prose">${escapeHtml(
+                    codeToken.text
+                )}</pre>`;
+            }
+            if (lang === 'reactflow') {
+                // The source is kept verbatim: the client parses it into a
+                // diagram, and anyone without JavaScript reads the description
+                // itself, which is legible on its own.
+                return `<pre class="reactflow not-prose">${escapeHtml(
                     codeToken.text
                 )}</pre>`;
             }

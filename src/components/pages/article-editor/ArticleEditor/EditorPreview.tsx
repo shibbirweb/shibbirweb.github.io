@@ -4,6 +4,7 @@ import ArticleContent from '@/components/pages/articles/ArticleContent';
 import CodeBlockCopy from '@/components/pages/articles/CodeBlock';
 import ImageLightbox from '@/components/pages/articles/ImageLightbox';
 import MermaidRenderer from '@/components/pages/articles/MermaidRenderer';
+import FlowDiagrams from '@/components/pages/articles/FlowDiagram';
 import TocList from '@/components/pages/articles/TableOfContents/TocList';
 import { useMarkdownPreview } from '@/components/pages/article-editor/ArticleEditor/hooks/useMarkdownPreview';
 
@@ -45,6 +46,7 @@ export default function EditorPreview({ body }: { body: string }) {
                 <article className="mt-8">
                     <ArticleContent html={html} />
                     <MermaidRenderer key={`mermaid-${renderKey}`} />
+                    <FlowDiagrams key={`flow-${renderKey}`} />
                     <CodeBlockCopy key={`code-${renderKey}`} />
                     <ImageLightbox key={`lightbox-${renderKey}`} />
                 </article>

@@ -1,0 +1,356 @@
+@reference "tailwindcss";
+
+/* Styling for the interactive React Flow diagram. Everything expressible as a
+   Tailwind utility uses @apply; the raw CSS is limited to what a module cannot say.
+
+   The `--background` / `--foreground` tokens come from the @theme inline block in
+   globals.css, which a module's @reference does not pull in, so utilities like
+   `bg-background` do not resolve here. They are written as var() plus color-mix()
+   instead, matching the other modules in this project.
+
+   Tone tokens are declared on the frame and read by nodes and edges, so an arrow
+   and the box it lands on always agree about what kind of hop it was. */
+.frame {
+    --tone-neutral: var(--color-slate-500);
+    --tone-secure: var(--color-emerald-500);
+    --tone-blocked: var(--color-rose-500);
+    --tone-allowed: var(--color-sky-500);
+    --bloom-strength: 9%;
+
+    /* Cursor spotlight knobs, matching the code preview's tuning: these are large
+       panels, so the reaches are the code block's rather than a small tile's.
+       --pointer-x/y are overwritten per frame by useSpotlightSurfaces; the 50%
+       defaults are what touch devices, reduced-motion visitors and the frames
+       before the first pointermove get, a centred bloom. */
+    --pointer-x: 50%;
+    --pointer-y: 50%;
+    --spotlight-radius: 20rem;
+    --spotlight-strength: 2.2%;
+    --spotlight-border-reach: 14rem;
+    --spotlight-border-strength: 50%;
+
+    /* `not-prose` belongs to the typography plugin, out of @reference scope, so
+       the component applies it as a literal class alongside this one.
+       Deliberately not `overflow-hidden`: the lit border sits a pixel outside the
+       padding box and a clip here would swallow it, so the clipping moves inward
+       to the stage instead. */
+    @apply relative isolate my-6 rounded-xl border p-3 sm:p-4;
+    background-color: var(--background);
+    border-color: color-mix(in oklab, var(--foreground) 10%, transparent);
+}
+
+/* Signature accent bloom: rests quiet, blooms gently on hover.
+
+   Tinted with the article's cover accent rather than a fixed colour, so a diagram
+   reads as part of its own page. `--accent-to` / `--accent-from` are set inline on
+   the ArticleContent wrapper by `accentStyle`, and these diagrams are portaled into
+   hosts inside that wrapper, so the values arrive by inheritance with nothing to
+   pass down. The emerald fallback is what the editor preview gets, where no article
+   accent exists; it matches the code-block and table glows exactly. */
+.frame::before {
+    @apply pointer-events-none absolute inset-0 z-[-1] rounded-[inherit] opacity-55 content-[''] motion-safe:transition-opacity motion-safe:duration-700 motion-safe:ease-out;
+    background-image: radial-gradient(
+        120% 90% at 50% 0%,
+        color-mix(
+            in oklab,
+            var(--accent-to, var(--color-emerald-500)) var(--bloom-strength),
+            transparent
+        ),
+        color-mix(
+            in oklab,
+            var(--accent-from, var(--color-emerald-500))
+                calc(var(--bloom-strength) * 0.45),
+            transparent
+        ),
+        transparent 72%
+    );
+}
+
+.frame:hover::before {
+    @apply opacity-100;
+}
+
+/* The cursor spotlight, on ::after because ::before is spent on the ambient bloom.
+   The same accent, kept fainter and tracking the pointer, so the two layers read as
+   one light source rather than two. It fades in on hover, exactly like the bloom,
+   which is why the hook never writes opacity. */
+.frame::after {
+    @apply pointer-events-none absolute inset-0 z-[-1] rounded-[inherit] opacity-0 content-[''] motion-safe:transition-opacity motion-safe:duration-500 motion-safe:ease-out;
+    background-image: radial-gradient(
+        circle var(--spotlight-radius) at var(--pointer-x) var(--pointer-y),
+        color-mix(
+            in oklab,
+            var(--accent-to, var(--color-emerald-500))
+                var(--spotlight-strength),
+            transparent
+        ),
+        transparent
+    );
+}
+
+.frame:hover::after {
+    @apply opacity-100;
+}
+
+/* The lit edge, on the shared SpotlightBorder span since both pseudo-elements are
+   already spoken for. It paints nothing but its hairline border, which a radial
+   mask crops to a soft circle at the pointer, so only the stretch of edge nearest
+   the cursor brightens. The mask circle is tighter than --spotlight-radius, keeping
+   the lit run a localised arc rather than the whole perimeter. */
+.spotlightBorder {
+    @apply opacity-0 motion-safe:transition-opacity motion-safe:duration-500 motion-safe:ease-out;
+    border-color: color-mix(
+        in oklab,
+        var(--accent-to, var(--color-emerald-500))
+            var(--spotlight-border-strength),
+        transparent
+    );
+    -webkit-mask-image: radial-gradient(
+        circle var(--spotlight-border-reach) at var(--pointer-x)
+            var(--pointer-y),
+        #000,
+        rgba(0, 0, 0, 0.35),
+        transparent
+    );
+    mask-image: radial-gradient(
+        circle var(--spotlight-border-reach) at var(--pointer-x)
+            var(--pointer-y),
+        #000,
+        rgba(0, 0, 0, 0.35),
+        transparent
+    );
+}
+
+.frame:hover .spotlightBorder {
+    @apply opacity-100;
+}
+
+@media (prefers-color-scheme: dark) {
+    :global(html:not([data-theme])) .frame {
+        --bloom-strength: 16%;
+        --spotlight-strength: 4%;
+        --spotlight-border-strength: 68%;
+        --tone-neutral: var(--color-slate-400);
+    }
+}
+:global(html[data-theme='dark']) .frame {
+    --bloom-strength: 16%;
+    --spotlight-strength: 4%;
+    --spotlight-border-strength: 68%;
+    --tone-neutral: var(--color-slate-400);
+}
+
+/* Control bar */
+
+.controls {
+    @apply mb-2 flex flex-wrap items-center justify-between gap-2;
+}
+
+.scenarioSwitch,
+.viewSwitch {
+    @apply flex flex-wrap gap-0.5 rounded-lg border p-0.5;
+    border-color: color-mix(in oklab, var(--foreground) 10%, transparent);
+}
+
+.scenarioButton {
+    @apply cursor-pointer rounded-md px-3 py-1.5 text-xs font-semibold motion-safe:transition-colors sm:text-sm;
+    color: color-mix(in oklab, var(--foreground) 60%, transparent);
+}
+
+.scenarioButton:hover {
+    color: var(--foreground);
+}
+
+.scenarioButton[aria-pressed='true'] {
+    background-color: color-mix(in oklab, var(--foreground) 10%, transparent);
+    color: var(--foreground);
+}
+
+.playback {
+    @apply flex items-center gap-1;
+}
+
+.stepCounter {
+    @apply mr-1 font-mono text-[0.7rem] tabular-nums sm:text-xs;
+    color: color-mix(in oklab, var(--foreground) 50%, transparent);
+}
+
+.iconButton {
+    @apply flex cursor-pointer items-center justify-center rounded-md p-1.5 motion-safe:transition-colors;
+    color: color-mix(in oklab, var(--foreground) 60%, transparent);
+}
+
+.iconButton:hover {
+    background-color: color-mix(in oklab, var(--foreground) 10%, transparent);
+    color: var(--foreground);
+}
+
+/* Canvas. React Flow needs the container to have a real height. */
+
+/* Carries the clip the frame gave up so the lit border can sit outside it. Rounded
+   a touch less than the frame, so the corners nest instead of colliding. */
+.stage {
+    @apply h-[22rem] w-full overflow-hidden rounded-lg sm:h-[26rem];
+}
+
+.canvas {
+    @apply h-full w-full;
+}
+
+/* Static (mermaid) view. Fills the same stage the interactive canvas uses, so
+   switching between them does not resize the page. `relative` anchors the tool
+   buttons; MermaidStage handles the panning inside. */
+.staticStage {
+    @apply relative h-full w-full overflow-hidden;
+}
+
+/* Full view and copy, positioned exactly as they sit on a plain mermaid block. */
+.staticTools {
+    @apply absolute top-2 right-2 z-10 flex gap-1;
+}
+
+.staticFallback {
+    @apply h-full w-full overflow-auto rounded-lg p-3 font-mono text-xs;
+    color: color-mix(in oklab, var(--foreground) 70%, transparent);
+    background-color: color-mix(in oklab, var(--foreground) 4%, transparent);
+}
+
+/* React Flow paints its own background colour on the pane; keep it transparent so
+   the frame's surface and bloom show through. */
+.canvas :global(.react-flow__pane),
+.canvas :global(.react-flow__renderer) {
+    background: transparent;
+}
+
+.canvas :global(.react-flow__attribution) {
+    @apply text-[10px];
+    background: transparent;
+    color: color-mix(in oklab, var(--foreground) 35%, transparent);
+}
+
+/* Nodes */
+
+.handle {
+    @apply pointer-events-none opacity-0;
+}
+
+.node {
+    @apply flex min-w-[8rem] max-w-[13rem] flex-col gap-0.5 rounded-xl border-2 px-3 py-2 text-center motion-safe:transition-opacity motion-safe:duration-300;
+    background-color: var(--background);
+    border-color: color-mix(in oklab, var(--tone-neutral) 45%, transparent);
+}
+
+.node[data-clickable] {
+    @apply cursor-pointer;
+}
+
+.node[data-tone='secure'] {
+    border-color: color-mix(in oklab, var(--tone-secure) 60%, transparent);
+}
+.node[data-tone='blocked'] {
+    border-color: color-mix(in oklab, var(--tone-blocked) 60%, transparent);
+}
+.node[data-tone='allowed'] {
+    border-color: color-mix(in oklab, var(--tone-allowed) 60%, transparent);
+}
+
+.node[data-dimmed] {
+    @apply opacity-30;
+}
+
+.node[data-selected] {
+    background-color: color-mix(
+        in oklab,
+        var(--tone-neutral) 12%,
+        var(--background)
+    );
+}
+
+.node[data-clickable]:hover {
+    background-color: color-mix(
+        in oklab,
+        var(--tone-neutral) 8%,
+        var(--background)
+    );
+}
+
+.nodeLabel {
+    @apply text-[0.8rem] leading-tight font-semibold;
+    color: var(--foreground);
+}
+
+.nodeDetail {
+    @apply font-mono text-[0.65rem] leading-tight;
+    color: color-mix(in oklab, var(--foreground) 55%, transparent);
+}
+
+/* Edges */
+
+.edge {
+    @apply motion-safe:transition-opacity motion-safe:duration-300;
+}
+
+.edge[data-dimmed] {
+    @apply opacity-25;
+}
+
+.edge :global(.react-flow__edge-path) {
+    stroke: var(--tone-neutral);
+    stroke-width: 1.75;
+}
+
+.edge[data-tone='secure'] :global(.react-flow__edge-path) {
+    stroke: var(--tone-secure);
+}
+.edge[data-tone='blocked'] :global(.react-flow__edge-path) {
+    stroke: var(--tone-blocked);
+}
+.edge[data-tone='allowed'] :global(.react-flow__edge-path) {
+    stroke: var(--tone-allowed);
+}
+
+.edge[data-active] :global(.react-flow__edge-path) {
+    stroke-width: 3;
+}
+
+.edgeLabel {
+    @apply pointer-events-none absolute rounded px-1.5 py-0.5 font-mono text-[0.6rem] leading-tight motion-safe:transition-opacity;
+    background-color: var(--background);
+    color: color-mix(in oklab, var(--foreground) 70%, transparent);
+}
+
+.edgeLabel[data-dimmed] {
+    @apply opacity-25;
+}
+
+/* Packets */
+
+.packet {
+    fill: var(--tone-neutral);
+}
+.packet[data-tone='secure'] {
+    fill: var(--tone-secure);
+}
+.packet[data-tone='blocked'] {
+    fill: var(--tone-blocked);
+}
+.packet[data-tone='allowed'] {
+    fill: var(--tone-allowed);
+}
+
+/* Caption */
+
+.caption {
+    @apply mt-2 flex flex-col gap-0.5 text-sm sm:flex-row sm:gap-2;
+    color: color-mix(in oklab, var(--foreground) 75%, transparent);
+}
+
+.captionSource {
+    @apply shrink-0 font-semibold;
+    color: var(--foreground);
+}
+
+.hint {
+    @apply mt-1.5 block text-xs;
+    color: color-mix(in oklab, var(--foreground) 40%, transparent);
+}
