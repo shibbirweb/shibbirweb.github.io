@@ -8,13 +8,30 @@
    `bg-background` do not resolve here. They are written as var() plus color-mix()
    instead, matching the other modules in this project.
 
-   Tone tokens are declared on the frame and read by nodes and edges, so an arrow
-   and the box it lands on always agree about what kind of hop it was. */
-.frame {
+   Tone tokens are read by nodes and edges, so an arrow and the box it lands on
+   always agree about what kind of hop it was. They live on their own class rather
+   than on the frame because the full-view modal portals to document.body, outside
+   the frame entirely: left to inherit, every color-mix() referring to them would
+   resolve against nothing and the boxes would come out unstyled. Both the frame
+   and the modal's canvas wear this class, so a diagram is toned wherever it is
+   mounted. */
+.tones {
     --tone-neutral: var(--color-slate-500);
     --tone-secure: var(--color-emerald-500);
     --tone-blocked: var(--color-rose-500);
     --tone-allowed: var(--color-sky-500);
+}
+
+@media (prefers-color-scheme: dark) {
+    :global(html:not([data-theme])) .tones {
+        --tone-neutral: var(--color-slate-400);
+    }
+}
+:global(html[data-theme='dark']) .tones {
+    --tone-neutral: var(--color-slate-400);
+}
+
+.frame {
     --bloom-strength: 9%;
 
     /* Cursor spotlight knobs, matching the code preview's tuning: these are large
@@ -130,14 +147,12 @@
         --bloom-strength: 16%;
         --spotlight-strength: 4%;
         --spotlight-border-strength: 68%;
-        --tone-neutral: var(--color-slate-400);
     }
 }
 :global(html[data-theme='dark']) .frame {
     --bloom-strength: 16%;
     --spotlight-strength: 4%;
     --spotlight-border-strength: 68%;
-    --tone-neutral: var(--color-slate-400);
 }
 
 /* Control bar */
@@ -193,8 +208,39 @@
     @apply h-[22rem] w-full overflow-hidden rounded-lg sm:h-[26rem];
 }
 
+/* Interactive (React Flow) view, matching .staticStage so the two views are the
+   same box with the same furniture in the same corners. */
+.interactiveStage,
+.canvasViewport {
+    @apply relative h-full w-full overflow-hidden;
+}
+
 .canvas {
     @apply h-full w-full;
+}
+
+/* Grab cursor on the pane only. The whole canvas would claim it over the boxes
+   too, and a box answers a click by explaining itself, so it keeps the pointer
+   FlowNode gives it. */
+.canvas :global(.react-flow__pane) {
+    @apply cursor-grab;
+}
+
+.canvas :global(.react-flow__pane.dragging) {
+    @apply cursor-grabbing;
+}
+
+/* The canvas is focusable so the arrow keys can pan it, which means it needs to
+   show where the focus went, like the mermaid stage's viewport does. */
+.canvas:focus-visible {
+    @apply outline-none;
+    box-shadow: inset 0 0 0 2px
+        color-mix(in oklab, var(--foreground) 30%, transparent);
+}
+
+/* Pan / zoom / reset, in the corner a mermaid diagram puts them. */
+.canvasControls {
+    @apply absolute right-3 bottom-3 z-10;
 }
 
 /* Static (mermaid) view. Fills the same stage the interactive canvas uses, so
@@ -206,7 +252,7 @@
 
 /* Full view and copy, positioned exactly as they sit on a plain mermaid block. */
 .staticTools {
-    @apply absolute top-2 right-2 z-10 flex gap-1;
+    @apply top-2 right-2;
 }
 
 .staticFallback {

@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import dynamic from 'next/dynamic';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { cn } from '@/utils/cn';
 import SpotlightBorder from '@/components/pages/common/SpotlightBorder';
 import { spotlightSurfaceProps } from '@/components/pages/common/spotlightSurface';
@@ -12,19 +11,13 @@ import { useFlowPlayback } from '@/components/pages/articles/FlowDiagram/hooks/u
 import { useInViewport } from '@/components/pages/articles/FlowDiagram/hooks/useInViewport';
 import { useSmilPlayback } from '@/components/pages/articles/FlowDiagram/hooks/useSmilPlayback';
 import { usePrefersReducedMotion } from '@/components/pages/articles/hooks/usePrefersReducedMotion';
+import FlowInteractiveView from '@/components/pages/articles/FlowDiagram/FlowInteractiveView';
 import FlowStaticView from '@/components/pages/articles/FlowDiagram/FlowStaticView';
+import { flowMermaidSource } from '@/components/pages/articles/FlowDiagram/toMermaid';
 import type {
     FlowDiagramDefinition,
     FlowView,
 } from '@/components/pages/articles/FlowDiagram/types';
-
-// React Flow and dagre are a large dependency for a page that may have no diagram
-// on it, so the canvas is split out and loaded on demand, mirroring how mermaid is
-// dynamically imported. ssr:false because React Flow measures the DOM.
-const FlowCanvas = dynamic(
-    () => import('@/components/pages/articles/FlowDiagram/FlowCanvas'),
-    { ssr: false }
-);
 
 /**
  * One interactive diagram: a scenario switch, an animated React Flow canvas, and a
@@ -56,6 +49,14 @@ export default function FlowDiagram({
     // Same test FlowControls uses to decide whether to render the switch, derived
     // from the same array, so the hint below cannot describe a missing control.
     const hasScenarioChoice = definition.scenarios.length > 1;
+
+    // Resolved here rather than inside the static view because both views want it:
+    // one draws it, the other hands it to its copy button, and a reader should get
+    // identical text out of either.
+    const mermaidSource = useMemo(
+        () => flowMermaidSource(definition, scenario),
+        [definition, scenario]
+    );
 
     const playback = useFlowPlayback({
         hopCount: scenario.edgeIds.length,
@@ -131,7 +132,7 @@ export default function FlowDiagram({
         <figure
             ref={frameRef}
             {...spotlightSurfaceProps}
-            className={cn('not-prose', styles.frame)}
+            className={cn('not-prose', styles.tones, styles.frame)}
         >
             <FlowControls
                 view={view}
@@ -155,13 +156,17 @@ export default function FlowDiagram({
 
             <div ref={stageRef} className={styles.stage}>
                 {view === 'interactive' ? (
-                    <FlowCanvas
+                    <FlowInteractiveView
                         definition={definition}
                         scenario={scenario}
+                        mermaidSource={mermaidSource}
                         selectedNodeId={selectedNodeId}
                         isStepping={playback.isStepping}
                         stepIndex={stepIndex}
-                        animate={!prefersReducedMotion && definition.showPackets !== false}
+                        animate={
+                            !prefersReducedMotion &&
+                            definition.showPackets !== false
+                        }
                         onSelectNode={(nodeId) =>
                             setSelectedNodeId((current) =>
                                 current === nodeId ? null : nodeId
@@ -169,10 +174,7 @@ export default function FlowDiagram({
                         }
                     />
                 ) : (
-                    <FlowStaticView
-                        definition={definition}
-                        scenario={scenario}
-                    />
+                    <FlowStaticView source={mermaidSource} />
                 )}
             </div>
 

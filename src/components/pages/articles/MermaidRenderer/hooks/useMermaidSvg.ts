@@ -5,6 +5,7 @@ import {
     getResolvedTheme,
     subscribe,
 } from '@/components/layout/ThemeToggle/theme';
+import { mermaidConfig } from '@/components/pages/articles/MermaidRenderer/mermaidTheme';
 
 /**
  * Renders Mermaid source to an SVG string on the client. Mermaid is imported
@@ -25,10 +26,9 @@ export function useMermaidSvg(source: string): string {
             try {
                 const { default: mermaid } = await import('mermaid');
                 if (cancelled) return;
-                mermaid.initialize({
-                    startOnLoad: false,
-                    theme: getResolvedTheme() === 'dark' ? 'dark' : 'default',
-                });
+                mermaid.initialize(
+                    mermaidConfig(getResolvedTheme() === 'dark')
+                );
                 const result = await mermaid.render(renderId, source);
                 // Drop Mermaid's fixed max-width so pan/zoom can scale the SVG.
                 if (!cancelled) {

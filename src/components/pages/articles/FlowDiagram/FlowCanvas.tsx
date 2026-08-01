@@ -12,6 +12,7 @@ import {
     type NodeMouseHandler,
 } from '@xyflow/react';
 import '@xyflow/react/dist/base.css';
+import { cn } from '@/utils/cn';
 import styles from '@/components/pages/articles/FlowDiagram/FlowDiagram.module.css';
 import FlowNode, {
     type FlowDiagramNode,
@@ -20,10 +21,11 @@ import FlowPacketEdge, {
     type FlowDiagramEdge,
 } from '@/components/pages/articles/FlowDiagram/FlowPacketEdge';
 import { layoutFlow } from '@/components/pages/articles/FlowDiagram/layout';
+import FlowCanvasControls from '@/components/pages/articles/FlowDiagram/FlowCanvasControls';
+import { DIAGRAM_TONE_HEX } from '@/components/pages/articles/diagramTones';
 import type {
     FlowDiagramDefinition,
     FlowScenario,
-    FlowTone,
 } from '@/components/pages/articles/FlowDiagram/types';
 
 // Must be module-level constants: React Flow warns and re-renders every node if
@@ -32,14 +34,12 @@ const nodeTypes = { flowNode: FlowNode };
 const edgeTypes = { packet: FlowPacketEdge };
 
 // Arrowheads are drawn by React Flow into shared <marker> defs, which cannot read
-// the CSS custom properties scoped to this component, so their colours are the one
-// place the tone palette is duplicated as literals. Everything else uses the vars.
-const MARKER_COLOR: Record<FlowTone, string> = {
-    neutral: '#64748b',
-    secure: '#10b981',
-    blocked: '#f43f5e',
-    allowed: '#0ea5e9',
-};
+// the CSS custom properties scoped to this component, so they take the literal
+// palette. Everything else in the canvas uses the vars.
+const MARKER_COLOR = DIAGRAM_TONE_HEX;
+
+/** Pixels an arrow key or a d-pad press shifts the view, matching MermaidStage. */
+const PAN_STEP = 48;
 
 interface FlowCanvasProps {
     definition: FlowDiagramDefinition;
@@ -49,6 +49,10 @@ interface FlowCanvasProps {
     stepIndex: number;
     animate: boolean;
     onSelectNode: (nodeId: string) => void;
+    /** Zoom toward the cursor on wheel (used in the modal). */
+    enableWheel: boolean;
+    /** Allow drag-panning with touch/pen, not just mouse (used in the modal). */
+    allowTouchPan: boolean;
 }
 
 function FlowCanvasInner({
@@ -59,12 +63,22 @@ function FlowCanvasInner({
     stepIndex,
     animate,
     onSelectNode,
+    enableWheel,
+    allowTouchPan,
 }: FlowCanvasProps) {
     const [nodes, setNodes, onNodesChange] = useNodesState<FlowDiagramNode>([]);
     const [edges, setEdges] = useEdgesState<FlowDiagramEdge>([]);
-    const { fitView, getNodes } = useReactFlow<FlowDiagramNode, FlowDiagramEdge>();
+    const {
+        fitView,
+        getNodes,
+        getViewport,
+        setViewport,
+        zoomIn,
+        zoomOut,
+    } = useReactFlow<FlowDiagramNode, FlowDiagramEdge>();
     const nodesInitialized = useNodesInitialized();
     const hasMeasuredLayout = useRef(false);
+    const viewportRef = useRef<HTMLDivElement>(null);
 
     // 1. Build the boxes once per diagram, positioned from estimated sizes so the
     //    first paint is close. Positions come from the union of every scenario's
@@ -228,33 +242,112 @@ function FlowCanvasInner({
         [onSelectNode]
     );
 
+    // React Flow can restrict panning to given mouse buttons, but its filter only
+    // consults that list for `mousedown`; a `touchstart` still starts a pan. So the
+    // inline canvas blocks the gesture before d3-zoom's listener on the pane ever
+    // sees it, which is what leaves a thumb swipe scrolling the article instead of
+    // dragging a diagram that fills most of the screen. The modal has no page
+    // behind it to scroll, so there it takes the gesture.
+    useEffect(() => {
+        const viewport = viewportRef.current;
+        if (!viewport || allowTouchPan) return;
+        const swallowTouch = (event: TouchEvent) => event.stopPropagation();
+        viewport.addEventListener('touchstart', swallowTouch, {
+            capture: true,
+        });
+        return () =>
+            viewport.removeEventListener('touchstart', swallowTouch, {
+                capture: true,
+            });
+    }, [allowTouchPan]);
+
+    const handleKeyDown = (event: React.KeyboardEvent) => {
+        const viewport = getViewport();
+        const panTo = (dx: number, dy: number) =>
+            void setViewport({
+                x: viewport.x + dx,
+                y: viewport.y + dy,
+                zoom: viewport.zoom,
+            });
+        switch (event.key) {
+            case 'ArrowUp':
+                panTo(0, PAN_STEP);
+                break;
+            case 'ArrowDown':
+                panTo(0, -PAN_STEP);
+                break;
+            case 'ArrowLeft':
+                panTo(PAN_STEP, 0);
+                break;
+            case 'ArrowRight':
+                panTo(-PAN_STEP, 0);
+                break;
+            case '+':
+            case '=':
+                void zoomIn();
+                break;
+            case '-':
+            case '_':
+                void zoomOut();
+                break;
+            case '0':
+                void fitView({ padding: 0.18, duration: 0 });
+                break;
+            default:
+                return;
+        }
+        event.preventDefault();
+    };
+
     return (
-        <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            onNodesChange={onNodesChange}
-            onNodeClick={handleNodeClick}
-            nodeTypes={nodeTypes}
-            edgeTypes={edgeTypes}
-            // An article diagram is read, not edited. Without this the reader can
-            // drag the boxes into a mess and scrolling the page over the canvas
-            // zooms it instead.
-            nodesDraggable={false}
-            nodesConnectable={false}
-            elementsSelectable={false}
-            edgesFocusable={false}
-            panOnDrag={false}
-            panOnScroll={false}
-            zoomOnScroll={false}
-            zoomOnPinch={false}
-            zoomOnDoubleClick={false}
-            preventScrolling={false}
-            proOptions={{ hideAttribution: false }}
-            fitView
-            fitViewOptions={{ padding: 0.18 }}
-            aria-label={definition.title ?? 'Network flow diagram'}
-            className={styles.canvas}
-        />
+        // The tone tokens ride on the canvas itself, not just the frame, so the
+        // full-view modal (portaled to document.body) still has them to read.
+        <div
+            ref={viewportRef}
+            className={cn(styles.tones, styles.canvasViewport)}
+        >
+            <ReactFlow
+                nodes={nodes}
+                edges={edges}
+                onNodesChange={onNodesChange}
+                onNodeClick={handleNodeClick}
+                nodeTypes={nodeTypes}
+                edgeTypes={edgeTypes}
+                // An article diagram is read, not edited: the reader may move the
+                // view around, never the boxes, whose positions dagre owns.
+                nodesDraggable={false}
+                nodesConnectable={false}
+                elementsSelectable={false}
+                edgesFocusable={false}
+                // Left mouse button drags the view, the same gesture the mermaid
+                // stage answers to. Middle and right are left alone so autoscroll
+                // and the context menu still behave normally.
+                panOnDrag={[0]}
+                panOnScroll={false}
+                // The wheel scrolls the page inline and zooms in the modal, so a
+                // reader scrolling past a diagram is never trapped by it.
+                zoomOnScroll={enableWheel}
+                zoomOnPinch={enableWheel}
+                zoomOnDoubleClick={false}
+                preventScrolling={enableWheel}
+                proOptions={{ hideAttribution: false }}
+                // Out of the bottom-right corner, which the control cluster now
+                // occupies. The attribution stays, it just moves over.
+                attributionPosition="bottom-left"
+                fitView
+                fitViewOptions={{ padding: 0.18 }}
+                tabIndex={0}
+                aria-label={`${
+                    definition.title ?? 'Network flow diagram'
+                }. Drag to pan; use the arrow keys to pan and + or - to zoom.`}
+                onKeyDown={handleKeyDown}
+                className={styles.canvas}
+            />
+            <FlowCanvasControls
+                className={styles.canvasControls}
+                step={PAN_STEP}
+            />
+        </div>
     );
 }
 
