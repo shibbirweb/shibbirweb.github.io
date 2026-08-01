@@ -6,6 +6,7 @@ import styles from '@/components/pages/articles/NetworkFlow/NetworkFlow.module.c
 import NetworkFlowCaption from '@/components/pages/articles/NetworkFlow/NetworkFlowCaption';
 import NetworkFlowControls from '@/components/pages/articles/NetworkFlow/NetworkFlowControls';
 import NetworkFlowScene from '@/components/pages/articles/NetworkFlow/NetworkFlowScene';
+import { useInViewport } from '@/components/pages/articles/NetworkFlow/hooks/useInViewport';
 import { useNetworkFlowPlayback } from '@/components/pages/articles/NetworkFlow/hooks/useNetworkFlowPlayback';
 import { useSmilPlayback } from '@/components/pages/articles/NetworkFlow/hooks/useSmilPlayback';
 import { usePrefersReducedMotion } from '@/components/pages/articles/hooks/usePrefersReducedMotion';
@@ -43,11 +44,17 @@ export default function NetworkFlowDiagram({
         prefersReducedMotion,
     });
 
+    const isInViewport = useInViewport(svgRef);
+
     // Stepping needs the SMIL clock running for its single-run animation, so the
-    // pause button only governs the continuous loop.
+    // pause button only governs the continuous loop. Either way the clock stops
+    // while the diagram is off screen: an article can hold several of these, and
+    // loops running where nobody can see them are pure battery cost. Visibility
+    // gates the clock only, never `isPlaying`, so the play button keeps showing
+    // what the reader chose rather than where the page happens to be scrolled.
     useSmilPlayback(
         svgRef,
-        playback.isStepping ? true : playback.isPlaying
+        isInViewport && (playback.isStepping || playback.isPlaying)
     );
 
     // A selection made in one scenario means nothing in the next one.
