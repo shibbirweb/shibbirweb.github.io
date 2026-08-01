@@ -74,6 +74,19 @@ Section folders carry their own component-wise `contents.ts` (e.g. `HeroArea/con
 
 - **Never use the em dash (`—`) character** anywhere in the project: not in UI copy, code, comments, JSON-LD/metadata strings, README, or this file. Rephrase instead with a comma, colon, parentheses, or a separate sentence; for title or name separators use a pipe (`|`).
 
+### Writing articles
+
+Articles are `content/articles/NN-<slug>.md`, where `NN` is the next zero-padded ordering prefix (stripped for the URL). The frontmatter contract is `ArticleFrontmatter` in `src/lib/articleSchema.ts`, and the exact YAML house style (field order, single-quoted scalars, inline `tags`/`tech` arrays, 4-space-indented `learn` items, `draft` written only when true) is defined by `serializeArticle` in `src/utils/articleFile.ts`. The authoritative list of supported body features, with copy-pasteable snippets, is `src/components/pages/article-editor/ArticleEditor/WritingGuide/contents.ts`.
+
+These posts are **first-person accounts of things that actually happened to the maintainer**, so the writing rules matter as much as the schema:
+
+- **Never reuse another article's section pattern.** Headings must be derived from the specifics of the story being told (e.g. "A branch I cut without thinking", "Thursday evening, and the fix still was not in production"), not generic narrative labels lifted from an existing post ("The setup", "The mistake", "The investigation", "Final thoughts"). A real story that reads like a filled-in template defeats the point of telling it. Match the existing articles' **voice**, never their outline.
+- **Do not invent the concrete details.** Dates, times of day, branch and table names, ticket IDs, team specifics: use what the maintainer actually reports. Where a detail is genuinely needed and not supplied, ask, or state plainly which placeholders were invented so they can be swapped.
+- **No roadmap paragraph.** Do not open with "This article covers X, then Y, then Z"; that is a template tell. Get into the story.
+- **Body conventions**: no H1 (the frontmatter `title` supplies it), `##` and `###` only (H4+ gets no anchor and no TOC entry), sentence-case headings with no trailing punctuation or emoji, `*` bullets with a bold lead-in phrase, `> **Note:**` / `> **Warning:**` callouts (the house style, in preference to the `> [!NOTE]` alert syntax), and code fences carrying a bare language.
+- **Verify mermaid diagrams actually render.** A parse or validation error degrades silently to a plain `<pre>` fallback (see `MermaidRenderer/hooks/useMermaidSvg.ts`), so a diagram that "looks fine" in the source may be broken on the page. Render it and look, do not assume.
+- After adding an article, run `pnpm gen:covers` (auto-generates the cover SVG when `cover` is omitted) and `pnpm build`.
+
 ### Commit conventions
 
 - Do **not** add Claude/AI co-author trailers (`Co-Authored-By: Claude …`) or other AI attribution to commits or PRs. This is enforced by `attribution: { "commit": "", "pr": "" }` in `.claude/settings.json` (project-level, so it travels with the repo).
