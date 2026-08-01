@@ -1,112 +1,132 @@
 ---
 title: 'Using Pi-hole Without Pinning My Whole Network to One DNS Server'
-description: 'A Pi-hole set in the router made my Proxmox playground box the single point of failure for every device in the house. Here is how a wg-easy WireGuard tunnel turned network-wide DNS filtering into a switch I flip per device.'
+description: 'I put Pi-hole in my router, and my little Proxmox server became the thing the whole house depended on. Here is how a WireGuard VPN turned ad blocking into a switch I can turn on and off per device.'
 date: '2026-08-01'
 tags: ['Pi-hole', 'WireGuard', 'Proxmox', 'DNS', 'Homelab', 'Self-Hosting']
 category: 'Homelab'
 difficulty: 'Intermediate'
 tech: ['Proxmox', 'Pi-hole', 'WireGuard', 'wg-easy', 'Docker']
 learn:
-    - 'Why setting a Pi-hole as the router DNS quietly promotes a hobby machine into critical infrastructure for every device on the network.'
-    - 'Why adding a secondary DNS server in the router does not give you failover, it gives you intermittent leaks, and why the list is not tried in order.'
-    - 'How a WireGuard client config carries its own DNS setting, so the tunnel toggle becomes an on/off switch for filtering that cleans up after itself.'
-    - 'How to run wg-easy in a Proxmox LXC container and point it at a Pi-hole in another container, including the tun device and nesting flags LXC needs.'
-    - 'Why AllowedIPs only needs the LAN and tunnel subnets for this to work, and what full tunnel versus split tunnel actually changes.'
-    - 'The Pi-hole listening-behaviour setting that silently drops queries from the tunnel subnet, and the masquerade trade-off between it and per-client query stats.'
+    - 'What a DNS server actually does, and why Pi-hole blocks ads by simply refusing to answer some questions.'
+    - 'Why putting Pi-hole in your router makes one small machine the thing every device in the house depends on.'
+    - 'Why adding a second DNS server in the router does not give you a backup, and instead lets ads slip through at random.'
+    - 'How a WireGuard config file carries its own DNS setting, so turning the VPN on and off also turns ad blocking on and off.'
+    - 'How to run wg-easy in a Proxmox LXC container and point it at Pi-hole, including the container settings WireGuard needs.'
+    - 'Why you do not need to send all your traffic through the VPN for this to work, and the one Pi-hole setting that silently ignores VPN clients.'
 ---
 
-For as long as I have had a Proxmox box humming in the corner of the room, the Pi-hole on it has been the best thing running there. It is an LXC container doing almost nothing interesting: it answers DNS queries, and refuses to answer some of them. One IP address typed into the router, and every device in the house stopped seeing ads without a single one of them being told why.
+My Proxmox server sits in the corner of my room. The best thing running on it is Pi-hole. It is a small container with one job: it answers DNS questions, and it refuses to answer the ones that belong to ads.
 
-Then I thought properly about what happens when the power goes out, and the whole arrangement stopped looking clever.
+I typed its IP address into my router once. After that, every device in my house stopped seeing ads, and none of them had to be told anything.
 
-## One IP address in the router, and the whole house was filtered
+Then one day I looked at that setup and thought: what happens when this server is off? I did not wait to find out by accident. I walked over and cut its power to see.
 
-The setup was the one everybody recommends, because it is genuinely the right one when your DNS server is a real appliance.
+## One line in my router, and all the ads were gone
 
-The Pi-hole lives in an unprivileged LXC container on the Proxmox host, with a static address on the LAN. In the router's DHCP settings I replaced the ISP's resolvers with that single address. From that moment, every device that joined the network, including ones I do not administer and ones that have no settings screen worth speaking of, was handed the Pi-hole as its resolver.
+Let me explain the piece that everything here depends on.
+
+Every time you open a website, your device asks a question first: "what is the IP address for this name?" The thing that answers is called a DNS server. Your device cannot reach anything by name until something answers that question.
+
+Pi-hole is a DNS server that lies on purpose. When the question is about an ad or tracker domain, Pi-hole answers "nothing here". Your browser then has nowhere to connect, so the ad never loads. It never sees your traffic and it never blocks anything else. It just gives a useless answer to questions it does not like.
+
+My setup was the normal one. Pi-hole runs in an LXC container on my Proxmox server with a fixed address, `192.168.0.20`. In my router settings, I removed my ISP's DNS servers and put that one address instead. From then on, the router told every device that joined the WiFi to use Pi-hole.
 
 ```mermaid
 flowchart LR
     Phone["Phone"] --> Router
-    Laptop["Laptop"] --> Router
-    TV["Smart TV"] --> Router
-    Router["Router<br/>DHCP hands out 192.168.0.20"] -->|"every DNS query"| Pihole["Pi-hole LXC<br/>192.168.0.20"]
-    Pihole -->|"on a blocklist"| Blocked["Answers 0.0.0.0"]
-    Pihole -->|"everything else"| Upstream["Upstream resolver"]
+    Desktop["Desktop"] --> Router
+    NewDevice["Any new device"] --> Router
+    Router["Router<br/>tells everyone: use 192.168.0.20"] -->|"every DNS question"| Pihole["Pi-hole<br/>192.168.0.20"]
+    Pihole -->|"it is an ad"| Blocked["Answers: nothing here"]
+    Pihole -->|"everything else"| Upstream["Normal DNS server"]
 ```
 
-The mechanism is worth saying out loud, because the rest of this article turns on it. Pi-hole is not a firewall and it does not inspect your traffic. It is a resolver that lies. When a device asks for the address of an ad domain, Pi-hole answers with nothing useful, the connection is never attempted, and the ad never loads. Every device on the network trusts whatever resolver DHCP handed it, so controlling that one setting controls all of them.
+One setting, and everything on the network was covered. Devices I never touched. Devices that have no way to block ads on their own. Anything that connected later, without me doing a thing.
 
-That is exactly why it is such a good trick, and exactly why it turned out to be a problem.
+## I turned the server off on purpose to see what would break
 
-## A playground server is not a server
+Power cuts are normal here, so this was not a hard thing to imagine. What made me stop and think was which machines survive one.
 
-Here is the thing I had managed not to think about. That Proxmox box is where I try things. Containers get created, broken, and destroyed on it. It gets rebooted because I changed something in the wrong place. It is on a normal wall socket with no meaningful power backup, because it is a hobby machine.
+My router is plugged into a small UPS. When the electricity goes, the router keeps running. The WiFi stays on. The line to my ISP stays up.
 
-My router, on the other hand, sits on a small UPS. When the electricity goes, the router stays up. Which means the WiFi stays up, the LAN stays up, and the connection to my ISP stays up for as long as the line itself does. The one thing that does not stay up is a container on a machine that just lost power.
+My Proxmox server is not on a UPS. It is my playground machine. I create containers on it, break them, and delete them. I reboot it when I change the wrong thing. It has no backup power, because it is a hobby machine.
+
+So on paper, a power cut leaves me with a working router and no Pi-hole. And Pi-hole was the only DNS server every device in the house knew about.
+
+I wanted to see it rather than assume it, so I switched the server off myself and picked up my phone.
 
 ```mermaid
 sequenceDiagram
     participant Phone
-    participant Router as Router (on the UPS, still running)
-    participant Pihole as Pi-hole LXC (host has no power)
+    participant Router as Router (on UPS, still running)
+    participant Pihole as Pi-hole (server has no power)
     Phone->>Router: Where is example.com?
     Router->>Pihole: Where is example.com?
-    Note over Pihole: Proxmox host is off
+    Note over Pihole: server is off
     Router--xPhone: no answer, then a timeout
-    Note over Phone: WiFi connected, gateway reachable,<br/>every single page fails to load
+    Note over Phone: WiFi works. Router works.<br/>But no website opens.
 ```
 
-DNS failure is the most confusing kind of network failure, and I say that as the person who caused it. Nothing looks broken. The WiFi icon is full. The router's admin page loads, because you reach it by IP. You can ping `1.1.1.1` all day. Packets are moving perfectly. It is only names that have stopped working, and since every human-facing thing on the internet is reached by name, the experience is indistinguishable from having no internet at all.
+It was worse than I expected, and that is the useful part of doing the test.
 
-And it was not only the power cuts. Any time I rebooted the container to change a setting, or took a snapshot, or fat-fingered something on the host, I was taking down name resolution for every device in the house. A machine whose entire purpose is to be experimented on had quietly been promoted to critical infrastructure.
+I knew websites would stop opening. What I had not pictured was how healthy everything else would look. The WiFi icon was full. The router page opened fine, because you reach it by IP address. `1.1.1.1` answered every ping. The network was working perfectly. Only names had stopped working, and since we reach everything by name, it felt exactly like having no internet at all.
 
-## A secondary DNS server is not a backup, it is a leak
+If that had happened during a real power cut, at night, I would not have started by suspecting DNS. I would have blamed the ISP and wasted an hour. Knowing that in advance was worth the two minutes the test took.
 
-The obvious fix is the one everybody suggests first: leave the Pi-hole as the primary DNS in the router and add a public resolver as the secondary. Primary dies, secondary takes over, done.
+And it was not only power cuts. Every time I rebooted that container to change a setting, I was taking DNS away from everyone in the house. My toy machine had quietly become something the whole home depended on.
 
-Except that is not what a secondary DNS server is. The list a client receives is not an ordered failover chain with a promise that the second entry is only ever used when the first one is definitively dead. Different resolver implementations treat it differently. Some do try them in order, some query several at once and take whichever replies first, some rank them by observed latency, and some cache the winner and keep using it. A public resolver on the open internet will very often answer faster than a small container on your LAN doing blocklist lookups.
+## Adding a second DNS server made it worse
+
+The first idea everybody has is simple. Keep Pi-hole as the first DNS server in the router, and add a public one like `1.1.1.1` as the second. If the first one dies, the second takes over.
+
+That sounds right, but it is not how it works.
+
+A second DNS server is not a backup that waits its turn. Your device is free to use either one, whenever it wants. Some devices try them in order. Some ask both at the same time and use whichever replies first. Some remember which one was faster and keep using that one. A big public DNS server is usually faster than a small container in your house.
 
 ```mermaid
 flowchart LR
-    Device["Phone"] --> Router["Router<br/>primary: 192.168.0.20<br/>secondary: 1.1.1.1"]
+    Device["Phone"] --> Router["Router<br/>first: 192.168.0.20<br/>second: 1.1.1.1"]
     Router -->|"sometimes"| Pihole["Pi-hole<br/>ad blocked"]
-    Router -->|"sometimes"| Public["Public resolver<br/>ad delivered"]
+    Router -->|"sometimes"| Public["Public DNS<br/>ad shows up"]
 ```
 
-So the result is not failover. The result is that some fraction of queries, on some devices, at times you cannot predict, skips the Pi-hole entirely. Ads reappear in a way that looks random. Local names resolve on one device and not on another. Worse, it flips: the same domain is blocked in the morning and not in the afternoon, depending on which resolver got there first and what got cached where.
+So you do not get a backup. You get leaks. Some questions skip Pi-hole completely. Ads come back, but only sometimes. A local name works on one device and not on another. And because answers get cached, the same website is blocked in the morning and not blocked in the afternoon.
 
-> **Note:** This is why the Pi-hole documentation tells you to configure exactly one DNS server. A hard failure is annoying but honest, and you fix it in five minutes. A soft, intermittent, cache-flavoured failure is the kind of thing you spend an evening on and still are not sure you understood.
+> **Note:** This is why the Pi-hole docs tell you to set only one DNS server. A clear failure is annoying, but you fix it in five minutes. A random failure that comes and goes will eat your whole evening, and you still will not be sure you understood it.
 
-That closed the door on the easy option. One DNS server in the router, or none.
+So the choice was simple: one DNS server in the router, or none at all.
 
-## Typing the same IP address into three devices and giving up
+## I set the DNS by hand on each device, and hated it
 
-If the router cannot hold the setting, the devices can. Set the Pi-hole manually as the DNS server on my desktop, my phone, my laptop, and leave the router pointing at the ISP so nothing else in the house depends on my hobby box.
+If the router cannot hold the setting, the devices can. I could leave the router on my ISP's DNS, so nothing in the house depends on my server, and set Pi-hole by hand only on my own devices.
 
-That works. I did it. It is also miserable in a way that is hard to appreciate until you are doing it for the third time.
+That works. I did it. It is also painful in a way you only feel by the third device.
 
-Every platform hides the setting somewhere different. On Android it is buried in the saved network's advanced settings, and it is per network, so it does not follow you. On iOS it is per network too, and it resets in ways I have never fully understood. On Windows it is in the adapter properties, one entry per adapter, so the WiFi and the ethernet port each need their own. On a laptop that docks and undocks, that is two settings that have to agree.
+Every system hides the setting somewhere different. On Android it is inside the saved WiFi network's advanced settings, and it only applies to that one network. On iPhone it is also per network. On Windows it is in the adapter settings, and the WiFi and the cable port each need their own copy. If a machine uses both, that is two settings that have to agree.
 
-Then there is the reverse problem, which is the one that actually finished me off. When the Pi-hole *is* down, and it is down on purpose because I am rebuilding it, every device I configured is now broken and has to be visited again to undo the change. I had swapped one point of failure for four smaller ones and given myself manual work at both ends.
+Then comes the part that finished me off. When Pi-hole is actually down, and it is down because I am rebuilding it on purpose, every device I configured is now broken. I have to go back to each one and undo the setting, then set it again later.
 
-What I actually wanted was for the filtering to be something I opt into per device, with one switch, without opening network settings, and with something else responsible for putting the setting back when I turn it off.
+I had turned one big problem into four small ones, and given myself manual work at both ends.
 
-## The resolver could just arrive with the tunnel
+What I really wanted was a switch. Turn filtering on when I want it. Turn it off when I do not. No network settings, and something else should clean up after me.
 
-The idea came from a line in a config file I had been ignoring for years.
+## The idea: let the VPN carry the DNS setting
 
-A WireGuard client configuration has a `DNS =` field in its `[Interface]` section. When the tunnel comes up, the client applies that resolver to the system. When the tunnel goes down, the client puts the old resolver back. Every WireGuard client on every platform does this, and it is the whole feature: the DNS setting has the same lifetime as the tunnel.
+The answer was in a line I had been ignoring for years.
 
-That is precisely the switch I was describing. It already exists, it is already in the OS, it is already one tap on a phone, and it already cleans up after itself. What I was missing was a WireGuard server on my LAN that would hand out my Pi-hole's address as that resolver.
+A WireGuard config file has a `DNS =` line in it. When you turn the VPN on, your device starts using that DNS server. When you turn the VPN off, your device goes back to whatever it was using before. Every WireGuard app on every platform does this automatically.
 
-So: a second LXC container on the same Proxmox host, running [wg-easy](https://github.com/wg-easy/wg-easy), configured to tell every client it issues that the DNS server is the Pi-hole next door.
+That is exactly the switch I wanted. It already exists. It is one tap on a phone. And it puts the old setting back by itself.
 
-## wg-easy in a second container, pointed at the first
+The only missing piece was a WireGuard server in my house that would tell its clients "use the Pi-hole next door".
 
-wg-easy is WireGuard plus a small web UI for creating clients and printing QR codes, which is the entire reason I picked it. Adding a device is a text box and a phone camera rather than a key exchange done by hand.
+So I added a second LXC container on the same Proxmox server, running [wg-easy](https://github.com/wg-easy/wg-easy).
 
-I run it with Docker inside a dedicated LXC container. Two things need to be true about the container before WireGuard will work inside it at all:
+## Setting up wg-easy in a second container
+
+wg-easy is WireGuard plus a small web page for managing it. That web page is the reason I chose it. Adding a new device means typing a name and scanning a QR code with your phone, instead of copying keys around by hand.
+
+I run it with Docker inside its own LXC container. Two things must be true about the container before WireGuard will work inside it:
 
 ```ini title="/etc/pve/lxc/<container-id>.conf"
 features: nesting=1,keyctl=1
@@ -114,9 +134,9 @@ lxc.cgroup2.devices.allow: c 10:200 rwm
 lxc.mount.entry: /dev/net/tun dev/net/tun none bind,create=file
 ```
 
-`nesting` is what lets Docker run inside the container at all. The other two lines expose `/dev/net/tun` to it, which WireGuard needs to create its interface. Without them you get an unhelpful failure at startup that looks like a permissions problem, because it is one.
+The first line lets Docker run inside the container at all. The other two give the container access to `/dev/net/tun`, which WireGuard needs to create its network interface. Without them you get a confusing error at startup that looks like a permission problem, because it is one.
 
-Then the compose file. The single line this whole article exists for is `WG_DEFAULT_DNS`:
+Then the Docker setup. The one line this whole article is about is `WG_DEFAULT_DNS`:
 
 ```yaml title="docker-compose.yml"
 services:
@@ -125,7 +145,7 @@ services:
         container_name: wg-easy
         environment:
             - WG_HOST=vpn.example.com
-            - PASSWORD_HASH=<bcrypt hash for the web UI>
+            - PASSWORD_HASH=<hash for the web page login>
             - WG_DEFAULT_ADDRESS=10.8.0.x
             - WG_DEFAULT_DNS=192.168.0.20
             - WG_ALLOWED_IPS=192.168.0.0/24, 10.8.0.0/24
@@ -144,15 +164,15 @@ services:
         restart: unless-stopped
 ```
 
-`WG_DEFAULT_DNS` is written into the `DNS =` line of every client config wg-easy generates. Point it at the Pi-hole and every device you enrol from then on gets filtered DNS for exactly as long as its tunnel is up. Newer wg-easy releases moved this into the web-based setup instead of an environment variable, but it is the same setting doing the same job.
+`WG_DEFAULT_DNS` is the Pi-hole's address. wg-easy writes it into the `DNS =` line of every client file it creates. So every device I add gets filtered DNS for as long as its VPN is on, and normal DNS the moment it turns off. Newer versions of wg-easy ask for this in the web setup instead of an environment variable, but it is the same setting doing the same job.
 
-I also set the container's own resolver to the Pi-hole, so anything the box itself looks up is filtered too. That part is housekeeping rather than the mechanism, but it means the container and its clients agree about what the world looks like.
+I also set the container itself to use Pi-hole as its DNS, so anything the box looks up is filtered too.
 
-> **Warning:** wg-easy's web UI on port `51821` is a full admin panel for your VPN. Keep it on the LAN, do not forward it from the router, and reach it through the tunnel once the tunnel exists. The only port that belongs on the internet is the UDP one WireGuard actually listens on.
+> **Warning:** The wg-easy web page on port `51821` can manage your whole VPN. Keep it inside your home network. Do not forward that port in your router. Once the VPN works, you can reach the page through the VPN itself. The only port that should face the internet is the UDP one WireGuard listens on.
 
-## Two lines in the client config do all the work
+## The two lines that matter in the client file
 
-Here is what a generated client looks like, with the two lines that matter called out:
+Here is what a client file looks like:
 
 ```ini title="phone.conf"
 [Interface]
@@ -168,77 +188,81 @@ Endpoint = vpn.example.com:51820
 PersistentKeepalive = 25
 ```
 
-`DNS` is the switch. `AllowedIPs` is the interesting one, because it decides how much of your traffic goes through the tunnel, and the answer turns out to be: less than you would think.
+`DNS` is the switch. That is the ad blocking, right there.
 
-The Pi-hole lives at `192.168.0.20`, which is inside `192.168.0.0/24`. So as long as the LAN subnet is in `AllowedIPs`, DNS queries are routed into the tunnel and reach the Pi-hole. Everything else, the actual page loads, the video streams, the app traffic, keeps going out through whatever connection the device is already on. The filtering is not a side effect of tunnelling your traffic. It is the only thing being tunnelled.
+`AllowedIPs` is the interesting one. It decides which traffic goes through the VPN. And you need less than you might think.
 
-| `AllowedIPs`                    | What goes through the tunnel                      | Good for                                                                        |
-| ------------------------------- | ------------------------------------------------- | ------------------------------------------------------------------------------- |
-| `192.168.0.0/24, 10.8.0.0/24`   | DNS and anything on my LAN. Nothing else.         | At home, or on mobile data. Blocking with almost no bandwidth or battery cost.  |
-| `0.0.0.0/0, ::/0`               | Everything.                                       | Hostile WiFi, where I want the whole session going home first.                  |
+Pi-hole is at `192.168.0.20`, which is inside `192.168.0.0/24`. So as long as that range is listed, DNS questions travel through the VPN and reach Pi-hole. Everything else, the actual web pages, the videos, the app data, goes out the normal way. You are not sending your whole internet through your house. You are only sending the questions.
 
-I keep the split-tunnel form as the default on my everyday clients and a separate full-tunnel client for cafe and airport WiFi. They are two entries in the same app, which costs nothing to maintain.
+| What you put in `AllowedIPs`  | What goes through the VPN                     | When to use it                                          |
+| ----------------------------- | --------------------------------------------- | -------------------------------------------------------- |
+| `192.168.0.0/24, 10.8.0.0/24` | DNS and my home network. Nothing else.        | Every day. Almost no effect on speed or battery.        |
+| `0.0.0.0/0, ::/0`             | Everything.                                   | Public WiFi, when I want all traffic to go home first.  |
+
+I keep the first one as my normal setup, and a second client with the full option for cafe and airport WiFi. They are just two entries in the same app.
 
 ```mermaid
 flowchart TB
-    subgraph tunnelOff["Tunnel off"]
-        DeviceOff["Laptop"] --> RouterOff["Router"]
-        RouterOff --> IspDns["ISP resolver<br/>nothing filtered"]
+    subgraph vpnOff["VPN off"]
+        DeviceOff["Desktop"] --> RouterOff["Router"]
+        RouterOff --> IspDns["ISP DNS<br/>ads show up"]
     end
-    subgraph tunnelOn["Tunnel on"]
-        DeviceOn["Laptop"] -->|"encrypted"| Wg["wg-easy LXC<br/>10.8.0.1"]
-        Wg -->|"DNS = 192.168.0.20"| PiholeOn["Pi-hole LXC"]
-        PiholeOn -->|"allowed"| UpstreamOn["Upstream resolver"]
-        PiholeOn -->|"blocked"| Nothing["Answers 0.0.0.0"]
-        PiholeOn -.->|"local records"| LocalHosts["My own machines,<br/>by name"]
+    subgraph vpnOn["VPN on"]
+        DeviceOn["Desktop"] -->|"encrypted"| Wg["wg-easy<br/>10.8.0.1"]
+        Wg -->|"DNS = 192.168.0.20"| PiholeOn["Pi-hole"]
+        PiholeOn -->|"normal site"| UpstreamOn["Normal DNS server"]
+        PiholeOn -->|"ad"| Nothing["Answers: nothing here"]
+        PiholeOn -.->|"my own names"| LocalHosts["pve.home,<br/>pihole.home"]
     end
 ```
 
-The router, meanwhile, went back to the ISP's resolvers. Nothing in the house depends on the Proxmox box any more.
+And my router went back to my ISP's DNS servers. Nothing in the house depends on the Proxmox box any more.
 
-## The Pi-hole has to be told the tunnel is a friend
+## Pi-hole ignores the VPN until you tell it not to
 
-There is one setting that will make all of this look broken while every part of it is working, and it is worth knowing about before you spend an evening on it.
+There is one setting that will make all of this look broken while every part of it is actually working. It is worth knowing before you lose an evening to it.
 
-Pi-hole's DNS listening behaviour defaults to allowing only local requests, meaning queries whose source address is in the same subnet as one of its own interfaces. Tunnel clients are on `10.8.0.0/24`. The Pi-hole is on `192.168.0.0/24`. If those queries arrive with their original source address, the Pi-hole considers them foreign and drops them without answering, and your client sits there resolving nothing at all with a perfectly healthy tunnel.
+By default, Pi-hole only answers devices on its own network. VPN clients are on `10.8.0.0/24`. Pi-hole is on `192.168.0.0/24`. Those are different networks. If the questions arrive with their original address, Pi-hole treats them as strangers and throws them away without replying. Your VPN connects fine and nothing resolves.
 
-There are two ways out, and they are a genuine trade-off rather than a right answer:
+There are two ways around it, and they are a real trade-off:
 
-- **Let wg-easy masquerade the traffic.** This is the default. The container rewrites the source address of tunnel traffic to its own LAN address, so from the Pi-hole's point of view every query arrives from a neighbour and the local-only rule is satisfied. Nothing to configure. The cost is that every tunnel client shows up in the Pi-hole query log as the same IP, so per-device statistics and per-device blocking stop being possible.
-- **Turn masquerading off, add a route, and permit all origins.** Give the router a static route for `10.8.0.0/24` via the wg-easy container, stop rewriting the source, and set the Pi-hole's listening behaviour to permit all origins. Now every client keeps its own tunnel address, and the query log tells you which device asked for what. That is more setup, and "permit all origins" is only reasonable because the Pi-hole is not reachable from outside the LAN.
+- **Let wg-easy rewrite the addresses.** This is the default behavior. The container replaces the sender address on VPN traffic with its own home network address. Pi-hole then sees a neighbor asking, and answers normally. Nothing to configure. The cost is that all your VPN devices look like one device in the Pi-hole logs, so you lose per-device statistics.
+- **Turn that off and let Pi-hole accept everyone.** Add a route in your router for `10.8.0.0/24` pointing at the wg-easy container, stop rewriting addresses, and change Pi-hole's setting to permit all origins. Now each device keeps its own address and shows up separately in the logs. It is more setup, and it only makes sense because Pi-hole is not reachable from outside your home.
 
-> **Note:** If you take the second route, make sure it really is only reachable from inside. An open resolver on the public internet gets found within hours and conscripted into DNS amplification attacks. Permitting all origins is a statement about your LAN, not about the internet.
+> **Note:** If you choose the second option, make sure Pi-hole really is unreachable from the internet. A DNS server that answers anybody gets found quickly and used by strangers to attack other people. Permitting all origins is a decision about your home network, not about the internet.
 
-## The part I did not plan for: my machines have names now
+## A bonus: my machines have names now
 
-This was a side effect, and it turned out to be the thing I use most.
+I did not plan this part, and it is the thing I use most.
 
-Pi-hole will serve local DNS records, mapping a name you invent to an address on your LAN. So the Proxmox host is not `192.168.0.10` any more, and none of my services are a port number I have to remember:
+Pi-hole can hold your own DNS names, pointing at addresses in your home. So I stopped remembering IP addresses:
 
-| Name         | Points at      |
-| ------------ | -------------- |
-| `pve.home`   | the Proxmox host |
-| `pihole.home` | the Pi-hole admin UI |
-| `vpn.home`   | the wg-easy UI |
+| Name          | Goes to              |
+| ------------- | -------------------- |
+| `pve.home`    | the Proxmox server   |
+| `pihole.home` | the Pi-hole web page |
+| `vpn.home`    | the wg-easy web page |
 
-Setting them in the router-wide arrangement meant they only worked at home. Now they arrive with the tunnel, so they work from anywhere the tunnel does. I can be out of the house, flip the switch, and type `pve.home` into a browser exactly as if I were sitting in front of the machine. That is the split tunnel earning its keep: two subnets in `AllowedIPs`, and my homelab follows me around.
+When Pi-hole was set in the router, these names only worked at home. Now they come with the VPN, so they work anywhere. I can be out of the house, turn the VPN on, and type `pve.home` in my browser as if I were sitting in front of the machine.
 
 ## What this still does not fix
 
-I want to be straight about the limits, because there are several and none of them are subtle.
+I want to be honest about the holes, because there are several.
 
-- **The devices that most need filtering are the ones that cannot run WireGuard.** The smart TV, the various things with a chip in them that phone home. They are on the ISP's resolvers now and nobody is filtering them. Under the old setup they were covered.
-- **Filtering is opt-in, which means it is off by default.** If the tunnel is off, I see ads. That is the entire design and also its biggest hole, because the switch only helps when you remember it exists.
-- **The Proxmox box is still a single point of failure, just for less.** If it is down, the tunnel does not come up. The difference is what that costs: a feature I chose to turn on does not work, instead of the whole house losing name resolution while the router sits there on its UPS looking fine.
-- **Browsers can go around it entirely.** Secure DNS in Chrome and Firefox sends lookups over HTTPS to a resolver of the browser's choosing and never asks the system resolver. If a browser is still showing ads with the tunnel up, that setting is the first thing to check.
-- **This is not high availability.** A second Pi-hole on a small always-on machine, with both configured through the router, is the actual answer to the failure I started with. I did not build that, because it means another box and keeping two blocklists in sync.
+- **Anything that cannot run WireGuard is no longer covered.** A device with no VPN app, or one you cannot install software on, now uses my ISP's DNS and nobody filters it. The old setup covered every device on the network without asking any of them. This one only covers the devices I set up by hand.
+- **Blocking is off by default now.** If the VPN is off, I see ads. That is the whole design, but it is also its weakest part, because a switch only helps when you remember it is there.
+- **The Proxmox server can still fail, but it costs much less.** If it is off, the VPN does not connect. That is it. Before, the whole house lost DNS while the router sat there on its UPS looking perfectly healthy.
+- **Browsers can go around it.** Chrome and Firefox have a "secure DNS" feature that sends DNS questions straight to their own server over HTTPS and ignores your system setting. If you still see ads with the VPN on, check that first.
+- **This is not a proper backup plan.** The real fix for my original problem is a second Pi-hole on a small machine that always stays on. I did not build that, because it means another box and keeping two blocklists in sync.
 
-## Good enough, chosen on purpose
+## Not perfect, but right for me
 
-None of this is the correct solution. The correct solution is redundant resolvers on hardware that stays up, and I know that.
+None of this is the correct solution, and I know it. The correct solution is two DNS servers on hardware that stays up.
 
-What I built instead did something more useful to me than being correct: it moved the blast radius. The question was never really "how do I block ads". It was "what breaks when my playground machine goes down", and the honest answer used to be "everything, for everyone in the house, in the most confusing way possible". Now the answer is "a switch on my own devices stops doing anything, and I am the only person who notices".
+But what I built did something more useful to me than being correct. It changed how much breaks when things go wrong.
 
-I still get the ad blocking. I get my local names, and I get them from outside the house, which I did not have before. The router holds a setting that will keep working whether or not I am in the middle of rebuilding something. And the cost is a toggle I flip roughly once a day and mostly forget is there.
+The real question was never "how do I block ads". It was "what happens when my playground server goes down". The old answer was "everything stops, for everyone in the house, in the most confusing way possible". The new answer is "a switch on my own devices stops working, and I am the only one who notices".
 
-There is a version of homelab work that is about building the right architecture, and there is a version that is about noticing which failures you can actually live with. This was the second kind. It is not the perfect answer. It is comfortably the right one for the way I actually use my network.
+I still get my ad blocking. I get my own names, and now they work from outside the house too. My router holds a setting that keeps working no matter what I am breaking on the server. The whole cost is one toggle I press about once a day and mostly forget about.
+
+Some homelab work is about building the right thing. Some of it is about noticing which failures you can live with. This was the second kind, and for the way I actually use my network, it is enough.
