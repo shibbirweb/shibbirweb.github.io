@@ -3,7 +3,7 @@
 import styles from '@/components/pages/articles/FlowDiagram/FlowDiagram.module.css';
 
 interface FlowCaptionProps {
-    /** Short label for where the text came from, e.g. "Hop 2" or a node name. */
+    /** Short label for where the text came from, e.g. "Step 2" or a node name. */
     source: string;
     text: string;
 }

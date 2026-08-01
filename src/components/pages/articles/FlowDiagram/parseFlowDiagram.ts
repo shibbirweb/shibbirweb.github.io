@@ -83,6 +83,7 @@ export function parseFlowDiagram(source: string): FlowDiagramDefinition {
     let title: string | undefined;
     let defaultView: FlowView | undefined;
     let diagramMermaid: string | undefined;
+    let showPackets: boolean | undefined;
     let currentScenario: FlowScenario | null = null;
     let proseTarget: ProseTarget = null;
 
@@ -202,6 +203,20 @@ export function parseFlowDiagram(source: string): FlowDiagramDefinition {
             return;
         }
 
+        if (/^packets\s*:/i.test(line)) {
+            const value = line.replace(/^packets\s*:/i, '').trim().toLowerCase();
+            if (value !== 'on' && value !== 'off') {
+                throw new FlowDiagramParseError(
+                    `packets must be "on" or "off", got "${value}"`,
+                    lineNumber,
+                    rawLine
+                );
+            }
+            showPackets = value === 'on';
+            proseTarget = null;
+            return;
+        }
+
         const scenarioMatch = line.match(SCENARIO_PATTERN);
         if (scenarioMatch) {
             const label = scenarioMatch[1].trim();
@@ -312,6 +327,7 @@ export function parseFlowDiagram(source: string): FlowDiagramDefinition {
         title,
         defaultView,
         mermaid: diagramMermaid,
+        showPackets,
         nodes: [...nodes.values()],
         edges: [...edges.values()],
         scenarios,

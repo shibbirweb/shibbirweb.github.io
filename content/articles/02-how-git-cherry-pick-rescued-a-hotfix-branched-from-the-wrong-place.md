@@ -36,22 +36,68 @@ The bug came up again, and someone asked the reasonable question: is that fixed 
 
 It was fixed. It was just fixed on `develop`, and `develop` was not going anywhere for another week. Here is what the history actually looked like:
 
-```mermaid
----
-config:
-    gitGraph:
-        mainBranchName: 'master'
----
-gitGraph
-    commit id: "release 2.4"
-    branch develop
-    checkout develop
-    commit id: "feature A"
-    commit id: "feature B"
-    commit id: "fix: guard"
-    commit id: "fix: edge case"
-    commit id: "test: guard"
-    commit id: "feature C"
+```reactflow
+title: Where the fix sat while production still needed it
+packets: off
+
+scenario "Unreleased history"
+> Everything after the release commit lives only on develop. The three commits production needs are buried in the middle of three features that are not allowed to ship.
+
+release 2.4
+> The tip of master, and the only thing users are actually running.
+
+feature A [develop]
+> Merged during the same couple of days, and not approved for release.
+
+feature B [develop]
+> The same.
+
+fix: guard [develop] {allowed}
+> The actual correction production is waiting for.
+
+fix: edge case [develop] {allowed}
+> A follow-up for a case a reviewer spotted.
+
+test: guard [develop] {allowed}
+> The test covering the fix. These three are the ones that have to move.
+
+feature C [develop]
+> Finished after the fix, and also unreleased.
+
+release 2.4 --> feature A
+> develop was cut from the release commit, so this is where the unreleased run begins.
+
+feature A --> feature B
+> Ordinary feature work, merged and waiting.
+
+feature B --> fix: guard
+> The hotfix branch was cut from develop out of habit, so its commits landed here.
+
+fix: guard --> fix: edge case
+> The follow-up, applied on top of the guard.
+
+fix: edge case --> test: guard
+> And the test, which is why order matters when these are replayed later.
+
+test: guard --> feature C
+> More feature work on top, sealing the fix in behind things that cannot ship.
+
+mermaid:
+    ---
+    config:
+        gitGraph:
+            mainBranchName: 'master'
+    ---
+    gitGraph
+        commit id: "release 2.4"
+        branch develop
+        checkout develop
+        commit id: "feature A"
+        commit id: "feature B"
+        commit id: "fix: guard"
+        commit id: "fix: edge case"
+        commit id: "test: guard"
+        commit id: "feature C"
 ```
 
 `master` is that first commit. Everything after it is unreleased, and the three commits I needed are buried in the middle of it.
@@ -77,27 +123,94 @@ A commit in Git is a snapshot, but it also implies a change: the difference betw
 
 The critical word is **new**. Cherry-pick does not move a commit and it does not share one. It copies a change and records the result as a fresh commit with a fresh SHA, a different parent, and no stored relationship to the original whatsoever. After the pick, the same change exists in two places under two different identities:
 
-```mermaid
----
-config:
-    gitGraph:
-        mainBranchName: 'master'
----
-gitGraph
-    commit id: "release 2.4"
-    branch develop
-    checkout develop
-    commit id: "feature A"
-    commit id: "feature B"
-    commit id: "fix: guard"
-    commit id: "fix: edge case"
-    commit id: "test: guard"
-    checkout master
-    branch hotfix/production-guard
-    checkout hotfix/production-guard
-    cherry-pick id: "fix: guard"
-    cherry-pick id: "fix: edge case"
-    cherry-pick id: "test: guard"
+```reactflow
+title: The same change on two branches under two different SHAs
+packets: off
+
+scenario "After the pick"
+> The hotfix branch was cut from the release commit, and the three changes were replayed onto it. Each replay is a brand new commit: same message, same diff, different SHA, different parent.
+
+release 2.4
+> Where both branches begin. The hotfix branch is cut from here, which is the whole point of the exercise.
+
+feature A [develop]
+> Still unreleased, and still going nowhere.
+
+feature B [develop]
+> The same.
+
+fix: guard [develop] {allowed}
+> The original commit, still sitting on develop where it was written.
+
+fix: edge case [develop] {allowed}
+> The original follow-up.
+
+test: guard [develop] {allowed}
+> The original test.
+
+picked: guard [hotfix, new SHA] {secure}
+> A new commit carrying the same change. Git stores no link back to the original, which is what -x exists to write into the message.
+
+picked: edge case [hotfix, new SHA] {secure}
+> The second replay, applied on top of the first so it lands on the state it expects.
+
+picked: test [hotfix, new SHA] {secure}
+> The third. This one conflicted, because the test file had been reorganised on develop between the fix and the test.
+
+release 2.4 --> feature A
+> develop carries on from the release commit as before. Nothing here is touched by the pick.
+
+feature A --> feature B
+> More unreleased work, unchanged by any of this.
+
+feature B --> fix: guard
+> The fix is still exactly where it was written, on the wrong branch.
+
+fix: guard --> fix: edge case
+> Its follow-up, still on develop.
+
+fix: edge case --> test: guard
+> And its test. Nothing on this row moves; the pick copies from it.
+
+release 2.4 --> picked: guard {secure}
+> The hotfix branch is cut from master this time, named explicitly, which is the five-second habit that would have prevented all of it.
+
+picked: guard --> picked: edge case {secure}
+> Replayed in the order they were authored, oldest first.
+
+picked: edge case --> picked: test {secure}
+> And the test last, so each patch lands on the state the next one expects.
+
+fix: guard --> picked: guard (cherry-picked) {secure}
+> Not a parent link. This is the copy: the diff of the commit on the left, replayed onto the branch on the right as a new commit.
+
+fix: edge case --> picked: edge case (cherry-picked) {secure}
+> The same relationship again. Git itself records none of these dotted links.
+
+test: guard --> picked: test (cherry-picked) {secure}
+> Which is exactly why the two histories look unrelated six months later.
+
+mermaid:
+    ---
+    config:
+        gitGraph:
+            mainBranchName: 'master'
+    ---
+    gitGraph
+        commit id: "release 2.4"
+        branch develop
+        checkout develop
+        commit id: "feature A"
+        commit id: "feature B"
+        commit id: "fix: guard"
+        commit id: "fix: edge case"
+        commit id: "test: guard"
+        checkout master
+        branch hotfix/production-guard
+        checkout hotfix/production-guard
+        cherry-pick id: "fix: guard"
+        cherry-pick id: "fix: edge case"
+        cherry-pick id: "test: guard"
 ```
 
 The commits on the hotfix branch carry the same message and the same change as the ones on `develop`, but they are different commits. Git considers them unrelated.

@@ -66,6 +66,13 @@ export interface FlowDiagramDefinition {
      */
     defaultView?: FlowView;
     /**
+     * Whether packets travel the hops in the interactive view, from a `packets:`
+     * line. Defaults to on. Structural diagrams (a commit history, say) want it
+     * off: nothing actually moves between two commits, so a travelling dot would
+     * assert something untrue.
+     */
+    showPackets?: boolean;
+    /**
      * Hand-written mermaid declared before any scenario, used as the static view
      * for every scenario that does not supply its own.
      */

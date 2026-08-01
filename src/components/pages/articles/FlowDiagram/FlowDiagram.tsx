@@ -107,11 +107,11 @@ export default function FlowDiagram({
     const hint =
         view === 'static'
             ? hasScenarioChoice
-                ? 'Switch between the routes, or press Interactive to animate the traffic and step through it.'
-                : 'Press Interactive to animate the traffic and step through it hop by hop.'
+                ? 'Switch scenarios, or press Interactive to step through the diagram.'
+                : 'Press Interactive to step through the diagram a piece at a time.'
             : hasScenarioChoice
-              ? 'Switch between the routes, step through the hops, or select a box to see what it does.'
-              : 'Step through the hops, or select a box to see what it does.';
+              ? 'Switch scenarios, step through the diagram, or select a box to see what it does.'
+              : 'Step through the diagram, or select a box to see what it does.';
 
     const caption =
         view === 'static'
@@ -119,7 +119,7 @@ export default function FlowDiagram({
             : selectedNode?.description
             ? { source: selectedNode.label, text: selectedNode.description }
             : playback.isStepping && activeHop?.caption
-              ? { source: `Hop ${stepIndex + 1}`, text: activeHop.caption }
+              ? { source: `Step ${stepIndex + 1}`, text: activeHop.caption }
               : { source: scenario.label, text: scenario.summary ?? '' };
 
     return (
@@ -147,7 +147,10 @@ export default function FlowDiagram({
                 onPause={playback.pause}
                 onStepForward={playback.stepForward}
                 onStepBackward={playback.stepBackward}
-                showPlayControl={!prefersReducedMotion}
+                showPlayControl={
+                    !prefersReducedMotion &&
+                    definition.showPackets !== false
+                }
             />
 
             <div ref={stageRef} className={styles.stage}>
@@ -158,7 +161,7 @@ export default function FlowDiagram({
                         selectedNodeId={selectedNodeId}
                         isStepping={playback.isStepping}
                         stepIndex={stepIndex}
-                        animate={!prefersReducedMotion}
+                        animate={!prefersReducedMotion && definition.showPackets !== false}
                         onSelectNode={(nodeId) =>
                             setSelectedNodeId((current) =>
                                 current === nodeId ? null : nodeId

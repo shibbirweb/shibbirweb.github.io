@@ -29,9 +29,14 @@ interface FlowControlsProps {
 }
 
 /**
- * The control bar: the scenario switch on one side, playback on the other.
- * Stepping is entered by pressing either step arrow, so there is no separate mode
- * selector for the reader to reason about.
+ * The control bar: the view and scenario switches on one side, playback on the
+ * other. Stepping is entered by pressing either step arrow, so there is no
+ * separate mode selector for the reader to reason about.
+ *
+ * All the wording here is deliberately neutral. This component is shared by every
+ * diagram on the site, so anything phrased for one subject (an earlier version
+ * said "Live traffic", which meant nothing on a commit history) is wrong the
+ * moment a second diagram exists.
  */
 export default function FlowControls({
     view,
@@ -108,13 +113,13 @@ export default function FlowControls({
             <div className={cn(styles.playback, 'ml-auto')}>
                 <span className={styles.stepCounter} aria-live="polite">
                     {isStepping
-                        ? `Hop ${stepIndex + 1} of ${stepCount}`
-                        : 'Live traffic'}
+                        ? `Step ${stepIndex + 1} of ${stepCount}`
+                        : `${stepCount} steps`}
                 </span>
                 <button
                     type="button"
                     onClick={onStepBackward}
-                    aria-label="Previous hop"
+                    aria-label="Previous step"
                     className={styles.iconButton}
                 >
                     <ChevronIcon className="size-4 -rotate-90" />
@@ -125,8 +130,8 @@ export default function FlowControls({
                         onClick={isPlaying && !isStepping ? onPause : onPlay}
                         aria-label={
                             isPlaying && !isStepping
-                                ? 'Pause the flow'
-                                : 'Play the flow'
+                                ? 'Pause the animation'
+                                : 'Play the animation'
                         }
                         className={styles.iconButton}
                     >
@@ -140,7 +145,7 @@ export default function FlowControls({
                 <button
                     type="button"
                     onClick={onStepForward}
-                    aria-label="Next hop"
+                    aria-label="Next step"
                     className={styles.iconButton}
                 >
                     <ChevronIcon className="size-4 rotate-90" />
