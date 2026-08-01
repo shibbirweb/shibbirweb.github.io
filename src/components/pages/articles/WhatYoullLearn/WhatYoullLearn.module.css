@@ -12,6 +12,8 @@
    by accentStyle), so the wash, the leading edge bar, and the check marks all read as
    one accent. Kept faint, and stepped up in dark mode like every other glow here. */
 .card {
+    --bloom-strength: 9%;
+
     --pointer-x: 50%;
     --pointer-y: 50%;
     --spotlight-radius: 20rem;
@@ -22,13 +24,42 @@
 
 @media (prefers-color-scheme: dark) {
     :global(html:not([data-theme])) .card {
+        --bloom-strength: 16%;
         --spotlight-strength: 3.5%;
         --spotlight-border-strength: 68%;
     }
 }
 :global(html[data-theme='dark']) .card {
+    --bloom-strength: 16%;
     --spotlight-strength: 3.5%;
     --spotlight-border-strength: 68%;
+}
+
+/* The ambient bloom, resting dim and blooming to full on hover. A panel this size
+   should not sit flat at rest next to MermaidDiagram and FlowDiagram, which glow
+   faintly on the same page; the cursor wash below is an addition to this, not a
+   replacement for it. */
+.card::before {
+    @apply pointer-events-none absolute inset-0 z-[-1] rounded-[inherit] opacity-55 content-[''] motion-safe:transition-opacity motion-safe:duration-700 motion-safe:ease-out;
+    background-image: radial-gradient(
+        120% 90% at 0% 0%,
+        color-mix(
+            in oklab,
+            var(--accent-from, var(--foreground)) var(--bloom-strength),
+            transparent
+        ),
+        color-mix(
+            in oklab,
+            var(--accent-to, var(--foreground))
+                calc(var(--bloom-strength) * 0.45),
+            transparent
+        ),
+        transparent 72%
+    );
+}
+
+.card:hover::before {
+    @apply opacity-100;
 }
 
 /* The cursor wash, behind the card's content (the card is `relative isolate`, so the

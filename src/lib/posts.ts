@@ -6,6 +6,7 @@ import type {
     ArticleDifficulty,
     ArticleSeries as SeriesFrontmatter,
 } from '@/lib/articleSchema';
+import { parseArticleDate, toDateString } from '@/utils/articleDate';
 import {
     coverGradientForSlug,
     generatedCoverPath,
@@ -155,8 +156,8 @@ function toSummary(article: ParsedArticle): ArticleSummary {
         slug,
         title: data.title ?? slug,
         description: data.description ?? '',
-        date: data.date ?? '',
-        updated: data.updated,
+        date: toDateString(data.date),
+        updated: data.updated ? toDateString(data.updated) : undefined,
         tags: Array.isArray(data.tags) ? data.tags : [],
         cover,
         coverColors: resolveCoverColors(cover, slug),
@@ -170,11 +171,32 @@ function toSummary(article: ParsedArticle): ArticleSummary {
     };
 }
 
+/**
+ * A published article flows into the feeds and the sitemap, where a missing or
+ * malformed date becomes an Invalid Date and throws deep inside serialisation with
+ * no clue which file caused it. Fail here instead, naming the article to fix. Draft
+ * previews never reach this path, so an in-progress draft may still have no date.
+ */
+function assertPublishableDate(summary: ArticleSummary): ArticleSummary {
+    if (!parseArticleDate(summary.date)) {
+        throw new Error(
+            `Article "${summary.slug}" needs a valid YYYY-MM-DD \`date:\` in its frontmatter, found ${JSON.stringify(summary.date)}.`
+        );
+    }
+    if (summary.updated && !parseArticleDate(summary.updated)) {
+        throw new Error(
+            `Article "${summary.slug}" has an invalid \`updated:\` date, found ${JSON.stringify(summary.updated)}. Use YYYY-MM-DD or remove the field.`
+        );
+    }
+    return summary;
+}
+
 /** Published articles, newest first. Drafts are excluded. */
 export function getAllArticles(): ArticleSummary[] {
     return readArticleFiles()
         .filter((article) => article.data.draft !== true)
         .map(toSummary)
+        .map(assertPublishableDate)
         .sort((a, b) => (a.date < b.date ? 1 : -1));
 }
 
@@ -231,6 +253,19 @@ export async function getArticle(slug: string): Promise<Article | null> {
     return buildArticle(article.slug, article.data, article.content);
 }
 
+/** One scored relevance candidate, before the ranking drops the score. */
+interface ScoredArticle {
+    article: ArticleSummary;
+    score: number;
+}
+
+/** Higher score first, newest first within a score. Dates are `YYYY-MM-DD`, so they compare as strings. */
+function compareByScoreThenRecency(a: ScoredArticle, b: ScoredArticle): number {
+    if (b.score !== a.score) return b.score - a.score;
+    if (a.article.date === b.article.date) return 0;
+    return a.article.date < b.article.date ? 1 : -1;
+}
+
 /**
  * Up to `limit` other articles ranked by relevance to `slug`: each shared tag
  * counts most, a shared category and a shared series add a strong signal, and
@@ -260,13 +295,7 @@ export function getRelatedArticles(slug: string, limit = 3): ArticleSummary[] {
             return { article, score };
         })
         .filter((entry) => entry.score > 0)
-        .sort((a, b) =>
-            b.score !== a.score
-                ? b.score - a.score
-                : a.article.date < b.article.date
-                  ? 1
-                  : -1
-        )
+        .sort(compareByScoreThenRecency)
         .slice(0, limit)
         .map((entry) => entry.article);
 }

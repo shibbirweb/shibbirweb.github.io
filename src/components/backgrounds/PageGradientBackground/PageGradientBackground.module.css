@@ -1,0 +1,61 @@
+@reference "tailwindcss";
+
+/* Registering the gradient colours as <color> custom properties lets them be
+   transitioned, so the wash cross-fades smoothly on navigation instead of
+   snapping to the next route's colours (a plain background-image cannot
+   transition, but a registered custom property used inside it can). @property is
+   global wherever it is declared, so it registers fine from inside this module,
+   and it must travel with the rule below or the cross-fade degrades to a snap. */
+@property --page-grad-from {
+    syntax: '<color>';
+    inherits: false;
+    initial-value: transparent;
+}
+@property --page-grad-to {
+    syntax: '<color>';
+    inherits: false;
+    initial-value: transparent;
+}
+
+/* Per-page gradient background for every page except home (issue #75). The
+   element is a full-page wash rendered by PageGradientBackground on non-home
+   routes (absolutely positioned over the relative body, so it spans the whole
+   document and scrolls with the page rather than staying fixed). Its two accent
+   colours (--page-grad-from / --page-grad-to) are set as an inline style by the
+   component and derived per route in pageGradient.ts, so each page gets its own
+   gradient and any new route is assigned one automatically. Each accent colour is
+   mixed a little into the base background (a touch stronger in dark mode) rather
+   than toward transparent, so every stop stays on the base colour and the wash
+   ends on the exact footer background (var(--background)) at the bottom. That
+   avoids the muddy "fade to transparent" band and lets the gradient meet the
+   footer seamlessly in both light and dark mode.
+
+   The cross-fade on route change: the element persists across client navigations,
+   so transitioning its colour variables animates the gradient. motion-safe leaves
+   the change instant for a reduced-motion preference. */
+.pageGradient {
+    --wash-strength: 6%;
+
+    @apply motion-safe:[transition:--page-grad-from_700ms_ease,--page-grad-to_700ms_ease];
+    background-image: linear-gradient(
+        180deg,
+        var(--background) 0%,
+        color-mix(in oklab, var(--page-grad-from) var(--wash-strength), var(--background))
+            15%,
+        color-mix(in oklab, var(--page-grad-to) var(--wash-strength), var(--background))
+            55%,
+        var(--background) 100%
+    );
+}
+
+/* A touch stronger when the resolved theme is dark; only the mix strength
+   changes, so the single gradient rule above is reused. Mirrored on the OS media
+   query for the no-JS fallback (no data-theme set). */
+@media (prefers-color-scheme: dark) {
+    :global(html:not([data-theme])) .pageGradient {
+        --wash-strength: 12%;
+    }
+}
+:global(html[data-theme='dark']) .pageGradient {
+    --wash-strength: 12%;
+}

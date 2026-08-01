@@ -1,5 +1,6 @@
 import { WithContext, ProfilePage } from 'schema-dts';
 
+import { getBuiltAt } from '@/lib/version';
 import {
     addressCountry,
     currentJobTitle,
@@ -34,7 +35,7 @@ export const resumeJsonLd: WithContext<ProfilePage> = {
     '@type': 'ProfilePage',
     url: resumeURL,
     name: `Resume | ${siteName}`,
-    dateModified: new Date().toISOString(),
+    dateModified: getBuiltAt(),
     mainEntity: {
         '@type': 'Person',
         '@id': `${siteURL}#person`,

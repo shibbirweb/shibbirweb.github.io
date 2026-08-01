@@ -1,4 +1,5 @@
 import matter from 'gray-matter';
+import { toDateString } from '@/utils/articleDate';
 import type { ArticleFrontmatter } from '@/lib/articleSchema';
 
 // Server-side helpers that read and write article `.md` files in the house style.
@@ -67,12 +68,6 @@ export function serializeArticle(
     return `---\n${lines.join('\n')}\n---\n\n${trimmedBody}\n`;
 }
 
-/** A YAML date value as a `YYYY-MM-DD` string (gray-matter may hand back a Date). */
-function asDateString(value: unknown): string {
-    if (value instanceof Date) return value.toISOString().slice(0, 10);
-    return value == null ? '' : String(value);
-}
-
 /** A frontmatter list field, keeping only strings, never null. */
 function stringList(value: unknown): string[] {
     return Array.isArray(value)
@@ -97,8 +92,8 @@ export function parseArticleFile(raw: string): {
     const frontmatter: ArticleFrontmatter = {
         title: typeof data.title === 'string' ? data.title : '',
         description: typeof data.description === 'string' ? data.description : '',
-        date: asDateString(data.date),
-        updated: data.updated ? asDateString(data.updated) : undefined,
+        date: toDateString(data.date),
+        updated: data.updated ? toDateString(data.updated) : undefined,
         tags: stringList(data.tags),
         cover: typeof data.cover === 'string' ? data.cover : undefined,
         category: typeof data.category === 'string' ? data.category : undefined,
