@@ -4,16 +4,16 @@ import { useCallback, useEffect, useState } from 'react';
 
 interface PlaybackOptions {
     /** Number of hops in the active scenario; stepping wraps around it. */
-    edgeCount: number;
+    hopCount: number;
     /** Resets stepping whenever the reader switches scenario. */
     scenarioId: string;
     prefersReducedMotion: boolean;
 }
 
-export interface NetworkFlowPlayback {
+export interface FlowPlayback {
     /** True while the reader is walking hops by hand rather than watching the loop. */
     isStepping: boolean;
-    /** Index into the scenario's edges; meaningful only while stepping. */
+    /** Index into the scenario's hops; meaningful only while stepping. */
     stepIndex: number;
     /** True while packets should be moving. */
     isPlaying: boolean;
@@ -26,14 +26,14 @@ export interface NetworkFlowPlayback {
 /**
  * Playback state for one diagram: the continuous packet loop, and the manual
  * hop-by-hop walk. Touching either step control leaves the loop and enters
- * stepping; pressing play returns to it. Visitors who ask for reduced motion
- * start in stepping mode, since for them the loop would never move anyway.
+ * stepping; pressing play returns to it. Visitors who ask for reduced motion start
+ * in stepping mode, since for them the loop would never move anyway.
  */
-export function useNetworkFlowPlayback({
-    edgeCount,
+export function useFlowPlayback({
+    hopCount,
     scenarioId,
     prefersReducedMotion,
-}: PlaybackOptions): NetworkFlowPlayback {
+}: PlaybackOptions): FlowPlayback {
     const [isStepping, setIsStepping] = useState(false);
     const [stepIndex, setStepIndex] = useState(0);
     const [isPlaying, setIsPlaying] = useState(true);
@@ -64,14 +64,16 @@ export function useNetworkFlowPlayback({
     const stepForward = useCallback(() => {
         setIsStepping(true);
         setIsPlaying(false);
-        setStepIndex((current) => (current + 1) % edgeCount);
-    }, [edgeCount]);
+        setStepIndex((current) => (hopCount ? (current + 1) % hopCount : 0));
+    }, [hopCount]);
 
     const stepBackward = useCallback(() => {
         setIsStepping(true);
         setIsPlaying(false);
-        setStepIndex((current) => (current - 1 + edgeCount) % edgeCount);
-    }, [edgeCount]);
+        setStepIndex((current) =>
+            hopCount ? (current - 1 + hopCount) % hopCount : 0
+        );
+    }, [hopCount]);
 
     return {
         isStepping,

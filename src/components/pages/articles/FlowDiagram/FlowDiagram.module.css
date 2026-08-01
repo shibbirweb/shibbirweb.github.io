@@ -1,0 +1,267 @@
+@reference "tailwindcss";
+
+/* Styling for the interactive React Flow diagram. Everything expressible as a
+   Tailwind utility uses @apply; the raw CSS is limited to what a module cannot say.
+
+   The `--background` / `--foreground` tokens come from the @theme inline block in
+   globals.css, which a module's @reference does not pull in, so utilities like
+   `bg-background` do not resolve here. They are written as var() plus color-mix()
+   instead, matching the other modules in this project.
+
+   Tone tokens are declared on the frame and read by nodes and edges, so an arrow
+   and the box it lands on always agree about what kind of hop it was. */
+.frame {
+    --tone-neutral: var(--color-slate-500);
+    --tone-secure: var(--color-emerald-500);
+    --tone-blocked: var(--color-rose-500);
+    --tone-allowed: var(--color-sky-500);
+    --bloom-strength: 9%;
+
+    /* `not-prose` belongs to the typography plugin, out of @reference scope, so
+       the component applies it as a literal class alongside this one. */
+    @apply relative isolate my-6 overflow-hidden rounded-xl border p-3 sm:p-4;
+    background-color: var(--background);
+    border-color: color-mix(in oklab, var(--foreground) 10%, transparent);
+}
+
+/* Signature accent bloom: rests quiet, blooms gently on hover. */
+.frame::before {
+    @apply pointer-events-none absolute inset-0 z-[-1] rounded-[inherit] opacity-55 content-[''] motion-safe:transition-opacity motion-safe:duration-700 motion-safe:ease-out;
+    background-image: radial-gradient(
+        120% 90% at 50% 0%,
+        color-mix(
+            in oklab,
+            var(--tone-secure) var(--bloom-strength),
+            transparent
+        ),
+        transparent 70%
+    );
+}
+
+.frame:hover::before {
+    @apply opacity-100;
+}
+
+@media (prefers-color-scheme: dark) {
+    :global(html:not([data-theme])) .frame {
+        --bloom-strength: 16%;
+        --tone-neutral: var(--color-slate-400);
+    }
+}
+:global(html[data-theme='dark']) .frame {
+    --bloom-strength: 16%;
+    --tone-neutral: var(--color-slate-400);
+}
+
+/* Control bar */
+
+.controls {
+    @apply mb-2 flex flex-wrap items-center justify-between gap-2;
+}
+
+.scenarioSwitch,
+.viewSwitch {
+    @apply flex flex-wrap gap-0.5 rounded-lg border p-0.5;
+    border-color: color-mix(in oklab, var(--foreground) 10%, transparent);
+}
+
+.scenarioButton {
+    @apply cursor-pointer rounded-md px-3 py-1.5 text-xs font-semibold motion-safe:transition-colors sm:text-sm;
+    color: color-mix(in oklab, var(--foreground) 60%, transparent);
+}
+
+.scenarioButton:hover {
+    color: var(--foreground);
+}
+
+.scenarioButton[aria-pressed='true'] {
+    background-color: color-mix(in oklab, var(--foreground) 10%, transparent);
+    color: var(--foreground);
+}
+
+.playback {
+    @apply flex items-center gap-1;
+}
+
+.stepCounter {
+    @apply mr-1 font-mono text-[0.7rem] tabular-nums sm:text-xs;
+    color: color-mix(in oklab, var(--foreground) 50%, transparent);
+}
+
+.iconButton {
+    @apply flex cursor-pointer items-center justify-center rounded-md p-1.5 motion-safe:transition-colors;
+    color: color-mix(in oklab, var(--foreground) 60%, transparent);
+}
+
+.iconButton:hover {
+    background-color: color-mix(in oklab, var(--foreground) 10%, transparent);
+    color: var(--foreground);
+}
+
+/* Canvas. React Flow needs the container to have a real height. */
+
+.stage {
+    @apply h-[22rem] w-full sm:h-[26rem];
+}
+
+.canvas {
+    @apply h-full w-full;
+}
+
+/* Static (mermaid) view. Fills the same stage the interactive canvas uses, so
+   switching between them does not resize the page. `relative` anchors the tool
+   buttons; MermaidStage handles the panning inside. */
+.staticStage {
+    @apply relative h-full w-full overflow-hidden;
+}
+
+/* Full view and copy, positioned exactly as they sit on a plain mermaid block. */
+.staticTools {
+    @apply absolute top-2 right-2 z-10 flex gap-1;
+}
+
+.staticFallback {
+    @apply h-full w-full overflow-auto rounded-lg p-3 font-mono text-xs;
+    color: color-mix(in oklab, var(--foreground) 70%, transparent);
+    background-color: color-mix(in oklab, var(--foreground) 4%, transparent);
+}
+
+/* React Flow paints its own background colour on the pane; keep it transparent so
+   the frame's surface and bloom show through. */
+.canvas :global(.react-flow__pane),
+.canvas :global(.react-flow__renderer) {
+    background: transparent;
+}
+
+.canvas :global(.react-flow__attribution) {
+    @apply text-[10px];
+    background: transparent;
+    color: color-mix(in oklab, var(--foreground) 35%, transparent);
+}
+
+/* Nodes */
+
+.handle {
+    @apply pointer-events-none opacity-0;
+}
+
+.node {
+    @apply flex min-w-[8rem] max-w-[13rem] flex-col gap-0.5 rounded-xl border-2 px-3 py-2 text-center motion-safe:transition-opacity motion-safe:duration-300;
+    background-color: var(--background);
+    border-color: color-mix(in oklab, var(--tone-neutral) 45%, transparent);
+}
+
+.node[data-clickable] {
+    @apply cursor-pointer;
+}
+
+.node[data-tone='secure'] {
+    border-color: color-mix(in oklab, var(--tone-secure) 60%, transparent);
+}
+.node[data-tone='blocked'] {
+    border-color: color-mix(in oklab, var(--tone-blocked) 60%, transparent);
+}
+.node[data-tone='allowed'] {
+    border-color: color-mix(in oklab, var(--tone-allowed) 60%, transparent);
+}
+
+.node[data-dimmed] {
+    @apply opacity-30;
+}
+
+.node[data-selected] {
+    background-color: color-mix(
+        in oklab,
+        var(--tone-neutral) 12%,
+        var(--background)
+    );
+}
+
+.node[data-clickable]:hover {
+    background-color: color-mix(
+        in oklab,
+        var(--tone-neutral) 8%,
+        var(--background)
+    );
+}
+
+.nodeLabel {
+    @apply text-[0.8rem] leading-tight font-semibold;
+    color: var(--foreground);
+}
+
+.nodeDetail {
+    @apply font-mono text-[0.65rem] leading-tight;
+    color: color-mix(in oklab, var(--foreground) 55%, transparent);
+}
+
+/* Edges */
+
+.edge {
+    @apply motion-safe:transition-opacity motion-safe:duration-300;
+}
+
+.edge[data-dimmed] {
+    @apply opacity-25;
+}
+
+.edge :global(.react-flow__edge-path) {
+    stroke: var(--tone-neutral);
+    stroke-width: 1.75;
+}
+
+.edge[data-tone='secure'] :global(.react-flow__edge-path) {
+    stroke: var(--tone-secure);
+}
+.edge[data-tone='blocked'] :global(.react-flow__edge-path) {
+    stroke: var(--tone-blocked);
+}
+.edge[data-tone='allowed'] :global(.react-flow__edge-path) {
+    stroke: var(--tone-allowed);
+}
+
+.edge[data-active] :global(.react-flow__edge-path) {
+    stroke-width: 3;
+}
+
+.edgeLabel {
+    @apply pointer-events-none absolute rounded px-1.5 py-0.5 font-mono text-[0.6rem] leading-tight motion-safe:transition-opacity;
+    background-color: var(--background);
+    color: color-mix(in oklab, var(--foreground) 70%, transparent);
+}
+
+.edgeLabel[data-dimmed] {
+    @apply opacity-25;
+}
+
+/* Packets */
+
+.packet {
+    fill: var(--tone-neutral);
+}
+.packet[data-tone='secure'] {
+    fill: var(--tone-secure);
+}
+.packet[data-tone='blocked'] {
+    fill: var(--tone-blocked);
+}
+.packet[data-tone='allowed'] {
+    fill: var(--tone-allowed);
+}
+
+/* Caption */
+
+.caption {
+    @apply mt-2 flex flex-col gap-0.5 text-sm sm:flex-row sm:gap-2;
+    color: color-mix(in oklab, var(--foreground) 75%, transparent);
+}
+
+.captionSource {
+    @apply shrink-0 font-semibold;
+    color: var(--foreground);
+}
+
+.hint {
+    @apply mt-1.5 block text-xs;
+    color: color-mix(in oklab, var(--foreground) 40%, transparent);
+}

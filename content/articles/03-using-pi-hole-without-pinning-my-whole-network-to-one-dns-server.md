@@ -31,9 +31,59 @@ Pi-hole is a DNS server that lies on purpose. When the question is about an ad o
 
 My setup was the normal one. Pi-hole runs in an LXC container on my Proxmox server with a fixed address, `192.168.0.20`. In my router settings, I removed my ISP's DNS servers and put that one address instead. From then on, the router told every device that joined the WiFi to use Pi-hole.
 
-```netflow
-router-pihole
-Every device on the network is handed Pi-hole as its DNS server, so ad domains are answered with nothing usable and everything else resolves normally.
+```reactflow
+title: How every device on the network reaches Pi-hole through the router
+
+scenario "Router-wide"
+> One address typed into the router, and every device that joins is handed Pi-hole as its DNS server, including the ones nobody configured.
+
+Phone
+> Never told about Pi-hole directly. It simply accepts whatever DNS server the router offers when it joins the WiFi.
+
+Desktop
+> Same story. No network settings were touched on it, and it is filtered anyway.
+
+Any new device [joins the WiFi]
+> This is the part that makes the router-wide setup so appealing: anything that connects later is covered automatically, with nothing to configure.
+
+Router [hands out 192.168.0.20]
+> The single point of control. Its DHCP settings tell every device on the network which DNS server to use, and it was pointed at Pi-hole instead of the ISP.
+
+Pi-hole [192.168.0.20]
+> An LXC container on the Proxmox server. It checks each name against its blocklists and decides whether to give a usable answer. This is also the machine the whole house now depends on.
+
+Ad blocked [nothing here] {blocked}
+> Pi-hole answers an ad or tracker domain with no usable address, so the browser never connects and the ad never loads.
+
+Site loads [real address] {allowed}
+> Everything not on a blocklist is forwarded upstream and answered normally, so ordinary browsing is unaffected.
+
+Phone --> Router
+> The phone asks the router for an address, because the router is the DNS server it was handed when it joined.
+
+Desktop --> Router
+> The desktop does the same, with no per-device setting involved.
+
+Any new device --> Router
+> So does anything that connects for the first time. Nobody has to remember to set it up.
+
+Router --> Pi-hole (all DNS)
+> The router forwards every DNS question to 192.168.0.20. This one setting is what puts Pi-hole in front of the whole network.
+
+Pi-hole --> Ad blocked (ad domain) {blocked}
+> A name on a blocklist gets nothing usable back. That refusal is the entire ad blocker.
+
+Pi-hole --> Site loads (normal site) {allowed}
+> Everything else is passed upstream and answered as usual.
+
+mermaid:
+    flowchart LR
+        Phone["Phone"] --> Router
+        Desktop["Desktop"] --> Router
+        NewDevice["Any new device"] --> Router
+        Router["Router<br/>hands out 192.168.0.20"] -->|"every DNS question"| Pihole["Pi-hole<br/>192.168.0.20"]
+        Pihole -->|"it is an ad"| Blocked["Answers: nothing here"]
+        Pihole -->|"everything else"| Upstream["Normal DNS server"]
 ```
 
 One setting, and everything on the network was covered. Devices I never touched. Devices that have no way to block ads on their own. Anything that connected later, without me doing a thing.
@@ -50,9 +100,55 @@ So on paper, a power cut leaves me with a working router and no Pi-hole. And Pi-
 
 I wanted to see it rather than assume it, so I switched the server off myself and picked up my phone.
 
-```netflow
-pihole-outage
-With the server off, the DNS path dies while everything else keeps working: the router stays up on its UPS, anything addressed by IP still replies, and only name lookups time out.
+```reactflow
+title: What still works when the Pi-hole server loses power, and what does not
+
+scenario "Server off"
+> The router is still up on its UPS, so anything addressed by IP behaves perfectly. Only the DNS path is dead, which is why it feels like the internet is down when it is not.
+
+Phone [still on the WiFi]
+> Connected, full signal, nothing on screen suggesting a problem. It is doing exactly what it always does.
+
+Router [on the UPS, still up]
+> Untouched by the power cut. It is routing packets perfectly and still handing out Pi-hole as the DNS server, because that is the only address it knows.
+
+Pi-hole [server has no power] {blocked}
+> Gone. The LXC container and the Proxmox host under it are both off, so nothing is listening on 192.168.0.20 at all.
+
+No answer [every page fails] {blocked}
+> The query gets no reply and eventually times out. Since every site is reached by name, the whole web appears to be down.
+
+Ping 1.1.1.1 [reached by IP] {allowed}
+> Anything addressed by number skips DNS completely, so it never touches the missing Pi-hole.
+
+Replies fine [network is healthy] {allowed}
+> This is the confusing part. Packets flow, the connection is up, the router admin page loads. Every test except a name lookup says everything is fine.
+
+Phone --> Router
+> The phone asks for an address, the same way it does a thousand times a day.
+
+Router --> Pi-hole (DNS question) {blocked}
+> The router forwards it to 192.168.0.20, because that is still the only DNS server it has been told about.
+
+Pi-hole --> No answer {blocked}
+> Nothing is there to answer. The question goes out and simply stops, and the phone waits until it gives up.
+
+Router --> Ping 1.1.1.1 (plain IP) {allowed}
+> Meanwhile anything that already knows its address needs no lookup, so it leaves the router untouched by any of this.
+
+Ping 1.1.1.1 --> Replies fine {allowed}
+> It answers instantly. Both halves of this picture are true at the same moment, and that is exactly why the failure is so hard to place.
+
+mermaid:
+    sequenceDiagram
+        participant Phone
+        participant Router as Router (on UPS, still running)
+        participant Pihole as Pi-hole (server has no power)
+        Phone->>Router: Where is example.com?
+        Router->>Pihole: Where is example.com?
+        Note over Pihole: server is off
+        Router--xPhone: no answer, then a timeout
+        Note over Phone: WiFi works. Router works.<br/>But no website opens.
 ```
 
 It was worse than I expected, and that is the useful part of doing the test.
@@ -71,9 +167,76 @@ That sounds right, but it is not how it works.
 
 A second DNS server is not a backup that waits its turn. Your device is free to use either one, whenever it wants. Some devices try them in order. Some ask both at the same time and use whichever replies first. Some remember which one was faster and keep using that one. A big public DNS server is usually faster than a small container in your house.
 
-```netflow
-secondary-dns
-With two DNS servers configured, a device may use either one at any moment, so some questions reach Pi-hole and get filtered while others go straight to the public resolver and the ad loads.
+```reactflow
+title: Why a second DNS server in the router leaks instead of failing over
+
+Phone [asks for a name]
+> It was handed two DNS servers and is free to use either. Nothing obliges it to prefer the first, and different devices make different choices.
+
+Router [two DNS servers set]
+> Pi-hole is listed first and a public resolver second. That order looks like a priority, but it is only a list, and nothing enforces it.
+
+Pi-hole [192.168.0.20] {secure}
+> When the query happens to land here, filtering works exactly as intended. This is the case people test, see working, and assume is the rule.
+
+Ad blocked [as intended] {secure}
+> The outcome you set the whole thing up for. It just is not the only outcome.
+
+Public DNS [1.1.1.1] {blocked}
+> A large public resolver on the open internet, usually quicker to answer than a small container at home doing blocklist lookups. Speed is often exactly what decides the race.
+
+Ad shows up [the leak] {blocked}
+> It knows nothing about your blocklists, so the ad domain resolves normally and the ad loads. Worse, the answer is cached, so the leak outlives the query that caused it.
+
+scenario "Both"
+> A second DNS server is not a backup waiting its turn. A device may use either one at any moment, so the same domain is blocked now and not blocked ten minutes from now.
+
+Phone --> Router
+> The device needs an address and turns to the DNS servers it was given.
+
+Router --> Pi-hole (sometimes) {secure}
+> Some of the time the question reaches Pi-hole, and everything behaves the way you designed it.
+
+Pi-hole --> Ad blocked {secure}
+> The name is refused, the ad never loads, and the setup looks like it is working.
+
+Router --> Public DNS (sometimes) {blocked}
+> The rest of the time it goes straight to the public resolver. Some devices try both at once and keep whichever replies first, and the public one usually wins.
+
+Public DNS --> Ad shows up {blocked}
+> That answer is honest, complete, and unfiltered, so the ad loads exactly as it would with no Pi-hole at all.
+
+mermaid:
+    flowchart LR
+        Device["Phone"] --> Router["Router<br/>first: 192.168.0.20<br/>second: 1.1.1.1"]
+        Router -->|"sometimes"| Pihole["Pi-hole<br/>ad blocked"]
+        Router -->|"sometimes"| Public["Public DNS<br/>ad shows up"]
+
+scenario "Primary DNS"
+> The lucky path. The question reaches Pi-hole, the ad domain is refused, and everything looks like it is working. This is the run people test and then trust.
+
+Phone --> Router
+Router --> Pi-hole
+Pi-hole --> Ad blocked
+
+mermaid:
+    flowchart LR
+        Device["Phone"] --> Router["Router<br/>first: 192.168.0.20"]
+        Router -->|"reached Pi-hole"| Pihole["Pi-hole<br/>192.168.0.20"]
+        Pihole -->|"on a blocklist"| Blocked["Ad blocked<br/>as intended"]
+
+scenario "Alternative DNS"
+> The same request, the same second, a different answer. Nothing reaches Pi-hole, so nothing is filtered, and no error is reported anywhere.
+
+Phone --> Router
+Router --> Public DNS
+Public DNS --> Ad shows up
+
+mermaid:
+    flowchart LR
+        Device["Phone"] --> Router["Router<br/>second: 1.1.1.1"]
+        Router -->|"skipped Pi-hole"| Public["Public DNS<br/>1.1.1.1"]
+        Public -->|"knows no blocklists"| Served["Ad shows up<br/>the leak"]
 ```
 
 So you do not get a backup. You get leaks. Some questions skip Pi-hole completely. Ads come back, but only sometimes. A local name works on one device and not on another. And because answers get cached, the same website is blocked in the morning and not blocked in the afternoon.
@@ -190,9 +353,76 @@ Everything else at home stays directly reachable, because you are already on the
 
 Here is the whole thing in one picture. Flip the tunnel on and off to see the route change, step through it a hop at a time, or select any box to read what it does:
 
-```netflow
-dns-vpn
-With the VPN off, DNS questions go to the ISP server through the router and nothing is filtered. With it on, they travel the tunnel to Pi-hole, which answers ad domains with nothing usable and passes everything else through.
+```reactflow
+title: How a DNS question travels with the VPN off and with the VPN on
+
+Desktop
+> Your device does not choose a DNS server on its own. With the tunnel down it uses whatever the router says; with the tunnel up it uses whatever the VPN client file says.
+
+Router [hands out ISP DNS]
+> The router tells every device on the network which DNS server to use. Since Pi-hole was removed from this setting, that is now the ISP again.
+
+ISP DNS [filters nothing]
+> A normal DNS server. It answers every question it can, including the ones for ad and tracker domains.
+
+Ad loads [real address returned] {blocked}
+> The ad domain resolves to a real address, your browser connects to it, and the ad appears.
+
+wg-easy [DNS = 192.168.0.20] {secure}
+> The WireGuard server. It does not filter anything itself. Its job is to hand each client Pi-hole as its DNS server.
+
+Pi-hole [192.168.0.20]
+> The DNS server that lies on purpose. It checks each name against its blocklists before deciding how to answer.
+
+Ad blocked [nothing here] {blocked}
+> Pi-hole answers with no usable address. The browser has nowhere to connect, so the ad never loads and no request is ever made.
+
+Site loads [resolves normally] {allowed}
+> An ordinary website resolves the same way either way. This half of the picture does not change when you flip the tunnel.
+
+scenario "VPN off"
+> With the tunnel down, the router hands out the ISP DNS server, and every question is answered honestly. Nothing is filtered.
+
+Desktop --> Router
+> Your device needs an address for a name, so it asks the DNS server it was given: the router.
+
+Router --> ISP DNS
+> The router passes the question on to the ISP DNS server. Nothing here knows about blocklists.
+
+ISP DNS --> Ad loads (ad domain) {blocked}
+> An ad domain gets a real, working address back. The browser connects, and the ad loads.
+
+ISP DNS --> Site loads (normal site) {allowed}
+> A normal site also gets its real address, exactly as you would expect.
+
+mermaid:
+    flowchart LR
+        Desktop["Desktop"] --> Router["Router<br/>hands out ISP DNS"]
+        Router --> IspDns["ISP DNS<br/>filters nothing"]
+        IspDns -->|"ad domain"| AdLoads["Ad loads<br/>real address returned"]
+        IspDns -->|"normal site"| SiteLoads["Site loads<br/>resolves normally"]
+
+scenario "VPN on"
+> The tunnel carries the DNS question to Pi-hole. Ad domains get a useless answer, everything else resolves normally, and the rest of your traffic still goes out the ordinary way.
+
+Desktop --> wg-easy (encrypted) {secure}
+> The VPN is up, so the DNS question goes into the tunnel instead of to the router. Only the question travels this way, not your web pages.
+
+wg-easy --> Pi-hole {secure}
+> wg-easy gave the client Pi-hole as its DNS server, so the question lands there.
+
+Pi-hole --> Ad blocked (ad domain) {blocked}
+> The name is on a blocklist, so Pi-hole answers with nothing usable. That refusal is the whole ad blocker.
+
+Pi-hole --> Site loads (normal site) {allowed}
+> Everything else is passed upstream and comes back with its real address, so normal browsing is untouched.
+
+mermaid:
+    flowchart LR
+        Desktop["Desktop"] -->|"encrypted"| Wg["wg-easy<br/>DNS = 192.168.0.20"]
+        Wg --> Pihole["Pi-hole<br/>192.168.0.20"]
+        Pihole -->|"ad domain"| Blocked["Ad blocked<br/>nothing here"]
+        Pihole -->|"normal site"| SiteLoads["Site loads<br/>resolves normally"]
 ```
 
 And my router went back to my ISP's DNS servers. Nothing in the house depends on the Proxmox box any more.

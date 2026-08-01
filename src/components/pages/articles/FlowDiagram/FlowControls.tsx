@@ -4,11 +4,16 @@ import { cn } from '@/utils/cn';
 import ChevronIcon from '@/components/icons/chevron';
 import PauseIcon from '@/components/icons/pause';
 import PlayIcon from '@/components/icons/play';
-import styles from '@/components/pages/articles/NetworkFlow/NetworkFlow.module.css';
-import type { NetworkFlowScenario } from '@/components/pages/articles/NetworkFlow/types';
+import styles from '@/components/pages/articles/FlowDiagram/FlowDiagram.module.css';
+import type {
+    FlowScenario,
+    FlowView,
+} from '@/components/pages/articles/FlowDiagram/types';
 
-interface NetworkFlowControlsProps {
-    scenarios: NetworkFlowScenario[];
+interface FlowControlsProps {
+    view: FlowView;
+    onSelectView: (view: FlowView) => void;
+    scenarios: FlowScenario[];
     activeScenarioId: string;
     onSelectScenario: (scenarioId: string) => void;
     isPlaying: boolean;
@@ -25,10 +30,12 @@ interface NetworkFlowControlsProps {
 
 /**
  * The control bar: the scenario switch on one side, playback on the other.
- * Stepping is entered by pressing either step arrow, so there is no separate
- * mode selector for the reader to reason about.
+ * Stepping is entered by pressing either step arrow, so there is no separate mode
+ * selector for the reader to reason about.
  */
-export default function NetworkFlowControls({
+export default function FlowControls({
+    view,
+    onSelectView,
     scenarios,
     activeScenarioId,
     onSelectScenario,
@@ -41,15 +48,42 @@ export default function NetworkFlowControls({
     onStepForward,
     onStepBackward,
     showPlayControl,
-}: NetworkFlowControlsProps) {
-    // A diagram with a single scenario has nothing to switch between, so the
-    // control bar drops the group entirely rather than showing one pill that is
-    // permanently pressed. Playback then carries `ml-auto` to stay on the right,
-    // since `justify-between` alone would pull it across to the empty left edge.
+}: FlowControlsProps) {
+    // A diagram with a single scenario has nothing to switch between, so the bar
+    // drops the group rather than showing one pill that is permanently pressed.
+    // Playback then carries ml-auto to stay right, since justify-between alone
+    // would pull it across to the empty left edge.
     const hasScenarioChoice = scenarios.length > 1;
+
+    // Playback only means something in the interactive view; the static picture
+    // has no packets to run and no hops to walk.
+    const isInteractive = view === 'interactive';
 
     return (
         <div className={styles.controls}>
+            <div
+                className={styles.viewSwitch}
+                role="group"
+                aria-label="Diagram rendering"
+            >
+                <button
+                    type="button"
+                    onClick={() => onSelectView('static')}
+                    aria-pressed={view === 'static'}
+                    className={styles.scenarioButton}
+                >
+                    Static
+                </button>
+                <button
+                    type="button"
+                    onClick={() => onSelectView('interactive')}
+                    aria-pressed={view === 'interactive'}
+                    className={styles.scenarioButton}
+                >
+                    Interactive
+                </button>
+            </div>
+
             {hasScenarioChoice && (
                 <div
                     className={styles.scenarioSwitch}
@@ -70,9 +104,12 @@ export default function NetworkFlowControls({
                 </div>
             )}
 
-            <div className={cn(styles.playback, !hasScenarioChoice && 'ml-auto')}>
+            {isInteractive && (
+            <div className={cn(styles.playback, 'ml-auto')}>
                 <span className={styles.stepCounter} aria-live="polite">
-                    {isStepping ? `Hop ${stepIndex + 1} of ${stepCount}` : 'Live traffic'}
+                    {isStepping
+                        ? `Hop ${stepIndex + 1} of ${stepCount}`
+                        : 'Live traffic'}
                 </span>
                 <button
                     type="button"
@@ -109,6 +146,7 @@ export default function NetworkFlowControls({
                     <ChevronIcon className="size-4 rotate-90" />
                 </button>
             </div>
+            )}
         </div>
     );
 }

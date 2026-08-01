@@ -15,7 +15,7 @@ import TagLink from '@/components/pages/articles/TagLink';
 import TechStack from '@/components/pages/articles/TechStack';
 import WhatYoullLearn from '@/components/pages/articles/WhatYoullLearn';
 import MermaidRenderer from '@/components/pages/articles/MermaidRenderer';
-import NetworkFlow from '@/components/pages/articles/NetworkFlow';
+import FlowDiagrams from '@/components/pages/articles/FlowDiagram';
 import CodeBlockCopy from '@/components/pages/articles/CodeBlock';
 import Comments from '@/components/pages/articles/Comments';
 import { JsonLd } from '@/components/seo/JsonLd';
@@ -129,7 +129,7 @@ export default function ArticleView({
                         />
 
                         <MermaidRenderer />
-                        <NetworkFlow />
+                        <FlowDiagrams />
                         <CodeBlockCopy />
                         <ImageLightbox />
 
