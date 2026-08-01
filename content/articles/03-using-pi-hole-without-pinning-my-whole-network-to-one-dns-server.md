@@ -144,11 +144,11 @@ services:
         image: ghcr.io/wg-easy/wg-easy:14
         container_name: wg-easy
         environment:
-            - WG_HOST=vpn.example.com
+            - WG_HOST=192.168.0.21
             - PASSWORD_HASH=<hash for the web page login>
             - WG_DEFAULT_ADDRESS=10.8.0.x
             - WG_DEFAULT_DNS=192.168.0.20
-            - WG_ALLOWED_IPS=192.168.0.0/24, 10.8.0.0/24
+            - WG_ALLOWED_IPS=10.8.0.0/24, 192.168.0.20/32
             - WG_PERSISTENT_KEEPALIVE=25
         volumes:
             - ./etc_wireguard:/etc/wireguard
@@ -166,9 +166,13 @@ services:
 
 `WG_DEFAULT_DNS` is the Pi-hole's address. wg-easy writes it into the `DNS =` line of every client file it creates. So every device I add gets filtered DNS for as long as its VPN is on, and normal DNS the moment it turns off. Newer versions of wg-easy ask for this in the web setup instead of an environment variable, but it is the same setting doing the same job.
 
+`WG_HOST` is the address my devices dial to reach the VPN. Mine is `192.168.0.21`, the container's own address on my home network, because I only use this at home. That is worth saying clearly: this VPN never leaves the house. There is no port forwarded in my router and nothing of mine is reachable from the internet. It is a VPN used purely as a way to choose my DNS server, not as a way to get home from outside.
+
 I also set the container itself to use Pi-hole as its DNS, so anything the box looks up is filtered too.
 
-> **Warning:** The wg-easy web page on port `51821` can manage your whole VPN. Keep it inside your home network. Do not forward that port in your router. Once the VPN works, you can reach the page through the VPN itself. The only port that should face the internet is the UDP one WireGuard listens on.
+> **Note:** If you do want to reach this from outside your home, `WG_HOST` becomes a public address instead, and you need three more things: a forwarded UDP port in your router, a dynamic DNS hostname (home connections rarely keep the same public IP), and an ISP that actually gives you a public IP. Many home and mobile connections share one public address between lots of customers, called CGNAT, and there port forwarding cannot work at all. None of that is needed for what this article does.
+
+> **Warning:** The wg-easy web page on port `51821` can manage your whole VPN. Keep it on your home network and never forward that port in your router.
 
 ## The two lines that matter in the client file
 
@@ -183,23 +187,20 @@ DNS = 192.168.0.20
 [Peer]
 PublicKey = <server public key>
 PresharedKey = <preshared key>
-AllowedIPs = 192.168.0.0/24, 10.8.0.0/24
-Endpoint = vpn.example.com:51820
+AllowedIPs = 10.8.0.0/24, 192.168.0.20/32
+Endpoint = 192.168.0.21:51820
 PersistentKeepalive = 25
 ```
 
 `DNS` is the switch. That is the ad blocking, right there.
 
-`AllowedIPs` is the interesting one. It decides which traffic goes through the VPN. And you need less than you might think.
+`AllowedIPs` is the interesting one. It decides which traffic goes through the VPN, and you need far less than you might think.
 
-Pi-hole is at `192.168.0.20`, which is inside `192.168.0.0/24`. So as long as that range is listed, DNS questions travel through the VPN and reach Pi-hole. Everything else, the actual web pages, the videos, the app data, goes out the normal way. You are not sending your whole internet through your house. You are only sending the questions.
+Look at what is listed: the VPN's own range, and one single address, the Pi-hole. That is all. DNS questions go through the tunnel. Everything else, the actual web pages, the videos, the app data, goes out the normal way as if the VPN were not running. You are not sending your internet through your house. You are only sending the questions.
 
-| What you put in `AllowedIPs`  | What goes through the VPN                     | When to use it                                          |
-| ----------------------------- | --------------------------------------------- | -------------------------------------------------------- |
-| `192.168.0.0/24, 10.8.0.0/24` | DNS and my home network. Nothing else.        | Every day. Almost no effect on speed or battery.        |
-| `0.0.0.0/0, ::/0`             | Everything.                                   | Public WiFi, when I want all traffic to go home first.  |
+That `/32` on the end matters more than it looks. It means "this one address only". You might expect to write the whole home range, `192.168.0.0/24`, instead. Do not, at least not while you are sitting on that same network. Your device is already on `192.168.0.0/24`, and so is the VPN server itself at `192.168.0.21`. Telling WireGuard to send that entire range into the tunnel includes the address the tunnel needs in order to work, which is a loop. A single-host route to the Pi-hole is more specific than your normal network route, so DNS follows the tunnel and nothing else changes.
 
-I keep the first one as my normal setup, and a second client with the full option for cafe and airport WiFi. They are just two entries in the same app.
+Everything else at home stays directly reachable, because you are already on the same network as it. The tunnel is not there to carry you home. It is there to change which DNS server you use.
 
 ```mermaid
 flowchart TB
@@ -243,7 +244,9 @@ Pi-hole can hold your own DNS names, pointing at addresses in your home. So I st
 | `pihole.home` | the Pi-hole web page |
 | `vpn.home`    | the wg-easy web page |
 
-When Pi-hole was set in the router, these names only worked at home. Now they come with the VPN, so they work anywhere. I can be out of the house, turn the VPN on, and type `pve.home` in my browser as if I were sitting in front of the machine.
+Names like these only work if you are asking a DNS server that knows about them. Once I took Pi-hole out of the router, they stopped working, because my devices were asking my ISP and my ISP has never heard of `pve.home`.
+
+Now they come back with the VPN. Turn it on, and my own names work again alongside the ad blocking. Turn it off, and they quietly stop. Same single switch, doing both jobs.
 
 ## What this still does not fix
 
@@ -251,6 +254,7 @@ I want to be honest about the holes, because there are several.
 
 - **Anything that cannot run WireGuard is no longer covered.** A device with no VPN app, or one you cannot install software on, now uses my ISP's DNS and nobody filters it. The old setup covered every device on the network without asking any of them. This one only covers the devices I set up by hand.
 - **Blocking is off by default now.** If the VPN is off, I see ads. That is the whole design, but it is also its weakest part, because a switch only helps when you remember it is there.
+- **It only works at home.** My VPN server has no public address, so I cannot turn this on from mobile data or someone else's WiFi. Away from home I get my ads back. Opening it up would mean forwarding a port and depending on my ISP giving me a public address, and I did not want either.
 - **The Proxmox server can still fail, but it costs much less.** If it is off, the VPN does not connect. That is it. Before, the whole house lost DNS while the router sat there on its UPS looking perfectly healthy.
 - **Browsers can go around it.** Chrome and Firefox have a "secure DNS" feature that sends DNS questions straight to their own server over HTTPS and ignores your system setting. If you still see ads with the VPN on, check that first.
 - **This is not a proper backup plan.** The real fix for my original problem is a second Pi-hole on a small machine that always stays on. I did not build that, because it means another box and keeping two blocklists in sync.
@@ -263,6 +267,6 @@ But what I built did something more useful to me than being correct. It changed 
 
 The real question was never "how do I block ads". It was "what happens when my playground server goes down". The old answer was "everything stops, for everyone in the house, in the most confusing way possible". The new answer is "a switch on my own devices stops working, and I am the only one who notices".
 
-I still get my ad blocking. I get my own names, and now they work from outside the house too. My router holds a setting that keeps working no matter what I am breaking on the server. The whole cost is one toggle I press about once a day and mostly forget about.
+I still get my ad blocking. I still get my own names for my own machines. My router holds a setting that keeps working no matter what I am breaking on the server. The whole cost is one toggle I press about once a day and mostly forget about.
 
 Some homelab work is about building the right thing. Some of it is about noticing which failures you can live with. This was the second kind, and for the way I actually use my network, it is enough.
