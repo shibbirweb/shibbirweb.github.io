@@ -12,7 +12,9 @@ const isDev = process.env.NODE_ENV !== 'production';
 // route so the running app can detect a newer deploy: the deployed build's
 // builtAt is strictly later than the one baked into an older open tab. Git plays
 // no part, so it works identically locally and in CI regardless of clone depth.
-const buildTime = new Date().toISOString();
+// An explicit NEXT_PUBLIC_BUILD_TIME wins, so a build can be pinned to compare
+// two runs byte for byte.
+const buildTime = process.env.NEXT_PUBLIC_BUILD_TIME ?? new Date().toISOString();
 
 const nextConfig: NextConfig = {
     output: isDev ? undefined : 'export',

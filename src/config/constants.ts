@@ -1,3 +1,5 @@
+import { getBuiltAt } from '@/lib/version';
+
 export const siteURL: string = 'https://shibbir.me';
 export const facebookPageId: string = '123805794398882';
 export const googleTagManagerId: string = 'GTM-W4DC9Z6';
@@ -58,7 +60,11 @@ export const defaultThumbnail: string = `${siteURL}/images/og-default-shibbir-ah
 export const currentJobTitle: string = 'Senior Software Engineer (Full Stack)';
 export const currentWorkplace: string = 'RoBenDevs';
 export const currentWorkplaceURL: string = 'https://robendevs.com';
-export const careerExperience: number = new Date().getFullYear() - 2019;
+// Derived from the build stamp rather than `new Date()`: this module reaches the
+// client bundle, so a live `getFullYear()` would re-evaluate in the browser and
+// disagree with the prerendered HTML once the year turned on a stale deploy.
+export const careerExperience: number =
+    new Date(getBuiltAt()).getUTCFullYear() - 2019;
 
 // education
 export const education: string = 'Bachelor of Science in Mathematics';

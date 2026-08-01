@@ -11,8 +11,10 @@ import {
     siteName,
     siteURL,
 } from '@/config/constants';
+import { requireArticleDate } from '@/utils/articleDate';
 import { articleOgImagePath } from '@/utils/generateArticleCover';
 import { getAllArticles, getArticle } from '@/lib/posts';
+import { getBuiltAt } from '@/lib/version';
 
 /** One article as a feed entry, with absolute URLs and parsed dates. */
 interface FeedItem {
@@ -39,11 +41,6 @@ function absoluteUrl(pathOrUrl: string): string {
     return pathOrUrl.startsWith('http') ? pathOrUrl : `${siteURL}${pathOrUrl}`;
 }
 
-/** Parse a `YYYY-MM-DD` frontmatter date the same way the sitemap does. */
-function parseDate(value: string): Date {
-    return new Date(`${value}T00:00:00`);
-}
-
 /**
  * Assemble the feed model from every published article (newest first), loading
  * full rendered HTML through the same pipeline the article pages use. Returns a
@@ -66,15 +63,16 @@ export async function getFeedData(): Promise<FeedData> {
                 url: absoluteUrl(`/articles/${summary.slug}`),
                 imageUrl: absoluteUrl(image),
                 tags: summary.tags,
-                published: parseDate(summary.date),
-                updated: parseDate(summary.updated ?? summary.date),
+                published: requireArticleDate(summary.date),
+                updated: requireArticleDate(summary.updated ?? summary.date),
                 contentHtml: article?.html ?? '',
             };
         })
     );
 
-    // The feed's own timestamp is the most recent article change, or now when
-    // the corpus is empty so the feed is still valid.
+    // The feed's own timestamp is the most recent article change, or the build
+    // stamp when the corpus is empty so the feed is still valid. Wall-clock time
+    // would make an unchanged corpus produce a different feed on every build.
     const updated = items.reduce<Date>(
         (latest, item) => (item.updated > latest ? item.updated : latest),
         new Date(0)
@@ -83,7 +81,7 @@ export async function getFeedData(): Promise<FeedData> {
     return {
         title: siteName,
         description: siteDescription,
-        updated: items.length > 0 ? updated : new Date(),
+        updated: items.length > 0 ? updated : new Date(getBuiltAt()),
         items,
     };
 }

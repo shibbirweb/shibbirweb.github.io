@@ -15,6 +15,7 @@ import { useDisclosure } from '@/components/layout/Navbar/hooks/useDisclosure';
 import type {
     ArticleDraft,
     ArticleListItem,
+    EditorActions,
     EditorSuggestions,
 } from '@/components/pages/article-editor/ArticleEditor/types';
 import { slugifyHeading } from '@/lib/markdown';
@@ -26,9 +27,11 @@ function fileSlug(file: string): string {
 }
 
 export default function ArticleEditor({
+    actions,
     existing,
     suggestions: initialSuggestions,
 }: {
+    actions: EditorActions;
     existing: ArticleListItem[];
     suggestions: EditorSuggestions;
 }) {
@@ -43,7 +46,7 @@ export default function ArticleEditor({
     const guide = useDisclosure();
 
     const { articles, suggestions, saveState, save, open, remove } =
-        useArticleActions(existing, initialSuggestions);
+        useArticleActions(actions, existing, initialSuggestions);
 
     const { textareaRef, insertSnippet } = useMarkdownInsertion(
         draft.body,

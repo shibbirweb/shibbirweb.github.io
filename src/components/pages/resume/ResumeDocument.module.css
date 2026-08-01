@@ -18,6 +18,8 @@
    box model: the printed CV must come out exactly as it did before this effect
    existed. See ResumeDocument for the print: resets on the card itself. */
 .card {
+    --bloom-strength: 5%;
+
     --pointer-x: 50%;
     --pointer-y: 50%;
     --spotlight-radius: 24rem;
@@ -28,13 +30,32 @@
 
 @media (prefers-color-scheme: dark) {
     :global(html:not([data-theme])) .card {
+        --bloom-strength: 10%;
         --spotlight-strength: 3.5%;
         --spotlight-border-strength: 45%;
     }
 }
 :global(html[data-theme='dark']) .card {
+    --bloom-strength: 10%;
     --spotlight-strength: 3.5%;
     --spotlight-border-strength: 45%;
+}
+
+/* The ambient bloom, resting dim and blooming to full on hover, so a surface this
+   large is never flat at rest. Neutral like the layers below it, and pitched lower
+   again than the accented panels' 9%/16% because --foreground reads heavier than a
+   hue at the same mix. print:hidden with everything else in this file. */
+.card::before {
+    @apply pointer-events-none absolute inset-0 z-[-1] rounded-[inherit] opacity-55 content-[''] motion-safe:transition-opacity motion-safe:duration-700 motion-safe:ease-out print:hidden;
+    background-image: radial-gradient(
+        120% 90% at 50% 0%,
+        color-mix(in oklab, var(--foreground) var(--bloom-strength), transparent),
+        transparent 72%
+    );
+}
+
+.card:hover::before {
+    @apply opacity-100;
 }
 
 /* The cursor wash, behind the document's content (the card is `relative isolate`,

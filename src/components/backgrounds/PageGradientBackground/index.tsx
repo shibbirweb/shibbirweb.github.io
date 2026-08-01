@@ -5,6 +5,8 @@ import { usePathname } from 'next/navigation';
 import { coverGradientForSlug } from '@/utils/generateArticleCover';
 import { pageGradientColors } from '@/utils/pageGradient';
 import { usePageGradientOverride } from '@/components/backgrounds/PageGradientBackground/PageGradientProvider';
+import styles from '@/components/backgrounds/PageGradientBackground/PageGradientBackground.module.css';
+import { cn } from '@/utils/cn';
 
 type GradientColors = readonly [string, string];
 
@@ -32,8 +34,8 @@ function routeGradientColors(pathname: string): GradientColors {
  * Full-page gradient wash shown on every page except the home page (which paints
  * its own section swells). It is absolutely positioned over the relative body,
  * so it spans the whole document and scrolls with the page. The actual gradient
- * (and its light/dark tuning) lives in the `.page-gradient` rule in globals.css;
- * here we only feed it the two accent colours via CSS variables.
+ * (and its light/dark tuning) lives in the co-located CSS module; here we only
+ * feed it the two accent colours via CSS variables.
  *
  * Colours are chosen in priority order:
  *  1. an override a page has claimed (`SyncPageGradient`), e.g. an article's exact
@@ -44,7 +46,7 @@ function routeGradientColors(pathname: string): GradientColors {
  *
  * The element stays mounted on every route (transparent on home) rather than
  * unmounting, so the registered colour properties transition on navigation and
- * the wash cross-fades smoothly in/out and between pages (see globals.css).
+ * the wash cross-fades smoothly in/out and between pages.
  */
 export default function PageGradientBackground() {
     const pathname = usePathname();
@@ -55,7 +57,10 @@ export default function PageGradientBackground() {
     return (
         <div
             aria-hidden="true"
-            className="page-gradient pointer-events-none absolute inset-0 -z-10 print:hidden"
+            className={cn(
+                styles.pageGradient,
+                'pointer-events-none absolute inset-0 -z-10 print:hidden'
+            )}
             style={
                 {
                     '--page-grad-from': from,

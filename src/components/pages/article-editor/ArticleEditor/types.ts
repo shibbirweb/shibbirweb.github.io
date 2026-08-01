@@ -25,3 +25,20 @@ export interface EditorSuggestions {
     seriesNames: string[];
     tech: string[];
 }
+
+/**
+ * The filesystem operations the editor needs, as a contract rather than an import.
+ * The implementations are dev-only Server Actions living beside the studio route,
+ * and the route passes them in: `src/components/` must never import from
+ * `src/app/`, so this interface is where the two sides meet.
+ */
+export interface EditorActions {
+    listArticles: () => Promise<ArticleListItem[]>;
+    loadArticle: (file: string) => Promise<ArticleDraft>;
+    saveArticle: (
+        input: ArticleDraft,
+        slugOverride: string
+    ) => Promise<{ file: string; status: ArticleListItem['status'] }>;
+    deleteArticle: (slug: string) => Promise<{ removed: string[] }>;
+    getSuggestions: () => Promise<EditorSuggestions>;
+}

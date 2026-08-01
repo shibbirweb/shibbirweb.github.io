@@ -1,12 +1,16 @@
 import type { MetadataRoute } from 'next';
 import { siteThumbnail, siteURL } from '@/config/constants';
+import { requireArticleDate } from '@/utils/articleDate';
 import { articleOgImagePath } from '@/utils/generateArticleCover';
 import { getAllArticles } from '@/lib/posts';
+import { getBuiltAt } from '@/lib/version';
 
 export const dynamic = 'force-static';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-    const now = new Date();
+    // The build stamp rather than wall-clock time, so an unchanged corpus exports
+    // an identical sitemap on every build.
+    const now = new Date(getBuiltAt());
     const articles = getAllArticles();
 
     const entries: MetadataRoute.Sitemap = [
@@ -55,9 +59,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
             : article.cover;
         entries.push({
             url: `${siteURL}/articles/${article.slug}`,
-            lastModified: new Date(
-                `${article.updated ?? article.date}T00:00:00`
-            ),
+            lastModified: requireArticleDate(article.updated ?? article.date),
             changeFrequency: 'yearly',
             priority: 0.6,
             images: [`${siteURL}${image}`],

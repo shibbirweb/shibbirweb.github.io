@@ -1,16 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import {
-    deleteArticle,
-    getSuggestions,
-    listArticles,
-    loadArticle,
-    saveArticle,
-} from '@/app/studio/article-editor/actions.dev';
 import type {
     ArticleDraft,
     ArticleListItem,
+    EditorActions,
     EditorSuggestions,
 } from '@/components/pages/article-editor/ArticleEditor/types';
 
@@ -26,8 +20,12 @@ export type SaveState =
  * suggestion sets (seeded from the page's server props, refreshed after a save so
  * a newly written file and any freshly coined tag appear at once), plus `save` and
  * `open` with the save button's pending/saved/error state.
+ *
+ * The actions arrive as a parameter rather than an import: they live beside the
+ * studio route in `src/app/`, which this side of the tree must not reach into.
  */
 export function useArticleActions(
+    actions: EditorActions,
     initialArticles: ArticleListItem[],
     initialSuggestions: EditorSuggestions
 ) {
@@ -35,16 +33,21 @@ export function useArticleActions(
     const [suggestions, setSuggestions] = useState(initialSuggestions);
     const [saveState, setSaveState] = useState<SaveState>({ status: 'idle' });
 
+    /** Re-read both server-owned lists, so a new file and any new tag land together. */
+    async function refreshLists() {
+        const [nextArticles, nextSuggestions] = await Promise.all([
+            actions.listArticles(),
+            actions.getSuggestions(),
+        ]);
+        setArticles(nextArticles);
+        setSuggestions(nextSuggestions);
+    }
+
     async function save(draft: ArticleDraft, slug: string) {
         setSaveState({ status: 'saving' });
         try {
-            const result = await saveArticle(draft, slug);
-            const [nextArticles, nextSuggestions] = await Promise.all([
-                listArticles(),
-                getSuggestions(),
-            ]);
-            setArticles(nextArticles);
-            setSuggestions(nextSuggestions);
+            const result = await actions.saveArticle(draft, slug);
+            await refreshLists();
             setSaveState({
                 status: 'saved',
                 message: `Saved ${result.file} (${result.status})`,
@@ -60,19 +63,14 @@ export function useArticleActions(
     }
 
     async function open(file: string): Promise<ArticleDraft> {
-        return loadArticle(file);
+        return actions.loadArticle(file);
     }
 
     async function remove(slug: string) {
         setSaveState({ status: 'saving' });
         try {
-            const result = await deleteArticle(slug);
-            const [nextArticles, nextSuggestions] = await Promise.all([
-                listArticles(),
-                getSuggestions(),
-            ]);
-            setArticles(nextArticles);
-            setSuggestions(nextSuggestions);
+            const result = await actions.deleteArticle(slug);
+            await refreshLists();
             setSaveState({
                 status: 'saved',
                 message: result.removed.length

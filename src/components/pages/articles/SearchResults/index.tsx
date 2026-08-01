@@ -2,9 +2,9 @@
 
 import { useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
-import ArticleGrid from '@/components/pages/articles/ArticleGrid';
 import ArticleSearch from '@/components/pages/articles/ArticleSearch';
-import Pagination from '@/components/pages/articles/Pagination';
+import SearchResultsBody from '@/components/pages/articles/SearchResults/SearchResultsBody';
+import { resolveResultsLabel } from '@/components/pages/articles/SearchResults/resultsLabel';
 import { searchArticles } from '@/utils/searchArticles';
 import { buildPageHref } from '@/utils/pageHref';
 import type { ArticleSummary } from '@/lib/posts';
@@ -36,7 +36,6 @@ export default function SearchResults({
         Number.isInteger(requested) && requested >= 1 && requested <= totalPages
             ? requested
             : 1;
-    const start = (current - 1) * perPage;
     const createHref = (page: number) =>
         buildPageHref('/articles/search', searchParams, page);
 
@@ -49,11 +48,7 @@ export default function SearchResults({
                 />
                 {query.length > 0 && (
                     <p className="text-foreground/70 text-sm">
-                        {results.length === 0
-                            ? 'No articles found for '
-                            : `${results.length} ${
-                                  results.length === 1 ? 'article' : 'articles'
-                              } found for `}
+                        {resolveResultsLabel(results.length)}
                         <span className="text-foreground font-medium">
                             “{query}”
                         </span>
@@ -61,24 +56,14 @@ export default function SearchResults({
                 )}
             </div>
 
-            {query.length === 0 ? (
-                <p className="text-foreground/70 mt-12 text-base">
-                    Open search to find an article by its title or a tag.
-                </p>
-            ) : results.length > 0 ? (
-                <>
-                    <ArticleGrid articles={results.slice(start, start + perPage)} />
-                    <Pagination
-                        current={current}
-                        total={totalPages}
-                        createHref={createHref}
-                    />
-                </>
-            ) : (
-                <p className="text-foreground/70 mt-12 text-base">
-                    Nothing matched. Try a different title or tag.
-                </p>
-            )}
+            <SearchResultsBody
+                query={query}
+                results={results}
+                perPage={perPage}
+                current={current}
+                totalPages={totalPages}
+                createHref={createHref}
+            />
         </div>
     );
 }

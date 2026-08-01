@@ -1,0 +1,120 @@
+@reference "tailwindcss";
+
+/* The signature accent bloom for a previous/next pager card, tuned like ArticleCard:
+   card-sized rather than panel-sized, and blooming from nothing on hover, since a
+   pair of small cards resting lit would compete with the article above them.
+
+   Each card is tinted with the accent of the article it links to (--accent-from into
+   --accent-to, set inline from that neighbour's coverColors), so the glow previews
+   where the link goes, the same way an article card matches its own cover.
+   --pointer-x/y are overwritten per frame by useSpotlightSurfaces on the enclosing
+   SpotlightGroup; the 50% defaults are what touch devices, reduced-motion visitors,
+   and the frames before the first pointermove get: a centred bloom. */
+.card {
+    --glow-strength: 8%;
+
+    --pointer-x: 50%;
+    --pointer-y: 50%;
+    --spotlight-radius: 18rem;
+    --spotlight-strength: 3%;
+    --spotlight-border-reach: 13rem;
+    --spotlight-border-strength: 50%;
+}
+
+/* A translucent colour over near-black reads much dimmer than over the light
+   background, so dark mode needs a higher mix to stay visible while still feeling
+   soft. Mirrored on the OS media query for the no-JS fallback. */
+@media (prefers-color-scheme: dark) {
+    :global(html:not([data-theme])) .card {
+        --glow-strength: 14%;
+        --spotlight-strength: 5.5%;
+        --spotlight-border-strength: 68%;
+    }
+}
+:global(html[data-theme='dark']) .card {
+    --glow-strength: 14%;
+    --spotlight-strength: 5.5%;
+    --spotlight-border-strength: 68%;
+}
+
+/* The accent bloom, rising from the card's bottom edge so it sits under the article
+   title rather than the "Previous"/"Next" label. Behind the content: the card is
+   `relative isolate`, so the negative z-index keeps this under the text. */
+.card::before {
+    @apply pointer-events-none absolute inset-0 z-[-1] rounded-[inherit] opacity-0 content-[''] motion-safe:transition-opacity motion-safe:duration-700 motion-safe:ease-out;
+    background-image: radial-gradient(
+        120% 80% at 50% 100%,
+        color-mix(
+            in oklab,
+            var(--accent-from, var(--foreground)) var(--glow-strength),
+            transparent
+        ),
+        color-mix(
+            in oklab,
+            var(--accent-to, var(--foreground))
+                calc(var(--glow-strength) * 0.45),
+            transparent
+        ),
+        transparent 74%
+    );
+}
+
+.card:hover::before {
+    @apply opacity-100;
+}
+
+/* The cursor wash, in the same z-[-1] bucket as the bloom but later in tree order, so
+   the moving highlight reads on top of it. */
+.card::after {
+    @apply pointer-events-none absolute inset-0 z-[-1] rounded-[inherit] opacity-0 content-[''] motion-safe:transition-opacity motion-safe:duration-500 motion-safe:ease-out;
+    background-image: radial-gradient(
+        circle var(--spotlight-radius) at var(--pointer-x) var(--pointer-y),
+        color-mix(
+            in oklab,
+            var(--accent-from, var(--foreground)) var(--spotlight-strength),
+            transparent
+        ),
+        color-mix(
+            in oklab,
+            var(--accent-to, var(--foreground))
+                calc(var(--spotlight-strength) * 0.4),
+            transparent
+        ),
+        transparent
+    );
+}
+
+.card:hover::after {
+    @apply opacity-100;
+}
+
+/* The lit edge, on the shared SpotlightBorder span (both pseudo-elements are already
+   spoken for). The span paints nothing but its hairline border, which a radial mask
+   crops to a soft circle at the pointer, so only the stretch of edge nearest the
+   cursor brightens. Both mask prefixes ship, matching the other card surfaces. */
+.spotlightBorder {
+    @apply opacity-0 motion-safe:transition-opacity motion-safe:duration-500 motion-safe:ease-out;
+    border-color: color-mix(
+        in oklab,
+        var(--accent-from, var(--foreground)) var(--spotlight-border-strength),
+        transparent
+    );
+    -webkit-mask-image: radial-gradient(
+        circle var(--spotlight-border-reach) at var(--pointer-x)
+            var(--pointer-y),
+        #000,
+        rgba(0, 0, 0, 0.35),
+        transparent
+    );
+    mask-image: radial-gradient(
+        circle var(--spotlight-border-reach) at var(--pointer-x)
+            var(--pointer-y),
+        #000,
+        rgba(0, 0, 0, 0.35),
+        transparent
+    );
+}
+
+.card:hover .spotlightBorder {
+    @apply opacity-100;
+}

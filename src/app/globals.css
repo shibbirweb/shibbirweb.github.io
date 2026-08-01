@@ -91,21 +91,6 @@ body {
     font-family: var(--font-noto-sans), Arial, Helvetica, sans-serif;
 }
 
-/* Registering the gradient colours as <color> custom properties lets them be
-   transitioned, so the wash cross-fades smoothly on navigation instead of
-   snapping to the next route's colours (a plain background-image cannot
-   transition, but a registered custom property used inside it can). */
-@property --page-grad-from {
-    syntax: '<color>';
-    inherits: false;
-    initial-value: transparent;
-}
-@property --page-grad-to {
-    syntax: '<color>';
-    inherits: false;
-    initial-value: transparent;
-}
-
 /* Registering the background tokens as <color> custom properties lets them be
    transitioned, so switching theme (light <-> dark) cross-fades the background
    instead of snapping. They are set on :root and read by descendants (body,
@@ -138,54 +123,6 @@ body {
     syntax: '<color>';
     inherits: true;
     initial-value: #e6f1ef;
-}
-
-/* Per-page gradient background for every page except home (issue #75). The
-   element is a full-page wash rendered by PageGradientBackground on non-home
-   routes (absolutely positioned over the relative body, so it spans the whole
-   document and scrolls with the page rather than staying fixed). Its two accent
-   colours (--page-grad-from / --page-grad-to) are derived per route in
-   pageGradient.ts, so each page gets its own gradient and any new route is
-   assigned one automatically. Each accent colour is mixed a little into the base
-   background (a touch stronger in dark mode) rather than toward transparent, so
-   every stop stays on the base colour and the wash ends on the exact footer
-   background (var(--background)) at the bottom. That avoids the muddy "fade to
-   transparent" band and lets the gradient meet the footer seamlessly in both
-   light and dark mode. */
-.page-gradient {
-    --wash-strength: 6%;
-    background-image: linear-gradient(
-        180deg,
-        var(--background) 0%,
-        color-mix(in oklab, var(--page-grad-from) var(--wash-strength), var(--background))
-            15%,
-        color-mix(in oklab, var(--page-grad-to) var(--wash-strength), var(--background))
-            55%,
-        var(--background) 100%
-    );
-}
-
-/* A touch stronger when the resolved theme is dark; only the mix strength
-   changes, so the single gradient rule above is reused. Mirrored on the OS media
-   query for the no-JS fallback (no data-theme set). */
-@media (prefers-color-scheme: dark) {
-    :root:not([data-theme]) .page-gradient {
-        --wash-strength: 12%;
-    }
-}
-:root[data-theme='dark'] .page-gradient {
-    --wash-strength: 12%;
-}
-
-/* Cross-fade the wash on route change: the element persists across client
-   navigations, so transitioning its colour variables animates the gradient.
-   Honour reduced-motion preferences by leaving the change instant. */
-@media (prefers-reduced-motion: no-preference) {
-    .page-gradient {
-        transition:
-            --page-grad-from 700ms ease,
-            --page-grad-to 700ms ease;
-    }
 }
 
 /* Cross-fade the theme on switch: the resolved theme is written to

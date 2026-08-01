@@ -211,6 +211,20 @@ interface CodeMeta {
 }
 
 /**
+ * The file path a fence points at, in precedence order: an explicit `title="..."`
+ * wins, then a bare trailing path. Anything else in the info string is some other
+ * `key=value` attribute, not a path, so it yields none.
+ */
+function resolveFilePath(
+    titled: RegExpMatchArray | null,
+    remainder: string
+): string | undefined {
+    if (titled) return titled[1];
+    if (remainder && !remainder.includes('=')) return remainder;
+    return undefined;
+}
+
+/**
  * Parses a fenced block's info string into a language plus an optional file path
  * (where the snippet belongs). Supports `lang path/to/file.ext` and
  * `lang title="path/to/file.ext"`.
@@ -221,12 +235,7 @@ function parseCodeMeta(token: CodeToken): CodeMeta {
     const [lang, ...rest] = info.split(/\s+/);
     const titled = info.match(/title="([^"]+)"/);
     const remainder = rest.join(' ').trim();
-    const filePath = titled
-        ? titled[1]
-        : remainder && !remainder.includes('=')
-          ? remainder
-          : undefined;
-    return { lang: lang || 'text', filePath };
+    return { lang: lang || 'text', filePath: resolveFilePath(titled, remainder) };
 }
 
 /** Header label: the file extension when a path is given, else the language. */
@@ -393,14 +402,33 @@ function headingPlainText(inner: string): string {
  * Adds stable `id` anchors to the body's H2/H3 headings and returns the table of
  * contents alongside the rewritten HTML. IDs and the TOC are produced in a single
  * pass so they always agree; duplicate slugs are disambiguated with a numeric
- * suffix (`-2`, `-3`). Headings that already carry an id are left untouched.
+ * suffix (`-2`, `-3`). Headings that already carry an id never match the pattern,
+ * so they are passed through untouched and stay out of the TOC.
+ *
+ * Every id, slugified or explicit, is claimed from one pool: an explicit `{#id}`
+ * that duplicates a slug (or a `-2` suffix that collides with a real heading named
+ * "... 2") would otherwise emit the same id twice, and `getElementById` resolves
+ * only the first, leaving the second heading unreachable from its own TOC link.
  */
 function addHeadingIdsAndExtractToc(html: string): {
     html: string;
     toc: TocItem[];
 } {
     const toc: TocItem[] = [];
-    const used = new Map<string, number>();
+    const used = new Set<string>();
+
+    /** `base`, or the first free `base-N`, reserved so no later heading repeats it. */
+    const claimId = (base: string): string => {
+        let candidate = base;
+        let suffix = 2;
+        while (used.has(candidate)) {
+            candidate = `${base}-${suffix}`;
+            suffix += 1;
+        }
+        used.add(candidate);
+        return candidate;
+    };
+
     const rewritten = html.replace(
         /<h([23])>([\s\S]*?)<\/h\1>/g,
         (match, level: string, inner: string) => {
@@ -412,15 +440,7 @@ function addHeadingIdsAndExtractToc(html: string): {
                 : inner;
             const text = headingPlainText(displayInner);
             if (!text) return match;
-            let id: string;
-            if (explicit) {
-                id = explicit[1];
-            } else {
-                const base = slugifyHeading(text) || 'section';
-                const seen = used.get(base) ?? 0;
-                used.set(base, seen + 1);
-                id = seen === 0 ? base : `${base}-${seen + 1}`;
-            }
+            const id = claimId(explicit ? explicit[1] : slugifyHeading(text) || 'section');
             toc.push({ id, text, level: Number(level) });
             return `<h${level} id="${id}">${displayInner}</h${level}>`;
         }

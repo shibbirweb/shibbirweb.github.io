@@ -18,6 +18,9 @@ const LEVEL_BARS: Record<ArticleDifficulty, number> = {
     Advanced: 3,
 };
 
+/** Bar heights, shortest first, so the strip reads as a rising signal. */
+const BAR_HEIGHTS = ['h-1.5', 'h-2', 'h-2.5'] as const;
+
 /** A small pill conveying an article's difficulty with a label and signal bars. */
 export default function DifficultyBadge({
     level,
@@ -39,12 +42,12 @@ export default function DifficultyBadge({
                 aria-hidden
                 className="flex items-end gap-0.5"
             >
-                {[0, 1, 2].map((bar) => (
+                {BAR_HEIGHTS.map((height, bar) => (
                     <span
-                        key={bar}
+                        key={height}
                         className={cn(
                             'w-0.5 rounded-full bg-current',
-                            bar === 0 ? 'h-1.5' : bar === 1 ? 'h-2' : 'h-2.5',
+                            height,
                             bar < filled ? 'opacity-100' : 'opacity-30'
                         )}
                     />
