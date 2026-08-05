@@ -8,10 +8,13 @@ import Textarea from '@/components/ui/Textarea';
 import SpotlightBorder from '@/components/pages/common/SpotlightBorder';
 import { useSpotlightSurfaces } from '@/components/pages/common/hooks/useSpotlightSurfaces';
 import { spotlightSurfaceProps } from '@/components/pages/common/spotlightSurface';
+import CaptchaSlot from '@/components/pages/home/ContactArea/CaptchaSlot';
 import ContactAside from '@/components/pages/home/ContactArea/ContactAside';
 import ContactSuccess from '@/components/pages/home/ContactArea/ContactSuccess';
 import styles from '@/components/pages/home/ContactArea/ContactForm.module.css';
+import { captchaHint } from '@/components/pages/home/ContactArea/captchaHint';
 import { useContactForm } from '@/components/pages/home/ContactArea/hooks/useContactForm';
+import { useFirstInteraction } from '@/components/pages/home/ContactArea/hooks/useFirstInteraction';
 import { useHCaptcha } from '@/components/pages/home/ContactArea/hooks/useHCaptcha';
 import {
     contactFields,
@@ -26,17 +29,33 @@ const fieldLabelClassName =
     'text-foreground/70 text-xs font-semibold tracking-[0.14em] uppercase';
 
 export default function ContactForm() {
-    const { setContainer, token, reset: resetCaptcha } = useHCaptcha();
-    const { values, status, errorMessage, updateField, handleSubmit, reset } =
-        useContactForm({ captchaToken: token, resetCaptcha });
-
-    const isSubmitting = status === 'submitting';
-
     // The panel is its own spotlight group: one delegated pointer listener here
     // writes --pointer-x/y to the panel, which the cursor glow and the lit border in
     // ContactForm.module.css both read.
     const panelRef = useRef<HTMLDivElement>(null);
     useSpotlightSurfaces(panelRef);
+
+    // hCaptcha is third-party JS for a control at the very bottom of the page, so
+    // it is fetched when the reader actually engages with the form rather than at
+    // hydration. Most visitors read and leave, and they should not pay for it.
+    const { hasInteracted, interactionProps, markInteracted } =
+        useFirstInteraction();
+
+    const {
+        setContainer,
+        token,
+        reset: resetCaptcha,
+        isWidgetRendered,
+    } = useHCaptcha({ shouldLoad: hasInteracted });
+    const { values, status, errorMessage, updateField, handleSubmit, reset } =
+        useContactForm({ captchaToken: token, resetCaptcha });
+
+    const isSubmitting = status === 'submitting';
+    const hintMessage = captchaHint({
+        hasToken: Boolean(token),
+        hasInteracted,
+        isWidgetRendered,
+    });
 
     return (
         <div className="w-full max-w-4xl">
@@ -61,6 +80,10 @@ export default function ContactForm() {
                         ) : (
                             <form
                                 onSubmit={handleSubmit}
+                                // Opens the captcha gate: every field and the
+                                // captcha slot itself sit inside this form, so any
+                                // click or tab into it counts as engagement.
+                                {...interactionProps}
                                 className="flex flex-col gap-5"
                             >
                                 {contactFields.map((field) => (
@@ -98,17 +121,14 @@ export default function ContactForm() {
                                     }
                                 />
 
-                                {/* hCaptcha renders a fixed 302px widget. Below
-                                    ~368px that cannot fit the panel, so scale it
-                                    down from the left inside an overflow-hidden
-                                    wrapper (the wrapper caps the layout width so
-                                    nothing spills past the rounded panel). */}
-                                <div className="w-full overflow-hidden">
-                                    <div
-                                        ref={setContainer}
-                                        className="flex origin-top-left justify-start max-[368px]:scale-[0.8]"
-                                    />
-                                </div>
+                                <CaptchaSlot
+                                    setContainer={setContainer}
+                                    isWidgetRendered={isWidgetRendered}
+                                    isLoading={
+                                        hasInteracted && !isWidgetRendered
+                                    }
+                                    onIntent={markInteracted}
+                                />
 
                                 {status === 'error' && errorMessage && (
                                     <p
@@ -144,10 +164,9 @@ export default function ContactForm() {
                                             </svg>
                                         )}
                                     </Button>
-                                    {!token && (
+                                    {hintMessage && (
                                         <span className="text-foreground/70 text-xs">
-                                            Complete the captcha to enable
-                                            sending.
+                                            {hintMessage}
                                         </span>
                                     )}
                                 </div>

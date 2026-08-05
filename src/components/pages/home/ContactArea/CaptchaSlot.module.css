@@ -1,0 +1,47 @@
+@reference "tailwindcss";
+
+/* Placeholder styling for the captcha slot, scoped to the component. Everything
+   expressible as a utility uses @apply; only the sweep gradient and its @keyframes
+   body are raw CSS, since Tailwind cannot express either. */
+
+/* The shimmer rides ::after so the placeholder's own text stays untouched by it.
+   It is transparent until the script is actually in flight, so the slot sits calm
+   at rest and the sweep only ever means "fetching". */
+.placeholder::after {
+    @apply pointer-events-none absolute inset-0 rounded-[inherit] opacity-0 content-[''] motion-safe:transition-opacity motion-safe:duration-300;
+    background-image: linear-gradient(
+        100deg,
+        transparent 25%,
+        color-mix(in oklab, var(--foreground) var(--shimmer-strength), transparent)
+            50%,
+        transparent 75%
+    );
+    background-size: 200% 100%;
+}
+
+.placeholder {
+    /* Light rests lower, matching the glow tokens on the other surfaces. */
+    --shimmer-strength: 9%;
+}
+
+@media (prefers-color-scheme: dark) {
+    :global(html:not([data-theme])) .placeholder {
+        --shimmer-strength: 16%;
+    }
+}
+:global(html[data-theme='dark']) .placeholder {
+    --shimmer-strength: 16%;
+}
+
+.loading::after {
+    @apply opacity-100 motion-safe:animate-[captcha-shimmer_1.5s_linear_infinite];
+}
+
+@keyframes captcha-shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}

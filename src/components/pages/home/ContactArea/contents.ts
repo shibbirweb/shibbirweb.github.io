@@ -47,6 +47,13 @@ export const messageField = {
 export const submitLabel = 'Send message';
 export const submittingLabel = 'Sending...';
 
+// Stands in for the widget before it loads. Names what belongs there without
+// imitating any part of the control itself.
+export const captchaPlaceholderLabel = 'Solve the captcha';
+
+export const captchaLoadingHint = 'Loading the captcha...';
+export const captchaUnsolvedHint = 'Complete the captcha to enable sending.';
+
 export const successTitle = 'Message sent successfully';
 export const successSubtitle =
     'Thanks for reaching out. I will get back to you soon. Need to add something?';
