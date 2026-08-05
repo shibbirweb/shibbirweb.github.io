@@ -1,7 +1,6 @@
 'use client';
 
 import { useRef } from 'react';
-import { cn } from '@/utils/cn';
 import MobileMenuButton from '@/components/layout/Navbar/MobileMenuButton';
 import MobileMenuPanel from '@/components/layout/Navbar/MobileMenuPanel';
 import MobileWordmark from '@/components/layout/Navbar/MobileWordmark';
@@ -12,7 +11,6 @@ import { useCloseOnClickOutside } from '@/components/layout/Navbar/hooks/useClos
 import { useCloseOnRouteChange } from '@/components/layout/Navbar/hooks/useCloseOnRouteChange';
 
 interface MobileNavProps {
-    visible: boolean;
     isHome: boolean;
     sectionItems: NavItemData[];
     pageItems: NavItemData[];
@@ -22,7 +20,6 @@ interface MobileNavProps {
 }
 
 export default function MobileNav({
-    visible,
     isHome,
     sectionItems,
     pageItems,
@@ -39,12 +36,7 @@ export default function MobileNav({
         <>
             <div
                 ref={menuRef}
-                className={cn(
-                    'fixed top-4 right-4 z-50 transition-all duration-700 ease-in-out motion-reduce:transition-none md:hidden',
-                    visible
-                        ? 'visible translate-x-0 opacity-100'
-                        : 'pointer-events-none invisible translate-x-24 opacity-0'
-                )}
+                className="fixed top-4 right-4 z-50 md:hidden"
             >
                 <MobileMenuButton
                     open={open}
@@ -63,11 +55,9 @@ export default function MobileNav({
             {/*
              * Inner pages only: home keeps the logo as a static item inside the
              * panel (MobileMenuPanel), with no centered wordmark and no travel.
-             * Rendered as a sibling of (not inside) the menu container above, for
-             * two reasons: that container carries a transform for its show/hide,
-             * which would become the containing block for the wordmark's `fixed`
-             * and break its centering; and being later in the DOM keeps it above
-             * the panel so the logo reads on top when it lands in the slot.
+             * Rendered as a sibling of (not inside) the menu container above so
+             * that being later in the DOM keeps it above the panel, letting the
+             * logo read on top when it lands in the slot.
              */}
             {!isHome && (
                 <MobileWordmark

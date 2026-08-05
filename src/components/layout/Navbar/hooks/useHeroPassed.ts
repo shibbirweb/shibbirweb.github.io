@@ -2,10 +2,9 @@ import { useEffect, useState } from 'react';
 
 /**
  * Whether the hero (`heroId`) has scrolled roughly halfway out of view on the
- * home page. Unlike useNavbarVisibility this toggles both ways (it flips back to
- * false when the hero returns to the top) and never idle-reveals. Off the home
- * page there is no hero, so it reports true. Gates the navbar wordmark so two
- * "SHIBBIR AHMED" are never on screen at once.
+ * home page. It toggles both ways, flipping back to false when the hero returns
+ * to the top. Off the home page there is no hero, so it reports true. Gates the
+ * navbar wordmark so two "SHIBBIR AHMED" are never on screen at once.
  */
 export function useHeroPassed(isHome: boolean, heroId: string): boolean {
     const [passed, setPassed] = useState(!isHome);

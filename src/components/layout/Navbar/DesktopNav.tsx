@@ -5,7 +5,6 @@ import StudioMenu from '@/components/layout/Navbar/StudioMenu';
 import type { NavItemData } from '@/components/layout/Navbar/contents';
 
 interface DesktopNavProps {
-    visible: boolean;
     /** Reveal the wordmark, once the hero name has scrolled ~50% out of view. */
     brandVisible: boolean;
     sectionItems: NavItemData[];
@@ -16,7 +15,6 @@ interface DesktopNavProps {
 }
 
 export default function DesktopNav({
-    visible,
     brandVisible,
     sectionItems,
     pageItems,
@@ -26,12 +24,7 @@ export default function DesktopNav({
     return (
         <nav
             aria-label="Primary"
-            className={cn(
-                'fixed top-4 left-1/2 z-50 hidden -translate-x-1/2 transition-[transform,opacity] duration-700 ease-in-out motion-reduce:transition-none md:block',
-                visible
-                    ? 'visible translate-y-0 opacity-100'
-                    : 'pointer-events-none invisible -translate-y-24 opacity-0'
-            )}
+            className="fixed top-4 left-1/2 z-50 hidden -translate-x-1/2 md:block"
         >
             <ul className="border-foreground/10 bg-background/60 flex items-center gap-0.5 rounded-full border px-2 py-1.5 shadow-lg shadow-black/5 backdrop-blur-lg">
                 <li className="flex items-center">

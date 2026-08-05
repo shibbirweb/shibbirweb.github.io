@@ -16,7 +16,6 @@ import {
     type NavItemData,
 } from '@/components/layout/Navbar/contents';
 import { useHeroPassed } from '@/components/layout/Navbar/hooks/useHeroPassed';
-import { useNavbarVisibility } from '@/components/layout/Navbar/hooks/useNavbarVisibility';
 import { useScrollSpy } from '@/components/layout/Navbar/hooks/useScrollSpy';
 
 export default function Navbar({
@@ -26,7 +25,6 @@ export default function Navbar({
 }) {
     const pathname = usePathname();
     const isHome = pathname === '/';
-    const visible = useNavbarVisibility(isHome, heroId);
     const brandVisible = useHeroPassed(isHome, heroId);
     const activeSection = useScrollSpy(sectionIds, isHome);
     // The resume page always exists, so its nav item is always shown.
@@ -47,7 +45,6 @@ export default function Navbar({
     return (
         <>
             <DesktopNav
-                visible={visible}
                 brandVisible={brandVisible}
                 sectionItems={sectionItems}
                 pageItems={pages}
@@ -55,14 +52,13 @@ export default function Navbar({
                 isActive={isActive}
             />
             <MobileNav
-                visible={visible}
                 isHome={isHome}
                 sectionItems={sectionItems}
                 pageItems={pages}
                 studioItems={studio}
                 isActive={isActive}
             />
-            <ThemeMenu visible={visible} />
+            <ThemeMenu />
         </>
     );
 }
