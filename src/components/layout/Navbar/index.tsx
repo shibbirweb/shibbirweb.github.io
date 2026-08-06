@@ -8,9 +8,9 @@ import ThemeMenu from '@/components/layout/ThemeToggle/ThemeMenu';
 import {
     articlesItem,
     heroId,
+    homeSectionIds,
     pageItems,
     resumeItem,
-    sectionIds,
     sectionItems,
     studioItems,
     type NavItemData,
@@ -26,7 +26,7 @@ export default function Navbar({
     const pathname = usePathname();
     const isHome = pathname === '/';
     const brandVisible = useHeroPassed(isHome, heroId);
-    const activeSection = useScrollSpy(sectionIds, isHome);
+    const activeSection = useScrollSpy(homeSectionIds, isHome);
     // The resume page always exists, so its nav item is always shown.
     const pages = [
         ...(hasArticles ? [articlesItem] : []),

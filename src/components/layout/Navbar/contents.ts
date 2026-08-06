@@ -38,7 +38,18 @@ export const studioItems: NavItemData[] = [
     { label: 'Article Editor', href: '/studio/article-editor' },
 ];
 
-export const sectionIds = sectionItems.map((item) => item.sectionId as string);
+// Home page section anchors tracked by the scroll spy, in document order (see
+// src/app/page.tsx). A superset of the sectionItems above: the Articles teaser
+// owns the URL hash while it is in view, but it is not a navbar entry (the
+// navbar's Articles link points at the /articles page). Every sectionId in
+// sectionItems must appear here.
+export const homeSectionIds = [
+    'about',
+    'skills',
+    'work',
+    'articles',
+    'contact',
+];
 
 // id of the hero element on the home page; observed to toggle the navbar.
 export const heroId = 'hero';
