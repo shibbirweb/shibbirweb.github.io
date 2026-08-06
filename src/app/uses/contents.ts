@@ -107,11 +107,21 @@ export const usesSections: UsesSectionData[] = [
     {
         title: 'Audio',
         Icon: Speaker,
-        intro: 'Perfect for music while coding, online meetings, and watching technical talks.',
         blocks: [
             {
-                kind: 'tags',
-                tags: ['Edifier R1280DBs', 'Edifier T5 Subwoofer'],
+                kind: 'gear',
+                gear: [
+                    {
+                        name: 'Edifier R1280DBs',
+                        description:
+                            'My desktop speakers for online meetings and technical talks. Clear at low volume, with Bluetooth and optical inputs for easy switching between devices.',
+                    },
+                    {
+                        name: 'Edifier T5 Subwoofer',
+                        description:
+                            'Adds the low end the speakers cannot reach, so everything sounds full without turning the volume up.',
+                    },
+                ],
             },
         ],
     },
