@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import SpotlightBorder from '@/components/pages/common/SpotlightBorder';
 import { spotlightSurfaceProps } from '@/components/pages/common/spotlightSurface';
+import DiagramSourceFallback from '@/components/pages/articles/DiagramSourceFallback';
 import DiagramTools from '@/components/pages/articles/DiagramTools';
 import styles from '@/components/pages/articles/MermaidRenderer/MermaidDiagram.module.css';
 import MermaidStage from '@/components/pages/articles/MermaidRenderer/MermaidStage';
@@ -26,7 +27,12 @@ export default function MermaidDiagram({ source }: { source: string }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     if (!svg) {
-        return <pre className={cn('not-prose', styles.fallback)}>{source}</pre>;
+        return (
+            <DiagramSourceFallback
+                source={source}
+                className={cn('not-prose', styles.fallback)}
+            />
+        );
     }
 
     return (

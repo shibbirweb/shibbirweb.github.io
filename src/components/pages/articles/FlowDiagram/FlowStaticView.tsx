@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import DiagramSourceFallback from '@/components/pages/articles/DiagramSourceFallback';
 import DiagramTools from '@/components/pages/articles/DiagramTools';
 import styles from '@/components/pages/articles/FlowDiagram/FlowDiagram.module.css';
 import MermaidModal from '@/components/pages/articles/MermaidRenderer/MermaidModal';
@@ -23,7 +24,12 @@ export default function FlowStaticView({ source }: { source: string }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     if (!svg) {
-        return <pre className={styles.staticFallback}>{source}</pre>;
+        return (
+            <DiagramSourceFallback
+                source={source}
+                className={styles.staticFallback}
+            />
+        );
     }
 
     return (
