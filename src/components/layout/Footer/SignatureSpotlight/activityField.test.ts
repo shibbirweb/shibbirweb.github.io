@@ -10,6 +10,7 @@ import {
     createRandom,
     generateActivityLevels,
     listActivityCells,
+    listCellNeighbours,
     pickActivityLevel,
 } from '@/components/layout/Footer/SignatureSpotlight/activityField';
 
@@ -138,5 +139,30 @@ describe('activityGridLayout', () => {
 
         expect(cells).toHaveLength(layout.columns * layout.rows);
         expect(cells[0]).toEqual({ x: layout.offsetX, y: layout.offsetY });
+    });
+});
+
+describe('listCellNeighbours', () => {
+    // A 3 x 2 grid with one gap at column 2, row 1.
+    const cells = [
+        { x: 0, y: 0 },
+        { x: 2, y: 0 },
+        { x: 4, y: 0 },
+        { x: 0, y: 2 },
+        { x: 2, y: 2 },
+    ];
+
+    it('finds up to eight neighbours by grid position, skipping gaps', () => {
+        const neighbours = listCellNeighbours(cells, 2);
+
+        expect([...neighbours[0]].sort()).toEqual([1, 3, 4]);
+        expect([...neighbours[1]].sort()).toEqual([0, 2, 3, 4]);
+        expect([...neighbours[2]].sort()).toEqual([1, 4]);
+    });
+
+    it('never lists a cell as its own neighbour', () => {
+        listCellNeighbours(cells, 2).forEach((list, index) => {
+            expect(list).not.toContain(index);
+        });
     });
 });

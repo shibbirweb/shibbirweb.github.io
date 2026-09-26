@@ -11,6 +11,7 @@ import {
 } from '@/components/layout/Footer/SignatureSpotlight/activityColors';
 import {
     drawActivityGraph,
+    drawChangedSquares,
     readShadeColors,
 } from '@/components/layout/Footer/SignatureSpotlight/drawActivityGraph';
 
@@ -28,9 +29,16 @@ function canvasWithLevelColors(): HTMLCanvasElement {
 /** A 2D context stand-in that records what was painted, and in what colour. */
 function fakeContext() {
     const fills: { color: string; squares: number[][] }[] = [];
+    const clipRects: number[][] = [];
     let path: number[][] = [];
     const context = {
         fillStyle: '',
+        save: vi.fn(),
+        restore: vi.fn(),
+        rect: vi.fn((...box: number[]) => {
+            clipRects.push(box);
+        }),
+        clip: vi.fn(),
         setTransform: vi.fn(),
         clearRect: vi.fn(),
         beginPath: vi.fn(() => {
@@ -43,7 +51,12 @@ function fakeContext() {
             fills.push({ color: String(context.fillStyle), squares: path });
         }),
     };
-    return { context: context as unknown as CanvasRenderingContext2D, fills };
+    return {
+        context: context as unknown as CanvasRenderingContext2D,
+        fakeContext: context,
+        fills,
+        clipRects,
+    };
 }
 
 describe('readShadeColors', () => {
@@ -124,5 +137,101 @@ describe('drawActivityGraph', () => {
         );
 
         expect(squareCount).toBe(cells.length);
+    });
+});
+
+describe('drawChangedSquares', () => {
+    const shadeColors = readShadeColors(canvasWithLevelColors());
+    // Four cells in a row, each the neighbour of the next.
+    const cells = [
+        { x: 0, y: 0 },
+        { x: 2, y: 0 },
+        { x: 4, y: 0 },
+        { x: 6, y: 0 },
+    ];
+    const neighbours = [[1], [0, 2], [1, 3], [2]];
+
+    // By default a 200 x 40 canvas over a 100 x 20 viewBox: 2 device pixels
+    // per unit.
+    function drawChanged(
+        changedIndices: number[],
+        levels: number[],
+        pixelsPerUnit = 2
+    ) {
+        const canvas = document.createElement('canvas');
+        canvas.width = 100 * pixelsPerUnit;
+        canvas.height = 20 * pixelsPerUnit;
+        const { context, fakeContext: raw, fills, clipRects } = fakeContext();
+        drawChangedSquares(
+            canvas,
+            context,
+            cells,
+            neighbours,
+            changedIndices,
+            levels,
+            shadeColors,
+            100,
+            20
+        );
+        return { raw, fills, clipRects };
+    }
+
+    it("clips to each changed square's footprint, rounded out to whole pixels", () => {
+        const { clipRects, raw } = drawChanged([1], [0, 2, 4, 1]);
+        const size = ACTIVITY_CELL_PITCH * ACTIVITY_CELL_FILL;
+        const inset = (ACTIVITY_CELL_PITCH - size) / 2;
+        const left = Math.floor((2 + inset) * 2);
+        const right = Math.ceil((2 + inset + size) * 2);
+
+        expect(clipRects).toHaveLength(1);
+        expect(clipRects[0][0]).toBe(left);
+        expect(clipRects[0][2]).toBe(right - left);
+        clipRects[0].forEach((value) =>
+            expect(Number.isInteger(value)).toBe(true)
+        );
+        expect(raw.clip).toHaveBeenCalledTimes(1);
+    });
+
+    it('clears inside the clip and restores the canvas state afterwards', () => {
+        const { raw } = drawChanged([1, 3], [0, 2, 4, 1]);
+
+        expect(raw.save).toHaveBeenCalledTimes(1);
+        expect(raw.clearRect).toHaveBeenCalledTimes(1);
+        expect(raw.clip.mock.invocationCallOrder[0]).toBeLessThan(
+            raw.clearRect.mock.invocationCallOrder[0]
+        );
+        expect(raw.restore).toHaveBeenCalledTimes(1);
+    });
+
+    function squaresFilled(fills: { squares: number[][] }[]) {
+        return fills.reduce((total, fill) => total + fill.squares.length, 0);
+    }
+
+    it('refills just the changed square when no neighbour shares its pixels', () => {
+        // At 2 pixels per unit each square's edge pixels are its own.
+        const { fills } = drawChanged([1], [0, 2, 4, 1], 2);
+
+        expect(squaresFilled(fills)).toBe(1);
+        expect(fills.map((fill) => fill.color)).toEqual([LEVEL_COLORS[2]]);
+    });
+
+    it('also refills a neighbour whose edge falls in the same pixels', () => {
+        // At 1.2 pixels per unit the gap is under a pixel: square 1 covers
+        // pixels 2..4 and square 0 reaches into pixel 2, so square 0 is
+        // repainted too; square 2 starts at pixel 5 and is left alone.
+        const { fills } = drawChanged([1], [0, 2, 4, 1], 1.2);
+
+        expect(squaresFilled(fills)).toBe(2);
+        expect(fills.map((fill) => fill.color)).toEqual([
+            LEVEL_COLORS[0],
+            LEVEL_COLORS[2],
+        ]);
+    });
+
+    it('fills in the same shade order as a full repaint', () => {
+        const { fills } = drawChanged([0, 3], [4, 3, 0, 1]);
+        const shadeOrder = fills.map((fill) => shadeColors.indexOf(fill.color));
+
+        expect(shadeOrder).toEqual([...shadeOrder].sort((a, b) => a - b));
     });
 });

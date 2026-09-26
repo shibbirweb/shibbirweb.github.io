@@ -113,6 +113,45 @@ export function listActivityCells(
 }
 
 /**
+ * For each cell, the indices of the cells around it (up to eight), found by
+ * grid position. A square's antialiased edge can share a pixel with its
+ * neighbours' edges, so repainting one square exactly means repainting the
+ * neighbours that reach into the same pixels.
+ */
+export function listCellNeighbours(
+    cells: readonly ActivityCell[],
+    pitch = ACTIVITY_CELL_PITCH
+): number[][] {
+    const indexByPosition = new Map<string, number>();
+    const gridPosition = (cell: ActivityCell) => [
+        Math.round(cell.x / pitch),
+        Math.round(cell.y / pitch),
+    ];
+    cells.forEach((cell, index) => {
+        const [column, row] = gridPosition(cell);
+        indexByPosition.set(`${column},${row}`, index);
+    });
+    return cells.map((cell) => {
+        const [column, row] = gridPosition(cell);
+        const neighbours: number[] = [];
+        for (let rowStep = -1; rowStep <= 1; rowStep++) {
+            for (let columnStep = -1; columnStep <= 1; columnStep++) {
+                if (rowStep === 0 && columnStep === 0) {
+                    continue;
+                }
+                const neighbour = indexByPosition.get(
+                    `${column + columnStep},${row + rowStep}`
+                );
+                if (neighbour !== undefined) {
+                    neighbours.push(neighbour);
+                }
+            }
+        }
+        return neighbours;
+    });
+}
+
+/**
  * Seeded decorative activity levels, one per cell, shown until the real GitHub
  * calendar arrives (or instead of it, when the proxy cannot be reached). Seeded,
  * so the fallback looks the same on every visit.

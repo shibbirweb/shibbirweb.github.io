@@ -5,8 +5,14 @@ import { watchGithubActivity } from '@/components/layout/Footer/SignatureSpotlig
 import { createLetterMask } from '@/components/layout/Footer/SignatureSpotlight/letterMask';
 import { startActivityGraph } from '@/components/layout/Footer/SignatureSpotlight/startActivityGraph';
 
-// Every paint, recorded: the levels drawn and the shade colours used.
-const draws: { levels: number[]; shadeColors: string[] }[] = [];
+// Every paint, recorded: whether it was a full repaint or only the changed
+// squares (and how many), the levels on screen, and the shade colours used.
+const draws: {
+    kind: 'full' | 'changed';
+    changedCount: number;
+    levels: number[];
+    shadeColors: string[];
+}[] = [];
 vi.mock(
     '@/components/layout/Footer/SignatureSpotlight/drawActivityGraph',
     async (importOriginal) => {
@@ -25,6 +31,26 @@ vi.mock(
                     shadeColors: readonly string[]
                 ) => {
                     draws.push({
+                        kind: 'full',
+                        changedCount: levels.length,
+                        levels: Array.from(levels),
+                        shadeColors: [...shadeColors],
+                    });
+                }
+            ),
+            drawChangedSquares: vi.fn(
+                (
+                    _canvas: HTMLCanvasElement,
+                    _context: CanvasRenderingContext2D,
+                    _cells: unknown,
+                    _neighbours: unknown,
+                    changedIndices: readonly number[],
+                    levels: ArrayLike<number>,
+                    shadeColors: readonly string[]
+                ) => {
+                    draws.push({
+                        kind: 'changed',
+                        changedCount: changedIndices.length,
                         levels: Array.from(levels),
                         shadeColors: [...shadeColors],
                     });
@@ -257,6 +283,19 @@ describe('startActivityGraph', () => {
         runFramesFor(1500);
         const breathing = lastDraw().levels;
         expect(breathing).not.toEqual(restingLevels);
+        // Breathing frames repaint only the squares that changed shade.
+        const breathingDraws = draws.slice(1);
+        expect(breathingDraws.some((draw) => draw.kind === 'changed')).toBe(
+            true
+        );
+        for (const draw of breathingDraws.filter(
+            (candidate) => candidate.kind === 'changed'
+        )) {
+            expect(draw.changedCount).toBeGreaterThan(0);
+            expect(draw.changedCount).toBeLessThanOrEqual(
+                restingLevels.length / 2
+            );
+        }
 
         await lightSpotlight(0);
         runFramesUntilIdle();

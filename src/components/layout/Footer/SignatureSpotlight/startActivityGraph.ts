@@ -8,10 +8,12 @@ import {
     createRandom,
     generateActivityLevels,
     listActivityCells,
+    listCellNeighbours,
 } from '@/components/layout/Footer/SignatureSpotlight/activityField';
 import { shadeIndexFor } from '@/components/layout/Footer/SignatureSpotlight/activityColors';
 import {
     drawActivityGraph,
+    drawChangedSquares,
     readShadeColors,
 } from '@/components/layout/Footer/SignatureSpotlight/drawActivityGraph';
 import { mapDaysToCells } from '@/components/layout/Footer/SignatureSpotlight/githubActivity';
@@ -32,6 +34,10 @@ const BREATH_PERIOD_MAX_MS = 4200;
 // it goes dark, and when it counts as fully faded out.
 const BREATH_ENVELOPE_MS = 500;
 const BREATH_ENVELOPE_SETTLE = 0.002;
+// When more than this share of the squares change shade in one frame (the
+// first frame of a fade, say), one full repaint is cheaper than clearing and
+// refilling each changed square.
+const FULL_REPAINT_SHARE = 0.5;
 // Cap on one frame's elapsed time, so a backgrounded tab does not jump.
 const MAX_FRAME_MS = 100;
 
@@ -90,14 +96,16 @@ export function startActivityGraph(
 
     // Each square's resting level (where it is heading), the level it rests
     // at right now while fading there, and what is drawn (resting level
-    // plus breathing). lastShades remembers the drawn shade, so a frame only
-    // repaints when some square actually changes shade.
+    // plus breathing). lastShades remembers the shade on screen, so a frame
+    // repaints only the squares that actually change shade (changedIndices).
     const targetLevels = Float32Array.from(
         generateActivityLevels(cells.length)
     );
     const restingLevels = Float32Array.from(targetLevels);
     const shownLevels = Float32Array.from(targetLevels);
     const lastShades = new Int16Array(cells.length).fill(-1);
+    const changedIndices: number[] = [];
+    const neighbours = listCellNeighbours(cells);
     const breathRandom = createRandom(ACTIVITY_FIELD_SEED + 1);
     const breathPhases = Float32Array.from(
         cells,
@@ -115,6 +123,9 @@ export function startActivityGraph(
 
     const draw = () => {
         hasDrawn = true;
+        for (let index = 0; index < cells.length; index++) {
+            lastShades[index] = shadeIndexFor(shownLevels[index]);
+        }
         drawActivityGraph(
             canvas,
             context,
@@ -149,7 +160,7 @@ export function startActivityGraph(
         }
 
         let stillFading = false;
-        let shadeChanged = false;
+        changedIndices.length = 0;
         for (let index = 0; index < cells.length; index++) {
             const target = targetLevels[index];
             if (restingLevels[index] !== target) {
@@ -177,11 +188,23 @@ export function startActivityGraph(
             const shade = shadeIndexFor(shownLevels[index]);
             if (shade !== lastShades[index]) {
                 lastShades[index] = shade;
-                shadeChanged = true;
+                changedIndices.push(index);
             }
         }
-        if (shadeChanged) {
+        if (changedIndices.length > cells.length * FULL_REPAINT_SHARE) {
             draw();
+        } else if (changedIndices.length > 0) {
+            drawChangedSquares(
+                canvas,
+                context,
+                cells,
+                neighbours,
+                changedIndices,
+                shownLevels,
+                shadeColors,
+                viewBoxWidth,
+                viewBoxHeight
+            );
         }
 
         if (lit || breathEnvelope > 0 || stillFading) {
