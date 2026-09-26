@@ -1,0 +1,161 @@
+name: CI
+
+on:
+    # Every pull request into master must pass before it can be merged
+    pull_request:
+        branches:
+            - master
+
+    # Allows you to run this workflow manually from the Actions tab
+    workflow_dispatch:
+
+permissions:
+    contents: read
+
+# A new push to the same PR cancels the run that is now out of date
+concurrency:
+    group: ci-${{ github.event.pull_request.number || github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    quality:
+        name: Lint, types and formatting
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Setup
+              uses: ./.github/actions/setup
+
+            - name: Lint
+              run: pnpm lint
+
+            - name: Type check
+              run: pnpm typecheck
+
+            # Only files this PR touches are checked, so older unformatted files
+            # do not block unrelated work; each file is fixed when it is edited.
+            - name: Check formatting of changed files
+              if: github.event_name == 'pull_request'
+              env:
+                  BASE_SHA: ${{ github.event.pull_request.base.sha }}
+              run: |
+                  git diff --name-only --diff-filter=ACMR "$BASE_SHA"...HEAD > changed-files.txt
+                  if [ -s changed-files.txt ]; then
+                      xargs pnpm exec prettier --check --ignore-unknown < changed-files.txt
+                  fi
+
+    unit:
+        name: Unit and component tests
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Setup
+              uses: ./.github/actions/setup
+
+            - name: Run unit and component tests
+              run: pnpm test:coverage
+
+            - name: Upload coverage report
+              if: always()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: coverage
+                  path: coverage/
+                  retention-days: 7
+
+    build:
+        name: Build and verify the static export
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Setup
+              uses: ./.github/actions/setup
+
+            - name: Build
+              run: pnpm build
+
+            - name: Verify the export (routes, SEO, feeds, PWA, links, budgets)
+              run: pnpm test:build
+
+            # The browser and Lighthouse jobs test this exact build.
+            - name: Upload the export
+              uses: actions/upload-artifact@v4
+              with:
+                  name: site-export
+                  path: out/
+                  retention-days: 1
+
+    e2e:
+        name: Browser tests (feature, responsive, a11y, PWA)
+        needs: build
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Setup
+              uses: ./.github/actions/setup
+
+            - name: Download the export
+              uses: actions/download-artifact@v4
+              with:
+                  name: site-export
+                  path: out/
+
+            - name: Cache Playwright browsers
+              uses: actions/cache@v4
+              with:
+                  path: ~/.cache/ms-playwright
+                  key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
+
+            - name: Install Chromium
+              run: pnpm test:e2e:install
+
+            - name: Run browser tests
+              run: pnpm test:e2e
+
+            - name: Upload Playwright report
+              if: failure()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: playwright-report
+                  path: |
+                      playwright-report/
+                      test-results/
+                  retention-days: 7
+
+    lighthouse:
+        name: Lighthouse (performance, a11y, SEO)
+        needs: build
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Setup
+              uses: ./.github/actions/setup
+
+            - name: Download the export
+              uses: actions/download-artifact@v4
+              with:
+                  name: site-export
+                  path: out/
+
+            - name: Run Lighthouse CI
+              run: pnpm test:lighthouse
+
+            - name: Upload Lighthouse reports
+              if: always()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: lighthouse-reports
+                  path: .lighthouseci/
+                  retention-days: 7

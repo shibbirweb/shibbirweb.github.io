@@ -70,7 +70,7 @@ flowchart TD
 2. **Static view** (the default) shows mermaid. It uses the scenario's `mermaid:`, then the diagram's `mermaid:`, and otherwise `toMermaid()` builds one.
 3. **Interactive view** loads React Flow and dagre on demand. dagre lays out all scenarios together, so nodes do not jump when you change scenario.
 4. **Packets** are small dots that move along edges with SVG `<animateMotion>`. They loop, or play one hop at a time when stepping.
-5. **Captions** show, by priority: the current hop while stepping, then the clicked node, then the scenario summary.
+5. **Captions** show, by priority: the clicked node, then the current hop while stepping, then the scenario summary (`resolveCaption` in `captions.ts`).
 
 ## Good to know
 

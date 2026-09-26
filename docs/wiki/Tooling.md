@@ -1,6 +1,6 @@
 # Tooling
 
-> **In short:** TypeScript in strict mode, ESLint for code checks, Prettier for formatting, and OpenSpec for planning bigger features. There is no test runner.
+> **In short:** TypeScript in strict mode, ESLint for code checks, Prettier for formatting, and OpenSpec for planning bigger features. Tests use Vitest, Playwright, and Lighthouse CI (see [Testing](Testing.md)).
 
 ## Files involved
 
@@ -8,6 +8,9 @@
 | ------------------------ | --------------------------------------------------------------------- |
 | `tsconfig.json`          | Strict TypeScript and the `@/*` to `./src/*` path alias.              |
 | `eslint.config.mjs`      | ESLint 9 flat config: Next.js core web vitals, TypeScript, Prettier.  |
+| `vitest.config.mts`      | Unit, component, and build test projects.                             |
+| `playwright.config.ts`   | Browser tests and screen sizes.                                       |
+| `lighthouserc.cjs`       | Lighthouse pages and minimum scores.                                  |
 | `prettier.config.mjs`    | Formatting rules and the Tailwind class sorter plugin.                |
 | `pnpm-workspace.yaml`    | Which dependencies may run install scripts (`allowBuilds`).           |
 | `.vscode/`               | Recommended editor extensions and settings.                           |
@@ -39,10 +42,11 @@ flowchart LR
     B -- yes --> C[OpenSpec proposal<br/>openspec/changes]
     C --> D[Build it]
     B -- no --> D
-    D --> E[pnpm lint + pnpm build]
+    D --> E[pnpm lint, typecheck, test]
     E --> F[Branch feat/ fix/ chore/]
     F --> G[Pull request]
-    G --> H[Merge to master]
+    G --> CI[ci.yml must pass]
+    CI --> H[Merge to master]
     H --> I[deploy.yml + publish-wiki.yml]
 ```
 
@@ -64,7 +68,8 @@ The specs are a good place to read **why** a feature behaves the way it does.
 
 ## Good to know
 
-- **No tests.** `pnpm lint` and `pnpm build` are the checks. Also click through the pages you changed.
+- **Tests run on every PR.** `.github/workflows/ci.yml` runs lint, types, all test suites, and Lighthouse. See [Testing](Testing.md).
+- **Formatting debt.** Many older files are not Prettier formatted yet, so CI checks formatting only on the files a PR changes.
 - **`next lint` is gone** in Next 16, so `pnpm lint` runs `eslint` directly.
 - **No em dash** anywhere in the project, including this wiki.
 
@@ -72,4 +77,5 @@ The specs are a good place to read **why** a feature behaves the way it does.
 
 - [Getting started](Getting-Started.md)
 - [Project structure](Project-Structure.md)
+- [Testing](Testing.md)
 - [Wiki guide](Wiki-Guide.md)

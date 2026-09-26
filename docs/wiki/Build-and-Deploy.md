@@ -73,6 +73,8 @@ sequenceDiagram
 - Only one deploy runs at a time. A running deploy is never cancelled.
 - You can also start it by hand from the Actions tab.
 
+Before a merge, `.github/workflows/ci.yml` runs every check on the pull request (lint, types, tests, build checks, browser tests, Lighthouse). See [Testing](Testing.md).
+
 The wiki is published by a separate workflow. See [Wiki guide](Wiki-Guide.md).
 
 ## Good to know

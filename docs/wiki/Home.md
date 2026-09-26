@@ -63,6 +63,7 @@ flowchart LR
 - [Configuration](Configuration.md): constants and environment values
 - [Build and deploy](Build-and-Deploy.md): the build steps and GitHub Pages
 - [Local preview](Local-Preview.md): test the real export locally
+- [Testing](Testing.md): every test suite and the PR checks
 - [Tooling](Tooling.md): lint, format, OpenSpec, git rules
 
 **Layout and design**

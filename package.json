@@ -19,7 +19,18 @@
         "preview:docker:down": "docker compose down",
         "lint": "eslint",
         "format": "prettier --write .",
-        "format:check": "prettier --check ."
+        "format:check": "prettier --check .",
+        "typecheck": "SERWIST_SUPPRESS_TURBOPACK_WARNING=1 next typegen && tsc --noEmit",
+        "test": "vitest run --project unit --project component",
+        "test:unit": "vitest run --project unit",
+        "test:component": "vitest run --project component",
+        "test:watch": "vitest --project unit --project component",
+        "test:coverage": "vitest run --project unit --project component --coverage",
+        "test:build": "vitest run --project build",
+        "test:e2e": "playwright test",
+        "test:e2e:install": "playwright install --with-deps chromium",
+        "test:lighthouse": "lhci autorun",
+        "test:ci": "pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm test:build && pnpm test:e2e && pnpm test:lighthouse"
     },
     "dependencies": {
         "@dagrejs/dagre": "^3.0.0",
@@ -44,21 +55,33 @@
         "tailwind-merge": "^3.3.0"
     },
     "devDependencies": {
+        "@axe-core/playwright": "^4.13.0",
         "@eslint/eslintrc": "^3",
+        "@lhci/cli": "^0.15.1",
+        "@playwright/test": "^1.63.0",
         "@resvg/resvg-js": "^2.6.2",
         "@tailwindcss/postcss": "^4",
+        "@testing-library/dom": "^10.4.2",
+        "@testing-library/jest-dom": "^7.0.1",
+        "@testing-library/react": "^16.3.3",
+        "@testing-library/user-event": "^14.6.7",
+        "@types/jsdom": "^30.0.0",
         "@types/node": "^20",
         "@types/react": "^19",
         "@types/react-dom": "^19",
+        "@vitest/coverage-v8": "^5.0.2",
         "eslint": "^9",
         "eslint-config-next": "15.3.2",
         "eslint-config-prettier": "10.1.5",
+        "fast-xml-parser": "^5.11.1",
+        "jsdom": "^30.1.1",
         "prettier": "3.5.3",
         "prettier-plugin-tailwindcss": "0.6.11",
         "schema-dts": "^1.1.5",
         "serwist": "^9.5.11",
         "tailwindcss": "^4",
         "tsx": "^4.22.4",
-        "typescript": "^5"
+        "typescript": "^5",
+        "vitest": "^5.0.2"
     }
 }

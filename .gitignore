@@ -74,3 +74,9 @@ certificates
 # resume (resume-shibbir-ahmed.pdf) untracked so it is never committed/exposed
 /content/resume/*.pdf
 !/content/resume/*.example.pdf
+
+# test output (vitest coverage, Playwright, Lighthouse CI)
+/playwright-report/
+/test-results/
+/blob-report/
+/.lighthouseci/

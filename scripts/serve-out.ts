@@ -5,6 +5,7 @@ import { existsSync } from 'node:fs';
 import { mkdir, readdir, readFile, stat } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import { extname, join } from 'node:path';
+import { gzipSync } from 'node:zlib';
 
 // Serves the static export in ./out for local preview, mimicking GitHub Pages:
 // for an extensionless path it tries the file, then `${path}.html`, then
@@ -49,6 +50,18 @@ const contentTypes: Record<string, string> = {
     '.pdf': 'application/pdf',
 };
 
+const compressibleExtensions = new Set([
+    '.html',
+    '.js',
+    '.mjs',
+    '.css',
+    '.json',
+    '.webmanifest',
+    '.xml',
+    '.txt',
+    '.svg',
+]);
+
 async function resolveFile(pathname: string): Promise<string | null> {
     const decoded = decodeURIComponent(pathname);
     const base = join(root, decoded);
@@ -84,8 +97,19 @@ const handler: http.RequestListener = async (req, res) => {
         contentTypes[extname(file)] ?? 'application/octet-stream'
     );
     // version.json must never be cached, matching the client's no-store poll.
-    if (file.endsWith('version.json')) res.setHeader('Cache-Control', 'no-store');
-    res.end(await readFile(file));
+    if (file.endsWith('version.json'))
+        res.setHeader('Cache-Control', 'no-store');
+    const body = await readFile(file);
+    // GitHub Pages gzips text responses. Doing the same keeps local transfer
+    // sizes (and so Lighthouse performance scores) close to production.
+    const acceptsGzip = /\bgzip\b/.test(String(req.headers['accept-encoding']));
+    if (acceptsGzip && compressibleExtensions.has(extname(file))) {
+        res.setHeader('Content-Encoding', 'gzip');
+        res.setHeader('Vary', 'Accept-Encoding');
+        res.end(gzipSync(body));
+        return;
+    }
+    res.end(body);
 };
 
 const certDir = join(process.cwd(), 'certificates');
@@ -186,7 +210,15 @@ async function getCert(): Promise<{ key: Buffer; cert: Buffer }> {
     await mkdir(certDir, { recursive: true });
     execFileSync(
         mkcert,
-        ['-cert-file', certPath, '-key-file', keyPath, host, '127.0.0.1', '::1'],
+        [
+            '-cert-file',
+            certPath,
+            '-key-file',
+            keyPath,
+            host,
+            '127.0.0.1',
+            '::1',
+        ],
         { stdio: 'ignore' }
     );
     return {
