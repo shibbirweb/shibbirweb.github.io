@@ -1,3 +1,5 @@
+@reference "tailwindcss";
+
 /* Footer signature cursor spotlight: within a soft circle that follows the
    pointer, the solid wordmark resolves into a field of binary 0/1 digits shaped
    to the letters, fading back to the dim solid watermark away from it. The
@@ -6,14 +8,17 @@
    edge). The pointer vars and the reveal's --spotlight-opacity are written by
    usePointerSpotlight from the pointer's proximity to the signature (so the
    binary wakes as the cursor nears the letters, not only over them); only the
-   reduced-motion fade is pure CSS, and the pointer path never re-renders React. */
+   reduced-motion fade is pure CSS, and the pointer path never re-renders React.
+
+   Everything expressible as a Tailwind utility uses @apply; only the bespoke
+   custom properties and the gradient mask values are written as raw CSS. */
 
 .spotlight {
     /* Size the spotlight from the signature's own width so the circle keeps the
        same proportion at every breakpoint instead of swallowing a narrow logo.
-       container-type makes this element a size container, so 1cqw below is 1% of
-       its width; 72cqw matches the radius that looked right on desktop. */
-    container-type: inline-size;
+       @container makes this element an inline-size container, so 1cqw below is
+       1% of its width; 72cqw matches the radius that looked right on desktop. */
+    @apply @container;
     --pointer-x: 50%;
     --pointer-y: 50%;
     --spotlight-radius: 72cqw;
@@ -54,7 +59,7 @@
    pointer (position + brightness written by usePointerSpotlight). Its content is
    the binary field below, so within the circle the solid letters read as 0/1. */
 .reveal {
-    opacity: var(--spotlight-opacity, 0);
+    @apply opacity-[var(--spotlight-opacity,0)] motion-safe:transition-opacity motion-safe:duration-220 motion-safe:ease-out;
     -webkit-mask-image: radial-gradient(
         circle var(--spotlight-radius) at var(--pointer-x) var(--pointer-y),
         #000 0%,
@@ -75,34 +80,14 @@
    mask nests inside .reveal's spotlight circle, so the two intersect: digits
    appear only where a letter and the circle overlap. */
 .binaryLetters {
-    position: absolute;
-    inset: 0;
-    overflow: hidden;
-    -webkit-mask-size: 100% 100%;
-    mask-size: 100% 100%;
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
+    @apply absolute inset-0 overflow-hidden mask-size-[100%_100%] mask-no-repeat [-webkit-mask-repeat:no-repeat] [-webkit-mask-size:100%_100%];
 }
 
 /* The field of 0s and 1s. Sized in container-query units so the same generated
    grid keeps its density and over-covers the wordmark at every breakpoint; the
-   letterform mask crops the overflow. */
+   letterform mask crops the overflow. The font stack is the system monospace on
+   purpose (not the site's font-mono), so it is spelled out as an arbitrary
+   property. */
 .binaryGrid {
-    position: absolute;
-    top: 0;
-    left: 0;
-    margin: 0;
-    color: var(--spotlight-color);
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    font-size: 0.6cqw;
-    line-height: 1;
-    letter-spacing: 0.12cqw;
-    white-space: pre;
-    user-select: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-    .reveal {
-        transition: opacity 220ms ease-out;
-    }
+    @apply absolute top-0 left-0 m-0 [font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace] text-[length:0.6cqw] leading-none tracking-[0.12cqw] whitespace-pre text-(color:--spotlight-color) select-none;
 }
