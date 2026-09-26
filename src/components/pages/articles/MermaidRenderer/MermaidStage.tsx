@@ -57,6 +57,9 @@ export default function MermaidStage({
             <div
                 ref={viewportRef}
                 tabIndex={0}
+                // A plain div may not carry aria-label; the group role gives
+                // the focusable viewport a name without hiding the SVG inside.
+                role="group"
                 aria-label="Mermaid diagram. Drag to pan; use the arrow keys to pan and + or - to zoom."
                 className="focus-visible:ring-foreground/30 relative h-full w-full cursor-grab overflow-hidden outline-none select-none focus-visible:ring-2 focus-visible:ring-inset active:cursor-grabbing"
                 style={{ touchAction: allowTouchPan ? 'none' : 'auto' }}
