@@ -44,11 +44,17 @@ module.exports = {
             // Three runs per page; the median is asserted to smooth out noise.
             numberOfRuns: 3,
             settings: {
-                // Third-party scripts (GTM, giscus) are not ours to budget.
+                // Third-party scripts (GTM, giscus) are not ours to budget. The
+                // footer's GitHub activity proxy (githubActivityURL in
+                // SignatureSpotlight/contents.ts) is blocked too: its answer
+                // depends on a service we do not run, and an error from it
+                // would fail errors-in-console. The footer falls back to its
+                // decorative graph, which is what gets audited.
                 blockedUrlPatterns: [
                     '*googletagmanager.com*',
                     '*giscus.app*',
                     '*hcaptcha.com*',
+                    '*github-contributions-api.jogruber.de*',
                 ],
             },
         },

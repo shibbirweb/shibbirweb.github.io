@@ -1,9 +1,9 @@
-import { renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { EMPTY_DAY_GLOW } from '@/components/layout/Footer/SignatureSpotlight/activityField';
 import { DAY_TEXTURE_DEPTH } from '@/components/layout/Footer/SignatureSpotlight/githubActivity';
 import { watchGithubActivity } from '@/components/layout/Footer/SignatureSpotlight/githubActivityStore';
-import { useActivityGraph } from '@/components/layout/Footer/SignatureSpotlight/hooks/useActivityGraph';
+import { createLetterMask } from '@/components/layout/Footer/SignatureSpotlight/letterMask';
+import { startActivityGraph } from '@/components/layout/Footer/SignatureSpotlight/startActivityGraph';
 
 // Every paint, recorded: the levels drawn and the shade colours used.
 const draws: { levels: number[]; shadeColors: string[] }[] = [];
@@ -38,6 +38,12 @@ vi.mock(
     () => ({ watchGithubActivity: vi.fn(() => () => {}) })
 );
 const mockedWatch = vi.mocked(watchGithubActivity);
+// jsdom has no canvas backend, so by default the letter mask is unavailable
+// and the graph falls back to the stubbed isPointInPath below.
+vi.mock('@/components/layout/Footer/SignatureSpotlight/letterMask', () => ({
+    createLetterMask: vi.fn(() => null),
+}));
+const mockedLetterMask = vi.mocked(createLetterMask);
 
 let pendingFrames = new Map<number, FrameRequestCallback>();
 let nextFrameId = 1;
@@ -103,23 +109,31 @@ function renderGraph({ hasContext = true } = {}) {
             : null
     );
     const spotlight = document.createElement('div');
-    const hook = renderHook(() =>
-        useActivityGraph({ current: canvas }, { current: spotlight })
-    );
+    const stop = startActivityGraph(canvas, spotlight);
+    if (stop) {
+        runningGraphs.push(stop);
+    }
+    const cleanUp = () => stop?.();
     const lightSpotlight = async (opacity: number) => {
         spotlight.style.setProperty('--spotlight-opacity', String(opacity));
         await flushObservers();
     };
-    return { ...hook, canvas, lightSpotlight };
+    return { stop, cleanUp, canvas, lightSpotlight };
 }
 
 const lastDraw = () => draws[draws.length - 1];
 
-describe('useActivityGraph', () => {
+// Every graph a test starts, stopped after the test so its observers never
+// react to a later test's theme switch.
+const runningGraphs: (() => void)[] = [];
+
+describe('startActivityGraph', () => {
     beforeEach(() => {
         draws.length = 0;
         mockedWatch.mockReset();
         mockedWatch.mockImplementation(() => () => {});
+        mockedLetterMask.mockReset();
+        mockedLetterMask.mockReturnValue(null);
         pendingFrames = new Map();
         nextFrameId = 1;
         frameTime = 0;
@@ -149,6 +163,7 @@ describe('useActivityGraph', () => {
     });
 
     afterEach(() => {
+        runningGraphs.splice(0).forEach((stop) => stop());
         vi.unstubAllGlobals();
         vi.restoreAllMocks();
     });
@@ -284,26 +299,41 @@ describe('useActivityGraph', () => {
         expect(requestAnimationFrame).not.toHaveBeenCalled();
     });
 
-    it('stops everything when unmounted', async () => {
+    it('stops everything when cleaned up', async () => {
         stubMedia({});
         const stopWatching = vi.fn();
         mockedWatch.mockImplementation(() => stopWatching);
-        const { unmount } = renderGraph();
-        const drawsBeforeUnmount = draws.length;
+        const { cleanUp } = renderGraph();
+        const drawsBeforeCleanUp = draws.length;
 
-        unmount();
+        cleanUp();
         document.documentElement.setAttribute('data-theme', 'light');
         await flushObservers();
 
         expect(stopWatching).toHaveBeenCalledTimes(1);
-        expect(draws).toHaveLength(drawsBeforeUnmount);
+        expect(draws).toHaveLength(drawsBeforeCleanUp);
     });
 
     it('does nothing when the canvas has no 2D context', () => {
         stubMedia({});
-        renderGraph({ hasContext: false });
+        const { stop } = renderGraph({ hasContext: false });
 
+        expect(stop).toBeNull();
         expect(draws).toHaveLength(0);
         expect(mockedWatch).not.toHaveBeenCalled();
+    });
+
+    it('lays out the squares from the letter mask when one is available', () => {
+        stubMedia({});
+        renderGraph();
+        const fallbackCellCount = lastDraw().levels.length;
+
+        draws.length = 0;
+        // A mask half as wide as the fallback strip.
+        mockedLetterMask.mockReturnValue((x: number) => x < 10);
+        renderGraph();
+
+        expect(lastDraw().levels.length).toBeGreaterThan(0);
+        expect(lastDraw().levels.length).toBeLessThan(fallbackCellCount);
     });
 });

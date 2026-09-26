@@ -3,6 +3,7 @@ import {
     ACTIVITY_CELL_PITCH,
     BREATH_AMPLITUDE,
     EMPTY_DAY_GLOW,
+    activityGridLayout,
     ACTIVITY_LEVEL_COUNT,
     ACTIVITY_LEVEL_WEIGHTS,
     breatheLevel,
@@ -118,5 +119,24 @@ describe('breatheLevel', () => {
         expect(breatheLevel(ACTIVITY_LEVEL_COUNT - 1, 1, 1)).toBe(
             ACTIVITY_LEVEL_COUNT - 1
         );
+    });
+});
+
+describe('activityGridLayout', () => {
+    it('fits whole cells and centres the leftover sliver', () => {
+        expect(activityGridLayout(45, 20, 10)).toEqual({
+            columns: 4,
+            rows: 2,
+            offsetX: 2.5,
+            offsetY: 0,
+        });
+    });
+
+    it('matches where listActivityCells puts its cells', () => {
+        const layout = activityGridLayout(45, 23, 10);
+        const cells = listActivityCells(45, 23, () => true, 10);
+
+        expect(cells).toHaveLength(layout.columns * layout.rows);
+        expect(cells[0]).toEqual({ x: layout.offsetX, y: layout.offsetY });
     });
 });

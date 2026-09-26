@@ -56,6 +56,34 @@ export function pickActivityLevel(randomValue: number): number {
     return ACTIVITY_LEVEL_WEIGHTS.length - 1;
 }
 
+export type ActivityGridLayout = {
+    columns: number;
+    rows: number;
+    offsetX: number;
+    offsetY: number;
+};
+
+/**
+ * How a square grid of `pitch` cells fits a `width` x `height` box: how many
+ * whole columns and rows, and the offset that centres them so the leftover
+ * sliver splits evenly. Shared by the cell list and the letter mask, so a mask
+ * pixel always lines up with its cell.
+ */
+export function activityGridLayout(
+    width: number,
+    height: number,
+    pitch = ACTIVITY_CELL_PITCH
+): ActivityGridLayout {
+    const columns = Math.floor(width / pitch);
+    const rows = Math.floor(height / pitch);
+    return {
+        columns,
+        rows,
+        offsetX: (width - columns * pitch) / 2,
+        offsetY: (height - rows * pitch) / 2,
+    };
+}
+
 /**
  * Lays a square grid over a `width` x `height` box and keeps the cells whose
  * centre `isInsideLetters` accepts, so the kept squares spell the wordmark.
@@ -67,11 +95,11 @@ export function listActivityCells(
     pitch = ACTIVITY_CELL_PITCH
 ): ActivityCell[] {
     const cells: ActivityCell[] = [];
-    const columns = Math.floor(width / pitch);
-    const rows = Math.floor(height / pitch);
-    // Centre the grid in the box so the leftover sliver splits evenly.
-    const offsetX = (width - columns * pitch) / 2;
-    const offsetY = (height - rows * pitch) / 2;
+    const { columns, rows, offsetX, offsetY } = activityGridLayout(
+        width,
+        height,
+        pitch
+    );
     for (let row = 0; row < rows; row++) {
         for (let column = 0; column < columns; column++) {
             const x = offsetX + column * pitch;
