@@ -71,7 +71,12 @@ async function readCanvas(page: Page) {
     });
 }
 
-/** Waits until the canvas stops changing (any fade-in has finished). */
+/**
+ * Waits until the canvas stops changing. The fade from the decorative graph
+ * onto the real calendar runs about four seconds after the footer appears,
+ * and a slow runner stretches that, so this allows well beyond the default
+ * five-second poll.
+ */
 async function waitForStillCanvas(page: Page) {
     let previous = -1;
     await expect
@@ -82,7 +87,7 @@ async function waitForStillCanvas(page: Page) {
                 previous = fingerprint;
                 return isStill;
             },
-            { intervals: [400] }
+            { intervals: [400], timeout: 15_000 }
         )
         .toBe(true);
 }
@@ -181,38 +186,47 @@ test.describe('footer graph with a mouse', () => {
         await mockProxy(page);
         await openFooter(page);
 
-        await hoverSignature(page);
-        const samples = await page.locator('footer canvas').evaluate(
-            (canvas) =>
-                new Promise<number[]>((resolve) => {
-                    const spotlight = canvas.parentElement
-                        ?.parentElement as HTMLElement;
-                    const values: number[] = [];
-                    const start = performance.now();
-                    const sample = () => {
-                        values.push(
-                            parseFloat(
-                                spotlight.style.getPropertyValue(
-                                    '--spotlight-opacity'
-                                )
-                            ) || 0
-                        );
-                        if (performance.now() - start < 800) {
-                            requestAnimationFrame(sample);
-                            return;
-                        }
-                        resolve(values);
-                    };
+        // Record the spotlight's brightness on every frame from before the
+        // pointer arrives, so a slow page cannot make the rise look like a jump.
+        await page.locator('footer canvas').evaluate((canvas) => {
+            const spotlight = canvas.parentElement
+                ?.parentElement as HTMLElement;
+            const samples: number[] = [];
+            (
+                window as unknown as { spotlightSamples: number[] }
+            ).spotlightSamples = samples;
+            const start = performance.now();
+            const sample = () => {
+                samples.push(
+                    parseFloat(
+                        spotlight.style.getPropertyValue('--spotlight-opacity')
+                    ) || 0
+                );
+                if (performance.now() - start < 4000) {
                     requestAnimationFrame(sample);
-                })
+                }
+            };
+            requestAnimationFrame(sample);
+        });
+        await hoverSignature(page);
+        await expect
+            .poll(async () => parseFloat(await readSpotlightOpacity(page)))
+            .toBeGreaterThan(0.8);
+        const samples = await page.evaluate(
+            () =>
+                (window as unknown as { spotlightSamples: number[] })
+                    .spotlightSamples
         );
-        expect(samples[0], 'starts dim, not at full strength').toBeLessThan(
-            0.7
-        );
-        expect(samples[samples.length - 1]).toBeGreaterThan(samples[0]);
-        samples.slice(1).forEach((value, index) => {
+
+        const lit = samples.filter((value) => value > 0);
+        expect(samples[0], 'dark before the pointer arrives').toBe(0);
+        expect(
+            lit.filter((value) => value > 0.05 && value < 0.6).length,
+            'passes through in-between brightness on the way up'
+        ).toBeGreaterThanOrEqual(2);
+        lit.slice(1).forEach((value, index) => {
             expect(value, 'rises without jumping back').toBeGreaterThanOrEqual(
-                samples[index] - 0.001
+                lit[index] - 0.001
             );
         });
 
