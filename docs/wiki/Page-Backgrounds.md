@@ -1,6 +1,6 @@
 # Page backgrounds
 
-> **In short:** Every page sits on a soft two colour wash. Article pages use their cover colours, other pages get colours from a hash of the URL, and the home page paints its own per section swells. The footer shows a name signature that reveals binary digits near the cursor.
+> **In short:** Every page sits on a soft two colour wash. Article pages use their cover colours, other pages get colours from a hash of the URL, and the home page paints its own per section swells. The footer name signature is drawn as a faint GitHub style contribution graph that brightens near the cursor.
 
 ## Files involved
 
@@ -39,11 +39,11 @@ Home is transparent here because `globals.css` gives each `main.home-sections > 
 
 ## Footer signature
 
-- Two layers stacked in one grid cell: the solid "Shibbir" SVG, and a field of 0 and 1 digits cut to the same letter shapes with an SVG mask.
-- `usePointerSpotlight` tracks the pointer across the window and shows the digits in a circle near it, fading with distance. It writes CSS variables directly, with no React re-render.
-- `useBinaryFlicker` flips a few digits every 420ms, only while the spotlight is visible.
-- The digits come from a seeded random generator (`binaryField.ts`), so server and client HTML match.
-- Touch devices and reduced motion get the plain signature.
+- Two layers stacked in one grid cell: the solid "Shibbir" SVG, and a canvas that redraws the letters as GitHub style contribution squares.
+- The squares always show faintly (`--graph-rest` in `SignatureSpotlight.module.css`). `usePointerSpotlight` tracks the pointer across the window and writes CSS variables to the signature box, with no React re-render. Both layers read them: the squares rise to full strength in a circle near the pointer, and in dark mode the solid letter fades out there by the same amount. Light mode keeps the solid letter behind the squares (`--solid-keep`), because the pale gaps would otherwise break its smooth edge into stair steps. The circle and its brightness ease after the pointer (`easeToward` in `src/utils/`) instead of snapping.
+- `useActivityGraph` keeps a square wherever its centre falls inside the letter path (`activityField.ts`), draws them with `drawActivityGraph.ts`, and changes a few levels every 900ms while the spotlight is lit. Each changed square fades to its new shade over about two seconds (`activityColors.ts` blends the in-between shades). It redraws when the theme changes.
+- The five square colours are the `--activity-level-0` to `4` grayscale variables in `SignatureSpotlight.module.css`, with a dark set for dark mode.
+- Touch devices and reduced motion get the faint graph, standing still.
 
 ## Good to know
 
