@@ -4,8 +4,8 @@
    maintainer's GitHub activity, the letters redrawn as small rounded squares
    tinted by activity level, blended over the dim solid wordmark. At rest the
    graph shows faintly everywhere (--graph-rest); within a soft circle that
-   follows the pointer it rises to full strength, and in dark mode the solid
-   letter fades by the same amount (light keeps it, see --solid-keep). The
+   follows the pointer it rises to full strength while the solid letter fades
+   by the same amount, so the gaps between squares show the page itself. The
    graph only draws squares inside the letters, so they never show as a
    visible disk or box edge. The pointer vars
    and --spotlight-opacity are written to .spotlight by usePointerSpotlight from
@@ -28,12 +28,6 @@
     --spotlight-edge: 80%;
     --spotlight-opacity: 0; /* raised toward MAX_OPACITY by usePointerSpotlight as the pointer nears */
     --graph-rest: 0.3; /* how strongly the graph shows away from the pointer */
-    /* How much of the solid letter stays behind the graph where the graph is
-       strongest. Light keeps it all: its gaps would otherwise show the pale page
-       and leave each dark square standing alone, so the letter's smooth edge
-       breaks into stair steps. Dark lets it go, since there the gaps sit so
-       close to the dimmest squares that the letter already reads as one shape. */
-    --solid-keep: 1;
 
     /* How strongly the graph shows at the spotlight's centre and halfway out:
        the rest level, lifted toward full by the spotlight's brightness. At the
@@ -64,61 +58,21 @@
     );
 }
 
-@media (prefers-color-scheme: dark) {
-    :global(html:not([data-theme])) .spotlight {
-        --solid-keep: 0;
-    }
-}
-:global(html[data-theme='dark']) .spotlight {
-    --solid-keep: 0;
-}
-
-/* The solid wordmark gives way to the graph layer by as much as --solid-keep
-   allows: fully kept in light, so the squares sit inside a smooth letter, and
-   the exact inverse of the graph in dark, so the gaps between squares show the
-   page background as on GitHub. */
+/* The solid wordmark is the exact inverse of the graph layer: mostly shown at
+   rest, and stepping aside under the spotlight so the gaps between squares
+   show the page background, as on GitHub. */
 .solid {
     -webkit-mask-image: radial-gradient(
         circle var(--spotlight-radius) at var(--pointer-x) var(--pointer-y),
-        rgb(
-                0 0 0 /
-                    calc(
-                        1 - var(--graph-strength-center) *
-                            (1 - var(--solid-keep))
-                    )
-            )
-            0%,
-        rgb(
-                0 0 0 /
-                    calc(
-                        1 - var(--graph-strength-middle) *
-                            (1 - var(--solid-keep))
-                    )
-            )
-            50%,
-        rgb(0 0 0 / calc(1 - var(--graph-rest) * (1 - var(--solid-keep))))
-            var(--spotlight-edge)
+        rgb(0 0 0 / calc(1 - var(--graph-strength-center))) 0%,
+        rgb(0 0 0 / calc(1 - var(--graph-strength-middle))) 50%,
+        rgb(0 0 0 / calc(1 - var(--graph-rest))) var(--spotlight-edge)
     );
     mask-image: radial-gradient(
         circle var(--spotlight-radius) at var(--pointer-x) var(--pointer-y),
-        rgb(
-                0 0 0 /
-                    calc(
-                        1 - var(--graph-strength-center) *
-                            (1 - var(--solid-keep))
-                    )
-            )
-            0%,
-        rgb(
-                0 0 0 /
-                    calc(
-                        1 - var(--graph-strength-middle) *
-                            (1 - var(--solid-keep))
-                    )
-            )
-            50%,
-        rgb(0 0 0 / calc(1 - var(--graph-rest) * (1 - var(--solid-keep))))
-            var(--spotlight-edge)
+        rgb(0 0 0 / calc(1 - var(--graph-strength-center))) 0%,
+        rgb(0 0 0 / calc(1 - var(--graph-strength-middle))) 50%,
+        rgb(0 0 0 / calc(1 - var(--graph-rest))) var(--spotlight-edge)
     );
 }
 
@@ -146,11 +100,11 @@
    properties on every draw, so theming stays here. */
 .activityCanvas {
     @apply absolute inset-0 size-full;
-    /* Light runs from just below the solid letter to near black. The empty
-       day sits a small step darker than the neutral-300 letter kept behind the
-       squares, so the lighter gaps outline every square, mirroring dark mode,
-       where empty squares sit a step above the #0a0a0a page. */
-    --activity-level-0: #c4c4c4; /* between neutral-300 and neutral-400 */
+    /* The empty day mirrors dark mode: dark's #171717 sits about 5 lightness
+       points above its #0a0a0a page, so light's sits the same small step below
+       the #ededed page. The page shows in the gaps between squares, and so low
+       a contrast keeps a letter's stepped square edge as quiet as in dark. */
+    --activity-level-0: #dcdcdc;
     --activity-level-1: #a3a3a3; /* neutral-400 */
     --activity-level-2: #737373; /* neutral-500 */
     --activity-level-3: #525252; /* neutral-600 */
