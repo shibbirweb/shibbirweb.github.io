@@ -44,7 +44,7 @@ sequenceDiagram
 1. `useScrollSpy` picks the last section whose top is above 30% of the screen. At the page bottom it picks the last section.
 2. `SectionUrlSync` (home only) passes that id to `useSectionUrlSync`, which updates the hash with `history.replaceState` (no new history entries). The hero clears the hash.
 3. When you click a nav link, the page scrolls through other sections. The lock stops those in between sections from being written. After the lock ends, the sync writes the final one.
-4. `HashScroll` (in the root layout) handles opening a URL like `/#skills`: it locks, jumps to the top, waits for fonts (up to 300ms), then scrolls smoothly to the section.
+4. `HashScroll` (in the root layout) handles opening a URL like `/#skills`: it locks, jumps to the top, waits for fonts (up to 300ms), then scrolls smoothly to the section. When the glide ends (`scrollend`, or after 1.5 s), it checks the page arrived and finishes the trip instantly if a slow device cut the glide short.
 
 ## Hooks in `Navbar/hooks/`
 

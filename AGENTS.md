@@ -33,7 +33,11 @@ JSON-LD, Google Tag Manager, pageview tracking, and the service worker (with its
 
 ## Testing Guidelines
 
-There is currently no automated test framework or coverage threshold. Before submitting changes, run `pnpm lint` and `pnpm build`. Manually verify affected routes with `pnpm dev`, including responsive behavior and article rendering where relevant. Check production-only features with `pnpm build` then `pnpm preview`. Mermaid diagrams fall back silently to plain text when they fail to parse, so look at them rendered. If introducing tests, colocate them as `*.test.ts` or `*.test.tsx` and add the runner command to `package.json`.
+`.github/workflows/ci.yml` runs on every pull request to `master` and must pass: lint, typecheck, Prettier on changed files, Vitest unit and component tests, `pnpm build` plus build checks on `out/`, Playwright browser tests (desktop, laptop, tablet, mobile), and Lighthouse score floors. Run the same locally with `pnpm test:ci`, or piece by piece: `pnpm test`, then `pnpm build`, `pnpm test:build`, `pnpm test:e2e`, `pnpm test:lighthouse`.
+
+Colocate unit and component tests beside the code (`*.test.ts` runs in Node, `*.test.tsx` in jsdom). Content-wide checks live in `tests/content/`, export checks in `tests/build/`, and browser specs in `tests/e2e/` (import `test` from `@tests/e2e/fixtures`, which blocks third-party requests and fails on page errors). Add or update tests with every behavior change, and add new routes to `tests/e2e/routes.ts`. Performance budgets are in `tests/build/performance.test.ts`; raise one only on purpose and say why. See `docs/wiki/Testing.md` for details.
+
+Still verify affected routes by hand with `pnpm dev`, and production-only features with `pnpm build` then `pnpm preview`.
 
 ## Documentation
 

@@ -50,7 +50,7 @@ sequenceDiagram
 
 ## Good to know
 
-- **Nothing reloads without the user clicking.** This is a rule from `openspec/specs/pwa/spec.md`.
+- **Nothing reloads without the user clicking.** This is a rule from `openspec/specs/pwa/spec.md`. The `controlling` handler only reloads after `applyUpdate` ran, because a first visit also fires `controlling` (the worker claims the page), and reloading then would wipe what the visitor typed.
 - **`updateViaCache: 'none'`** makes the browser always fetch a fresh `sw.js`. Without it, a cached old `sw.js` could point to deleted files and fail to install.
 - **Pin the time stamp** by setting `NEXT_PUBLIC_BUILD_TIME` yourself. Useful to compare two builds byte for byte.
 - The toast is mounted last inside the main wrapper in `layout.tsx`, so it floats over content and parks above the footer.

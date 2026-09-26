@@ -56,12 +56,13 @@ interface ServiceWorkerState {
 export function useServiceWorker(): ServiceWorkerState {
     const [updateReady, setUpdateReady] = useState(false);
     const serwistRef = useRef<Serwist | null>(null);
+    // Set only when the visitor presses Reload on the update toast. The worker
+    // also takes control on a first visit (clientsClaim), and reloading then
+    // would interrupt a brand-new visitor and wipe anything they had typed.
+    const updateRequestedRef = useRef(false);
 
     useEffect(() => {
-        if (
-            typeof window === 'undefined' ||
-            !('serviceWorker' in navigator)
-        ) {
+        if (typeof window === 'undefined' || !('serviceWorker' in navigator)) {
             return;
         }
 
@@ -90,7 +91,9 @@ export function useServiceWorker(): ServiceWorkerState {
         // access until the next deploy.
         let hasReloaded = false;
         const onControlling = async () => {
-            if (hasReloaded) return;
+            if (hasReloaded || !updateRequestedRef.current) {
+                return;
+            }
             hasReloaded = true;
             await clearRuntimeCaches();
             window.location.reload();
@@ -156,6 +159,7 @@ export function useServiceWorker(): ServiceWorkerState {
     }, []);
 
     const applyUpdate = useCallback(() => {
+        updateRequestedRef.current = true;
         serwistRef.current?.messageSkipWaiting();
     }, []);
 

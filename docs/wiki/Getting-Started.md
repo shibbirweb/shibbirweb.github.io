@@ -45,6 +45,11 @@ flowchart LR
 | `pnpm preview:https`  | Serve `./out` over HTTPS at `https://localhost:4322`.                 |
 | `pnpm preview:docker` | Serve `./out` with nginx in Docker, with a trusted local certificate. |
 | `pnpm lint`           | ESLint check.                                                         |
+| `pnpm typecheck`      | TypeScript check of the whole project, tests included.                |
+| `pnpm test`           | Unit and component tests. See [Testing](Testing.md).                  |
+| `pnpm test:build`     | Checks on the built `./out` (run `pnpm build` first).                 |
+| `pnpm test:e2e`       | Browser tests on four screen sizes (run `pnpm build` first).          |
+| `pnpm test:ci`        | Everything CI runs, in the same order.                                |
 | `pnpm format`         | Prettier writes fixes to every file.                                  |
 | `pnpm format:check`   | Prettier checks only.                                                 |
 | `pnpm gen:covers`     | Only regenerate article covers.                                       |
@@ -69,8 +74,9 @@ To check a production only feature, run `pnpm build` and then `pnpm preview`.
 
 ## Before you open a pull request
 
-- Run `pnpm lint`.
-- Run `pnpm build`. There is no test suite, so a clean build is the main check.
+- Run `pnpm lint`, `pnpm typecheck`, and `pnpm test`.
+- Add or update tests for what you changed. See [Testing](Testing.md).
+- Run `pnpm build`, then `pnpm test:build` and `pnpm test:e2e`. CI runs the same checks and blocks the PR if one fails.
 - Open the pages you changed in `pnpm dev`, on a phone size screen and a desktop.
 - Update the wiki page for the feature you changed.
 
@@ -78,4 +84,5 @@ To check a production only feature, run `pnpm build` and then `pnpm preview`.
 
 - [Project structure](Project-Structure.md)
 - [Build and deploy](Build-and-Deploy.md)
+- [Testing](Testing.md)
 - [Tooling](Tooling.md)

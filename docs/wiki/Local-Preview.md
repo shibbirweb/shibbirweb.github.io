@@ -30,6 +30,7 @@ flowchart TD
 - For a path with no extension, it tries the file, then `path.html`, then `path/index.html`. A normal static server would 404 here.
 - Unknown paths get `out/404.html` with status 404.
 - `version.json` is sent with `Cache-Control: no-store`, so update checks work.
+- Text files (HTML, JS, CSS, JSON, SVG) are gzipped, like GitHub Pages does, so sizes and Lighthouse scores match production.
 - `--port <n>` changes the port.
 - With `--https` it makes a trusted certificate using the same `mkcert` flow as `next dev --experimental-https`, saved in `certificates/`.
 

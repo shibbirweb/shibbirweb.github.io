@@ -7,6 +7,22 @@ import { lockScrollSync } from '@/components/layout/scrollSyncLock';
 // so the section's final offset is known. Capped so the glide is never delayed
 // noticeably even if fonts are slow.
 const SETTLE_TIMEOUT_MS = 300;
+// Upper bound on how long the glide may take before its landing is checked,
+// for browsers without the `scrollend` event.
+const GLIDE_CHECK_TIMEOUT_MS = 1500;
+// How far from the target the page may stop and still count as arrived.
+const LANDING_TOLERANCE_PX = 4;
+
+/** The scroll position that brings `target` to the top, as far as the page allows. */
+function landingScrollY(target: HTMLElement): number {
+    const scrollMargin =
+        parseFloat(getComputedStyle(target).scrollMarginTop) || 0;
+    const targetY =
+        target.getBoundingClientRect().top + window.scrollY - scrollMargin;
+    const maxScrollY =
+        document.documentElement.scrollHeight - window.innerHeight;
+    return Math.max(0, Math.min(targetY, maxScrollY));
+}
 
 /**
  * On a direct visit to a URL with a fragment (e.g. /#skills), glide smoothly to
@@ -45,11 +61,38 @@ export function useHashScroll() {
 
         let cancelled = false;
         let settleTimer = 0;
+        let glideCheckTimer = 0;
+
+        // On a slow device the smooth glide can be cut short a few pixels in
+        // (the browser's own fragment scroll is still settling), which left the
+        // visitor at the top and let the URL sync drop the hash. Once the glide
+        // ends, finish the trip instantly if it stopped short.
+        const finishIfShort = () => {
+            window.clearTimeout(glideCheckTimer);
+            window.removeEventListener('scrollend', finishIfShort);
+            const target = document.getElementById(id);
+            if (cancelled || !target) {
+                return;
+            }
+            const expectedY = landingScrollY(target);
+            if (Math.abs(window.scrollY - expectedY) <= LANDING_TOLERANCE_PX) {
+                return;
+            }
+            lockScrollSync(500);
+            root.style.scrollBehavior = 'auto';
+            window.scrollTo(0, expectedY);
+            root.style.scrollBehavior = previousBehavior;
+        };
 
         const glideToTarget = () => {
             if (cancelled) return;
             // Re-lock for the glide itself in case fonts settled slowly.
             lockScrollSync(1000);
+            window.addEventListener('scrollend', finishIfShort);
+            glideCheckTimer = window.setTimeout(
+                finishIfShort,
+                GLIDE_CHECK_TIMEOUT_MS
+            );
             document.getElementById(id)?.scrollIntoView({
                 behavior: prefersReducedMotion ? 'auto' : 'smooth',
             });
@@ -69,6 +112,8 @@ export function useHashScroll() {
         return () => {
             cancelled = true;
             window.clearTimeout(settleTimer);
+            window.clearTimeout(glideCheckTimer);
+            window.removeEventListener('scrollend', finishIfShort);
         };
     }, []);
 }

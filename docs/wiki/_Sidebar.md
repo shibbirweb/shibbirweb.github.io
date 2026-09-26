@@ -7,6 +7,7 @@
 - [Configuration](Configuration.md)
 - [Build and deploy](Build-and-Deploy.md)
 - [Local preview](Local-Preview.md)
+- [Testing](Testing.md)
 - [Tooling](Tooling.md)
 
 **Layout and design**

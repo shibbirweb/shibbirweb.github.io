@@ -4,20 +4,21 @@
 
 ## Top level folders
 
-| Folder            | What is inside                                                               |
-| ----------------- | ---------------------------------------------------------------------------- |
-| `src/app/`        | Routes: `page.tsx`, `layout.tsx`, feeds, sitemap, robots, manifest, `sw.ts`. |
-| `src/components/` | All React components, grouped by purpose.                                    |
-| `src/lib/`        | Loaders and logic used at build time (articles, markdown, feeds, resume).    |
-| `src/utils/`      | Small pure helper functions (`cn`, dates, JSON-LD builders, search).         |
-| `src/config/`     | Site constants, fonts, and environment flags.                                |
-| `src/types/`      | Global TypeScript declarations (for example `*.css` imports).                |
-| `content/`        | Article markdown files and the resume PDF source.                            |
-| `public/`         | Static files copied as is into the build. Some are generated.                |
-| `scripts/`        | Build helper scripts run with `tsx` (covers, OG images, resume, and more).   |
-| `docker/`         | Files for the Docker HTTPS preview.                                          |
-| `openspec/`       | Feature specs and archived change proposals.                                 |
-| `docs/wiki/`      | This wiki.                                                                   |
+| Folder            | What is inside                                                                   |
+| ----------------- | -------------------------------------------------------------------------------- |
+| `src/app/`        | Routes: `page.tsx`, `layout.tsx`, feeds, sitemap, robots, manifest, `sw.ts`.     |
+| `src/components/` | All React components, grouped by purpose.                                        |
+| `src/lib/`        | Loaders and logic used at build time (articles, markdown, feeds, resume).        |
+| `src/utils/`      | Small pure helper functions (`cn`, dates, JSON-LD builders, search).             |
+| `src/config/`     | Site constants, fonts, and environment flags.                                    |
+| `src/types/`      | Global TypeScript declarations (for example `*.css` imports).                    |
+| `content/`        | Article markdown files and the resume PDF source.                                |
+| `public/`         | Static files copied as is into the build. Some are generated.                    |
+| `scripts/`        | Build helper scripts run with `tsx` (covers, OG images, resume, and more).       |
+| `tests/`          | Test setup, content checks, build checks, browser tests ([Testing](Testing.md)). |
+| `docker/`         | Files for the Docker HTTPS preview.                                              |
+| `openspec/`       | Feature specs and archived change proposals.                                     |
+| `docs/wiki/`      | This wiki.                                                                       |
 
 ## How the layers depend on each other
 

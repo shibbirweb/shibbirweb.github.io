@@ -17,13 +17,27 @@ pnpm build           # gen:assets + gen:og, next build --webpack, image optimize
 pnpm preview         # Serve ./out like GitHub Pages (http://localhost:4321; preview:https on 4322)
 pnpm preview:docker  # Serve ./out with nginx + a locally trusted cert (docker-compose.yml)
 pnpm lint            # eslint (ESLint 9 flat config + prettier); Next 16 removed `next lint`
+pnpm typecheck       # next typegen + tsc --noEmit (covers tests too; next build type-checks them)
 pnpm format          # prettier --write . (format:check to verify)
+pnpm test            # Vitest unit + component tests (no build needed)
+pnpm test:build      # Vitest checks against ./out (run pnpm build first)
+pnpm test:e2e        # Playwright browser tests against ./out (test:e2e:install once)
+pnpm test:lighthouse # Lighthouse CI score floors against ./out
+pnpm test:ci         # everything, in CI order
 pnpm start           # Serve a non-exported build (rarely used here)
 ```
 
 `gen:assets` runs `gen:covers` (article cover SVGs), `gen:resume` (copies a private resume PDF if present) and `gen:giscus` (comment theme CSS from `globals.css`); `gen:og` rasterizes article OG PNGs and runs in `build` only. `build` uses webpack because the Serwist service worker plugin needs it.
 
-There is **no test suite** and no test runner configured.
+## Testing
+
+Every pull request to `master` runs `.github/workflows/ci.yml`: lint + typecheck + formatting of changed files, unit/component tests, `pnpm build` + build checks, Playwright, and Lighthouse. A feature change is not done until its tests pass and new behavior has a test. Details and conventions are in `docs/wiki/Testing.md`.
+
+- **Unit and component tests** (Vitest) are colocated: `Foo.ts` -> `Foo.test.ts` (Node), `Foo.tsx` -> `Foo.test.tsx` (jsdom, React Testing Library). Content-wide checks (article frontmatter, every mermaid/reactflow diagram parses, no em dash, wiki links, data files) live in `tests/content/`. Tests follow the same code rules as source (`@/` imports, or `@tests/` for test helpers).
+- **Build checks** (`tests/build/`) inspect `./out`: routes, metadata/canonical/OG, JSON-LD, sitemap/robots, feeds, manifest and service worker precache, internal links, and performance budgets (initial JS/CSS/HTML gzip size, mermaid and React Flow staying lazy). Raise a budget only deliberately, in the same PR, with the reason.
+- **Browser tests** (`tests/e2e/`, Playwright, Chromium) run on desktop, laptop, tablet and mobile sizes. Import `test` from `@tests/e2e/fixtures`: it blocks every third-party request (mock with `page.route`) and fails on uncaught page errors. Use `waitForHydration(page)`, never `networkidle`. New routes go in `tests/e2e/routes.ts` so the responsive and axe sweeps cover them.
+- **Lighthouse** (`lighthouserc.cjs`) audits pages served by `pnpm preview`, which gzips like GitHub Pages.
+- Formatting is checked only on files a PR changes, because many older files predate Prettier; format a file when you touch it.
 
 ## Architecture
 
@@ -93,7 +107,7 @@ These posts are **first-person accounts of things that actually happened to the 
 - **No roadmap paragraph.** Do not open with "This article covers X, then Y, then Z"; that is a template tell. Get into the story.
 - **Body conventions**: no H1 (the frontmatter `title` supplies it), `##` and `###` only (H4+ gets no anchor and no TOC entry), sentence-case headings with no trailing punctuation or emoji, `*` bullets with a bold lead-in phrase, `> **Note:**` / `> **Warning:**` callouts (the house style, in preference to the `> [!NOTE]` alert syntax), and code fences carrying a bare language.
 - **Verify mermaid diagrams actually render.** A parse or validation error degrades silently to a plain `<pre>` fallback (see `MermaidRenderer/hooks/useMermaidSvg.ts`), so a diagram that "looks fine" in the source may be broken on the page. Render it and look, do not assume.
-- After adding an article, run `pnpm gen:covers` (auto-generates the cover SVG when `cover` is omitted) and `pnpm build`.
+- After adding an article, run `pnpm gen:covers` (auto-generates the cover SVG when `cover` is omitted), `pnpm test` (the content suite validates the frontmatter and parses every diagram), and `pnpm build`.
 
 ### Commit conventions
 
