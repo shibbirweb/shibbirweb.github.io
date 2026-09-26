@@ -26,6 +26,88 @@ function yearOfContributions() {
     };
 }
 
+/** Serves the mocked calendar for every proxy request, counting them. */
+async function mockProxy(page: Page) {
+    const requests = { count: 0 };
+    await page.route(githubActivityURL, (route) => {
+        requests.count++;
+        return route.fulfill({ json: yearOfContributions() });
+    });
+    return requests;
+}
+
+async function openFooter(page: Page) {
+    await page.goto('/');
+    await waitForHydration(page);
+    await page.locator('footer').scrollIntoViewIfNeeded();
+}
+
+/**
+ * A fingerprint of what the graph canvas shows right now, plus how many
+ * pixels are painted at all, read inside the page from its 2D context.
+ */
+async function readCanvas(page: Page) {
+    return page.locator('footer canvas').evaluate((element) => {
+        const canvas = element as HTMLCanvasElement;
+        const context = canvas.getContext('2d');
+        if (!context || canvas.width === 0 || canvas.height === 0) {
+            return { fingerprint: 0, paintedPixels: 0 };
+        }
+        const { data } = context.getImageData(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+        let fingerprint = 0;
+        let paintedPixels = 0;
+        for (let i = 0; i < data.length; i += 4) {
+            fingerprint = (fingerprint * 31 + data[i] + data[i + 3]) >>> 0;
+            if (data[i + 3] > 0) {
+                paintedPixels++;
+            }
+        }
+        return { fingerprint, paintedPixels };
+    });
+}
+
+/** Waits until the canvas stops changing (any fade-in has finished). */
+async function waitForStillCanvas(page: Page) {
+    let previous = -1;
+    await expect
+        .poll(
+            async () => {
+                const { fingerprint } = await readCanvas(page);
+                const isStill = fingerprint === previous;
+                previous = fingerprint;
+                return isStill;
+            },
+            { intervals: [400] }
+        )
+        .toBe(true);
+}
+
+async function hoverSignature(page: Page) {
+    const box = await page.locator('footer svg').first().boundingBox();
+    if (!box) {
+        throw new Error('footer signature has no box');
+    }
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+}
+
+// The spotlight element (which usePointerSpotlight writes to) is the canvas's
+// grandparent: canvas -> graph layer -> spotlight.
+async function readSpotlightOpacity(page: Page): Promise<string> {
+    return page
+        .locator('footer canvas')
+        .evaluate(
+            (canvas) =>
+                (
+                    canvas.parentElement?.parentElement as HTMLElement | null
+                )?.style.getPropertyValue('--spotlight-opacity') ?? ''
+        );
+}
+
 async function readCachedLevels(page: Page): Promise<string | null> {
     return page.evaluate((cacheKey) => {
         const raw = window.localStorage.getItem(cacheKey);
@@ -76,5 +158,139 @@ test.describe('footer GitHub activity', () => {
         await expect.poll(() => proxyRequests).toBe(1);
         await expect(page.locator('footer canvas')).toBeVisible();
         expect(await readCachedLevels(page)).toBeNull();
+    });
+});
+
+test.describe('footer graph with a mouse', () => {
+    test.skip(({ isMobile }) => isMobile, 'hover needs a fine pointer');
+
+    test('paints the decorative graph when the proxy is out of reach', async ({
+        page,
+    }) => {
+        // No mock: the fixture blocks every third-party request.
+        await openFooter(page);
+
+        await expect
+            .poll(async () => (await readCanvas(page)).paintedPixels)
+            .toBeGreaterThan(0);
+    });
+
+    test('brightens gradually on hover and fades when the pointer leaves', async ({
+        page,
+    }) => {
+        await mockProxy(page);
+        await openFooter(page);
+
+        await hoverSignature(page);
+        const samples = await page.locator('footer canvas').evaluate(
+            (canvas) =>
+                new Promise<number[]>((resolve) => {
+                    const spotlight = canvas.parentElement
+                        ?.parentElement as HTMLElement;
+                    const values: number[] = [];
+                    const start = performance.now();
+                    const sample = () => {
+                        values.push(
+                            parseFloat(
+                                spotlight.style.getPropertyValue(
+                                    '--spotlight-opacity'
+                                )
+                            ) || 0
+                        );
+                        if (performance.now() - start < 800) {
+                            requestAnimationFrame(sample);
+                            return;
+                        }
+                        resolve(values);
+                    };
+                    requestAnimationFrame(sample);
+                })
+        );
+        expect(samples[0], 'starts dim, not at full strength').toBeLessThan(
+            0.7
+        );
+        expect(samples[samples.length - 1]).toBeGreaterThan(samples[0]);
+        samples.slice(1).forEach((value, index) => {
+            expect(value, 'rises without jumping back').toBeGreaterThanOrEqual(
+                samples[index] - 0.001
+            );
+        });
+
+        await page.mouse.move(1, 1);
+        await expect
+            .poll(async () => parseFloat(await readSpotlightOpacity(page)))
+            .toBeLessThan(0.01);
+    });
+
+    test('breathes while hovered and holds still at rest', async ({ page }) => {
+        await mockProxy(page);
+        await openFooter(page);
+        await page.mouse.move(1, 1);
+        await waitForStillCanvas(page);
+
+        const atRest = (await readCanvas(page)).fingerprint;
+        await page.waitForTimeout(700);
+        expect((await readCanvas(page)).fingerprint).toBe(atRest);
+
+        await hoverSignature(page);
+        await page.waitForTimeout(800);
+        const breathing = (await readCanvas(page)).fingerprint;
+        await page.waitForTimeout(700);
+        expect((await readCanvas(page)).fingerprint).not.toBe(breathing);
+    });
+
+    test('holds the graph still under reduced motion', async ({ page }) => {
+        await page.emulateMedia({ reducedMotion: 'reduce' });
+        await mockProxy(page);
+        await openFooter(page);
+        await waitForStillCanvas(page);
+
+        await hoverSignature(page);
+        await expect
+            .poll(async () => parseFloat(await readSpotlightOpacity(page)))
+            .toBeGreaterThan(0.5);
+        const lit = (await readCanvas(page)).fingerprint;
+        await page.waitForTimeout(700);
+        expect((await readCanvas(page)).fingerprint).toBe(lit);
+    });
+
+    test('redraws in the new colours when the theme switches', async ({
+        page,
+    }) => {
+        await mockProxy(page);
+        await openFooter(page);
+        await waitForStillCanvas(page);
+        const before = (await readCanvas(page)).fingerprint;
+
+        await page.evaluate(() => {
+            const root = document.documentElement;
+            const isDark =
+                root.dataset.theme === 'dark' ||
+                (!root.dataset.theme &&
+                    window.matchMedia('(prefers-color-scheme: dark)').matches);
+            root.dataset.theme = isDark ? 'light' : 'dark';
+        });
+
+        await expect
+            .poll(async () => (await readCanvas(page)).fingerprint)
+            .not.toBe(before);
+    });
+});
+
+test.describe('footer graph on a touch screen', () => {
+    test.skip(({ isMobile }) => !isMobile, 'runs on the mobile project');
+
+    test('shows the still graph and never lights the spotlight', async ({
+        page,
+    }) => {
+        await mockProxy(page);
+        await openFooter(page);
+
+        await expect
+            .poll(async () => (await readCanvas(page)).paintedPixels)
+            .toBeGreaterThan(0);
+        await page.locator('footer svg').first().tap();
+        await page.waitForTimeout(500);
+        expect(await readSpotlightOpacity(page)).toBe('');
     });
 });

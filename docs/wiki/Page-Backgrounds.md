@@ -52,7 +52,7 @@ Home is transparent here because `globals.css` gives each `main.home-sections > 
 - GitHub's own calendar sends no CORS header and its API needs a token, so the browser calls a public community proxy instead. It only returns a whole year, so the store keeps the newest 30 days. The URL, day count, cache key and 4 hour limit are in `SignatureSpotlight/contents.ts`, built from `githubUsername` in `src/config/constants.ts`.
 - `watchGithubActivity` (`githubActivityStore.ts`) shows the `localStorage` copy at once. If it is missing or older than 4 hours, it calls the proxy once the footer is about 600px away, then caches the result. So each browser calls the proxy at most once every 4 hours. In local development (`isDevelopment`) the cache is skipped, so every reload fetches fresh data.
 - Until real data arrives, or if the proxy fails, times out (8s) or storage is blocked, the graph shows a seeded decorative pattern. Real data fades in over it.
-- Browser tests block third-party requests, so most specs see the decorative pattern. `tests/e2e/footer.spec.ts` mocks the proxy with `page.route` to check the request timing, the cache, trimming to 30 days, and the fallback when the proxy fails.
+- Browser tests block third-party requests, so most specs see the decorative pattern. `tests/e2e/footer.spec.ts` mocks the proxy with `page.route` to check the request timing, the cache, trimming to 30 days and the fallback. It also checks the hover (gradual brighten and fade), breathing only while hovered, reduced motion, the theme redraw, and the still graph on touch screens. The hooks have their own tests beside them (`useActivityGraph.test.tsx`, `usePointerSpotlight.test.tsx`).
 
 ## Good to know
 

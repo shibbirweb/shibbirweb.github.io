@@ -4,13 +4,13 @@ import { easeToward } from '@/utils/easeToward';
 // How far, in pixels, the glow reaches past the glyphs before it fully fades.
 // The signature sits at the page edge, so it reaches farther above and to the
 // sides than below.
-const REACH_TOP = 72;
-const REACH_SIDE = 56;
-const REACH_BOTTOM = 28;
+export const REACH_TOP = 72;
+export const REACH_SIDE = 56;
+export const REACH_BOTTOM = 28;
 // Peak opacity of the contribution-graph reveal, reached when the pointer is
 // over the glyphs; the solid base fades by the same amount, so the squares read
 // in their true colours with only a trace of the letter behind them.
-const MAX_OPACITY = 0.9;
+export const MAX_OPACITY = 0.9;
 // Time constants of the eases that let the spotlight trail the pointer instead
 // of snapping to it: a short glide for the circle, a slower swell and fade for
 // its brightness, so the graph brightens and settles calmly.
