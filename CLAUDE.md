@@ -4,19 +4,24 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Single-page personal portfolio for Shibbir Ahmed, built with Next.js 15 (App Router) and Tailwind CSS v4, **statically exported** and deployed to GitHub Pages under the custom domain `https://shibbir.me`.
+Single-page personal portfolio for Shibbir Ahmed, built with Next.js 16 (App Router) and Tailwind CSS v4, **statically exported** and deployed to GitHub Pages under the custom domain `https://shibbir.me`.
 
 ## Commands
 
 Package manager is **pnpm** (v10). Node 22 in CI.
 
 ```bash
-pnpm dev          # Dev server with Turbopack
-pnpm dev:https     # Dev server over HTTPS (for testing OG/PWA features)
-pnpm build         # Production build -> static export into ./out
-pnpm lint          # next lint (ESLint 9 + prettier config)
-pnpm start         # Serve a non-exported build (rarely used here)
+pnpm dev             # gen:assets, then dev server with Turbopack
+pnpm dev:https       # Same, over HTTPS (for testing OG/PWA/giscus features)
+pnpm build           # gen:assets + gen:og, next build --webpack, image optimizer, offline fallback -> ./out
+pnpm preview         # Serve ./out like GitHub Pages (http://localhost:4321; preview:https on 4322)
+pnpm preview:docker  # Serve ./out with nginx + a locally trusted cert (docker-compose.yml)
+pnpm lint            # eslint (ESLint 9 flat config + prettier); Next 16 removed `next lint`
+pnpm format          # prettier --write . (format:check to verify)
+pnpm start           # Serve a non-exported build (rarely used here)
 ```
+
+`gen:assets` runs `gen:covers` (article cover SVGs), `gen:resume` (copies a private resume PDF if present) and `gen:giscus` (comment theme CSS from `globals.css`); `gen:og` rasterizes article OG PNGs and runs in `build` only. `build` uses webpack because the Serwist service worker plugin needs it.
 
 There is **no test suite** and no test runner configured.
 
@@ -24,9 +29,11 @@ There is **no test suite** and no test runner configured.
 
 ### Static export constraints
 
-`next.config.ts` sets `output: 'export'`, so the entire site is pre-rendered to static HTML/assets in `./out`. This rules out runtime server features: no API routes, no Server Actions, no `next/image` optimization loader, no middleware, no ISR/dynamic rendering. Metadata routes (`sitemap.ts`, `robots.ts`) must stay statically resolvable, so they use `export const dynamic = 'force-static'`.
+`next.config.ts` sets `output: 'export'` for production builds, so the entire site is pre-rendered to static HTML/assets in `./out`. This rules out runtime server features in shipped code: no API routes, no Server Actions, no `next/image` optimization loader (images go through `next-image-export-optimizer` with a custom loader), no middleware, no ISR/dynamic rendering. Metadata and feed routes (`sitemap.ts`, `robots.ts`, `manifest.ts`, `feed.xml`, `atom.xml`, `feed.json`, `version.json`) must stay statically resolvable, so they use `export const dynamic = 'force-static'`.
 
-Site-wide config (URLs for `siteURL`, sitemap) is exposed through `publicRuntimeConfig` in `next.config.ts` and read in `sitemap.ts`/`robots.ts` via `getConfig()` from `next/config`. Most other code imports values directly from `@/config/constants`.
+The one exception is dev-only code: `pageExtensions` includes `dev.tsx`/`dev.ts` only when `NODE_ENV !== 'production'`, so files like `src/app/studio/article-editor/page.dev.tsx` and its `actions.dev.ts` Server Actions (which use `node:fs`) are routes under `next dev` and are excluded from the export. Gate dev-only UI on `isDevelopment` from `@/config/env` so the bundler strips it from production.
+
+`sitemap.ts`, `robots.ts`, and all other code import site-wide values directly from `@/config/constants`; there is no `publicRuntimeConfig`. The build time stamp (`NEXT_PUBLIC_BUILD_TIME`, set in `next.config.ts`, read via `getBuiltAt()` in `src/lib/version.ts`) drives the PWA update check, sitemap/JSON-LD dates, and `careerExperience`.
 
 ### Single source of truth: `src/config/constants.ts`
 
@@ -34,21 +41,21 @@ Site-wide config (URLs for `siteURL`, sitemap) is exposed through `publicRuntime
 
 ### Page composition
 
-`src/app/page.tsx` composes the home page sections (inside a single `<main>`), each a PascalCase folder with an `index.tsx` under `src/components/pages/home/`:
+`src/app/page.tsx` composes the home page sections, in this order (inside a single `<main className="home-sections">`, after `SectionUrlSync`), each a PascalCase folder with an `index.tsx` under `src/components/pages/home/`:
 
-- `HeroArea/`: name + title + social icons over an animated grid background; scroll-down cue links to `#about`
-- `AboutMeArea/`: heading, photo, bio, experience/education (anchor `#about`)
-- `ProjectsArea/`: "Featured Projects" card grid driven by `contents.ts` (anchor `#work`)
-- `SkillsArea/`: grouped skill tags driven by `contents.ts` (anchor `#skills`)
-- `ArticlesArea/`: "Latest Articles" teaser of the most recent posts (anchor `#articles`)
-- `ContactArea/`: mailto CTA + reused `SocialIcons` (anchor `#contact`)
+- `HeroArea/`: name + title + social icons over an animated grid background (anchor `#hero`)
+- `AboutMeArea/`: portrait plus four facet cards; `SystemDiagram` on `lg`, `Bento` below (anchor `#about`)
+- `SkillsArea/`: skill tiles (`SkillCard`) driven by `contents.ts` (anchor `#skills`)
+- `ProjectsArea/`: "Open Source" card grids (packages with a "Show more" toggle, personal projects) driven by `contents.ts`, plus a `ResumeBridge` link (anchor `#work`)
+- `ArticlesArea/`: "Latest Articles" teaser of the most recent posts; renders nothing when there are none (anchor `#articles`)
+- `ContactArea/`: Web3Forms contact form with lazily loaded hCaptcha and a mailto fallback, plus reused `SocialIcons` (anchor `#contact`)
 
-Section folders carry their own component-wise `contents.ts` (e.g. `HeroArea/contents.ts` holds `socialLinks`; `ProjectsArea/contents.ts` holds the curated project list). Page-wise data that a route's `page.tsx` owns stays beside the route instead (e.g. `src/app/now/contents.ts`, `src/app/uses/contents.ts`), with its shared types extracted to a `types.ts` in the component folder so `src/components/` never imports from `src/app/`. Shared/reusable pieces live in `src/components/` (`animations/`, `backgrounds/`, `icons/`, `layout/`, `seo/`, `wrappers/`, plus `pages/` for page-grouped sections with `pages/common/` for cross-section primitives). Section headings use the shared `SectionHeading` (`src/components/pages/common/SectionHeading.tsx`), the underline-accent motif. Anchor IDs (`#about`, `#work`, `#skills`, `#articles`, `#contact`) work with the `scroll-smooth` set on `<html>`.
+Section folders carry their own component-wise `contents.ts` (e.g. `HeroArea/contents.ts` holds `socialLinks`; `ProjectsArea/contents.ts` holds the curated project list). Page-wise data that a route's `page.tsx` owns stays beside the route instead (e.g. `src/app/now/contents.ts`, `src/app/uses/contents.ts`), with its shared types extracted to a `types.ts` in the component folder so `src/components/` never imports from `src/app/`. Shared/reusable pieces live in `src/components/` (`analytics/`, `animations/`, `backgrounds/`, `icons/`, `layout/`, `pwa/`, `seo/`, `ui/`, `wrappers/`, plus `pages/` for page-grouped sections with `pages/common/` for cross-section primitives). Section headings use the shared `SectionHeading` (`src/components/pages/common/SectionHeading.tsx`). Anchor IDs (`#about`, `#work`, `#skills`, `#articles`, `#contact`) work with the `scroll-smooth` set on `<html>`; `useScrollSpy` + `SectionUrlSync` keep the URL hash in step while scrolling, `HashScroll` handles a hash on first load, and `scrollSyncLock` stops the two from fighting during nav clicks. A new home section's id must be added to `homeSectionIds` in `Navbar/contents.ts`.
 
 ### Component conventions
 
 - Prefer small, single-responsibility, reusable components. Do **not** put multiple components (or large inline JSX blocks) in one file; extract repeated markup (cards, tags, list rows, links) into their own components. When a component grows large or juggles several concerns, **split it into smaller subcomponents** rather than letting it become a monolith.
-- Cross-section/shared UI primitives live in `src/components/pages/common/` (e.g. `SectionHeading`, `Tag`). Section-specific subcomponents are colocated in the section folder next to its `contents.ts` (e.g. `ProjectsArea/ProjectCard.tsx`, `ProjectsArea/ProjectLink.tsx`, `SkillsArea/SkillGroup.tsx`).
+- Cross-section/shared UI primitives live in `src/components/pages/common/` (e.g. `SectionHeading`, `Tag`). Section-specific subcomponents are colocated in the section folder next to its `contents.ts` (e.g. `ProjectsArea/ProjectCard/`, `ProjectsArea/ProjectLink.tsx`, `SkillsArea/SkillCard/`).
 - Keep each section's `index.tsx` thin: section wrapper + `SectionHeading` + a `.map()` over a subcomponent. Data lives in `contents.ts`, not inline.
 - Reuse the shared `cn()` helper and existing primitives before creating new ones; avoid premature abstraction for genuinely one-off markup.
 - A component that spans more than one file (e.g. a co-located CSS Module, subcomponents, or its own `contents.ts`) gets its **own folder** with the entry point as `index.tsx` and its files beside it, e.g. `components/animations/AnimatedUnderline/index.tsx` + `AnimatedUnderline.module.css`. Keep genuinely single-file components as a single `.tsx`.
@@ -59,7 +66,7 @@ Section folders carry their own component-wise `contents.ts` (e.g. `HeroArea/con
 
 - **Use the `@/` alias for every import; never use a relative path (`./` or `../`)**, not even for a same-folder sibling (e.g. `import ProjectCard from '@/components/pages/home/ProjectsArea/ProjectCard'`, not `'./ProjectCard'`). CSS Module and asset imports follow the same rule. This includes the root layout's global stylesheet (`import '@/app/globals.css'` in `src/app/layout.tsx`); plain `*.css` side-effect imports resolve via the ambient `declare module '*.css'` in `src/types/css.d.ts`.
 - **`src/app/` holds only routing concerns**: `page.tsx`, `layout.tsx`, metadata routes (`sitemap.ts`, `robots.ts`, `manifest.ts`), `globals.css`, and route icons/images. **Never define a component in `src/app/`**; all components live in `src/components/`.
-- **Group components by purpose, never in a catch-all bucket**: `animations/`, `backgrounds/`, `icons/`, `layout/`, `seo/`, `wrappers/`, and `pages/` (section components grouped by route, with `pages/common/` for cross-section primitives). `src/utils/` is for **pure helper functions only** (e.g. `cn`, `formatDate`); never put a component there.
+- **Group components by purpose, never in a catch-all bucket**: `analytics/`, `animations/`, `backgrounds/`, `icons/`, `layout/`, `pwa/`, `seo/`, `ui/`, `wrappers/`, and `pages/` (section components grouped by route, with `pages/common/` for cross-section primitives). `src/utils/` is for **pure helper functions only** (e.g. `cn`, `formatDate`); never put a component there.
 - **`src/components/` must never import from `src/app/`** (dependencies flow `app -> components` only). Data a route's `page.tsx` owns is page-wise and lives beside the route as `src/app/<route>/contents.ts`; data a self-contained component owns is component-wise and lives in a `contents.ts` inside that component's folder. When page-wise data and its components share types, put the types in a `types.ts` in the component folder and import them from both sides.
 
 ### Naming conventions
@@ -100,14 +107,14 @@ These posts are **first-person accounts of things that actually happened to the 
 
 ### SEO & structured data
 
-This is a major focus of the codebase. `layout.tsx` defines the full Next.js `Metadata` (OpenGraph, Twitter, robots, icons, manifest). `src/utils/jsonLd.ts` builds a `schema.org` `ProfilePage`/`Person` JSON-LD object (typed with `schema-dts`), rendered via `JsonLdScript` (in `src/components/seo/`). **Both JSON-LD injection and Google Tag Manager are gated on `process.env.NODE_ENV === 'production'`** (see `layout.tsx`), so they do not appear in dev.
+This is a major focus of the codebase. `layout.tsx` defines the full Next.js `Metadata` (OpenGraph, Twitter, robots, icons, manifest). Pages add their own metadata through `buildPageMetadata` (`src/utils/pageMetadata.ts`), which exists because Next does not deep-merge a page's `openGraph` with the layout's; articles use `generateMetadata`. `src/utils/jsonLd.ts` builds a `schema.org` `ProfilePage`/`Person` JSON-LD object (typed with `schema-dts`), rendered via `JsonLdScript` (in `src/components/seo/`); `siteJsonLd.ts` (WebSite, navigation), `breadcrumbJsonLd.ts`, `articleJsonLd.ts` (BlogPosting), and `resumeJsonLd.ts` render through `JsonLd` and link to the person by `@id` `#person`. **JSON-LD, Google Tag Manager (`DeferredGoogleTagManager`), `PageviewTracker`, and `ServiceWorkerManager` are all gated on `process.env.NODE_ENV === 'production'`** (see `layout.tsx`), so they do not appear in dev; use `pnpm build` + `pnpm preview` to check them.
 
 ### Styling (Tailwind v4)
 
-CSS-first configuration lives in `src/app/globals.css`; there is **no `tailwind.config.js`**. Theme tokens, custom keyframes (`shine`), and custom utilities (`text-box-trim-*`, `text-box-edge-*`) are declared with `@theme` / `@utility` directives. Dark mode is driven by `prefers-color-scheme` (system), not a class toggle. Use the `cn()` helper (`@/utils/cn`, wraps `clsx` + `tailwind-merge`) for conditional class composition. Respect `motion-safe:` prefixes on animations.
+CSS-first configuration lives in `src/app/globals.css`; there is **no `tailwind.config.js`**. Theme tokens, custom keyframes (`shine`), and custom utilities (`text-box-trim-*`, `text-box-edge-*`) are declared with `@theme` / `@utility` directives. Dark mode is driven by a `data-theme="light|dark"` attribute on `<html>`: users pick System/Light/Dark (stored in `localStorage` as `theme`), `ThemeScript` applies it before first paint, and the `dark` custom variant in `globals.css` matches `[data-theme='dark']` with a `prefers-color-scheme` fallback when no attribute is set (see `src/components/layout/ThemeToggle/theme.ts`). Use the `cn()` helper (`@/utils/cn`, wraps `clsx` + `tailwind-merge`) for conditional class composition. Respect `motion-safe:` prefixes on animations.
 
 - **Tailwind utilities are the default** for component styling, composed via `cn()`.
-- **Custom CSS that a section or component needs (and that is not a global concern) goes in a co-located CSS Module** (`ComponentName.module.css` beside the component's `index.tsx`), imported only by that component via the `@/` alias and applied with `cn(styles.x, '...utilities...')`. Do **not** add component- or section-specific rules to `globals.css`. Handle that component's theming inside its module with `@media (prefers-color-scheme: dark)` (and scope properties like `color-scheme` there too, not on `:root`, unless they are genuinely site-wide). See `SignatureSpotlight`, `AnimatedUnderline`, and `SkillsArea/SkillCard` for the pattern.
+- **Custom CSS that a section or component needs (and that is not a global concern) goes in a co-located CSS Module** (`ComponentName.module.css` beside the component's `index.tsx`), imported only by that component via the `@/` alias and applied with `cn(styles.x, '...utilities...')`. Do **not** add component- or section-specific rules to `globals.css`. Handle that component's theming inside its module with the paired selectors `:global(html[data-theme='dark']) .x` plus the `@media (prefers-color-scheme: dark) :global(html:not([data-theme])) .x` no-JS fallback (and scope properties like `color-scheme` there too, not on `:root`, unless they are genuinely site-wide). See `SignatureSpotlight`, `AnimatedUnderline`, and `SkillsArea/SkillCard` for the pattern.
 - **`globals.css` is reserved for global concerns only**: theme tokens, base styles, shared keyframes, and shared `@theme` / `@utility` declarations used across the app.
 - **Inside a CSS Module, prefer Tailwind over hand-written CSS.** Any declaration expressible as a utility must be written with `@apply` (e.g. `@apply pointer-events-none absolute inset-0 opacity-0 motion-safe:transition-opacity`). This includes properties that have **no named utility but do have an arbitrary-property equivalent**: write `@apply [-webkit-user-drag:none] [-webkit-touch-callout:none]` (and `motion-safe:animate-[my-keyframes_5s_ease-in-out_infinite]` to drive an animation), not the raw declarations. Reach for raw CSS only for what Tailwind genuinely cannot express: a `color-mix()` / `radial-gradient()` / `conic-gradient()` value, a `@keyframes` body, a bespoke custom property. Using `@apply` in a module requires `@reference "tailwindcss";` at the top of the file so the utilities resolve. Prefer Tailwind variants over hand-rolled media queries too (`motion-safe:` instead of a `prefers-reduced-motion` block); a raw `@media (prefers-color-scheme: dark)` is acceptable only for theming a custom property, matching `SignatureSpotlight`.
 
@@ -124,6 +131,17 @@ The pattern (see `SkillsArea/SkillCard`, `Footer/SignatureSpotlight`, and `pages
 
 Path alias: `@/*` -> `./src/*`.
 
+### Developer wiki
+
+`docs/wiki/` is the developer wiki: one flat folder, one `.md` file per page, with `Home.md` as the front page and `_Sidebar.md` as the menu. It explains how every feature works and how the files connect, in simple language with mermaid diagrams. **When a change alters how a feature works, update its wiki page in the same change.**
+
+- Follow the page template and rules in `docs/wiki/Wiki-Guide.md`: sections in the order "In short", "Files involved", "How it works", "How to change it", "Good to know", "Related pages"; under 150 lines per page (split instead of growing); at most two diagrams per page; plain, easy words.
+- Keep the folder flat (GitHub wikis ignore subfolders). Link pages as `[Text](Page-Name.md)`; the publish workflow strips `.md` for the wiki.
+- A new page gets a link in `_Sidebar.md` and, if it is a main topic, in `Home.md`.
+- Wiki diagrams must parse too: check them with mermaid before handing them over.
+
 ### Deployment
 
 `.github/workflows/deploy.yml` runs on push to `master`: pnpm install -> `pnpm build` -> upload `./out` -> deploy to GitHub Pages. The build receives `PAGES_BASE_PATH`, but note `next.config.ts` does **not** currently consume it into `basePath`, and the site works because it serves from a custom domain at root. If the deploy target ever changes to a subpath, wire `basePath`/`assetPrefix` into `next.config.ts`.
+
+`.github/workflows/publish-wiki.yml` runs on push to `master` when `docs/wiki/**` changes (or manually): it syncs `docs/wiki/` into the `<repo>.wiki.git` repository with `rsync --delete`, rewrites `Page.md` links to `Page`, and pushes. `docs/wiki/` is the source of truth, so edits made on the GitHub wiki website are overwritten. The wiki repository only exists after its first page is saved once from the Wiki tab.
