@@ -68,7 +68,7 @@ Useful extras: `pnpm test:watch`, `pnpm test:coverage`, and `pnpm test:e2e --ui`
 - **Put unit and component tests beside the code**: `Foo.tsx` gets `Foo.test.tsx`. `.test.ts` runs in Node, `.test.tsx` runs in jsdom.
 - **Use `@/` imports** (and `@tests/` for test helpers), like all other code.
 - **Browser specs import `test` from `@tests/e2e/fixtures`**. It blocks all third-party requests and fails on any page error. Mock a service with `page.route`.
-- **Wait with `waitForHydration(page)`** before checking diagrams or copy buttons, not `networkidle`.
+- **Wait with `waitForHydration(page)`** before checking diagrams or copy buttons, not `networkidle`. Diagrams only draw near the screen, so it scrolls each one into view, then back to the top.
 - **Test what a visitor sees**: roles, labels, and text, not class names.
 - **A new page?** Add it to `tests/e2e/routes.ts` so the layout and a11y sweeps cover it.
 

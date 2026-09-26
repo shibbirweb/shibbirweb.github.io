@@ -9,16 +9,21 @@ import { mermaidConfig } from '@/components/pages/articles/MermaidRenderer/merma
 
 /**
  * Renders Mermaid source to an SVG string on the client. Mermaid is imported
- * lazily (only when a diagram exists) and re-rendered when the resolved theme
- * changes (an OS scheme flip while on 'system', or a manual switch) so the
- * diagram matches the site. Returns '' until the first render succeeds (or stays
- * '' if the source fails to parse).
+ * lazily and only once `enabled` (callers pass whether the diagram has come
+ * near the viewport, so the 1.7 MB library and the render stay out of page
+ * start-up). It re-renders when the resolved theme changes (an OS scheme flip
+ * while on 'system', or a manual switch) so the diagram matches the site.
+ * Returns '' until the first render succeeds (or stays '' if the source fails
+ * to parse).
  */
-export function useMermaidSvg(source: string): string {
+export function useMermaidSvg(source: string, enabled = true): string {
     const reactId = useId();
     const [svg, setSvg] = useState('');
 
     useEffect(() => {
+        if (!enabled) {
+            return;
+        }
         const renderId = `mermaid-${reactId.replace(/[^a-zA-Z0-9]/g, '')}`;
         let cancelled = false;
 
@@ -45,7 +50,7 @@ export function useMermaidSvg(source: string): string {
             cancelled = true;
             unsubscribe();
         };
-    }, [source, reactId]);
+    }, [source, reactId, enabled]);
 
     return svg;
 }

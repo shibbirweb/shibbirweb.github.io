@@ -110,7 +110,9 @@ export function articlesWithFence(language: string): PublishedArticle[] {
 /**
  * Waits until client islands (diagrams, copy buttons) have mounted: the page
  * has loaded, every diagram's source <pre> has been swapped for its rendered
- * host, and the browser has had an idle moment to finish effects. This avoids
+ * host, and the browser has had an idle moment to finish effects. Diagrams
+ * only draw once they near the viewport, so it scrolls each one still showing
+ * its placeholder into view, then returns to the top of the page. This avoids
  * 'networkidle', which never settles on pages that poll (network status).
  */
 export async function waitForHydration(page: Page): Promise<void> {
@@ -120,15 +122,30 @@ export async function waitForHydration(page: Page): Promise<void> {
             (block) => (block as HTMLElement).style.display === 'none'
         )
     );
-    // While mermaid loads, each diagram shows its source in a fallback <pre>
-    // (CSS Module classes `..._fallback__` / `..._staticFallback__`); wait for
-    // every one to be replaced by its SVG.
-    await page.waitForFunction(
+    // Until mermaid draws it, each diagram shows its source in a fallback <pre>
+    // (CSS Module classes `..._fallback__` / `..._staticFallback__`). Bring
+    // the first one left into view on every check, until all are replaced.
+    const scrolledForDiagrams = await page.evaluate(
         () =>
             document.querySelectorAll(
                 '[class*="_fallback__"], [class*="_staticFallback__"]'
-            ).length === 0
+            ).length > 0
     );
+    await page.waitForFunction(() => {
+        const placeholders = document.querySelectorAll(
+            '[class*="_fallback__"], [class*="_staticFallback__"]'
+        );
+        placeholders[0]?.scrollIntoView({
+            block: 'center',
+            behavior: 'instant',
+        });
+        return placeholders.length === 0;
+    });
+    if (scrolledForDiagrams) {
+        await page.evaluate(() =>
+            window.scrollTo({ top: 0, behavior: 'instant' })
+        );
+    }
     await page.evaluate(
         () =>
             new Promise<void>((resolve) => {

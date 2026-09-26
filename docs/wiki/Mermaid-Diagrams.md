@@ -1,24 +1,26 @@
 # Mermaid diagrams
 
-> **In short:** A ` ```mermaid ` block is left as plain text in the HTML at build time. In the browser, `MermaidRenderer` finds it, loads the mermaid library only when needed, and replaces it with an SVG you can pan, zoom, copy, and open full screen.
+> **In short:** A ` ```mermaid ` block is left as plain text in the HTML at build time. In the browser, `MermaidRenderer` finds it, loads the mermaid library only once the diagram nears the screen, and replaces it with an SVG you can pan, zoom, copy, and open full screen.
 
 ## Files involved
 
 All paths are under `src/components/pages/articles/`.
 
-| File                                         | What it does                                                          |
-| -------------------------------------------- | --------------------------------------------------------------------- |
-| `src/lib/markdown.ts`                        | Emits `<pre class="mermaid">` with the escaped source.                |
-| `MermaidRenderer/index.tsx`                  | Portals one `MermaidDiagram` into each block.                         |
-| `MermaidRenderer/hooks/useMermaidIslands.ts` | Finds the blocks and makes a host `<div>` after each.                 |
-| `MermaidRenderer/MermaidDiagram.tsx`         | Frame, stage, tools, and the full view modal.                         |
-| `MermaidRenderer/hooks/useMermaidSvg.ts`     | Lazy loads mermaid and renders the SVG. Re-renders on theme change.   |
-| `MermaidRenderer/mermaidTheme.ts`            | Colours, fonts, spacing for light and dark.                           |
-| `MermaidRenderer/MermaidStage.tsx`           | The pan and zoom viewport.                                            |
-| `MermaidRenderer/hooks/usePanZoom.ts`        | CSS transform based pan and zoom.                                     |
-| `DiagramTools.tsx`, `DiagramModal.tsx`       | Full view and copy buttons, and the modal. Shared with flow diagrams. |
-| `hooks/useDiagramViewportKeys.ts`            | Keyboard: arrows pan, `+` `-` zoom, `0` resets.                       |
-| `hooks/useModalChrome.ts`                    | Modal scroll lock, focus trap, Escape to close.                       |
+| File                                            | What it does                                                           |
+| ----------------------------------------------- | ---------------------------------------------------------------------- |
+| `src/lib/markdown.ts`                           | Emits `<pre class="mermaid">` with the escaped source.                 |
+| `MermaidRenderer/index.tsx`                     | Portals one `MermaidDiagram` into each block.                          |
+| `MermaidRenderer/hooks/useMermaidIslands.ts`    | Finds the blocks and makes a host `<div>` after each.                  |
+| `MermaidRenderer/MermaidDiagram.tsx`            | Frame, stage, tools, and the full view modal.                          |
+| `MermaidRenderer/hooks/useMermaidSvg.ts`        | Lazy loads mermaid and renders the SVG. Re-renders on theme change.    |
+| `MermaidRenderer/hooks/useHasNearedViewport.ts` | Turns true (and stays true) once the diagram is 600px from the screen. |
+| `DiagramSourceFallback.tsx`                     | The source text shown until the SVG is ready. Keyboard reachable.      |
+| `MermaidRenderer/mermaidTheme.ts`               | Colours, fonts, spacing for light and dark.                            |
+| `MermaidRenderer/MermaidStage.tsx`              | The pan and zoom viewport.                                             |
+| `MermaidRenderer/hooks/usePanZoom.ts`           | CSS transform based pan and zoom.                                      |
+| `DiagramTools.tsx`, `DiagramModal.tsx`          | Full view and copy buttons, and the modal. Shared with flow diagrams.  |
+| `hooks/useDiagramViewportKeys.ts`               | Keyboard: arrows pan, `+` `-` zoom, `0` resets.                        |
+| `hooks/useModalChrome.ts`                       | Modal scroll lock, focus trap, Escape to close.                        |
 
 ## The islands pattern
 
@@ -31,7 +33,10 @@ flowchart TD
     C --> D[Create a div after the pre]
     D --> E[Hide the pre]
     E --> F[createPortal MermaidDiagram into the div]
-    F --> G[useMermaidSvg: import mermaid]
+    F --> N{within 600px of the screen?}
+    N -- not yet --> P[Show the source placeholder]
+    P --> N
+    N -- yes --> G[useMermaidSvg: import mermaid]
     G --> H{render ok?}
     H -- yes --> I[Show SVG in MermaidStage]
     H -- no --> J[Show source as plain text]
@@ -40,7 +45,7 @@ flowchart TD
 1. `ArticleView` (and the editor preview) render `<MermaidRenderer />` after the article HTML.
 2. On mount, it finds every `pre.mermaid`, adds a host `<div>` after it, and hides the `<pre>`.
 3. It portals a `MermaidDiagram` into each host.
-4. `useMermaidSvg` runs `await import('mermaid')`, so pages without diagrams never download it.
+4. Until the diagram is about 600px from the screen (`useHasNearedViewport`), it shows its source in `DiagramSourceFallback`. Then `useMermaidSvg` runs `await import('mermaid')`. So the 1.7 MB library and the drawing stay out of page start-up, and pages without diagrams never download it.
 5. It calls `mermaid.initialize(...)` with the theme for the current light or dark mode, then `mermaid.render(...)`.
 6. On unmount, the hosts are removed and the `<pre>` blocks are shown again.
 
@@ -61,7 +66,9 @@ flowchart TD
 
 ## Good to know
 
-- **A broken diagram fails quietly.** It shows the source as plain text, with no error on the page. The same text also shows for a moment while mermaid loads. Always check your diagram in the browser.
+- **A broken diagram fails quietly.** It shows the source as plain text, with no error on the page. The same text also shows until the diagram nears the screen and while mermaid loads. Always check your diagram in the browser.
+- **Why diagrams wait.** Drawing every diagram at load cost the long articles about 300ms of blocked main thread and failed the Lighthouse floor. Waiting cut that to about 20ms.
+- **The placeholder can scroll sideways**, so it is focusable and labelled "Diagram source" for keyboard users.
 - **Readers without JavaScript** see the source in the `<pre>`.
 - The frame uses the site's accent bloom, tinted by the article's cover colours.
 
