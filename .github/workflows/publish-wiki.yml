@@ -1,0 +1,62 @@
+name: Publish wiki
+
+on:
+    # Runs when a pull request that touches the wiki docs is merged into master
+    push:
+        branches:
+            - master
+        paths:
+            - 'docs/wiki/**'
+            - '.github/workflows/publish-wiki.yml'
+
+    # Allows you to run this workflow manually from the Actions tab
+    workflow_dispatch:
+
+# Pushing to the <repo>.wiki.git repository needs write access to contents
+permissions:
+    contents: write
+
+# Only the newest docs matter, so a newer run replaces a queued or running one
+concurrency:
+    group: 'wiki'
+    cancel-in-progress: true
+
+jobs:
+    publish:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            # GitHub creates the wiki repository only after the first page is
+            # saved from the Wiki tab, so this step fails until that is done once.
+            - name: Checkout wiki
+              uses: actions/checkout@v4
+              with:
+                  repository: ${{ github.repository }}.wiki
+                  path: wiki
+                  token: ${{ secrets.GITHUB_TOKEN }}
+
+            # docs/wiki is the source of truth: --delete removes pages that were
+            # deleted from the repo, and .git is kept so the wiki history stays.
+            - name: Sync docs into the wiki
+              run: rsync -a --delete --exclude '.git' docs/wiki/ wiki/
+
+            # Pages link to each other as `Page-Name.md` so the links work when
+            # browsing the repo. Wiki URLs have no extension, so strip it here.
+            - name: Rewrite page links for the wiki
+              run: |
+                  sed -i -E 's/\]\(([A-Za-z0-9_-]+)\.md(#[^)]*)?\)/](\1\2)/g' wiki/*.md
+
+            - name: Commit and push
+              working-directory: wiki
+              run: |
+                  git config user.name 'github-actions[bot]'
+                  git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+                  git add -A
+                  if git diff --cached --quiet; then
+                      echo 'Wiki is already up to date.'
+                      exit 0
+                  fi
+                  git commit -m "docs: sync wiki from ${GITHUB_SHA::7}"
+                  git push

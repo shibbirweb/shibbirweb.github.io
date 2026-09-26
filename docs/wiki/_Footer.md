@@ -1,0 +1,1 @@
+This wiki is generated from [`docs/wiki/`](https://github.com/shibbirweb/shibbirweb.github.io/tree/master/docs/wiki). Edit it there with a pull request; changes made on this site are overwritten on the next publish.
