@@ -77,6 +77,7 @@ Useful extras: `pnpm test:watch`, `pnpm test:coverage`, and `pnpm test:e2e --ui`
 - **Budgets live in `tests/build/performance.test.ts`.** If a change truly needs more JavaScript, raise the number in the same PR and say why.
 - **Formatting is checked only on files the PR changes.** Many older files are not Prettier formatted yet; fix a file when you edit it.
 - **Service workers are blocked** in browser tests except `pwa.spec.ts`, because they would hide requests from `page.route`.
+- **Vitest counts as development.** It runs with `NODE_ENV=test`, so `isDevelopment` from `@/config/env` is true. A unit test of production-only behaviour must mock `@/config/env` (see `githubActivityStore.test.tsx`), or cover it in a browser spec, which runs against the production build.
 - **Failed CI runs upload reports**: `playwright-report`, `coverage`, and `lighthouse-reports` artifacts on the run page.
 
 ## Related pages

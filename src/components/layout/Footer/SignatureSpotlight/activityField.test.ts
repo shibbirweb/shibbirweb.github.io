@@ -1,8 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
     ACTIVITY_CELL_PITCH,
+    BREATH_AMPLITUDE,
+    EMPTY_DAY_GLOW,
     ACTIVITY_LEVEL_COUNT,
     ACTIVITY_LEVEL_WEIGHTS,
+    breatheLevel,
     createRandom,
     generateActivityLevels,
     listActivityCells,
@@ -91,5 +94,29 @@ describe('generateActivityLevels', () => {
         } finally {
             Math.random = originalRandom;
         }
+    });
+});
+
+describe('breatheLevel', () => {
+    it('rests on the real level when the envelope is closed', () => {
+        expect(breatheLevel(2, 1, 0)).toBe(2);
+    });
+
+    it('swells around the real level by at most BREATH_AMPLITUDE', () => {
+        expect(breatheLevel(2, 1, 1)).toBeCloseTo(2 + BREATH_AMPLITUDE);
+        expect(breatheLevel(2, -1, 1)).toBeCloseTo(2 - BREATH_AMPLITUDE);
+    });
+
+    it('lets an empty day glow only faintly, never like real activity', () => {
+        expect(breatheLevel(0, 1, 0)).toBe(0);
+        expect(breatheLevel(0, -1, 1)).toBe(0);
+        expect(breatheLevel(0, 1, 1)).toBeCloseTo(EMPTY_DAY_GLOW);
+        expect(EMPTY_DAY_GLOW).toBeLessThan(1 - BREATH_AMPLITUDE);
+    });
+
+    it('stays inside the level range', () => {
+        expect(breatheLevel(ACTIVITY_LEVEL_COUNT - 1, 1, 1)).toBe(
+            ACTIVITY_LEVEL_COUNT - 1
+        );
     });
 });

@@ -1,6 +1,6 @@
 # Page backgrounds
 
-> **In short:** Every page sits on a soft two colour wash. Article pages use their cover colours, other pages get colours from a hash of the URL, and the home page paints its own per section swells. The footer name signature is drawn as a faint GitHub style contribution graph that brightens near the cursor.
+> **In short:** Every page sits on a soft two colour wash. Article pages use their cover colours, other pages get colours from a hash of the URL, and the home page paints its own per section swells. The footer name signature is drawn as a faint graph of the maintainer's real GitHub contributions that brightens near the cursor.
 
 ## Files involved
 
@@ -41,9 +41,18 @@ Home is transparent here because `globals.css` gives each `main.home-sections > 
 
 - Two layers stacked in one grid cell: the solid "Shibbir" SVG, and a canvas that redraws the letters as GitHub style contribution squares.
 - The squares always show faintly (`--graph-rest` in `SignatureSpotlight.module.css`). `usePointerSpotlight` tracks the pointer across the window and writes CSS variables to the signature box, with no React re-render. Both layers read them: the squares rise to full strength in a circle near the pointer, and in dark mode the solid letter fades out there by the same amount. Light mode keeps the solid letter behind the squares (`--solid-keep`), because the pale gaps would otherwise break its smooth edge into stair steps. The circle and its brightness ease after the pointer (`easeToward` in `src/utils/`) instead of snapping.
-- `useActivityGraph` keeps a square wherever its centre falls inside the letter path (`activityField.ts`), draws them with `drawActivityGraph.ts`, and changes a few levels every 900ms while the spotlight is lit. Each changed square fades to its new shade over about two seconds (`activityColors.ts` blends the in-between shades). It redraws when the theme changes.
+- `useActivityGraph` keeps a square wherever its centre falls inside the letter path (`activityField.ts`) and draws them with `drawActivityGraph.ts`. It redraws when the theme changes.
+- The squares show the last 30 days of GitHub contributions (`githubActivityDays`). The days run left to right: the oldest is in the "S", today is in the "D" (`mapDaysToCells` in `githubActivity.ts`), so each letter covers two or three days. Each day gets an equal-width band. Near each border the shade eases into the next day, with a little random feathering (`DAY_EDGE_SOFTNESS`, `DAY_EDGE_JITTER`), so a busy day fades out instead of stopping at a hard line. Squares are also randomly dimmed a little (`DAY_TEXTURE_DEPTH`), so a busy day reads as texture.
+- While the spotlight is lit, active squares breathe gently around their real level. Empty days glow faintly, never past 45% of the way to level 1, so they react to the pointer but never look like work that did not happen.
 - The five square colours are the `--activity-level-0` to `4` grayscale variables in `SignatureSpotlight.module.css`, with a dark set for dark mode.
 - Touch devices and reduced motion get the faint graph, standing still.
+
+## Where the GitHub data comes from
+
+- GitHub's own calendar sends no CORS header and its API needs a token, so the browser calls a public community proxy instead. It only returns a whole year, so the store keeps the newest 30 days. The URL, day count, cache key and 4 hour limit are in `SignatureSpotlight/contents.ts`, built from `githubUsername` in `src/config/constants.ts`.
+- `watchGithubActivity` (`githubActivityStore.ts`) shows the `localStorage` copy at once. If it is missing or older than 4 hours, it calls the proxy once the footer is about 600px away, then caches the result. So each browser calls the proxy at most once every 4 hours. In local development (`isDevelopment`) the cache is skipped, so every reload fetches fresh data.
+- Until real data arrives, or if the proxy fails, times out (8s) or storage is blocked, the graph shows a seeded decorative pattern. Real data fades in over it.
+- Browser tests block third-party requests, so most specs see the decorative pattern. `tests/e2e/footer.spec.ts` mocks the proxy with `page.route` to check the request timing, the cache, trimming to 30 days, and the fallback when the proxy fails.
 
 ## Good to know
 

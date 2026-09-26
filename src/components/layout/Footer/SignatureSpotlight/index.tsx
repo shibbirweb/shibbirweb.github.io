@@ -8,11 +8,11 @@ import { usePointerSpotlight } from '@/components/layout/Footer/SignatureSpotlig
 import styles from '@/components/layout/Footer/SignatureSpotlight/SignatureSpotlight.module.css';
 
 /**
- * The footer signature: a dim solid wordmark that, within a soft circle
- * following the pointer, resolves into a GitHub-style contribution graph shaped
- * to the letters. The graph layer (ActivityReveal) is masked to that circle and
- * stacked over the solid base in one grid cell, so the two stay aligned at any
- * width; away from the pointer only the solid wordmark shows.
+ * The footer signature: a dim solid wordmark overlaid with a graph of the
+ * maintainer's real GitHub activity, shaped to the letters. The graph layer
+ * (ActivityReveal) rests faintly everywhere and brightens within a soft circle
+ * following the pointer; it is stacked over the solid base in one grid cell, so
+ * the two stay aligned at any width.
  */
 export default function SignatureSpotlight() {
     const spotlightRef = useRef<HTMLDivElement>(null);

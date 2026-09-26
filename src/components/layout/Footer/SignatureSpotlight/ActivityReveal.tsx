@@ -6,12 +6,12 @@ import { useActivityGraph } from '@/components/layout/Footer/SignatureSpotlight/
 import styles from '@/components/layout/Footer/SignatureSpotlight/SignatureSpotlight.module.css';
 
 /**
- * The signature's contribution-graph reveal layer: the wordmark redrawn as
- * GitHub-style activity squares on a canvas, shown only inside the pointer
- * spotlight (whose position and opacity it inherits from `spotlightRef`). Away
- * from the pointer the layer is invisible and the solid wordmark shows through;
- * near it the letters read as a graph of busy and quiet days. useActivityGraph
- * draws the squares and keeps them quietly shifting while the reveal is shown.
+ * The signature's contribution-graph layer: the wordmark redrawn on a canvas
+ * as squares showing the maintainer's last 30 days of GitHub activity. It rests
+ * faintly across the whole name and rises to full strength inside the pointer
+ * spotlight (whose position and opacity it inherits from `spotlightRef`).
+ * useActivityGraph loads the data, draws the squares, and lets them breathe
+ * gently while the spotlight is lit.
  */
 export default function ActivityReveal({
     spotlightRef,

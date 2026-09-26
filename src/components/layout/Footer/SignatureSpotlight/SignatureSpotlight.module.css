@@ -1,12 +1,13 @@
 @reference "tailwindcss";
 
-/* Footer signature cursor spotlight: the wordmark is a GitHub-style
-   contribution graph, the letters redrawn as small rounded squares tinted by
-   activity level, blended over the dim solid wordmark. At rest the graph shows
-   faintly everywhere (--graph-rest); within a soft circle that follows the
-   pointer it rises to full strength while the solid letter fades by the same
-   amount, so the two layers always crossfade. The graph only draws squares
-   inside the letters, so they never show as a visible disk or box edge. The pointer vars
+/* Footer signature cursor spotlight: the wordmark is a graph of the
+   maintainer's GitHub activity, the letters redrawn as small rounded squares
+   tinted by activity level, blended over the dim solid wordmark. At rest the
+   graph shows faintly everywhere (--graph-rest); within a soft circle that
+   follows the pointer it rises to full strength, and in dark mode the solid
+   letter fades by the same amount (light keeps it, see --solid-keep). The
+   graph only draws squares inside the letters, so they never show as a
+   visible disk or box edge. The pointer vars
    and --spotlight-opacity are written to .spotlight by usePointerSpotlight from
    the pointer's proximity to the signature (so the graph wakes as the cursor
    nears the letters, not only over them), and both layers inherit them; the
@@ -145,9 +146,11 @@
    properties on every draw, so theming stays here. */
 .activityCanvas {
     @apply absolute inset-0 size-full;
-    /* Light starts one clear step below the #ededed page (as dark starts one
-       step above #0a0a0a) so even empty days read, then runs to near black. */
-    --activity-level-0: #d4d4d4; /* neutral-300 */
+    /* Light runs from just below the solid letter to near black. The empty
+       day sits a small step darker than the neutral-300 letter kept behind the
+       squares, so the lighter gaps outline every square, mirroring dark mode,
+       where empty squares sit a step above the #0a0a0a page. */
+    --activity-level-0: #c4c4c4; /* between neutral-300 and neutral-400 */
     --activity-level-1: #a3a3a3; /* neutral-400 */
     --activity-level-2: #737373; /* neutral-500 */
     --activity-level-3: #525252; /* neutral-600 */

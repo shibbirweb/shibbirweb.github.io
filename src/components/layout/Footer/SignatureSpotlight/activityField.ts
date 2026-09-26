@@ -85,8 +85,9 @@ export function listActivityCells(
 }
 
 /**
- * Seeded activity levels, one per cell, so the graph looks the same on every
- * visit until the flicker starts shifting it.
+ * Seeded decorative activity levels, one per cell, shown until the real GitHub
+ * calendar arrives (or instead of it, when the proxy cannot be reached). Seeded,
+ * so the fallback looks the same on every visit.
  */
 export function generateActivityLevels(
     count: number,
@@ -94,4 +95,31 @@ export function generateActivityLevels(
 ): number[] {
     const random = createRandom(seed);
     return Array.from({ length: count }, () => pickActivityLevel(random()));
+}
+
+// How far a lit square's shade swells above and below its real level while it
+// breathes on hover, in levels. Small, so a square never reads as another level.
+export const BREATH_AMPLITUDE = 0.4;
+// How far an empty day glows toward level 1 at the top of its breath. Kept
+// below 1 - BREATH_AMPLITUDE (the lowest a level 1 day ever dips), so an empty
+// day stays visibly quieter than any real activity.
+export const EMPTY_DAY_GLOW = 0.45;
+
+/**
+ * The level a square shows while breathing: its resting `level`, nudged by a
+ * `wave` in -1..1 scaled by `envelope` (0 at rest, 1 fully lit), and kept in
+ * range. Empty days (level 0) only glow faintly upward, to at most
+ * EMPTY_DAY_GLOW, so they still react to the spotlight without ever reading
+ * as a day with activity.
+ */
+export function breatheLevel(
+    level: number,
+    wave: number,
+    envelope: number
+): number {
+    if (level <= 0) {
+        return envelope * EMPTY_DAY_GLOW * (0.5 + 0.5 * wave);
+    }
+    const breathing = level + wave * envelope * BREATH_AMPLITUDE;
+    return Math.min(Math.max(breathing, 0), ACTIVITY_LEVEL_COUNT - 1);
 }
