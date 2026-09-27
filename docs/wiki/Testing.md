@@ -68,7 +68,7 @@ Useful extras: `pnpm test:watch`, `pnpm test:coverage`, and `pnpm test:e2e --ui`
 - **Put unit and component tests beside the code**: `Foo.tsx` gets `Foo.test.tsx`. `.test.ts` runs in Node, `.test.tsx` runs in jsdom.
 - **Use `@/` imports** (and `@tests/` for test helpers), like all other code.
 - **Browser specs import `test` from `@tests/e2e/fixtures`**. It blocks all third-party requests and fails on any page error. Mock a service with `page.route`.
-- **Wait with `waitForHydration(page)`** before checking diagrams or copy buttons, not `networkidle`.
+- **Wait with `waitForHydration(page)`** before checking diagrams or copy buttons, not `networkidle`. Diagrams only draw near the screen, so it scrolls each one into view, then back to the top.
 - **Test what a visitor sees**: roles, labels, and text, not class names.
 - **A new page?** Add it to `tests/e2e/routes.ts` so the layout and a11y sweeps cover it.
 
@@ -77,6 +77,7 @@ Useful extras: `pnpm test:watch`, `pnpm test:coverage`, and `pnpm test:e2e --ui`
 - **Budgets live in `tests/build/performance.test.ts`.** If a change truly needs more JavaScript, raise the number in the same PR and say why.
 - **Formatting is checked only on files the PR changes.** Many older files are not Prettier formatted yet; fix a file when you edit it.
 - **Service workers are blocked** in browser tests except `pwa.spec.ts`, because they would hide requests from `page.route`.
+- **Vitest counts as development.** It runs with `NODE_ENV=test`, so `isDevelopment` from `@/config/env` is true. A unit test of production-only behaviour must mock `@/config/env` (see `githubActivityStore.test.tsx`), or cover it in a browser spec, which runs against the production build.
 - **Failed CI runs upload reports**: `playwright-report`, `coverage`, and `lighthouse-reports` artifacts on the run page.
 
 ## Related pages

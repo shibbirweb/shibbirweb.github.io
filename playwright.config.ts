@@ -55,7 +55,7 @@ export default defineConfig({
             name: 'mobile',
             use: { ...devices['Pixel 7'] },
             testMatch:
-                /(responsive|a11y|navigation|theme|home|contact|articles|article|pages)\.spec\.ts/,
+                /(responsive|a11y|navigation|theme|home|contact|articles|article|pages|footer)\.spec\.ts/,
         },
     ],
 });

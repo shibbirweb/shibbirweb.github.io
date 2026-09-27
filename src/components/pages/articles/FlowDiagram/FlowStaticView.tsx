@@ -1,10 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import DiagramSourceFallback from '@/components/pages/articles/DiagramSourceFallback';
 import DiagramTools from '@/components/pages/articles/DiagramTools';
 import styles from '@/components/pages/articles/FlowDiagram/FlowDiagram.module.css';
 import MermaidModal from '@/components/pages/articles/MermaidRenderer/MermaidModal';
 import MermaidStage from '@/components/pages/articles/MermaidRenderer/MermaidStage';
+import { useHasNearedViewport } from '@/components/pages/articles/MermaidRenderer/hooks/useHasNearedViewport';
 import { useMermaidSvg } from '@/components/pages/articles/MermaidRenderer/hooks/useMermaidSvg';
 
 /**
@@ -16,14 +18,24 @@ import { useMermaidSvg } from '@/components/pages/articles/MermaidRenderer/hooks
  * left off, because the surrounding FlowDiagram frame already provides one.
  *
  * `useMermaidSvg` brings lazy loading and theme-aware re-rendering with it, and
- * falls back to the source in a `<pre>` when mermaid cannot parse the block.
+ * falls back to the source in a `<pre>` until the diagram nears the viewport
+ * (useHasNearedViewport) or when mermaid cannot parse the block.
  */
 export default function FlowStaticView({ source }: { source: string }) {
-    const svg = useMermaidSvg(source);
+    // Mermaid loads and draws only once the placeholder nears the viewport.
+    const placeholderRef = useRef<HTMLPreElement>(null);
+    const hasNearedViewport = useHasNearedViewport(placeholderRef);
+    const svg = useMermaidSvg(source, hasNearedViewport);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     if (!svg) {
-        return <pre className={styles.staticFallback}>{source}</pre>;
+        return (
+            <DiagramSourceFallback
+                ref={placeholderRef}
+                source={source}
+                className={styles.staticFallback}
+            />
+        );
     }
 
     return (

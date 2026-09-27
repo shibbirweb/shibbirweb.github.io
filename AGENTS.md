@@ -48,3 +48,13 @@ Still verify affected routes by hand with `pnpm dev`, and production-only featur
 History follows Conventional Commit-style subjects such as `feat:`, `fix:`, and `refactor:`. Keep commits focused with an imperative, lowercase summary.
 
 Do not commit without explicit approval, commit directly to `master`, or push/open a PR unless requested. Approved commits belong on `feat/...`, `fix/...`, or `chore/...` branches and must not include AI attribution. PRs should describe the change, verification, and linked issue or plan; include screenshots for visual work.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->

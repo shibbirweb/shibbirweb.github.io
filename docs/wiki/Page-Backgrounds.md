@@ -1,6 +1,6 @@
 # Page backgrounds
 
-> **In short:** Every page sits on a soft two colour wash. Article pages use their cover colours, other pages get colours from a hash of the URL, and the home page paints its own per section swells. The footer shows a name signature that reveals binary digits near the cursor.
+> **In short:** Every page sits on a soft two colour wash. Article pages use their cover colours, other pages get colours from a hash of the URL, and the home page paints its own per section swells. The footer name signature is drawn as a faint graph of the maintainer's real GitHub contributions that brightens near the cursor.
 
 ## Files involved
 
@@ -39,11 +39,22 @@ Home is transparent here because `globals.css` gives each `main.home-sections > 
 
 ## Footer signature
 
-- Two layers stacked in one grid cell: the solid "Shibbir" SVG, and a field of 0 and 1 digits cut to the same letter shapes with an SVG mask.
-- `usePointerSpotlight` tracks the pointer across the window and shows the digits in a circle near it, fading with distance. It writes CSS variables directly, with no React re-render.
-- `useBinaryFlicker` flips a few digits every 420ms, only while the spotlight is visible.
-- The digits come from a seeded random generator (`binaryField.ts`), so server and client HTML match.
-- Touch devices and reduced motion get the plain signature.
+- Two layers stacked in one grid cell: the solid "Shibbir" SVG, and a canvas that redraws the letters as GitHub style contribution squares.
+- The squares always show faintly (`--graph-rest` in `SignatureSpotlight.module.css`). `usePointerSpotlight` tracks the pointer across the window and writes CSS variables to the signature box, with no React re-render. Both layers read them: the squares rise to full strength in a circle near the pointer, and the solid letter fades out there by the same amount, so the gaps between squares show the page. In both themes the empty-day square sits only a small step from the page colour, which keeps the stepped square edge of each letter quiet. The circle and its brightness ease after the pointer (`easeToward` in `src/utils/`) instead of snapping.
+- `useActivityGraph` waits until the footer is about 600px from the screen, then calls `startActivityGraph`. So building the graph never adds to the page's start-up work, which Lighthouse measures.
+- `startActivityGraph` keeps a square wherever the letters cover at least half of its cell. `letterMask.ts` finds those cells by painting the letters once into a tiny canvas (one pixel per cell) and reading it back, instead of thousands of `isPointInPath` calls. It draws the squares with `drawActivityGraph.ts` and redraws everything when the theme changes. While the squares breathe, each frame repaints only the squares whose shade changed (`drawChangedSquares`): it clips to their whole pixels and also repaints any neighbour whose edge shares those pixels, so the result matches a full repaint pixel for pixel at about a third of the cost.
+- The squares show the last 30 days of GitHub contributions (`githubActivityDays`). The days run left to right: the oldest is in the "S", today is in the "D" (`mapDaysToCells` in `githubActivity.ts`), so each letter covers two or three days. Each day gets an equal-width band. Near each border the shade eases into the next day, with a little random feathering (`DAY_EDGE_SOFTNESS`, `DAY_EDGE_JITTER`), so a busy day fades out instead of stopping at a hard line. Squares are also randomly dimmed a little (`DAY_TEXTURE_DEPTH`), so a busy day reads as texture.
+- While the spotlight is lit, active squares breathe gently around their real level. Empty days glow faintly, never past 45% of the way to level 1, so they react to the pointer but never look like work that did not happen.
+- The five square colours are the `--activity-level-0` to `4` grayscale variables in `SignatureSpotlight.module.css`, with a dark set for dark mode.
+- Touch devices and reduced motion get the faint graph, standing still.
+
+## Where the GitHub data comes from
+
+- GitHub's own calendar sends no CORS header and its API needs a token, so the browser calls a public community proxy instead. It only returns a whole year, so the store keeps the newest 30 days. The URL, day count, cache key and 4 hour limit are in `SignatureSpotlight/contents.ts`, built from `githubUsername` in `src/config/constants.ts`.
+- `watchGithubActivity` (`githubActivityStore.ts`) shows the `localStorage` copy at once. If it is missing or older than 4 hours, it calls the proxy once the footer is about 600px away, then caches the result. So each browser calls the proxy at most once every 4 hours. In local development (`isDevelopment`) the cache is skipped, so every reload fetches fresh data.
+- Until real data arrives, or if the proxy fails, times out (8s) or storage is blocked, the graph shows a seeded decorative pattern. Real data fades in over it.
+- Browser tests block third-party requests, so most specs see the decorative pattern. `tests/e2e/footer.spec.ts` mocks the proxy with `page.route` to check the request timing, the cache, trimming to 30 days and the fallback. It also checks the hover (gradual brighten and fade), breathing only while hovered, reduced motion, the theme redraw, and the still graph on touch screens. The logic has its own tests beside it (`startActivityGraph.test.tsx`, `useActivityGraph.test.tsx`, `usePointerSpotlight.test.tsx`, `letterMask.test.tsx`).
+- Lighthouse blocks the proxy (`lighthouserc.cjs`), so audits never depend on a service we do not run.
 
 ## Good to know
 

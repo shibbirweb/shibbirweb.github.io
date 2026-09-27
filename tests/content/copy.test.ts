@@ -40,6 +40,15 @@ const GENERATED_PREFIXES = [
     '.claude/skills/openspec-',
 ];
 
+/**
+ * The agent rules block `next dev` writes into AGENTS.md. Next rewrites it to
+ * its own wording on every run (see generate-agent-files.js in next), em
+ * dashes included, so only the lines between these markers are exempt; the
+ * rest of the file still follows the ban.
+ */
+const NEXT_AGENT_RULES_START = '<!-- BEGIN:nextjs-agent-rules -->';
+const NEXT_AGENT_RULES_END = '<!-- END:nextjs-agent-rules -->';
+
 /** The rule itself has to show the banned character once, in backticks. */
 const CLAUDE_MD_RULE_QUOTE = `(\`${EM_DASH}\`)`;
 
@@ -62,13 +71,30 @@ function trackedTextFiles(): string[] {
         .filter((file) => fs.existsSync(path.join(process.cwd(), file)));
 }
 
-function emDashLines(file: string): string[] {
-    const text = fs.readFileSync(path.join(process.cwd(), file), 'utf8');
+/** Each line of `text` holding an em dash, outside Next's generated block. */
+function emDashLinesIn(file: string, text: string): string[] {
+    let insideGeneratedBlock = false;
     return text
         .split('\n')
-        .map((line, index) => ({ line, lineNumber: index + 1 }))
-        .filter(({ line }) => line.includes(EM_DASH))
+        .map((line, index) => {
+            if (line.includes(NEXT_AGENT_RULES_START)) {
+                insideGeneratedBlock = true;
+            }
+            const skipped = insideGeneratedBlock;
+            if (line.includes(NEXT_AGENT_RULES_END)) {
+                insideGeneratedBlock = false;
+            }
+            return { line, lineNumber: index + 1, skipped };
+        })
+        .filter(({ line, skipped }) => !skipped && line.includes(EM_DASH))
         .map(({ line, lineNumber }) => `${file}:${lineNumber}: ${line.trim()}`);
+}
+
+function emDashLines(file: string): string[] {
+    return emDashLinesIn(
+        file,
+        fs.readFileSync(path.join(process.cwd(), file), 'utf8')
+    );
 }
 
 describe('em dash ban', () => {
@@ -85,6 +111,21 @@ describe('em dash ban', () => {
             .flatMap(emDashLines);
 
         expect(offending).toEqual([]);
+    });
+
+    it("skips only Next's generated agent rules block", () => {
+        const text = [
+            `before ${EM_DASH} caught`,
+            NEXT_AGENT_RULES_START,
+            `generated ${EM_DASH} skipped`,
+            NEXT_AGENT_RULES_END,
+            `after ${EM_DASH} caught`,
+        ].join('\n');
+
+        expect(emDashLinesIn('AGENTS.md', text)).toEqual([
+            `AGENTS.md:1: before ${EM_DASH} caught`,
+            `AGENTS.md:5: after ${EM_DASH} caught`,
+        ]);
     });
 
     it('allows only the single quoted em dash in the CLAUDE.md rule', () => {

@@ -1,12 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import SpotlightBorder from '@/components/pages/common/SpotlightBorder';
 import { spotlightSurfaceProps } from '@/components/pages/common/spotlightSurface';
+import DiagramSourceFallback from '@/components/pages/articles/DiagramSourceFallback';
 import DiagramTools from '@/components/pages/articles/DiagramTools';
 import styles from '@/components/pages/articles/MermaidRenderer/MermaidDiagram.module.css';
 import MermaidStage from '@/components/pages/articles/MermaidRenderer/MermaidStage';
 import MermaidModal from '@/components/pages/articles/MermaidRenderer/MermaidModal';
+import { useHasNearedViewport } from '@/components/pages/articles/MermaidRenderer/hooks/useHasNearedViewport';
 import { useMermaidSvg } from '@/components/pages/articles/MermaidRenderer/hooks/useMermaidSvg';
 import { cn } from '@/utils/cn';
 
@@ -22,11 +24,21 @@ import { cn } from '@/utils/cn';
  * the data attribute spotlightSurfaceProps adds.
  */
 export default function MermaidDiagram({ source }: { source: string }) {
-    const svg = useMermaidSvg(source);
+    // The placeholder is what the reader scrolls towards; mermaid loads and
+    // draws only once it nears the viewport.
+    const placeholderRef = useRef<HTMLPreElement>(null);
+    const hasNearedViewport = useHasNearedViewport(placeholderRef);
+    const svg = useMermaidSvg(source, hasNearedViewport);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     if (!svg) {
-        return <pre className={cn('not-prose', styles.fallback)}>{source}</pre>;
+        return (
+            <DiagramSourceFallback
+                ref={placeholderRef}
+                source={source}
+                className={cn('not-prose', styles.fallback)}
+            />
+        );
     }
 
     return (
