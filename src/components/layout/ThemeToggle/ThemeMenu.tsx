@@ -11,12 +11,12 @@ import { useCloseOnRouteChange } from '@/components/layout/Navbar/hooks/useClose
 
 /**
  * Desktop theme control: a round icon button fixed to the top-right that opens a
- * small menu of the three preferences (light / system / dark). The trigger shows
- * the current preference's icon. Hidden on mobile, where the segmented
- * ThemeToggle lives inside the menu panel instead.
+ * small menu of the two themes (light / dark). The trigger shows the current
+ * theme's icon. Hidden on mobile, where the segmented ThemeToggle lives inside
+ * the menu panel instead.
  */
 export default function ThemeMenu() {
-    const { preference, setPreference } = useTheme();
+    const { theme, setTheme } = useTheme();
     const { open, toggle, close } = useDisclosure();
     const menuRef = useRef<HTMLDivElement>(null);
     useCloseOnEscape(open, close);
@@ -24,7 +24,7 @@ export default function ThemeMenu() {
     useCloseOnRouteChange(close);
 
     const ActiveIcon =
-        themeOptions.find((option) => option.value === preference)?.Icon ??
+        themeOptions.find((option) => option.value === theme)?.Icon ??
         themeOptions[0].Icon;
 
     return (
@@ -64,7 +64,7 @@ export default function ThemeMenu() {
                 >
                     <ul className="flex flex-col gap-0.5">
                         {themeOptions.map(({ value, label, Icon }) => {
-                            const active = preference === value;
+                            const active = theme === value;
                             return (
                                 <li
                                     key={value}
@@ -75,7 +75,7 @@ export default function ThemeMenu() {
                                         role="menuitemradio"
                                         aria-checked={active}
                                         onClick={() => {
-                                            setPreference(value);
+                                            setTheme(value);
                                             close();
                                         }}
                                         className={cn(

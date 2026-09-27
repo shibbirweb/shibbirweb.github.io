@@ -12,7 +12,7 @@ import { mermaidConfig } from '@/components/pages/articles/MermaidRenderer/merma
  * lazily and only once `enabled` (callers pass whether the diagram has come
  * near the viewport, so the 1.7 MB library and the render stay out of page
  * start-up). It re-renders when the resolved theme changes (an OS scheme flip
- * while on 'system', or a manual switch) so the diagram matches the site.
+ * while no theme is saved, or a manual switch) so the diagram matches the site.
  * Returns '' until the first render succeeds (or stays '' if the source fails
  * to parse).
  */

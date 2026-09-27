@@ -2,41 +2,42 @@
 
 import { useEffect, useState } from 'react';
 import {
-    applyPreference,
-    getStoredPreference,
-    notifyPreferenceChange,
-    storePreference,
+    applyTheme,
+    getResolvedTheme,
+    notifyThemeChange,
+    resolveTheme,
+    storeTheme,
     subscribe,
-    type ThemePreference,
+    type Theme,
 } from '@/components/layout/ThemeToggle/theme';
 
 /**
- * Reads and updates the theme preference, keeping every mounted instance and the
- * <html> element in sync. SSR and the first client render both start at 'system'
- * so the markup matches; the stored value is read after mount to avoid a
- * hydration mismatch (the pre-paint ThemeScript has already applied it to the DOM).
+ * Reads and updates the light/dark theme, keeping every mounted instance and the
+ * <html> element in sync. SSR and the first client render both start at 'light'
+ * so the markup matches; the real theme is read after mount from <html>, where
+ * the pre-paint ThemeScript has already applied the saved choice or OS scheme.
  */
 export function useTheme() {
-    const [preference, setPreferenceState] = useState<ThemePreference>('system');
+    const [theme, setThemeState] = useState<Theme>('light');
 
     useEffect(() => {
-        setPreferenceState(getStoredPreference());
-        // Re-sync on a preference change (this or another instance), a cross-tab
-        // storage write, or an OS scheme flip while on 'system'.
+        setThemeState(getResolvedTheme());
+        // Re-sync on a choice (this or another instance), a cross-tab storage
+        // write, or an OS scheme flip while no choice is saved.
         const sync = () => {
-            const next = getStoredPreference();
-            setPreferenceState(next);
-            applyPreference(next);
+            const next = resolveTheme();
+            setThemeState(next);
+            applyTheme(next);
         };
         return subscribe(sync);
     }, []);
 
-    const setPreference = (next: ThemePreference) => {
-        setPreferenceState(next);
-        storePreference(next);
-        applyPreference(next);
-        notifyPreferenceChange();
+    const setTheme = (next: Theme) => {
+        setThemeState(next);
+        storeTheme(next);
+        applyTheme(next);
+        notifyThemeChange();
     };
 
-    return { preference, setPreference };
+    return { theme, setTheme };
 }

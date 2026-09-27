@@ -1,6 +1,6 @@
 # Theme system
 
-> **In short:** Users pick System, Light, or Dark. Only that choice is saved (in `localStorage` as `theme`). The resolved value, `light` or `dark`, is written to `<html data-theme="...">`, and CSS reads it.
+> **In short:** There are two themes, Light and Dark. A first-time visitor gets the theme their device is set to. Once they pick one, it is saved (in `localStorage` as `theme`) and wins over the device from then on. The theme is written to `<html data-theme="...">`, and CSS reads it.
 
 ## Files involved
 
@@ -10,11 +10,11 @@ All paths are under `src/components/layout/ThemeToggle/`.
 | --------------------------- | -------------------------------------------------------------- |
 | `theme.ts`                  | Core logic: read, save, resolve, apply, and subscribe.         |
 | `ThemeScript.tsx`           | Inline script in `<head>` that applies the theme before paint. |
-| `hooks/useTheme.ts`         | React hook: current choice plus `setPreference`.               |
+| `hooks/useTheme.ts`         | React hook: current theme plus `setTheme`.                     |
 | `hooks/useResolvedTheme.ts` | React hook: just `light` or `dark`.                            |
-| `options.ts`                | The three choices and their icons.                             |
+| `options.ts`                | The two choices and their icons.                               |
 | `ThemeMenu.tsx`             | Desktop: round button with a dropdown (top right).             |
-| `index.tsx`                 | Mobile: three button toggle inside the menu panel.             |
+| `index.tsx`                 | Mobile: two button toggle inside the menu panel.               |
 | `src/app/globals.css`       | Colour tokens and the `dark` variant.                          |
 
 ## How it works
@@ -24,20 +24,20 @@ flowchart TD
     A[Page starts loading] --> B[ThemeScript reads localStorage.theme]
     B --> C{light or dark?}
     C -- yes --> D[use it]
-    C -- no, or system --> E[check prefers-color-scheme]
+    C -- nothing saved --> E[check prefers-color-scheme]
     E --> D
     D --> F["html data-theme + color-scheme"]
     F --> G[CSS tokens switch]
-    H[User picks a theme] --> I[useTheme.setPreference]
+    H[User picks a theme] --> I[useTheme.setTheme]
     I --> J[save, apply, notify]
     J --> K[themepreferencechange event]
     K --> L[Mermaid, giscus, hCaptcha re-render]
 ```
 
 1. **Before paint**, `ThemeScript` resolves the theme and sets `data-theme` and `colorScheme` on `<html>`. No flash of the wrong theme.
-2. **After hydration**, `useTheme` reads the saved choice and subscribes to changes.
-3. **When the user picks**, `setPreference` saves the choice, applies it, and fires a `themepreferencechange` window event.
-4. **`subscribe()`** in `theme.ts` listens to three things: that event, `storage` events from other tabs, and OS colour scheme changes.
+2. **After hydration**, `useTheme` reads the theme from `<html>` and subscribes to changes.
+3. **When the user picks**, `setTheme` saves the choice, applies it, and fires a `themepreferencechange` window event.
+4. **`subscribe()`** in `theme.ts` listens to three things: that event, `storage` events from other tabs, and OS colour scheme changes. An OS change only matters while nothing is saved, because `resolveTheme()` always prefers the saved choice.
 
 ## CSS side
 
@@ -65,9 +65,9 @@ flowchart TD
 
 ## Good to know
 
-- **"system" never reaches the DOM.** Only `light` or `dark` is written to `data-theme`.
-- **Keep `ThemeScript` and `theme.ts` in step.** The inline script copies the logic of `resolvePreference` and `applyPreference`.
-- **Hooks start with safe defaults** (`system` and `light`) to avoid hydration mismatch, then update after mount.
+- **There is no System option any more.** An old saved `system` value counts as "nothing saved", so those visitors simply follow their device again.
+- **Keep `ThemeScript` and `theme.ts` in step.** The inline script copies the logic of `resolveTheme` and `applyTheme`.
+- **Hooks start at `light`** to avoid a hydration mismatch, then read the real theme after mount.
 - The offline page has its own copy of the theme script. See [Offline page](Offline-Page.md).
 
 ## Related pages
