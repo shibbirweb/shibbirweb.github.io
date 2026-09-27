@@ -124,13 +124,11 @@ export async function waitForHydration(page: Page): Promise<void> {
     );
     // Until mermaid draws it, each diagram shows its source in a fallback <pre>
     // (CSS Module classes `..._fallback__` / `..._staticFallback__`). Bring
-    // the first one left into view on every check, until all are replaced.
-    const scrolledForDiagrams = await page.evaluate(
-        () =>
-            document.querySelectorAll(
-                '[class*="_fallback__"], [class*="_staticFallback__"]'
-            ).length > 0
-    );
+    // the first one left into view on every check, until all are replaced,
+    // then return exactly to where the page was. The islands can mount after
+    // the first check on a slow runner, so the position is always restored
+    // rather than only when placeholders were seen up front.
+    const startScrollY = await page.evaluate(() => window.scrollY);
     await page.waitForFunction(() => {
         const placeholders = document.querySelectorAll(
             '[class*="_fallback__"], [class*="_staticFallback__"]'
@@ -141,11 +139,11 @@ export async function waitForHydration(page: Page): Promise<void> {
         });
         return placeholders.length === 0;
     });
-    if (scrolledForDiagrams) {
-        await page.evaluate(() =>
-            window.scrollTo({ top: 0, behavior: 'instant' })
-        );
-    }
+    await page.evaluate((top) => {
+        if (window.scrollY !== top) {
+            window.scrollTo({ top, behavior: 'instant' });
+        }
+    }, startScrollY);
     await page.evaluate(
         () =>
             new Promise<void>((resolve) => {
