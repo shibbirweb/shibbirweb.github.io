@@ -30,6 +30,28 @@ export const collapsedPackageProjectCount = 4;
 // `links` to their distribution page alongside the source repo.
 export const packageProjects: Project[] = [
     {
+        name: 'MCP DB Read-Only',
+        category: 'MCP Server',
+        description:
+            'A Model Context Protocol server that lets AI assistants like Claude query MySQL, MariaDB, PostgreSQL, SQLite, SQL Server, ClickHouse, MongoDB, Redis and Elasticsearch/OpenSearch safely, with read-only access enforced both by query validation and at the database level, plus named profiles for switching databases without a restart.',
+        tech: ['TypeScript', 'Node.js', 'MCP', 'Docker'],
+        repoURL: 'https://github.com/shibbirweb/mcp-db-read-only',
+        links: [
+            {
+                url: 'https://www.npmjs.com/package/@shibbirweb/mcp-db-read-only',
+                label: 'npm',
+            },
+            {
+                url: 'https://hub.docker.com/r/shibbirweb/mcp-db-read-only',
+                label: 'Docker Hub',
+            },
+            {
+                url: 'https://github.com/shibbirweb/mcp-db-read-only/wiki',
+                label: 'Docs',
+            },
+        ],
+    },
+    {
         name: 'Extra Cursor Caret Height',
         category: 'VS Code Extension',
         description:
@@ -64,21 +86,6 @@ export const packageProjects: Project[] = [
         ],
     },
     {
-        name: 'Advanced Laravel Vue Paginate',
-        category: 'Vue.js Package',
-        description:
-            'A Vue.js pagination component that renders Laravel paginator responses out of the box, with a customizable, ready-to-use paginate UI.',
-        tech: ['Vue.js', 'JavaScript', 'Laravel'],
-        repoURL:
-            'https://github.com/shibbirweb/advanced-laravel-vue-paginate',
-        links: [
-            {
-                url: 'https://www.npmjs.com/package/advanced-laravel-vue-paginate',
-                label: 'npm',
-            },
-        ],
-    },
-    {
         name: 'Al-Quran Quote',
         category: 'Rainmeter Skin',
         description:
@@ -97,6 +104,20 @@ export const packageProjects: Project[] = [
             {
                 url: 'https://github.com/shibbirweb/rainmeter-skin-al-quran-quote/wiki',
                 label: 'Docs',
+            },
+        ],
+    },
+    {
+        name: 'Advanced Laravel Vue Paginate',
+        category: 'Vue.js Package',
+        description:
+            'A Vue.js pagination component that renders Laravel paginator responses out of the box, with a customizable, ready-to-use paginate UI.',
+        tech: ['Vue.js', 'JavaScript', 'Laravel'],
+        repoURL: 'https://github.com/shibbirweb/advanced-laravel-vue-paginate',
+        links: [
+            {
+                url: 'https://www.npmjs.com/package/advanced-laravel-vue-paginate',
+                label: 'npm',
             },
         ],
     },
