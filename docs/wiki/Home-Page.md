@@ -37,7 +37,7 @@ flowchart TD
 - **Hero.** Full screen. The name (`HeroName`) uses the Zain font and a shine animation over a pulsing grid. Then the job title and social icons. Name and title come from `constants.ts`. Both animations wait until 5 seconds after the page loads (`DeferredAnimations`), so they stay out of what Lighthouse and other speed tools measure.
 - **About me.** Four "facet" cards around a portrait (`Core`). On large screens, `SystemDiagram` draws connector lines when you scroll to it (`useDrawOnScroll`). On smaller screens, `Bento` shows a 2x2 grid.
 - **Skills.** A grid of `SkillCard` tiles. Each skill can set a brand `color`. The icon glows in that colour on hover.
-- **Projects** (heading "Open Source"). "Packages & Plugins" shows the first 4 cards, and "Show more" reveals the rest. Then "Personal Projects" and a link to `/resume`. Card glow colours are spread around the colour wheel by index.
+- **Projects** (heading "Open Source"). Two `ProjectGroup`s: "Packages & Plugins" shows the first 4 cards and "Personal Projects" the first 2, and each has its own "Show more" (`MoreProjects`) for the rest. The counts are `collapsedPackageProjectCount` and `collapsedPersonalProjectCount` in `contents.ts`. Then a link to `/resume`. Card glow colours are spread around the colour wheel by index.
 - **Articles.** The 3 newest posts as cards and a "View all articles" link. The section is hidden when there are no posts.
 - **Contact.** A form with captcha. See [Contact form](Contact-Form.md).
 

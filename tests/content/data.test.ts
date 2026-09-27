@@ -25,6 +25,7 @@ import {
 import { socialLinks } from '@/components/pages/home/HeroArea/contents';
 import {
     collapsedPackageProjectCount,
+    collapsedPersonalProjectCount,
     packageProjects,
     personalProjects,
 } from '@/components/pages/home/ProjectsArea/contents';
@@ -174,13 +175,17 @@ describe('ProjectsArea projects', () => {
         }
     });
 
-    it('collapses to a count the package list can fill', () => {
-        expect(Number.isInteger(collapsedPackageProjectCount)).toBe(true);
-        expect(collapsedPackageProjectCount).toBeGreaterThan(0);
-        expect(collapsedPackageProjectCount).toBeLessThanOrEqual(
-            packageProjects.length
-        );
-    });
+    it.each([
+        ['package', collapsedPackageProjectCount, packageProjects],
+        ['personal', collapsedPersonalProjectCount, personalProjects],
+    ])(
+        'collapses to a count the %s list can fill',
+        (_group, collapsedCount, projects) => {
+            expect(Number.isInteger(collapsedCount)).toBe(true);
+            expect(collapsedCount).toBeGreaterThan(0);
+            expect(collapsedCount).toBeLessThanOrEqual(projects.length);
+        }
+    );
 });
 
 describe('AboutMeArea facets', () => {

@@ -1,5 +1,9 @@
 import { XMLParser } from 'fast-xml-parser';
 import { describe, expect, it } from 'vitest';
+import {
+    packageProjects,
+    personalProjects,
+} from '@/components/pages/home/ProjectsArea/contents';
 import { siteURL } from '@/config/constants';
 import { getAllArticles } from '@/lib/posts';
 import {
@@ -94,6 +98,51 @@ describe('page metadata', () => {
                 'application/feed+json',
             ])
         );
+    });
+});
+
+describe('home page projects', () => {
+    it('ships every project card, including those behind "Show more"', () => {
+        const document = loadPage('index.html');
+        const work = document.getElementById('work');
+        const cardHeadings = [...(work?.querySelectorAll('li h4') ?? [])].map(
+            (heading) => heading.textContent?.trim()
+        );
+
+        for (const project of [...packageProjects, ...personalProjects]) {
+            expect(cardHeadings).toContain(project.name);
+        }
+    });
+
+    it('gives every project card its own glow colour across both groups', () => {
+        const document = loadPage('index.html');
+        // Cards are the spotlight surfaces; plain `li`s also match tech tags.
+        const cards =
+            document
+                .getElementById('work')
+                ?.querySelectorAll('li[data-spotlight-surface]') ?? [];
+        const glowColours = [...cards].map(
+            (card) => card.getAttribute('style')?.match(/--glow-a:([^;]+)/)?.[1]
+        );
+
+        expect(glowColours).toHaveLength(
+            packageProjects.length + personalProjects.length
+        );
+        expect(glowColours).not.toContain(undefined);
+        expect(new Set(glowColours).size).toBe(glowColours.length);
+    });
+
+    it('holds each "Show more" region hidden in the static HTML', () => {
+        const document = loadPage('index.html');
+
+        for (const regionId of [
+            'more-package-projects',
+            'more-personal-projects',
+        ]) {
+            const region = document.getElementById(regionId);
+            expect(region, regionId).not.toBeNull();
+            expect(region?.hasAttribute('hidden'), regionId).toBe(true);
+        }
     });
 });
 

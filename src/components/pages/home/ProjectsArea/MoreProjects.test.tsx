@@ -1,17 +1,17 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
-import MorePackageProjects from '@/components/pages/home/ProjectsArea/MorePackageProjects';
+import MoreProjects from '@/components/pages/home/ProjectsArea/MoreProjects';
 
 function renderReveal() {
     return render(
-        <MorePackageProjects>
+        <MoreProjects revealRegionId="more-test-projects">
             <p>Hidden project</p>
-        </MorePackageProjects>
+        </MoreProjects>
     );
 }
 
-describe('MorePackageProjects', () => {
+describe('MoreProjects', () => {
     it('starts collapsed with the extra cards hidden but still in the DOM', () => {
         renderReveal();
 
@@ -25,8 +25,8 @@ describe('MorePackageProjects', () => {
 
         const toggle = screen.getByRole('button', { name: 'Show more' });
         expect(toggle).toHaveAttribute('aria-expanded', 'false');
-        const regionId = toggle.getAttribute('aria-controls') ?? '';
-        expect(document.getElementById(regionId)).toContainElement(
+        expect(toggle).toHaveAttribute('aria-controls', 'more-test-projects');
+        expect(document.getElementById('more-test-projects')).toContainElement(
             screen.getByText('Hidden project')
         );
     });

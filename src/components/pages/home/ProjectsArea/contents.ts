@@ -21,10 +21,11 @@ export type Project = {
 };
 
 /**
- * How many package projects stay on screen before the "Show more" toggle.
- * Bump this when a project should be visible without a click.
+ * How many projects in each group stay on screen before its "Show more"
+ * toggle. Bump one when a project should be visible without a click.
  */
 export const collapsedPackageProjectCount = 4;
+export const collapsedPersonalProjectCount = 2;
 
 // Reusable tools published for others (VS Code Marketplace, npm). These carry
 // `links` to their distribution page alongside the source repo.
@@ -131,9 +132,35 @@ export const packageProjects: Project[] = [
     },
 ];
 
-// Public repos built for personal use, learning, or practice. Source only, no
-// distribution page.
+// Public repos built for personal use, learning, or practice. Mostly source
+// only; `links` is for the few that also ship releases or docs.
 export const personalProjects: Project[] = [
+    {
+        name: 'On Air Record',
+        category: 'Audio Broadcast & DVR',
+        description:
+            'A cross-platform audio broadcast and DVR service in Rust with a React control room UI: it captures a microphone on the host, streams it live to any browser on the local network, records continuously to disk, and lets you scrub back to any moment on a CCTV-style timeline.',
+        tech: ['Rust', 'React', 'TypeScript', 'Docker'],
+        repoURL: 'https://github.com/shibbirweb/on-air-record',
+        links: [
+            {
+                url: 'https://hub.docker.com/r/shibbirweb/on-air-record',
+                label: 'Docker Hub',
+            },
+            {
+                url: 'https://github.com/shibbirweb/on-air-record/pkgs/container/on-air-record',
+                label: 'GHCR',
+            },
+            {
+                url: 'https://github.com/shibbirweb/on-air-record/releases',
+                label: 'Releases',
+            },
+            {
+                url: 'https://github.com/shibbirweb/on-air-record/wiki',
+                label: 'Docs',
+            },
+        ],
+    },
     {
         name: 'Cloudflare DNS & Server Manager',
         category: 'Control Panel',
