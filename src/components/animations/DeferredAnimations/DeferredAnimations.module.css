@@ -1,0 +1,9 @@
+@reference "tailwindcss";
+
+/* Until the start delay passes, no descendant animates at all (not merely
+   paused), so nothing repaints during the page speed measurement window. The
+   selector outranks a single-class module rule such as `.shine`, and as an
+   unlayered rule it also beats Tailwind's layered `animate-*` utilities. */
+.gate[data-animations='waiting'] * {
+    @apply animate-none;
+}

@@ -12,6 +12,7 @@
 | `src/utils/pageGradient.ts`                                     | URL to colour pair (hash based).               |
 | `src/components/backgrounds/GridBackground.tsx`                 | Grid lines (hero, error pages, offline page).  |
 | `src/components/wrappers/WithGridAnimatedBackgroundWrapper.tsx` | Hero wrapper with a pulsing grid.              |
+| `src/components/animations/DeferredAnimations/`                 | Holds the hero animations until after load.    |
 | `src/components/layout/Footer/SignatureSpotlight/`              | The footer signature effect.                   |
 
 ## How the page wash picks colours
@@ -60,6 +61,7 @@ Home is transparent here because `globals.css` gives each `main.home-sections > 
 
 - To tint a new page from its own data, render `<SyncPageGradient colors={[from, to]} />` in it.
 - Grid colours come from `--grid-line` and `--grid-dot` in `globals.css`.
+- The hero grid pulse (and the name shine) start 5 seconds after the window `load` event. Until then `DeferredAnimations` sets `data-animations="waiting"`, and its CSS Module turns every animation inside it off, so nothing repaints while speed tools measure. Change the wait with its `delayMs` prop. Without JavaScript the hero just stays still.
 
 ## Related pages
 

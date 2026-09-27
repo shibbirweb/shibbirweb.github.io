@@ -1,6 +1,8 @@
 /* Shiny shimmer for the hero name. The animation only runs when motion is
    allowed (mirrors the previous `motion-safe:` behaviour); its duration is
-   overridden inline via the `speed` prop. */
+   overridden inline via the `speed` prop. The resting `bg-right` position
+   matches the first keyframe, so a delayed start (DeferredAnimations) or
+   reduced motion shows the same frame the shine begins from, with no jump. */
 @media (prefers-reduced-motion: no-preference) {
     .shine {
         animation: shine 5s linear infinite;

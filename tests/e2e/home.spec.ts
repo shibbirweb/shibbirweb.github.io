@@ -5,7 +5,12 @@ import {
     packageProjects,
 } from '@/components/pages/home/ProjectsArea/contents';
 import { personGivenName, professionalTitle } from '@/config/constants';
-import { expect, publishedArticles, test } from '@tests/e2e/fixtures';
+import {
+    expect,
+    publishedArticles,
+    test,
+    waitForHydration,
+} from '@tests/e2e/fixtures';
 
 test.describe('home page', () => {
     test.beforeEach(async ({ page }) => {
@@ -81,5 +86,29 @@ test.describe('home page', () => {
         await expect(
             teaser.getByRole('link', { name: 'View all articles' })
         ).toHaveAttribute('href', '/articles');
+    });
+});
+
+test.describe('hero animations', () => {
+    test('stay still until 5 seconds after the page loads', async ({
+        page,
+    }) => {
+        // The fake clock flows in real time until runFor skips it ahead, so
+        // hydration still settles normally before the delay is fast-forwarded.
+        await page.clock.install();
+        await page.goto('/');
+        await waitForHydration(page);
+
+        const hero = page.locator('#hero');
+        const nameShine = hero.getByRole('heading', { level: 1 }).locator('..');
+        const gridPulse = hero.locator('> div').last();
+
+        await expect(nameShine).toHaveCSS('animation-name', 'none');
+        await expect(gridPulse).toHaveCSS('animation-name', 'none');
+
+        await page.clock.runFor(5_000);
+
+        await expect(nameShine).toHaveCSS('animation-name', /shine/);
+        await expect(gridPulse).toHaveCSS('animation-name', 'pulse');
     });
 });

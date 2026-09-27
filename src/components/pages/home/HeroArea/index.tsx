@@ -1,3 +1,4 @@
+import DeferredAnimations from '@/components/animations/DeferredAnimations';
 import ShinyTextAnimation from '@/components/animations/ShinyTextAnimation';
 import HeroName from '@/components/pages/home/HeroArea/HeroName';
 import SocialIcons from '@/components/pages/home/HeroArea/SocialIcons';
@@ -12,24 +13,34 @@ import { cn } from '@/utils/cn';
 
 export default function HeroArea() {
     return (
-        <WithGridAnimatedBackgroundWrapper id="hero">
-            <div className={cn(zain.variable, 'font-display container mx-auto')}>
-                <div className="flex min-h-[100svh] w-full flex-col items-center justify-center py-6">
-                    <div className="flex flex-col gap-y-2 px-4 sm:gap-y-3 md:gap-y-4 lg:items-end lg:justify-center">
-                        <ShinyTextAnimation>
-                            <h1 className="flex flex-wrap items-center justify-center gap-x-[0.25em] text-[length:clamp(2.75rem,14vw,6rem)] leading-none font-bold not-supports-[text-box-trim:trim-both]:!-mb-[0.115em] not-supports-[text-box-trim:trim-both]:!leading-[0.75] sm:text-8xl sm:leading-10 lg:text-9xl lg:leading-12">
-                                <HeroName
-                                    words={[personGivenName, personFamilyName]}
-                                />
-                            </h1>
-                        </ShinyTextAnimation>
-                        <p className="self-center text-center text-2xl leading-tight sm:leading-5 lg:self-end lg:pr-[5px]">
-                            {professionalTitle}
-                        </p>
+        <DeferredAnimations>
+            <WithGridAnimatedBackgroundWrapper id="hero">
+                <div
+                    className={cn(
+                        zain.variable,
+                        'font-display container mx-auto'
+                    )}
+                >
+                    <div className="flex min-h-[100svh] w-full flex-col items-center justify-center py-6">
+                        <div className="flex flex-col gap-y-2 px-4 sm:gap-y-3 md:gap-y-4 lg:items-end lg:justify-center">
+                            <ShinyTextAnimation>
+                                <h1 className="flex flex-wrap items-center justify-center gap-x-[0.25em] text-[length:clamp(2.75rem,14vw,6rem)] leading-none font-bold not-supports-[text-box-trim:trim-both]:!-mb-[0.115em] not-supports-[text-box-trim:trim-both]:!leading-[0.75] sm:text-8xl sm:leading-10 lg:text-9xl lg:leading-12">
+                                    <HeroName
+                                        words={[
+                                            personGivenName,
+                                            personFamilyName,
+                                        ]}
+                                    />
+                                </h1>
+                            </ShinyTextAnimation>
+                            <p className="self-center text-center text-2xl leading-tight sm:leading-5 lg:self-end lg:pr-[5px]">
+                                {professionalTitle}
+                            </p>
+                        </div>
+                        <SocialIcons />
                     </div>
-                    <SocialIcons />
                 </div>
-            </div>
-        </WithGridAnimatedBackgroundWrapper>
+            </WithGridAnimatedBackgroundWrapper>
+        </DeferredAnimations>
     );
 }
