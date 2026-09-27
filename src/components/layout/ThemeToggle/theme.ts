@@ -1,89 +1,91 @@
-// Theme core: the single source of truth for the light/dark/system preference.
-// Framework-agnostic and SSR-safe (every window/document/localStorage access is
-// guarded), so it can be shared by the React hook, the pre-paint ThemeScript,
-// and the Mermaid renderer without pulling any of them into each other.
+// Theme core: the single source of truth for the light/dark theme. Framework-
+// agnostic and SSR-safe (every window/document/localStorage access is guarded),
+// so it can be shared by the React hook, the pre-paint ThemeScript, and the
+// Mermaid renderer without pulling any of them into each other.
 //
-// The stored value is the user's *preference* ('system' | 'light' | 'dark').
-// What we write to <html> is the *resolved* theme ('light' | 'dark'): data-theme
-// drives the attribute selectors and style.color-scheme drives every light-dark()
-// token. Keeping the resolved theme on the element (never "system") means CSS
-// only ever deals with a concrete light or dark, so no @media duplication.
+// There are only two themes. A visitor who has never picked one gets the OS
+// colour scheme (and keeps following it); once they pick light or dark, that
+// choice is saved and wins over the OS from then on. What we write to <html> is
+// always a concrete theme: data-theme drives the attribute selectors and
+// style.color-scheme drives every light-dark() token.
 
-export type ThemePreference = 'system' | 'light' | 'dark';
-export type ResolvedTheme = 'light' | 'dark';
+export type Theme = 'light' | 'dark';
 
 export const THEME_STORAGE_KEY = 'theme';
 
-// Fired on window when the preference changes in this tab, so every mounted
-// consumer (both navbar toggles, the Mermaid renderer) re-reads it in sync.
+// Fired on window when the theme changes in this tab, so every mounted consumer
+// (both navbar toggles, the Mermaid renderer) re-reads it in sync.
 const THEME_CHANGE_EVENT = 'themepreferencechange';
 const DARK_QUERY = '(prefers-color-scheme: dark)';
 
-function isPreference(value: unknown): value is ThemePreference {
-    return value === 'system' || value === 'light' || value === 'dark';
+function isTheme(value: unknown): value is Theme {
+    return value === 'light' || value === 'dark';
 }
 
-export function getStoredPreference(): ThemePreference {
-    if (typeof window === 'undefined') return 'system';
+/**
+ * The visitor's saved choice, or null when they have never picked one. Anything
+ * else in storage (including the old 'system' value) counts as no choice.
+ */
+export function getStoredTheme(): Theme | null {
+    if (typeof window === 'undefined') return null;
     try {
         const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
-        return isPreference(stored) ? stored : 'system';
+        return isTheme(stored) ? stored : null;
     } catch {
-        return 'system';
+        return null;
     }
 }
 
-export function storePreference(preference: ThemePreference): void {
+export function storeTheme(theme: Theme): void {
     try {
-        window.localStorage.setItem(THEME_STORAGE_KEY, preference);
+        window.localStorage.setItem(THEME_STORAGE_KEY, theme);
     } catch {
         // Ignore write failures (private mode, storage disabled).
     }
 }
 
-function prefersDark(): boolean {
-    return (
-        typeof window !== 'undefined' &&
-        window.matchMedia(DARK_QUERY).matches
-    );
+export function getSystemTheme(): Theme {
+    const prefersDark =
+        typeof window !== 'undefined' && window.matchMedia(DARK_QUERY).matches;
+    return prefersDark ? 'dark' : 'light';
 }
 
-export function resolvePreference(preference: ThemePreference): ResolvedTheme {
-    if (preference === 'light' || preference === 'dark') return preference;
-    return prefersDark() ? 'dark' : 'light';
+/** The theme to show: the saved choice, or the OS scheme when there is none. */
+export function resolveTheme(): Theme {
+    return getStoredTheme() ?? getSystemTheme();
 }
 
 /**
- * Writes the resolved theme to <html> so the CSS can react. Mirrors the inline
- * pre-paint script in ThemeScript; the two must stay aligned.
+ * Writes the theme to <html> so the CSS can react. Mirrors the inline pre-paint
+ * script in ThemeScript; the two must stay aligned.
  */
-export function applyPreference(preference: ThemePreference): void {
+export function applyTheme(theme: Theme): void {
     if (typeof document === 'undefined') return;
-    const resolved = resolvePreference(preference);
     const root = document.documentElement;
-    root.dataset.theme = resolved;
-    root.style.colorScheme = resolved;
+    root.dataset.theme = theme;
+    root.style.colorScheme = theme;
 }
 
-export function getResolvedTheme(): ResolvedTheme {
+/** The theme currently on <html>, or the OS scheme when none is applied yet. */
+export function getResolvedTheme(): Theme {
     if (typeof document !== 'undefined') {
         const current = document.documentElement.dataset.theme;
-        if (current === 'light' || current === 'dark') return current;
+        if (isTheme(current)) return current;
     }
-    return prefersDark() ? 'dark' : 'light';
+    return getSystemTheme();
 }
 
-/** Broadcasts an in-tab preference change so every consumer re-reads it. */
-export function notifyPreferenceChange(): void {
+/** Broadcasts an in-tab theme change so every consumer re-reads it. */
+export function notifyThemeChange(): void {
     if (typeof window !== 'undefined') {
         window.dispatchEvent(new Event(THEME_CHANGE_EVENT));
     }
 }
 
 /**
- * Subscribes to anything that can change the resolved theme: an in-tab
- * preference change, a cross-tab storage write, or an OS scheme flip (which only
- * matters while the preference is 'system'). Returns an unsubscribe function.
+ * Subscribes to anything that can change the theme: an in-tab choice, a
+ * cross-tab storage write, or an OS scheme flip (which only matters while no
+ * choice is saved). Returns an unsubscribe function.
  */
 export function subscribe(listener: () => void): () => void {
     if (typeof window === 'undefined') return () => {};

@@ -5,7 +5,7 @@
    OS. Two branches, mirroring the token rules below: the resolved theme written
    to <html data-theme> (ThemeScript/theme.ts), and a prefers-color-scheme
    fallback that applies only when no theme has been resolved (JavaScript off).
-   With JS, data-theme is always the resolved light/dark (system included), so the
+   With JS, data-theme is always light/dark (the OS scheme when unsaved), so the
    attribute branch covers everything and the media branch is the no-JS path.
    Tailwind wraps each branch in :where(), so utility specificity is preserved. */
 @custom-variant dark {

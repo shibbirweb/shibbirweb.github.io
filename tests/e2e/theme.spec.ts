@@ -43,6 +43,39 @@ test.describe('theme', () => {
         expect(await resolvedTheme(page)).toBe('dark');
     });
 
+    test('keeps a saved light choice on a dark system', async ({
+        page,
+        isMobile,
+    }) => {
+        await page.emulateMedia({ colorScheme: 'dark' });
+        await page.goto('/');
+        await chooseTheme(page, isMobile, 'Light');
+
+        await expect.poll(() => resolvedTheme(page)).toBe('light');
+
+        await page.reload();
+        expect(await resolvedTheme(page)).toBe('light');
+    });
+
+    test('offers only light and dark', async ({ page, isMobile }) => {
+        await page.goto('/');
+        if (isMobile) {
+            await page.getByRole('button', { name: 'Open menu' }).click();
+            const buttons = page
+                .getByRole('group', { name: 'Theme' })
+                .getByRole('button');
+            await expect(buttons).toHaveCount(2);
+            await expect(buttons.first()).toHaveAccessibleName('Light theme');
+            await expect(buttons.last()).toHaveAccessibleName('Dark theme');
+            return;
+        }
+        await page.getByRole('button', { name: 'Theme', exact: true }).click();
+        await expect(page.getByRole('menuitemradio')).toHaveText([
+            'Light',
+            'Dark',
+        ]);
+    });
+
     test('applies the saved theme before any app code runs', async ({
         page,
     }) => {

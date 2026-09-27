@@ -2,12 +2,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { themeOptions } from '@/components/layout/ThemeToggle/options';
 import {
     THEME_STORAGE_KEY,
-    applyPreference,
+    applyTheme,
     getResolvedTheme,
-    getStoredPreference,
-    notifyPreferenceChange,
-    resolvePreference,
-    storePreference,
+    getStoredTheme,
+    getSystemTheme,
+    notifyThemeChange,
+    resolveTheme,
+    storeTheme,
     subscribe,
 } from '@/components/layout/ThemeToggle/theme';
 
@@ -49,78 +50,90 @@ afterEach(() => {
     vi.restoreAllMocks();
 });
 
-describe('stored preference', () => {
-    it('defaults to system when nothing is stored', () => {
-        expect(getStoredPreference()).toBe('system');
+describe('stored theme', () => {
+    it('is null when nothing is stored', () => {
+        expect(getStoredTheme()).toBeNull();
     });
 
-    it('reads back a stored light or dark preference', () => {
-        storePreference('dark');
-        expect(getStoredPreference()).toBe('dark');
-        storePreference('light');
-        expect(getStoredPreference()).toBe('light');
+    it('reads back a stored light or dark choice', () => {
+        storeTheme('dark');
+        expect(getStoredTheme()).toBe('dark');
+        storeTheme('light');
+        expect(getStoredTheme()).toBe('light');
     });
 
     it('stores under the theme key', () => {
-        storePreference('dark');
+        storeTheme('dark');
         expect(window.localStorage.getItem(THEME_STORAGE_KEY)).toBe('dark');
         expect(THEME_STORAGE_KEY).toBe('theme');
     });
 
-    it('falls back to system for an invalid stored value', () => {
+    it('treats an invalid stored value as no choice', () => {
         window.localStorage.setItem(THEME_STORAGE_KEY, 'sepia');
-        expect(getStoredPreference()).toBe('system');
+        expect(getStoredTheme()).toBeNull();
     });
 
-    it('falls back to system when storage cannot be read', () => {
+    it('treats the old system value as no choice', () => {
+        window.localStorage.setItem(THEME_STORAGE_KEY, 'system');
+        expect(getStoredTheme()).toBeNull();
+    });
+
+    it('is null when storage cannot be read', () => {
         vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
             throw new Error('blocked');
         });
-        expect(getStoredPreference()).toBe('system');
+        expect(getStoredTheme()).toBeNull();
     });
 
     it('ignores storage write failures', () => {
         vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
             throw new Error('quota');
         });
-        expect(() => storePreference('dark')).not.toThrow();
+        expect(() => storeTheme('dark')).not.toThrow();
     });
 });
 
-describe('resolvePreference', () => {
-    it('keeps an explicit light or dark choice regardless of the OS', () => {
+describe('getSystemTheme', () => {
+    it('follows the OS colour scheme', () => {
         stubSystemScheme(true);
-        expect(resolvePreference('light')).toBe('light');
+        expect(getSystemTheme()).toBe('dark');
         stubSystemScheme(false);
-        expect(resolvePreference('dark')).toBe('dark');
-    });
-
-    it('resolves system to dark when the OS prefers dark', () => {
-        stubSystemScheme(true);
-        expect(resolvePreference('system')).toBe('dark');
-    });
-
-    it('resolves system to light when the OS prefers light', () => {
-        stubSystemScheme(false);
-        expect(resolvePreference('system')).toBe('light');
+        expect(getSystemTheme()).toBe('light');
     });
 });
 
-describe('applyPreference', () => {
-    it('writes the resolved theme to data-theme and color-scheme', () => {
-        applyPreference('dark');
-        expect(document.documentElement.dataset.theme).toBe('dark');
-        expect(document.documentElement.style.colorScheme).toBe('dark');
+describe('resolveTheme', () => {
+    it('uses the OS scheme for a first-time visitor', () => {
+        stubSystemScheme(true);
+        expect(resolveTheme()).toBe('dark');
+        stubSystemScheme(false);
+        expect(resolveTheme()).toBe('light');
     });
 
-    it('never writes system to the element', () => {
+    it('keeps a saved choice regardless of the OS', () => {
+        storeTheme('light');
         stubSystemScheme(true);
-        applyPreference('system');
+        expect(resolveTheme()).toBe('light');
+
+        storeTheme('dark');
+        stubSystemScheme(false);
+        expect(resolveTheme()).toBe('dark');
+    });
+
+    it('falls back to the OS scheme for the old system value', () => {
+        window.localStorage.setItem(THEME_STORAGE_KEY, 'system');
+        stubSystemScheme(true);
+        expect(resolveTheme()).toBe('dark');
+    });
+});
+
+describe('applyTheme', () => {
+    it('writes the theme to data-theme and color-scheme', () => {
+        applyTheme('dark');
         expect(document.documentElement.dataset.theme).toBe('dark');
         expect(document.documentElement.style.colorScheme).toBe('dark');
 
-        stubSystemScheme(false);
-        applyPreference('system');
+        applyTheme('light');
         expect(document.documentElement.dataset.theme).toBe('light');
         expect(document.documentElement.style.colorScheme).toBe('light');
     });
@@ -144,10 +157,10 @@ describe('getResolvedTheme', () => {
 });
 
 describe('subscribe', () => {
-    it('fires on an in-tab preference change', () => {
+    it('fires on an in-tab theme change', () => {
         const listener = vi.fn();
         const unsubscribe = subscribe(listener);
-        notifyPreferenceChange();
+        notifyThemeChange();
         expect(listener).toHaveBeenCalledTimes(1);
         unsubscribe();
     });
@@ -185,7 +198,7 @@ describe('subscribe', () => {
         const listener = vi.fn();
         const unsubscribe = subscribe(listener);
         unsubscribe();
-        notifyPreferenceChange();
+        notifyThemeChange();
         window.dispatchEvent(
             new StorageEvent('storage', { key: THEME_STORAGE_KEY })
         );
@@ -196,9 +209,8 @@ describe('subscribe', () => {
 });
 
 describe('themeOptions', () => {
-    it('offers system, light, then dark', () => {
+    it('offers light, then dark', () => {
         expect(themeOptions.map((option) => option.value)).toEqual([
-            'system',
             'light',
             'dark',
         ]);

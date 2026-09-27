@@ -29,31 +29,30 @@ describe('ThemeMenu', () => {
         expect(screen.getByRole('menu', { name: 'Theme' })).toBeInTheDocument();
     });
 
-    it('lists the three preferences as radio items with system checked', () => {
+    it('lists light and dark as radio items with the OS scheme checked', () => {
         render(<ThemeMenu />);
 
         const items = screen.getAllByRole('menuitemradio');
         expect(items.map((item) => item.textContent)).toEqual([
-            'System',
             'Light',
             'Dark',
         ]);
         expect(
-            screen.getByRole('menuitemradio', { name: 'System' })
+            screen.getByRole('menuitemradio', { name: 'Light' })
         ).toHaveAttribute('aria-checked', 'true');
     });
 
-    it('applies the chosen preference and closes', async () => {
+    it('applies the chosen theme and closes', async () => {
         const user = userEvent.setup();
         render(<ThemeMenu />);
 
         await user.click(getTrigger());
-        await user.click(screen.getByRole('menuitemradio', { name: 'Light' }));
+        await user.click(screen.getByRole('menuitemradio', { name: 'Dark' }));
 
-        expect(document.documentElement).toHaveAttribute('data-theme', 'light');
-        expect(window.localStorage.getItem('theme')).toBe('light');
+        expect(document.documentElement).toHaveAttribute('data-theme', 'dark');
+        expect(window.localStorage.getItem('theme')).toBe('dark');
         expect(
-            screen.getByRole('menuitemradio', { name: 'Light' })
+            screen.getByRole('menuitemradio', { name: 'Dark' })
         ).toHaveAttribute('aria-checked', 'true');
         expect(getTrigger()).toHaveAttribute('aria-expanded', 'false');
     });

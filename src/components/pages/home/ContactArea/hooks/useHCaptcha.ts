@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { hcaptchaSiteKey } from '@/config/constants';
 import { useResolvedTheme } from '@/components/layout/ThemeToggle/hooks/useResolvedTheme';
-import type { ResolvedTheme } from '@/components/layout/ThemeToggle/theme';
+import type { Theme } from '@/components/layout/ThemeToggle/theme';
 
 const HCAPTCHA_SCRIPT_SRC = 'https://js.hcaptcha.com/1/api.js?render=explicit';
 
@@ -71,13 +71,13 @@ function loadHCaptchaScript(): Promise<void> {
 export function useHCaptcha({ shouldLoad }: UseHCaptchaArgs) {
     const widgetIdRef = useRef<string | null>(null);
     const nodeRef = useRef<HTMLDivElement | null>(null);
-    const renderedThemeRef = useRef<ResolvedTheme | null>(null);
+    const renderedThemeRef = useRef<Theme | null>(null);
     const [token, setToken] = useState<string | null>(null);
     const [isWidgetRendered, setIsWidgetRendered] = useState(false);
 
     const theme = useResolvedTheme();
     // Read the latest theme from inside async callbacks without re-creating them.
-    const themeRef = useRef<ResolvedTheme>(theme);
+    const themeRef = useRef<Theme>(theme);
     themeRef.current = theme;
 
     // Same idiom as themeRef, and here it is load bearing: reading the gate from

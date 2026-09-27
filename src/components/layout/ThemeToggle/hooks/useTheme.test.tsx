@@ -1,51 +1,94 @@
 import { act, renderHook } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { useTheme } from '@/components/layout/ThemeToggle/hooks/useTheme';
 
+type ChangeListener = () => void;
+
+/** Stubs matchMedia with a controllable dark-scheme query. */
+function stubColorScheme(initiallyDark: boolean) {
+    const listeners: ChangeListener[] = [];
+    const state = { dark: initiallyDark };
+    vi.spyOn(window, 'matchMedia').mockImplementation(
+        (query: string) =>
+            ({
+                get matches() {
+                    return (
+                        query === '(prefers-color-scheme: dark)' && state.dark
+                    );
+                },
+                media: query,
+                addEventListener: (_type: string, listener: ChangeListener) => {
+                    listeners.push(listener);
+                },
+                removeEventListener: () => {},
+            }) as unknown as MediaQueryList
+    );
+    return {
+        flip(dark: boolean) {
+            state.dark = dark;
+            listeners.forEach((listener) => listener());
+        },
+    };
+}
+
 describe('useTheme', () => {
-    it('reports system when nothing is stored', () => {
-        const { result } = renderHook(() => useTheme());
-
-        expect(result.current.preference).toBe('system');
+    afterEach(() => {
+        vi.restoreAllMocks();
     });
 
-    it('reads the stored preference after mount', () => {
-        window.localStorage.setItem('theme', 'light');
-
-        const { result } = renderHook(() => useTheme());
-
-        expect(result.current.preference).toBe('light');
-    });
-
-    it('treats an unknown stored value as system', () => {
-        window.localStorage.setItem('theme', 'sepia');
+    it('reports the OS scheme when nothing is stored', () => {
+        stubColorScheme(true);
 
         const { result } = renderHook(() => useTheme());
 
-        expect(result.current.preference).toBe('system');
+        expect(result.current.theme).toBe('dark');
     });
 
-    it('stores, applies, and reports a new preference', () => {
+    it('reads the theme the pre-paint script applied', () => {
+        document.documentElement.dataset.theme = 'dark';
+
+        const { result } = renderHook(() => useTheme());
+
+        expect(result.current.theme).toBe('dark');
+    });
+
+    it('stores, applies, and reports a new theme', () => {
         const { result } = renderHook(() => useTheme());
 
         act(() => {
-            result.current.setPreference('dark');
+            result.current.setTheme('dark');
         });
 
-        expect(result.current.preference).toBe('dark');
+        expect(result.current.theme).toBe('dark');
         expect(window.localStorage.getItem('theme')).toBe('dark');
         expect(document.documentElement.dataset.theme).toBe('dark');
         expect(document.documentElement.style.colorScheme).toBe('dark');
     });
 
-    it('resolves system to light when the OS is not dark', () => {
+    it('follows an OS scheme flip while nothing is stored', () => {
+        const scheme = stubColorScheme(false);
         const { result } = renderHook(() => useTheme());
 
         act(() => {
-            result.current.setPreference('system');
+            scheme.flip(true);
         });
 
-        expect(window.localStorage.getItem('theme')).toBe('system');
+        expect(result.current.theme).toBe('dark');
+        expect(document.documentElement.dataset.theme).toBe('dark');
+    });
+
+    it('keeps a saved choice when the OS scheme flips', () => {
+        const scheme = stubColorScheme(false);
+        const { result } = renderHook(() => useTheme());
+
+        act(() => {
+            result.current.setTheme('light');
+        });
+        act(() => {
+            scheme.flip(true);
+        });
+
+        expect(result.current.theme).toBe('light');
         expect(document.documentElement.dataset.theme).toBe('light');
     });
 
@@ -54,13 +97,13 @@ describe('useTheme', () => {
         const second = renderHook(() => useTheme());
 
         act(() => {
-            first.result.current.setPreference('light');
+            first.result.current.setTheme('dark');
         });
 
-        expect(second.result.current.preference).toBe('light');
+        expect(second.result.current.theme).toBe('dark');
     });
 
-    it('re-reads the preference on a cross-tab storage write', () => {
+    it('re-reads the theme on a cross-tab storage write', () => {
         const { result } = renderHook(() => useTheme());
 
         act(() => {
@@ -68,7 +111,7 @@ describe('useTheme', () => {
             window.dispatchEvent(new StorageEvent('storage', { key: 'theme' }));
         });
 
-        expect(result.current.preference).toBe('dark');
+        expect(result.current.theme).toBe('dark');
         expect(document.documentElement.dataset.theme).toBe('dark');
     });
 
@@ -82,6 +125,6 @@ describe('useTheme', () => {
             );
         });
 
-        expect(result.current.preference).toBe('system');
+        expect(result.current.theme).toBe('light');
     });
 });

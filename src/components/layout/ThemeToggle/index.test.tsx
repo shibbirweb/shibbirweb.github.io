@@ -21,29 +21,32 @@ describe('ThemeToggle', () => {
         vi.restoreAllMocks();
     });
 
-    it('renders a labelled group of three theme buttons', () => {
+    it('renders a labelled group of two theme buttons', () => {
         render(<ThemeToggle />);
 
         const group = screen.getByRole('group', { name: 'Theme' });
         const buttons = within(group).getAllByRole('button');
         expect(
             buttons.map((button) => button.getAttribute('aria-label'))
-        ).toEqual(['System theme', 'Light theme', 'Dark theme']);
+        ).toEqual(['Light theme', 'Dark theme']);
     });
 
-    it('presses System when nothing is stored', () => {
+    it('presses the OS scheme when nothing is stored', () => {
+        prefersDarkScheme(true);
+
         render(<ThemeToggle />);
 
         expect(
-            screen.getByRole('button', { name: 'System theme' })
+            screen.getByRole('button', { name: 'Dark theme' })
         ).toHaveAttribute('aria-pressed', 'true');
         expect(
-            screen.getByRole('button', { name: 'Dark theme' })
+            screen.getByRole('button', { name: 'Light theme' })
         ).toHaveAttribute('aria-pressed', 'false');
     });
 
-    it('presses the stored preference after mount', () => {
-        window.localStorage.setItem('theme', 'dark');
+    it('presses the theme already applied to <html> after mount', () => {
+        prefersDarkScheme(false);
+        document.documentElement.dataset.theme = 'dark';
 
         render(<ThemeToggle />);
 
@@ -66,20 +69,19 @@ describe('ThemeToggle', () => {
             screen.getByRole('button', { name: 'Dark theme' })
         ).toHaveAttribute('aria-pressed', 'true');
         expect(
-            screen.getByRole('button', { name: 'System theme' })
+            screen.getByRole('button', { name: 'Light theme' })
         ).toHaveAttribute('aria-pressed', 'false');
     });
 
-    it('stores system and resolves it from the OS scheme', async () => {
-        prefersDarkScheme(true);
-        window.localStorage.setItem('theme', 'light');
+    it('stores light even when it matches the OS scheme', async () => {
+        prefersDarkScheme(false);
         const user = userEvent.setup();
         render(<ThemeToggle />);
 
-        await user.click(screen.getByRole('button', { name: 'System theme' }));
+        await user.click(screen.getByRole('button', { name: 'Light theme' }));
 
-        expect(window.localStorage.getItem('theme')).toBe('system');
-        expect(document.documentElement).toHaveAttribute('data-theme', 'dark');
+        expect(window.localStorage.getItem('theme')).toBe('light');
+        expect(document.documentElement).toHaveAttribute('data-theme', 'light');
     });
 
     it('keeps two mounted toggles in sync', async () => {
@@ -91,12 +93,12 @@ describe('ThemeToggle', () => {
             </>
         );
 
-        const [firstLight, secondLight] = screen.getAllByRole('button', {
-            name: 'Light theme',
+        const [firstDark, secondDark] = screen.getAllByRole('button', {
+            name: 'Dark theme',
         });
-        await user.click(firstLight);
+        await user.click(firstDark);
 
-        expect(secondLight).toHaveAttribute('aria-pressed', 'true');
+        expect(secondDark).toHaveAttribute('aria-pressed', 'true');
     });
 
     it('merges the caller class onto the group', () => {
