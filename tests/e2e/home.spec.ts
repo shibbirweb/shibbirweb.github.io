@@ -2,7 +2,9 @@ import { homeSectionIds } from '@/components/layout/Navbar/contents';
 import { socialLinks } from '@/components/pages/home/HeroArea/contents';
 import {
     collapsedPackageProjectCount,
+    collapsedPersonalProjectCount,
     packageProjects,
+    personalProjects,
 } from '@/components/pages/home/ProjectsArea/contents';
 import { personGivenName, professionalTitle } from '@/config/constants';
 import {
@@ -11,6 +13,22 @@ import {
     test,
     waitForHydration,
 } from '@tests/e2e/fixtures';
+
+// The ids match the `revealRegionId` each ProjectGroup gets in ProjectsArea.
+const projectGroups = [
+    {
+        name: 'package',
+        projects: packageProjects,
+        collapsedCount: collapsedPackageProjectCount,
+        revealRegionId: 'more-package-projects',
+    },
+    {
+        name: 'personal',
+        projects: personalProjects,
+        collapsedCount: collapsedPersonalProjectCount,
+        revealRegionId: 'more-personal-projects',
+    },
+];
 
 test.describe('home page', () => {
     test.beforeEach(async ({ page }) => {
@@ -46,30 +64,30 @@ test.describe('home page', () => {
         }
     });
 
-    test('reveals the remaining packages with "Show more"', async ({
-        page,
-    }) => {
-        test.skip(
-            packageProjects.length <= collapsedPackageProjectCount,
-            'every package already fits in the collapsed grid'
-        );
-        const toggle = page
-            .locator('#work')
-            .getByRole('button', { name: 'Show more' });
+    for (const group of projectGroups) {
+        test(`reveals the remaining ${group.name} projects with "Show more"`, async ({
+            page,
+        }) => {
+            test.skip(
+                group.projects.length <= group.collapsedCount,
+                `every ${group.name} project already fits in the collapsed grid`
+            );
+            const toggle = page.locator(
+                `#work button[aria-controls="${group.revealRegionId}"]`
+            );
+            const revealRegion = page.locator(`#${group.revealRegionId}`);
 
-        await toggle.scrollIntoViewIfNeeded();
-        await expect(toggle).toHaveAttribute('aria-expanded', 'false');
-        await toggle.click();
+            await toggle.scrollIntoViewIfNeeded();
+            await expect(toggle).toHaveText('Show more');
+            await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+            await expect(revealRegion).toBeHidden();
+            await toggle.click();
 
-        const expanded = page
-            .locator('#work')
-            .getByRole('button', { name: 'Show less' });
-        await expect(expanded).toHaveAttribute('aria-expanded', 'true');
-        const revealRegion = page.locator(
-            `#${await expanded.getAttribute('aria-controls')}`
-        );
-        await expect(revealRegion).toBeVisible();
-    });
+            await expect(toggle).toHaveText('Show less');
+            await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+            await expect(revealRegion).toBeVisible();
+        });
+    }
 
     test('teases the newest articles', async ({ page }) => {
         const articles = publishedArticles();

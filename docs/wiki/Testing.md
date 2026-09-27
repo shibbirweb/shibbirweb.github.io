@@ -65,6 +65,7 @@ Useful extras: `pnpm test:watch`, `pnpm test:coverage`, and `pnpm test:e2e --ui`
 
 ## Writing a new test
 
+- **Cover every layer.** A new feature or an update needs tests in each layer it touches: unit or component, content, build checks, browser, and Lighthouse. Skip a layer only when there is nothing for it to check, and say which one and why. Run them all before calling the change done (`pnpm test:ci`).
 - **Put unit and component tests beside the code**: `Foo.tsx` gets `Foo.test.tsx`. `.test.ts` runs in Node, `.test.tsx` runs in jsdom.
 - **Use `@/` imports** (and `@tests/` for test helpers), like all other code.
 - **Browser specs import `test` from `@tests/e2e/fixtures`**. It blocks all third-party requests and fails on any page error. Mock a service with `page.route`.
