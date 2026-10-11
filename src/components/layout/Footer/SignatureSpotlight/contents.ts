@@ -9,7 +9,7 @@ export const githubActivityURL: string = `https://github-contributions-api.jogru
 
 // How many of the most recent days the graph shows, oldest in the "S" and
 // today in the "D".
-export const githubActivityDays: number = 30;
+export const githubActivityDays: number = 7;
 
 // Each visitor's browser keeps the calendar in localStorage for this long, so
 // the proxy is called at most once per four hours per browser.
