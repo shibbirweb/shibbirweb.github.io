@@ -7,7 +7,7 @@ import styles from '@/components/layout/Footer/SignatureSpotlight/SignatureSpotl
 
 /**
  * The signature's contribution-graph layer: the wordmark redrawn on a canvas
- * as squares showing the maintainer's last 30 days of GitHub activity. It rests
+ * as squares showing the maintainer's last 7 days of GitHub activity. It rests
  * faintly across the whole name and rises to full strength inside the pointer
  * spotlight (whose position and opacity it inherits from `spotlightRef`).
  * useActivityGraph loads the data, draws the squares, and lets them breathe
