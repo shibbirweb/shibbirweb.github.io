@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
+    COUNT_LEVEL_LIFT,
+    countRangesByLevel,
     DAY_TEXTURE_DEPTH,
     decodeCachedActivity,
     encodeCachedActivity,
@@ -7,6 +9,7 @@ import {
     keepRecentDays,
     mapDaysToCells,
     parseContributionLevels,
+    refineLevelByCount,
     toLocalIsoDate,
 } from '@/components/layout/Footer/SignatureSpotlight/githubActivity';
 
@@ -22,6 +25,55 @@ describe('parseContributionLevels', () => {
                 ],
             })
         ).toEqual([0, 4, 2]);
+    });
+
+    it('lifts a busier day above a quieter one on the same level', () => {
+        expect(
+            parseContributionLevels({
+                contributions: [
+                    { date: '2026-01-01', count: 1, level: 1 },
+                    { date: '2026-01-02', count: 9, level: 1 },
+                    { date: '2026-01-03', count: 5, level: 1 },
+                    { date: '2026-01-04', count: 20, level: 2 },
+                ],
+            })
+        ).toEqual([1, 1 + COUNT_LEVEL_LIFT, 1 + COUNT_LEVEL_LIFT / 2, 2]);
+    });
+
+    it('measures the count range over the whole year, not just the kept days', () => {
+        expect(
+            parseContributionLevels(
+                {
+                    contributions: [
+                        { date: '2026-01-01', count: 1, level: 1 },
+                        { date: '2026-01-02', count: 16, level: 1 },
+                        { date: '2026-01-03', count: 4, level: 1 },
+                    ],
+                },
+                '2026-01-01'
+            )
+        ).toEqual([1]);
+        expect(
+            parseContributionLevels({
+                contributions: [
+                    { date: '2026-01-01', count: 1, level: 1 },
+                    { date: '2026-01-02', count: 16, level: 1 },
+                ],
+            })?.[1]
+        ).toBe(1 + COUNT_LEVEL_LIFT);
+    });
+
+    it('keeps the plain level when the count is missing or invalid', () => {
+        expect(
+            parseContributionLevels({
+                contributions: [
+                    { date: '2026-01-01', level: 1 },
+                    { date: '2026-01-02', count: 'many', level: 2 },
+                    { date: '2026-01-03', count: -3, level: 3 },
+                    { date: '2026-01-04', count: 2, level: 1 },
+                ],
+            })
+        ).toEqual([1, 2, 3, 1]);
     });
 
     it('rejects missing, empty or malformed responses', () => {
@@ -42,18 +94,57 @@ describe('parseContributionLevels', () => {
     });
 });
 
+describe('refineLevelByCount', () => {
+    const range = { lowest: 1, highest: 16 };
+
+    it('keeps the quietest day of a level on that level', () => {
+        expect(refineLevelByCount(1, 1, range)).toBe(1);
+    });
+
+    it('lifts the busiest day of a level by COUNT_LEVEL_LIFT', () => {
+        expect(refineLevelByCount(1, 16, range)).toBe(1 + COUNT_LEVEL_LIFT);
+    });
+
+    it('never lifts a level into the next one', () => {
+        expect(COUNT_LEVEL_LIFT).toBeLessThan(1);
+        expect(refineLevelByCount(3, 99, range)).toBe(3 + COUNT_LEVEL_LIFT);
+    });
+
+    it('leaves empty days, the top level and a missing count alone', () => {
+        expect(refineLevelByCount(0, 0, { lowest: 0, highest: 0 })).toBe(0);
+        expect(refineLevelByCount(4, 80, { lowest: 50, highest: 90 })).toBe(4);
+        expect(refineLevelByCount(2, null, range)).toBe(2);
+        expect(refineLevelByCount(2, 5, null)).toBe(2);
+        expect(refineLevelByCount(2, 5, { lowest: 5, highest: 5 })).toBe(2);
+    });
+});
+
+describe('countRangesByLevel', () => {
+    it('finds the lowest and highest count of each level, skipping missing counts', () => {
+        const ranges = countRangesByLevel([
+            { date: '2026-01-01', count: 3, level: 1 },
+            { date: '2026-01-02', count: 12, level: 1 },
+            { date: '2026-01-03', count: null, level: 1 },
+            { date: '2026-01-04', count: 30, level: 2 },
+        ]);
+        expect(ranges.get(1)).toEqual({ lowest: 3, highest: 12 });
+        expect(ranges.get(2)).toEqual({ lowest: 30, highest: 30 });
+        expect(ranges.get(3)).toBeUndefined();
+    });
+});
+
 describe('cached activity', () => {
     it('round-trips through encode and decode', () => {
-        const raw = encodeCachedActivity([0, 1, 4, 2], 1234);
+        const raw = encodeCachedActivity([0, 1.25, 4, 2], 1234);
         expect(decodeCachedActivity(raw)).toEqual({
             savedAt: 1234,
-            levels: [0, 1, 4, 2],
+            levels: [0, 1.25, 4, 2],
         });
     });
 
-    it('packs the levels as a short digit string', () => {
-        expect(encodeCachedActivity([0, 1, 4], 1)).toBe(
-            '{"savedAt":1,"levels":"014"}'
+    it('packs the levels rounded to two decimals', () => {
+        expect(encodeCachedActivity([0, 1 + 1 / 3, 4], 1)).toBe(
+            '{"savedAt":1,"levels":[0,1.33,4]}'
         );
     });
 
@@ -61,10 +152,18 @@ describe('cached activity', () => {
         expect(decodeCachedActivity(null)).toBeNull();
         expect(decodeCachedActivity('not json')).toBeNull();
         expect(
-            decodeCachedActivity('{"savedAt":"1","levels":"01"}')
+            decodeCachedActivity('{"savedAt":"1","levels":[0,1]}')
         ).toBeNull();
-        expect(decodeCachedActivity('{"savedAt":1,"levels":"09"}')).toBeNull();
-        expect(decodeCachedActivity('{"savedAt":1,"levels":""}')).toBeNull();
+        expect(decodeCachedActivity('{"savedAt":1,"levels":[0,9]}')).toBeNull();
+        expect(
+            decodeCachedActivity('{"savedAt":1,"levels":[0,-1]}')
+        ).toBeNull();
+        expect(decodeCachedActivity('{"savedAt":1,"levels":["1"]}')).toBeNull();
+        expect(decodeCachedActivity('{"savedAt":1,"levels":[]}')).toBeNull();
+    });
+
+    it('drops an entry in the older digit string format, so it is fetched again', () => {
+        expect(decodeCachedActivity('{"savedAt":1,"levels":"014"}')).toBeNull();
     });
 });
 
