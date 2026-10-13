@@ -4,15 +4,11 @@ import {
     githubActivityDays,
     githubActivityURL,
 } from '@/components/layout/Footer/SignatureSpotlight/contents';
-import {
-    COUNT_LEVEL_LIFT,
-    toLocalIsoDate,
-} from '@/components/layout/Footer/SignatureSpotlight/githubActivity';
+import { toLocalIsoDate } from '@/components/layout/Footer/SignatureSpotlight/githubActivity';
 import { expect, test, waitForHydration } from '@tests/e2e/fixtures';
 
-// A year of contributions ending today, the shape the proxy returns. The
-// newest days are all level 2 with a rising count, so a trimmed cache is easy
-// to recognise and shows the count lifting each day within its level.
+// A year of contributions ending today, the shape the proxy returns, with the
+// newest days all at level 4 so a trimmed cache is easy to recognise.
 function yearOfContributions() {
     const today = new Date();
     return {
@@ -20,29 +16,14 @@ function yearOfContributions() {
         contributions: Array.from({ length: 365 }, (_, index) => {
             const date = new Date(today);
             date.setDate(today.getDate() - (364 - index));
-            const recentDay = index - (365 - githubActivityDays);
-            const isRecent = recentDay >= 0;
+            const isRecent = index >= 365 - githubActivityDays;
             return {
                 date: toLocalIsoDate(date),
-                count: isRecent ? 10 + recentDay : 0,
-                level: isRecent ? 2 : 0,
+                count: isRecent ? 9 : 0,
+                level: isRecent ? 4 : 0,
             };
         }),
     };
-}
-
-// The levels the mocked recent days should be cached as: level 2, lifted by
-// how far each day's count sits between the quietest and busiest level 2 day.
-function expectedRecentLevels() {
-    return Array.from(
-        { length: githubActivityDays },
-        (_, recentDay) =>
-            Math.round(
-                (2 +
-                    (COUNT_LEVEL_LIFT * recentDay) / (githubActivityDays - 1)) *
-                    100
-            ) / 100
-    );
 }
 
 /** Serves the mocked calendar for every proxy request, counting them. */
@@ -132,10 +113,10 @@ async function readSpotlightOpacity(page: Page): Promise<string> {
         );
 }
 
-async function readCachedLevels(page: Page): Promise<number[] | null> {
+async function readCachedLevels(page: Page): Promise<string | null> {
     return page.evaluate((cacheKey) => {
         const raw = window.localStorage.getItem(cacheKey);
-        return raw ? (JSON.parse(raw) as { levels: number[] }).levels : null;
+        return raw ? (JSON.parse(raw) as { levels: string }).levels : null;
     }, githubActivityCacheKey);
 }
 
@@ -157,7 +138,7 @@ test.describe('footer GitHub activity', () => {
         await expect.poll(() => proxyRequests).toBe(1);
         await expect
             .poll(() => readCachedLevels(page))
-            .toEqual(expectedRecentLevels());
+            .toBe('4'.repeat(githubActivityDays));
 
         await page.reload();
         await waitForHydration(page);
