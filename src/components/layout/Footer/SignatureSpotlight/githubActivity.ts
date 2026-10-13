@@ -1,8 +1,7 @@
 // Pure helpers that turn the maintainer's GitHub contribution calendar into
-// levels for the footer graph: validating the proxy's response, refining
-// GitHub's level with the day's count, packing it for the localStorage cache,
-// and spreading the days across the letters so reading the name from left to
-// right reads them from oldest day to today.
+// levels for the footer graph: validating the proxy's response, packing it for
+// the localStorage cache, and spreading the year across the letters so reading
+// the name from left to right reads the year from oldest day to today.
 
 import {
     ACTIVITY_FIELD_SEED,
@@ -21,25 +20,10 @@ export const DAY_EDGE_JITTER = 0.12;
 // Most a square's level is randomly dimmed (as a share), so an active day
 // reads as texture inside the letters rather than a flat block of one shade.
 export const DAY_TEXTURE_DEPTH = 0.3;
-// How far above its GitHub level the count can lift a day: the quietest day of
-// a level this year keeps that level's shade, the busiest is lifted by this
-// much toward the next one. Below 1, so a level never overlaps the next.
-export const COUNT_LEVEL_LIFT = 0.5;
 
 export type CachedGithubActivity = {
     savedAt: number;
     levels: number[];
-};
-
-type ContributionDay = {
-    date: string;
-    count: number | null;
-    level: number;
-};
-
-type CountRange = {
-    lowest: number;
-    highest: number;
 };
 
 function isActivityLevel(level: unknown): level is number {
@@ -50,80 +34,11 @@ function isActivityLevel(level: unknown): level is number {
     );
 }
 
-// A displayed level may be fractional (a level refined by its count), but it
-// stays inside the range of level colours.
-function isDisplayedLevel(level: unknown): level is number {
-    return (
-        typeof level === 'number' &&
-        Number.isFinite(level) &&
-        level >= 0 &&
-        level <= ACTIVITY_LEVEL_COUNT - 1
-    );
-}
-
-function toContributionCount(count: unknown): number | null {
-    if (typeof count !== 'number' || !Number.isFinite(count) || count < 0) {
-        return null;
-    }
-    return count;
-}
-
 /**
- * The lowest and highest count GitHub put in each level across `days`. GitHub
- * picks its level boundaries from the whole year, so this is measured before
- * the days are trimmed to the recent ones.
- */
-export function countRangesByLevel(
-    days: readonly ContributionDay[]
-): Map<number, CountRange> {
-    const ranges = new Map<number, CountRange>();
-    days.forEach(({ count, level }) => {
-        if (count === null) {
-            return;
-        }
-        const range = ranges.get(level) ?? null;
-        if (!range) {
-            ranges.set(level, { lowest: count, highest: count });
-            return;
-        }
-        range.lowest = Math.min(range.lowest, count);
-        range.highest = Math.max(range.highest, count);
-    });
-    return ranges;
-}
-
-/**
- * GitHub's `level` refined by the day's `count`: where the count sits between
- * the quietest and busiest day of that level lifts it by up to
- * COUNT_LEVEL_LIFT, so two days on the same level still differ in shade. An
- * empty day, the top level, a missing count, or a level whose days all share
- * one count keep the plain level, so a day never looks quieter than GitHub
- * shows it.
- */
-export function refineLevelByCount(
-    level: number,
-    count: number | null,
-    range: CountRange | null
-): number {
-    if (
-        level === 0 ||
-        level >= ACTIVITY_LEVEL_COUNT - 1 ||
-        count === null ||
-        !range ||
-        range.highest <= range.lowest
-    ) {
-        return level;
-    }
-    const position = (count - range.lowest) / (range.highest - range.lowest);
-    return level + COUNT_LEVEL_LIFT * Math.min(Math.max(position, 0), 1);
-}
-
-/**
- * Reads the proxy's `{ contributions: [{ date, count, level }] }` response
- * into one displayed level per day, oldest first: GitHub's level refined by
- * the count (refineLevelByCount), skipping any day after `lastDate`
- * (YYYY-MM-DD) when given. Returns null for anything malformed, so a bad or
- * changed response falls back to the decorative graph instead of throwing.
+ * Reads the proxy's `{ contributions: [{ date, level }] }` response into one
+ * level per day, oldest first, skipping any day after `lastDate` (YYYY-MM-DD)
+ * when given. Returns null for anything malformed, so a bad or changed
+ * response falls back to the decorative graph instead of throwing.
  */
 export function parseContributionLevels(
     response: unknown,
@@ -134,28 +49,17 @@ export function parseContributionLevels(
     if (!Array.isArray(contributions) || contributions.length === 0) {
         return null;
     }
-    const rawDays = contributions.map((day) => ({
+    const days = contributions.map((day) => ({
         date: String((day as { date?: unknown } | null)?.date ?? ''),
-        count: toContributionCount(
-            (day as { count?: unknown } | null)?.count ?? null
-        ),
         level: (day as { level?: unknown } | null)?.level ?? null,
     }));
-    if (!rawDays.every((day) => isActivityLevel(day.level))) {
+    if (!days.every((day) => isActivityLevel(day.level))) {
         return null;
     }
-    const days = rawDays as ContributionDay[];
-    const countRanges = countRangesByLevel(days);
     days.sort((first, second) => first.date.localeCompare(second.date));
     return days
         .filter((day) => !lastDate || day.date <= lastDate)
-        .map((day) =>
-            refineLevelByCount(
-                day.level,
-                day.count,
-                countRanges.get(day.level) ?? null
-            )
-        );
+        .map((day) => day.level as number);
 }
 
 /**
@@ -175,22 +79,17 @@ export function toLocalIsoDate(date: Date): string {
 }
 
 /**
- * Packs the levels for localStorage, rounded to two decimals (far finer than
- * the SHADES_PER_LEVEL steps the canvas draws).
+ * Packs the levels as a digit string ("0012…"), one character per day.
  */
 export function encodeCachedActivity(
     levels: number[],
     savedAt: number
 ): string {
-    return JSON.stringify({
-        savedAt,
-        levels: levels.map((level) => Math.round(level * 100) / 100),
-    });
+    return JSON.stringify({ savedAt, levels: levels.join('') });
 }
 
 /**
- * The inverse of encodeCachedActivity; null for a missing or corrupt entry,
- * including one in the older digit string format, so it is fetched again.
+ * The inverse of encodeCachedActivity; null for a missing or corrupt entry.
  */
 export function decodeCachedActivity(
     raw: string | null
@@ -204,11 +103,12 @@ export function decodeCachedActivity(
             levels?: unknown;
         };
         const savedAt = parsed?.savedAt ?? null;
-        const levels = parsed?.levels ?? null;
-        if (typeof savedAt !== 'number' || !Array.isArray(levels)) {
+        const packedLevels = parsed?.levels ?? null;
+        if (typeof savedAt !== 'number' || typeof packedLevels !== 'string') {
             return null;
         }
-        if (levels.length === 0 || !levels.every(isDisplayedLevel)) {
+        const levels = packedLevels.split('').map(Number);
+        if (levels.length === 0 || !levels.every(isActivityLevel)) {
             return null;
         }
         return { savedAt, levels };
