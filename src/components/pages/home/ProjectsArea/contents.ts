@@ -53,6 +53,34 @@ export const packageProjects: Project[] = [
         ],
     },
     {
+        name: 'Flow Trace',
+        category: 'AI Agent Skill',
+        description:
+            'An Agent Skill for Claude Code, Codex, Cursor, Copilot, Gemini CLI and OpenCode that turns "how does this request work?" into an animated, step-through page: one hop per file, the real code with the executing lines highlighted, plain-language notes, and a validator that checks every referenced file and line.',
+        tech: ['Agent Skills', 'Claude Code', 'JavaScript', 'HTML'],
+        repoURL: 'https://github.com/shibbirweb/flow-trace-skill',
+        links: [
+            {
+                url: 'https://github.com/shibbirweb/flow-trace-skill/blob/main/INSTALL.md',
+                label: 'Install',
+            },
+        ],
+    },
+    {
+        name: 'Refactor Compare',
+        category: 'AI Agent Skill',
+        description:
+            'An Agent Skill for Claude Code, Codex, Cursor, Copilot, Gemini CLI and OpenCode that builds an interactive before and after page for a refactor: pick a real example, step through the old and new code side by side, and see which lines run, what the diff added or removed, and how the values change.',
+        tech: ['Agent Skills', 'Claude Code', 'JavaScript', 'Git'],
+        repoURL: 'https://github.com/shibbirweb/refactor-compare-skill',
+        links: [
+            {
+                url: 'https://github.com/shibbirweb/refactor-compare-skill/blob/main/INSTALL.md',
+                label: 'Install',
+            },
+        ],
+    },
+    {
         name: 'Extra Cursor Caret Height',
         category: 'VS Code Extension',
         description:
