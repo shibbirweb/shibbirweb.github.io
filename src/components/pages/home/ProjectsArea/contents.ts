@@ -164,6 +164,62 @@ export const packageProjects: Project[] = [
 // only; `links` is for the few that also ship releases or docs.
 export const personalProjects: Project[] = [
     {
+        name: 'SendMock',
+        category: 'Local Mock Server',
+        description:
+            'A local stand-in for the email, SMS, push notification and payment services an app talks to while you build and test it: the app sends over SMTP or the same Twilio, SendGrid, Stripe or FCM APIs it already uses, and SendMock keeps every message in a web UI, pulls out codes and links for tests, and sends realistic webhooks back, with a REST API, CLI and MCP server for AI agents.',
+        tech: ['Rust', 'TypeScript', 'SMTP', 'MCP', 'Docker'],
+        repoURL: 'https://github.com/shibbirweb/sendmock',
+        links: [
+            {
+                url: 'https://shibbirweb.github.io/sendmock/',
+                label: 'Website',
+            },
+            {
+                url: 'https://shibbirweb.github.io/sendmock/demo/',
+                label: 'Live demo',
+            },
+            {
+                url: 'https://shibbirweb.github.io/sendmock/docs/',
+                label: 'Docs',
+            },
+            {
+                url: 'https://www.npmjs.com/package/sendmock',
+                label: 'npm',
+            },
+            {
+                url: 'https://hub.docker.com/r/shibbirweb/sendmock',
+                label: 'Docker Hub',
+            },
+        ],
+    },
+    {
+        name: 'Nibtree',
+        category: 'Desktop Git Client',
+        description:
+            'A native desktop Git client for macOS, Windows and Linux with a 3-way merge tool, multi-folder workspaces, tabs, blame and history, plus a panel to run and watch AI coding agents such as Claude Code and Codex side by side in their own worktrees, built on Rust (Tauri 2) and Svelte 5 so it starts fast and stays light on memory.',
+        tech: ['Rust', 'Tauri', 'Svelte', 'TypeScript', 'Git'],
+        repoURL: 'https://github.com/shibbirweb/nibtree',
+        links: [
+            {
+                url: 'https://github.com/shibbirweb/nibtree/releases',
+                label: 'Releases',
+            },
+            {
+                url: 'https://www.npmjs.com/package/nibtree',
+                label: 'npm',
+            },
+            {
+                url: 'https://hub.docker.com/r/shibbirweb/nibtree',
+                label: 'Docker Hub',
+            },
+            {
+                url: 'https://github.com/shibbirweb/nibtree/wiki',
+                label: 'Docs',
+            },
+        ],
+    },
+    {
         name: 'On Air Record',
         category: 'Audio Broadcast & DVR',
         description:
