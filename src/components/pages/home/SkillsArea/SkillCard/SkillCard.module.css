@@ -1,52 +1,55 @@
 @reference "tailwindcss";
 
-/* Skill tile surface styling, scoped to the component. Everything expressible as
-   a Tailwind utility uses @apply; only the genuinely custom bits (the brand-tinted
-   radial gradient and its strength variable) are written as raw CSS.
+/* Featured AI skill card, scoped to the component. Everything expressible as a
+   Tailwind utility uses @apply; only the genuinely custom bits (the brand-tinted
+   radial gradients and their strength variables) are written as raw CSS.
 
-   On hover a very soft, brand-coloured glow fades in: a translucent radial wash on
-   a ::before layer behind the tile content (the tile is `relative isolate` in the
-   component, so the negative z-index keeps the wash under the icon and name). It is
-   tinted with the tile's --brand-color (set inline per tile) and falls back to
-   --foreground for the monochrome logos; deliberately barely noticeable, with the
-   strength stepping up a touch in dark mode. The per-theme light-dark() brand
-   colours used on these tiles (JavaScript, Linux) resolve against the color-scheme
-   set globally on <html> (see globals.css), so no local color-scheme is needed. */
-.tile {
-    --glow-strength: 8%;
+   A soft brand-coloured glow rests dim behind the card and blooms to full on
+   hover: a translucent radial wash on a ::before layer behind the content (the
+   card is `relative isolate` in the component, so the negative z-index keeps the
+   wash under the icon and text). It is tinted with the card's --brand-color (set
+   inline per card) and falls back to --foreground for the monochrome logos, with
+   the strength stepping up in dark mode. The per-theme light-dark() brand colours
+   resolve against the color-scheme set globally on <html> (see globals.css), so
+   no local color-scheme is needed. */
+.card {
+    --glow-strength: 9%;
+    --badge-tint: 8%;
 
-    /* Cursor spotlight knobs; see the block above .tile::after. --pointer-x/y are
+    /* Cursor spotlight knobs; see the block above .card::after. --pointer-x/y are
        overwritten per frame by useSpotlightSurfaces, and these 50% defaults are what
        touch devices, reduced-motion visitors, and the frames before the first
        pointermove get: a centred bloom, matching how the ambient glow already
-       behaves on tap. The reaches are scaled to a tile rather than a card: these
-       are 5rem to 7rem squares, so the project cards' 21rem/15rem would flood the
-       whole surface and read as a plain brightening. */
+       behaves on tap. The reaches sit between a skill chip and a project card,
+       since these cards are a quarter of the panel wide. */
     --pointer-x: 50%;
     --pointer-y: 50%;
-    --spotlight-radius: 6rem;
-    --spotlight-strength: 4%;
-    --spotlight-border-reach: 3.5rem;
+    --spotlight-radius: 14rem;
+    --spotlight-strength: 3%;
+    --spotlight-border-reach: 9rem;
     --spotlight-border-strength: 50%;
 }
 
 @media (prefers-color-scheme: dark) {
-    :global(html:not([data-theme])) .tile {
-        --glow-strength: 14%;
-        --spotlight-strength: 7%;
+    :global(html:not([data-theme])) .card {
+        --glow-strength: 16%;
+        --badge-tint: 14%;
+        --spotlight-strength: 5.5%;
         --spotlight-border-strength: 68%;
     }
 }
-:global(html[data-theme='dark']) .tile {
-    --glow-strength: 14%;
-    --spotlight-strength: 7%;
+:global(html[data-theme='dark']) .card {
+    --glow-strength: 16%;
+    --badge-tint: 14%;
+    --spotlight-strength: 5.5%;
     --spotlight-border-strength: 68%;
 }
 
-.tile::before {
-    @apply pointer-events-none absolute inset-0 z-[-1] rounded-[inherit] opacity-0 content-[''] motion-safe:transition-opacity motion-safe:duration-300;
+/* Signature bloom: rests dim, lifts to full on hover with a slow, calm fade. */
+.card::before {
+    @apply pointer-events-none absolute inset-0 z-[-1] rounded-[inherit] opacity-55 content-[''] motion-safe:transition-opacity motion-safe:duration-700 motion-safe:ease-out;
     background-image: radial-gradient(
-        130% 100% at 50% 30%,
+        120% 80% at 0% 0%,
         color-mix(
             in oklab,
             var(--brand-color, var(--foreground)) var(--glow-strength),
@@ -56,26 +59,27 @@
     );
 }
 
-.tile:hover::before {
+.card:hover::before {
     @apply opacity-100;
 }
 
-/* Cursor spotlight, part one: a soft highlight that tracks the pointer across the
-   tile. It rides ::after, which sits in the same z-[-1] bucket as the ambient glow
-   on ::before but later in tree order, so the moving highlight reads on top of the
-   static wash while the icon and name stay above both. --pointer-x/y come from
-   useSpotlightSurfaces, written straight to the tile's inline style once per animation
-   frame (never through React); unregistered custom properties are not interpolable,
-   so the tile's transition-all cannot smear them and the glow tracks the cursor
-   exactly.
+/* The icon sits on a small tile washed in its own brand colour. */
+.iconBadge {
+    background-color: color-mix(
+        in oklab,
+        var(--brand-color, var(--foreground)) var(--badge-tint),
+        transparent
+    );
+}
 
-   Tinted with the same --brand-color the ambient glow uses, falling back to
-   --foreground for the monochrome logos, so the two layers stay one light source.
-   Kept faint and stepped up in dark mode, matching every other glow here; it fades
-   a little slower than the ambient wash's 300ms so the two do not arrive as one
-   smudge. As with ::before, only the gradient and its strength variable are raw
-   CSS. */
-.tile::after {
+/* Cursor spotlight, part one: a soft highlight that tracks the pointer across the
+   card. It rides ::after, which sits in the same z-[-1] bucket as the ambient glow
+   on ::before but later in tree order, so the moving highlight reads on top of the
+   static wash while the content stays above both. --pointer-x/y come from
+   useSpotlightSurfaces, written straight to the card's inline style once per
+   animation frame (never through React); unregistered custom properties are not
+   interpolable, so the card's transition-all cannot smear them. */
+.card::after {
     @apply pointer-events-none absolute inset-0 z-[-1] rounded-[inherit] opacity-0 content-[''] motion-safe:transition-opacity motion-safe:duration-500 motion-safe:ease-out;
     background-image: radial-gradient(
         circle var(--spotlight-radius) at var(--pointer-x) var(--pointer-y),
@@ -88,17 +92,15 @@
     );
 }
 
-.tile:hover::after {
+.card:hover::after {
     @apply opacity-100;
 }
 
 /* Cursor spotlight, part two: the lit edge, on the shared SpotlightBorder span
    (both pseudo-elements are already spoken for). The span paints nothing but its
    hairline border, which a radial mask crops to a soft circle at the pointer, so
-   only the stretch of edge nearest the cursor brightens. The mask circle is
-   deliberately tighter than --spotlight-radius, keeping the lit run a localised arc
-   instead of the whole perimeter. Both mask prefixes ship, matching
-   SignatureSpotlight. */
+   only the stretch of edge nearest the cursor brightens. Both mask prefixes ship,
+   matching SignatureSpotlight. */
 .spotlightBorder {
     @apply opacity-0 motion-safe:transition-opacity motion-safe:duration-500 motion-safe:ease-out;
     border-color: color-mix(
@@ -122,6 +124,6 @@
     );
 }
 
-.tile:hover .spotlightBorder {
+.card:hover .spotlightBorder {
     @apply opacity-100;
 }

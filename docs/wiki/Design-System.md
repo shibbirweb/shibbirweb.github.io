@@ -47,9 +47,9 @@ Each card module has three layers:
 
 **Glow strength** is a custom property, about `9%` in light and `16%` in dark, set with the paired dark selectors (see [Theme system](Theme-System.md)).
 
-**Accent colour** comes from context: a skill's brand colour (`--brand-color`), a golden angle hue per card index (projects, now, uses), the cover colours (articles), or emerald (contact).
+**Accent colour** comes from context: a skill's brand colour (`--brand-color`), a golden angle hue per card index (projects, now, uses), the cover colours (articles), emerald (contact), or violet (the AI panel on the skills section).
 
-Reference modules: `SkillsArea/SkillCard`, `ProjectsArea/ProjectCard`, `ContactArea/ContactForm.module.css`, `Footer/SignatureSpotlight`.
+Reference modules: `SkillsArea/SkillCard`, `SkillsArea/AiShowcase`, `ProjectsArea/ProjectCard`, `ContactArea/ContactForm.module.css`, `Footer/SignatureSpotlight`.
 
 ## Adding a new card
 

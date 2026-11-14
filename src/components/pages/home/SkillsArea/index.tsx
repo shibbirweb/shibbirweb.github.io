@@ -1,7 +1,8 @@
 import SectionHeading from '@/components/pages/common/SectionHeading';
-import SpotlightList from '@/components/pages/common/SpotlightList';
-import SkillCard from '@/components/pages/home/SkillsArea/SkillCard';
-import { skills } from '@/components/pages/home/SkillsArea/contents';
+import AiShowcase from '@/components/pages/home/SkillsArea/AiShowcase';
+import SkillIconsRegion from '@/components/pages/home/SkillsArea/SkillIconsRegion';
+import StackOverview from '@/components/pages/home/SkillsArea/StackOverview';
+import { skillsIntro } from '@/components/pages/home/SkillsArea/contents';
 
 export default function SkillsArea() {
     return (
@@ -13,15 +14,14 @@ export default function SkillsArea() {
                 <SectionHeading className="text-center">
                     Skills &amp; Tech
                 </SectionHeading>
+                <p className="text-foreground/70 mx-auto mt-4 max-w-2xl text-center text-base sm:text-lg">
+                    {skillsIntro}
+                </p>
 
-                <SpotlightList className="mt-12 flex flex-wrap justify-center gap-3 sm:gap-4">
-                    {skills.map((skill) => (
-                        <SkillCard
-                            key={skill.name}
-                            skill={skill}
-                        />
-                    ))}
-                </SpotlightList>
+                <SkillIconsRegion className="mx-auto mt-12 max-w-6xl">
+                    <AiShowcase />
+                    <StackOverview />
+                </SkillIconsRegion>
             </div>
         </section>
     );

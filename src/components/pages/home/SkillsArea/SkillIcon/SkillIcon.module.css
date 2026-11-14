@@ -1,0 +1,26 @@
+@reference "tailwindcss";
+
+/* A skill logo painted as a mask: the logo file gives the shape and
+   currentColor gives the colour, so the text colour classes on the icon drive
+   it exactly as they would an inline SVG.
+
+   The mask (and the fill under it) only switch on once SkillIconsRegion marks
+   the section ready, which it does when the section comes within 600px of the
+   viewport. Until then the icon is an empty box of the right size, so nothing
+   shifts when the logos arrive, and the browser has no reason to fetch the logo
+   files during page start-up. */
+.icon {
+    @apply inline-block shrink-0 mask-contain mask-center mask-no-repeat;
+}
+
+:global([data-skill-icons='ready']) .icon {
+    @apply bg-current mask-(--skill-icon-url);
+}
+
+/* Without JavaScript nothing marks the section ready, so show the logos at
+   once. */
+@media (scripting: none) {
+    .icon {
+        @apply bg-current mask-(--skill-icon-url);
+    }
+}

@@ -6,7 +6,7 @@ import DiagramTools from '@/components/pages/articles/DiagramTools';
 import styles from '@/components/pages/articles/FlowDiagram/FlowDiagram.module.css';
 import MermaidModal from '@/components/pages/articles/MermaidRenderer/MermaidModal';
 import MermaidStage from '@/components/pages/articles/MermaidRenderer/MermaidStage';
-import { useHasNearedViewport } from '@/components/pages/articles/MermaidRenderer/hooks/useHasNearedViewport';
+import { useHasNearedViewport } from '@/components/pages/common/hooks/useHasNearedViewport';
 import { useMermaidSvg } from '@/components/pages/articles/MermaidRenderer/hooks/useMermaidSvg';
 
 /**

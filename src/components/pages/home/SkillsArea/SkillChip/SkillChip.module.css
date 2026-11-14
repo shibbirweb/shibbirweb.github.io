@@ -1,0 +1,36 @@
+@reference "tailwindcss";
+
+/* Skill chip glow, scoped to the component. Chips are small enough to bloom from
+   nothing (the design system lets tiles start at opacity-0), so the brand-tinted
+   wash on ::before is invisible at rest and fades in on hover. It is tinted with
+   the chip's --brand-color (set inline per chip) and falls back to --foreground
+   for the monochrome logos, stepping up a touch in dark mode. */
+.chip {
+    --glow-strength: 10%;
+}
+
+@media (prefers-color-scheme: dark) {
+    :global(html:not([data-theme])) .chip {
+        --glow-strength: 18%;
+    }
+}
+:global(html[data-theme='dark']) .chip {
+    --glow-strength: 18%;
+}
+
+.chip::before {
+    @apply pointer-events-none absolute inset-0 z-[-1] rounded-[inherit] opacity-0 content-[''] motion-safe:transition-opacity motion-safe:duration-300;
+    background-image: radial-gradient(
+        90% 140% at 20% 50%,
+        color-mix(
+            in oklab,
+            var(--brand-color, var(--foreground)) var(--glow-strength),
+            transparent
+        ),
+        transparent 75%
+    );
+}
+
+.chip:hover::before {
+    @apply opacity-100;
+}
