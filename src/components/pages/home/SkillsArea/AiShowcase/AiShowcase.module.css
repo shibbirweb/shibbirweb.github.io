@@ -1,65 +1,27 @@
 @reference "tailwindcss";
 
-/* AI panel ambient accent. A soft violet glow bleeds in from the top corners of
-   the panel, marking it as the section's focus. Violet is the panel's own accent
-   (it matches the LLMs card), and like the contact panel it keeps a faint glow at
-   rest, then lifts gently on hover. Stronger in dark mode, mirroring the
-   strength-stepping used by SkillCard and ContactForm. */
-.panel {
-    --panel-glow: 9%;
-    --focus-badge-tint: 12%;
-    --focus-badge-text: var(--color-violet-700);
-}
-
-@media (prefers-color-scheme: dark) {
-    :global(html:not([data-theme])) .panel {
-        --panel-glow: 16%;
-        --focus-badge-tint: 20%;
-        --focus-badge-text: var(--color-violet-300);
-    }
-}
-:global(html[data-theme='dark']) .panel {
-    --panel-glow: 16%;
-    --focus-badge-tint: 20%;
-    --focus-badge-text: var(--color-violet-300);
-}
-
-/* Signature bloom: rests dim and lifts to full on hover, slowly and with a small
-   delta, so it reads as ambient warmth rather than an attention-grab. */
-.panel::before {
-    @apply pointer-events-none absolute inset-0 z-0 rounded-[inherit] opacity-55 content-[''] motion-safe:transition-opacity motion-safe:duration-700 motion-safe:ease-out;
-    background-image:
-        radial-gradient(
-            55% 45% at 90% 0%,
-            color-mix(
-                in oklab,
-                var(--color-violet-500) var(--panel-glow),
-                transparent
-            ),
-            transparent 72%
-        ),
-        radial-gradient(
-            50% 40% at 6% 4%,
-            color-mix(
-                in oklab,
-                var(--color-violet-500) calc(var(--panel-glow) * 0.55),
-                transparent
-            ),
-            transparent 70%
-        );
-}
-
-.panel:hover::before {
-    @apply opacity-100;
-}
-
-/* The "Core focus" pill next to the panel title, tinted with the same violet. */
+/* The "Core focus" pill next to the AI title: a violet fill (no outline, so it
+   adds no extra border to the panel), matching the panel's violet bloom. The
+   fill and text step up in dark mode with the paired theme selectors. */
 .focusBadge {
+    --focus-badge-tint: 14%;
+    --focus-badge-text: var(--color-violet-700);
+
     color: var(--focus-badge-text);
-    border-color: color-mix(in oklab, var(--color-violet-500) 35%, transparent);
     background-color: color-mix(
         in oklab,
         var(--color-violet-500) var(--focus-badge-tint),
         transparent
     );
+}
+
+@media (prefers-color-scheme: dark) {
+    :global(html:not([data-theme])) .focusBadge {
+        --focus-badge-tint: 22%;
+        --focus-badge-text: var(--color-violet-300);
+    }
+}
+:global(html[data-theme='dark']) .focusBadge {
+    --focus-badge-tint: 22%;
+    --focus-badge-text: var(--color-violet-300);
 }

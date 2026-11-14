@@ -26,8 +26,7 @@ flowchart TD
     P --> C[ContactArea]
     H --> H1[GridBackground + ShinyTextAnimation + SocialIcons]
     A --> A1[SystemDiagram on lg, Bento below lg]
-    SK --> SK1[AiShowcase: SkillCard + SkillChip]
-    SK --> SK2[StackOverview: StackGroup rows of SkillChip]
+    SK --> SK1[SkillsPanel: AiShowcase + BuiltOnDivider + StackOverview]
     PR --> PR1[ProjectGrid of ProjectCard + ResumeBridge]
     AR --> AR1[3 x ArticleCard]
     C --> C1[ContactForm + SocialIcons]
@@ -37,7 +36,7 @@ flowchart TD
 
 - **Hero.** Full screen. The name (`HeroName`) uses the Zain font and a shine animation over a pulsing grid. Then the job title and social icons. Name and title come from `constants.ts`. Both animations wait until 5 seconds after the page loads (`DeferredAnimations`), so they stay out of what Lighthouse and other speed tools measure.
 - **About me.** Four "facet" cards around a portrait (`Core`). On large screens, `SystemDiagram` draws connector lines when you scroll to it (`useDrawOnScroll`). On smaller screens, `Bento` shows a 2x2 grid.
-- **Skills.** AI comes first. `AiShowcase` is a panel with a violet glow: four featured AI skills as `SkillCard`s (icon, name, one-line `summary`), then the rest of the AI toolkit as `SkillChip` pills. Below it, `StackOverview` shows the full-stack skills as labelled `StackGroup` rows of chips (Languages, Frontend, Backend, Data, Infrastructure, Tooling & mobile). Each skill can set a brand `color`; cards show it at rest, chips glow in it on hover.
+- **Skills.** AI comes first. `SkillsPanel` is a borderless backdrop with a soft violet glow at the top. The top half (`AiShowcase`) shows four featured AI skills as bordered `SkillCard`s (icon, name, one-line `summary`) and the rest of the AI toolkit as `SkillChip` pills. A `BuiltOnDivider` ("Built on") joins it to the bottom half (`StackOverview`): the full-stack skills as labelled `StackGroup` rows of chips. Cards and chips share the cards' hover: the border brightens and a brand-coloured arc follows the cursor (chips rest on a soft fill with no visible border). Each skill can set a brand `color`.
 - **Projects** (heading "Open Source"). Two `ProjectGroup`s: "Packages & Plugins" shows the first 4 cards and "Personal Projects" the first 2, and each has its own "Show more" (`MoreProjects`) for the rest. The counts are `collapsedPackageProjectCount` and `collapsedPersonalProjectCount` in `contents.ts`. Then a link to `/resume`. Card glow colours are spread around the colour wheel by index.
 - **Articles.** The 3 newest posts as cards and a "View all articles" link. The section is hidden when there are no posts.
 - **Contact.** A form with captcha. See [Contact form](Contact-Form.md).

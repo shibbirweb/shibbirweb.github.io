@@ -7,6 +7,7 @@ import {
 import {
     aiShowcaseTitle,
     allSkills,
+    builtOnLabel,
     featuredAiSkills,
     skillIconUrl,
     stackOverviewTitle,
@@ -196,6 +197,20 @@ describe('home page skills', () => {
         ].map((heading) => heading.textContent?.trim());
 
         expect(headings).toEqual([aiShowcaseTitle, stackOverviewTitle]);
+    });
+
+    it('puts both halves on one panel, joined by "Built on"', () => {
+        const skills = loadPage('index.html').getElementById('skills');
+        const panels = skills?.querySelectorAll('[data-skills-panel]') ?? [];
+
+        expect(panels).toHaveLength(1);
+        const panelText = panels[0]?.textContent ?? '';
+        const aiAt = panelText.indexOf(aiShowcaseTitle);
+        const builtOnAt = panelText.indexOf(builtOnLabel);
+        const stackAt = panelText.indexOf(stackOverviewTitle);
+        expect(aiAt).toBeGreaterThanOrEqual(0);
+        expect(builtOnAt).toBeGreaterThan(aiAt);
+        expect(stackAt).toBeGreaterThan(builtOnAt);
     });
 
     it('renders the featured AI skills as spotlight cards', () => {

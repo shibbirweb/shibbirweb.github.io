@@ -61,4 +61,29 @@ describe('SkillCard', () => {
             'true'
         );
     });
+
+    it('has a border that brightens on hover, like the project cards', () => {
+        renderSkill('#8b5cf6');
+
+        expect(screen.getByRole('listitem')).toHaveClass(
+            'border',
+            'border-foreground/10',
+            'hover:border-foreground/30'
+        );
+    });
+
+    it('lights its border near the cursor with a SpotlightBorder', () => {
+        renderSkill('#8b5cf6');
+
+        const litEdge = screen
+            .getByRole('listitem')
+            .querySelector(':scope > span[aria-hidden]:last-child');
+        expect(litEdge).toHaveClass('absolute', '-inset-px', 'border');
+    });
+
+    it('shows the hand pointer', () => {
+        renderSkill('#8b5cf6');
+
+        expect(screen.getByRole('listitem')).toHaveClass('cursor-pointer');
+    });
 });

@@ -107,6 +107,25 @@ test.describe('home page', () => {
         expect(stackTop).toBeGreaterThan(panelTop);
     });
 
+    test('borders the featured AI cards, not the panel around them', async ({
+        page,
+    }) => {
+        const panel = page.locator('#skills [data-skills-panel]');
+        const featuredCards = panel.locator('li[data-spotlight-surface]', {
+            has: page.getByRole('heading', { level: 4 }),
+        });
+
+        await panel.scrollIntoViewIfNeeded();
+        await expect(panel).toHaveCSS('border-top-width', '0px');
+        await expect(featuredCards).toHaveCount(featuredAiSkills.length);
+        for (const card of await featuredCards.all()) {
+            await expect(card).toHaveCSS('border-top-width', '1px');
+        }
+        await expect(
+            panel.getByRole('heading', { level: 3, name: stackOverviewTitle })
+        ).toBeAttached();
+    });
+
     test('lists every full-stack row with its skills', async ({ page }) => {
         const skills = page.locator('#skills');
 
@@ -165,6 +184,32 @@ test.describe('home page', () => {
         await expect(logo).not.toHaveCSS('color', 'rgb(217, 119, 87)');
         await chip.hover();
         await expect(logo).toHaveCSS('color', 'rgb(217, 119, 87)');
+    });
+
+    test('lights a skill chip border near the cursor on hover', async ({
+        page,
+    }, testInfo) => {
+        test.skip(
+            testInfo.project.name === 'mobile' ||
+                testInfo.project.name === 'tablet',
+            'touch devices have no hover'
+        );
+        const chip = page
+            .locator('#skills')
+            .getByRole('listitem')
+            .filter({ hasText: /^Vector Search$/ });
+        const litEdge = chip.locator('span[aria-hidden]').last();
+
+        await chip.scrollIntoViewIfNeeded();
+        await expect(chip).toHaveCSS('border-top-color', 'rgba(0, 0, 0, 0)');
+        await expect(litEdge).toHaveCSS('opacity', '0');
+        await chip.hover();
+        await expect(chip).not.toHaveCSS(
+            'border-top-color',
+            'rgba(0, 0, 0, 0)'
+        );
+        await expect(litEdge).toHaveCSS('opacity', '1');
+        await expect(chip).toHaveCSS('cursor', 'pointer');
     });
 
     for (const group of projectGroups) {

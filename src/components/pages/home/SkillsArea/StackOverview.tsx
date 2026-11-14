@@ -4,10 +4,13 @@ import {
     stackOverviewTitle,
 } from '@/components/pages/home/SkillsArea/contents';
 
-/** The supporting stack under the AI panel, one labelled row per layer. */
+/**
+ * The full-stack half of the skills panel, under the "Built on" divider: one
+ * labelled row of chips per layer.
+ */
 export default function StackOverview() {
     return (
-        <div className="mt-12 sm:px-8 lg:px-10">
+        <div>
             <h3 className="text-xl font-bold sm:text-2xl">
                 {stackOverviewTitle}
             </h3>

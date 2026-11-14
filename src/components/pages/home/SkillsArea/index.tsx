@@ -1,6 +1,8 @@
 import SectionHeading from '@/components/pages/common/SectionHeading';
 import AiShowcase from '@/components/pages/home/SkillsArea/AiShowcase';
+import BuiltOnDivider from '@/components/pages/home/SkillsArea/BuiltOnDivider';
 import SkillIconsRegion from '@/components/pages/home/SkillsArea/SkillIconsRegion';
+import SkillsPanel from '@/components/pages/home/SkillsArea/SkillsPanel';
 import StackOverview from '@/components/pages/home/SkillsArea/StackOverview';
 import { skillsIntro } from '@/components/pages/home/SkillsArea/contents';
 
@@ -19,8 +21,11 @@ export default function SkillsArea() {
                 </p>
 
                 <SkillIconsRegion className="mx-auto mt-12 max-w-6xl">
-                    <AiShowcase />
-                    <StackOverview />
+                    <SkillsPanel>
+                        <AiShowcase />
+                        <BuiltOnDivider />
+                        <StackOverview />
+                    </SkillsPanel>
                 </SkillIconsRegion>
             </div>
         </section>

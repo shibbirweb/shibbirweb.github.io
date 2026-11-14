@@ -1,8 +1,13 @@
 import { cn } from '@/utils/cn';
+import SpotlightList from '@/components/pages/common/SpotlightList';
 import SkillChip from '@/components/pages/home/SkillsArea/SkillChip';
 import type { Skill } from '@/components/pages/home/SkillsArea/contents';
 
-/** A wrapping row of skill chips, used by the AI toolkit and each stack row. */
+/**
+ * A wrapping row of skill chips, used by the AI toolkit and each stack row. It
+ * is a SpotlightList, so the chip under the cursor gets the same lit edge as
+ * the cards; the chips themselves stay server-rendered.
+ */
 export default function SkillChipList({
     skills,
     className,
@@ -14,8 +19,8 @@ export default function SkillChipList({
     labelledBy?: string;
 }) {
     return (
-        <ul
-            aria-labelledby={labelledBy}
+        <SpotlightList
+            labelledBy={labelledBy}
             className={cn('flex flex-wrap gap-2', className)}
         >
             {skills.map((skill) => (
@@ -24,6 +29,6 @@ export default function SkillChipList({
                     skill={skill}
                 />
             ))}
-        </ul>
+        </SpotlightList>
     );
 }

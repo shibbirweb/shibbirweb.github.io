@@ -16,9 +16,12 @@ import { useSpotlightSurfaces } from '@/components/pages/common/hooks/useSpotlig
  */
 export default function SpotlightList({
     className,
+    labelledBy,
     children,
 }: {
     className: string;
+    /** Id of the heading that names this list, when it has one. */
+    labelledBy?: string;
     children: ReactNode;
 }) {
     const listRef = useRef<HTMLUListElement>(null);
@@ -27,6 +30,7 @@ export default function SpotlightList({
     return (
         <ul
             ref={listRef}
+            aria-labelledby={labelledBy}
             className={className}
         >
             {children}

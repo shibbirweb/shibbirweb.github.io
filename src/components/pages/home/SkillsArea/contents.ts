@@ -41,6 +41,8 @@ export const aiShowcaseBadge = 'Core focus';
 
 export const aiToolkitTitle = 'Models, retrieval & automation';
 
+export const builtOnLabel = 'Built on';
+
 export const stackOverviewTitle = 'Full-stack foundation';
 
 /**

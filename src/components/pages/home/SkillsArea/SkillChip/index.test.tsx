@@ -44,4 +44,29 @@ describe('SkillChip', () => {
             screen.getByRole('listitem').querySelector('[data-skill-icon]')
         ).toHaveAttribute('aria-hidden', 'true');
     });
+
+    it('rests on a soft fill and shows its border only on hover', () => {
+        renderChip('#d97757');
+
+        expect(screen.getByRole('listitem')).toHaveClass(
+            'border-transparent',
+            'hover:border-foreground/25'
+        );
+    });
+
+    it('is a spotlight surface with a lit edge, like the cards', () => {
+        renderChip('#d97757');
+
+        const chip = screen.getByRole('listitem');
+        expect(chip).toHaveAttribute('data-spotlight-surface', 'true');
+        expect(
+            chip.querySelector(':scope > span[aria-hidden]:last-child')
+        ).toHaveClass('absolute', '-inset-px', 'border');
+    });
+
+    it('shows the hand pointer', () => {
+        renderChip('#d97757');
+
+        expect(screen.getByRole('listitem')).toHaveClass('cursor-pointer');
+    });
 });
