@@ -61,7 +61,7 @@ The one exception is dev-only code: `pageExtensions` includes `dev.tsx`/`dev.ts`
 
 - `HeroArea/`: name + title + social icons over an animated grid background (anchor `#hero`)
 - `AboutMeArea/`: portrait plus four facet cards; `SystemDiagram` on `lg`, `Bento` below (anchor `#about`)
-- `SkillsArea/`: skill tiles (`SkillCard`) driven by `contents.ts` (anchor `#skills`)
+- `SkillsArea/`: AI-first skills on one `SkillsPanel`: `AiShowcase` (featured `SkillCard`s plus `SkillChip`s for the AI toolkit), a `BuiltOnDivider`, then `StackOverview` (labelled `StackGroup` rows of chips), all driven by `contents.ts` (anchor `#skills`); logos are files in `public/icons/skills/` drawn as lazily loaded CSS masks (`SkillIcon` + `SkillIconsRegion`)
 - `ProjectsArea/`: "Open Source" card grids (packages with a "Show more" toggle, personal projects) driven by `contents.ts`, plus a `ResumeBridge` link (anchor `#work`)
 - `ArticlesArea/`: "Latest Articles" teaser of the most recent posts; renders nothing when there are none (anchor `#articles`)
 - `ContactArea/`: Web3Forms contact form with lazily loaded hCaptcha and a mailto fallback, plus reused `SocialIcons` (anchor `#contact`)
@@ -136,7 +136,7 @@ CSS-first configuration lives in `src/app/globals.css`; there is **no `tailwind.
 
 #### Signature accent bloom (cards and section surfaces)
 
-This is the site's signature interaction, and it is a **design-system rule, not a one-off**: every self-contained card or section-level surface (skill tiles, project cards, the contact panel, and any new equivalent) should carry the same ambient accent glow that rests quiet and blooms gently on hover. When you build a new card or section, add it; do not ship a flat, glow-less surface.
+This is the site's signature interaction, and it is a **design-system rule, not a one-off**: every self-contained card or section-level surface (skill cards, project cards, the contact panel, the skills panel, and any new equivalent) should carry the same ambient accent glow that rests quiet and blooms gently on hover. When you build a new card or section, add it; do not ship a flat, glow-less surface.
 
 The pattern (see `SkillsArea/SkillCard`, `Footer/SignatureSpotlight`, and `pages/home/ContactArea/ContactForm.module.css` as the reference implementations):
 

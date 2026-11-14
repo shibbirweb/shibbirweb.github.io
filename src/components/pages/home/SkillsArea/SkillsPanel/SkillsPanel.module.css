@@ -1,0 +1,53 @@
+@reference "tailwindcss";
+
+/* Skills panel ambient accent. The panel has no border: it is only the shared
+   backdrop for both halves of the section. A soft violet glow bleeds in from the
+   top corners, over the AI half, and fades out before the full-stack rows, so
+   the section reads as AI first on a calmer foundation. Its gradients fade to
+   transparent on every side, so the glow has no visible edge. It keeps a faint
+   glow at rest and lifts gently on hover, stronger in dark mode, mirroring the
+   strength-stepping used by SkillCard and ContactForm. */
+.panel {
+    --panel-glow: 9%;
+}
+
+@media (prefers-color-scheme: dark) {
+    :global(html:not([data-theme])) .panel {
+        --panel-glow: 16%;
+    }
+}
+:global(html[data-theme='dark']) .panel {
+    --panel-glow: 16%;
+}
+
+/* Signature bloom: rests dim and lifts to full on hover, slowly and with a small
+   delta, so it reads as ambient warmth rather than an attention-grab. */
+.panel::before {
+    @apply pointer-events-none absolute inset-0 z-0 opacity-55 content-[''] motion-safe:transition-opacity motion-safe:duration-700 motion-safe:ease-out;
+    /* Each ellipse sits wholly inside the panel and reaches transparent at its
+       own rim, so with no border to frame it the glow never meets an edge and
+       shows no hard line. */
+    background-image:
+        radial-gradient(
+            25% 12% at 72% 12%,
+            color-mix(
+                in oklab,
+                var(--color-violet-500) var(--panel-glow),
+                transparent
+            ),
+            transparent
+        ),
+        radial-gradient(
+            18% 10% at 20% 10%,
+            color-mix(
+                in oklab,
+                var(--color-violet-500) calc(var(--panel-glow) * 0.55),
+                transparent
+            ),
+            transparent
+        );
+}
+
+.panel:hover::before {
+    @apply opacity-100;
+}

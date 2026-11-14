@@ -8,7 +8,7 @@ import DiagramTools from '@/components/pages/articles/DiagramTools';
 import styles from '@/components/pages/articles/MermaidRenderer/MermaidDiagram.module.css';
 import MermaidStage from '@/components/pages/articles/MermaidRenderer/MermaidStage';
 import MermaidModal from '@/components/pages/articles/MermaidRenderer/MermaidModal';
-import { useHasNearedViewport } from '@/components/pages/articles/MermaidRenderer/hooks/useHasNearedViewport';
+import { useHasNearedViewport } from '@/components/pages/common/hooks/useHasNearedViewport';
 import { useMermaidSvg } from '@/components/pages/articles/MermaidRenderer/hooks/useMermaidSvg';
 import { cn } from '@/utils/cn';
 

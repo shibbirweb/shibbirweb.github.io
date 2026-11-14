@@ -4,12 +4,21 @@ import {
     packageProjects,
     personalProjects,
 } from '@/components/pages/home/ProjectsArea/contents';
+import {
+    aiShowcaseTitle,
+    allSkills,
+    builtOnLabel,
+    featuredAiSkills,
+    skillIconUrl,
+    stackOverviewTitle,
+} from '@/components/pages/home/SkillsArea/contents';
 import { siteURL } from '@/config/constants';
 import { getAllArticles } from '@/lib/posts';
 import {
     jsonLdBlocks,
     listHtmlPages,
     loadPage,
+    outExists,
     pagePath,
     readOut,
     resolveRoute,
@@ -143,6 +152,76 @@ describe('home page projects', () => {
             expect(region, regionId).not.toBeNull();
             expect(region?.hasAttribute('hidden'), regionId).toBe(true);
         }
+    });
+});
+
+describe('home page skills', () => {
+    it('ships every skill name and featured summary in the static HTML', () => {
+        const skillsText =
+            loadPage('index.html').getElementById('skills')?.textContent ?? '';
+
+        for (const skill of allSkills) {
+            expect(skillsText, skill.name).toContain(skill.name);
+        }
+        for (const skill of featuredAiSkills) {
+            expect(skillsText, skill.name).toContain(skill.summary);
+        }
+    });
+
+    it('keeps the skill logos out of the HTML, to be fetched lazily', () => {
+        const skills = loadPage('index.html').getElementById('skills');
+
+        expect(skills?.querySelectorAll('svg')).toHaveLength(0);
+        expect(
+            skills
+                ?.querySelector('[data-skill-icons]')
+                ?.getAttribute('data-skill-icons')
+        ).toBe('pending');
+        expect(skills?.querySelectorAll('[data-skill-icon]')).toHaveLength(
+            allSkills.length
+        );
+    });
+
+    it('exports every skill logo file', () => {
+        for (const skill of allSkills) {
+            const iconPath = skillIconUrl(skill.icon).slice(1);
+            expect(outExists(iconPath), iconPath).toBe(true);
+        }
+    });
+
+    it('leads with the AI panel, ahead of the full-stack rows', () => {
+        const headings = [
+            ...(loadPage('index.html')
+                .getElementById('skills')
+                ?.querySelectorAll('h3') ?? []),
+        ].map((heading) => heading.textContent?.trim());
+
+        expect(headings).toEqual([aiShowcaseTitle, stackOverviewTitle]);
+    });
+
+    it('puts both halves on one panel, joined by "Built on"', () => {
+        const skills = loadPage('index.html').getElementById('skills');
+        const panels = skills?.querySelectorAll('[data-skills-panel]') ?? [];
+
+        expect(panels).toHaveLength(1);
+        const panelText = panels[0]?.textContent ?? '';
+        const aiAt = panelText.indexOf(aiShowcaseTitle);
+        const builtOnAt = panelText.indexOf(builtOnLabel);
+        const stackAt = panelText.indexOf(stackOverviewTitle);
+        expect(aiAt).toBeGreaterThanOrEqual(0);
+        expect(builtOnAt).toBeGreaterThan(aiAt);
+        expect(stackAt).toBeGreaterThan(builtOnAt);
+    });
+
+    it('renders the featured AI skills as spotlight cards', () => {
+        const cards =
+            loadPage('index.html')
+                .getElementById('skills')
+                ?.querySelectorAll('li[data-spotlight-surface] h4') ?? [];
+
+        expect([...cards].map((heading) => heading.textContent)).toEqual(
+            featuredAiSkills.map((skill) => skill.name)
+        );
     });
 });
 

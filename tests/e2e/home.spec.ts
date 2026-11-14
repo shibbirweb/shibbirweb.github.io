@@ -6,6 +6,14 @@ import {
     packageProjects,
     personalProjects,
 } from '@/components/pages/home/ProjectsArea/contents';
+import {
+    aiShowcaseTitle,
+    aiToolkit,
+    aiToolkitTitle,
+    featuredAiSkills,
+    stackGroups,
+    stackOverviewTitle,
+} from '@/components/pages/home/SkillsArea/contents';
 import { personGivenName, professionalTitle } from '@/config/constants';
 import {
     expect,
@@ -62,6 +70,146 @@ test.describe('home page', () => {
             await expect(link).toHaveAttribute('rel', /noopener/);
             await expect(link).toHaveAccessibleName(/.+/);
         }
+    });
+
+    test('leads the skills section with the AI engineering panel', async ({
+        page,
+    }) => {
+        const skills = page.locator('#skills');
+        const panelHeading = skills.getByRole('heading', {
+            level: 3,
+            name: aiShowcaseTitle,
+        });
+        const stackHeading = skills.getByRole('heading', {
+            level: 3,
+            name: stackOverviewTitle,
+        });
+
+        await panelHeading.scrollIntoViewIfNeeded();
+        await expect(panelHeading).toBeVisible();
+        for (const skill of featuredAiSkills) {
+            await expect(
+                skills.getByRole('heading', {
+                    level: 4,
+                    name: skill.name,
+                    exact: true,
+                })
+            ).toBeVisible();
+        }
+        await expect(
+            skills
+                .getByRole('list', { name: aiToolkitTitle })
+                .getByRole('listitem')
+        ).toHaveCount(aiToolkit.length);
+
+        const panelTop = (await panelHeading.boundingBox())?.y ?? 0;
+        const stackTop = (await stackHeading.boundingBox())?.y ?? 0;
+        expect(stackTop).toBeGreaterThan(panelTop);
+    });
+
+    test('borders the featured AI cards, not the panel around them', async ({
+        page,
+    }) => {
+        const panel = page.locator('#skills [data-skills-panel]');
+        const featuredCards = panel.locator('li[data-spotlight-surface]', {
+            has: page.getByRole('heading', { level: 4 }),
+        });
+
+        await panel.scrollIntoViewIfNeeded();
+        await expect(panel).toHaveCSS('border-top-width', '0px');
+        await expect(featuredCards).toHaveCount(featuredAiSkills.length);
+        for (const card of await featuredCards.all()) {
+            await expect(card).toHaveCSS('border-top-width', '1px');
+        }
+        await expect(
+            panel.getByRole('heading', { level: 3, name: stackOverviewTitle })
+        ).toBeAttached();
+    });
+
+    test('lists every full-stack row with its skills', async ({ page }) => {
+        const skills = page.locator('#skills');
+
+        for (const group of stackGroups) {
+            const row = skills.getByRole('list', {
+                name: group.title,
+                exact: true,
+            });
+            await row.scrollIntoViewIfNeeded();
+            await expect(row, group.title).toBeVisible();
+            await expect(row.getByRole('listitem')).toHaveCount(
+                group.skills.length
+            );
+        }
+    });
+
+    test('loads the skill logos only once the section nears the screen', async ({
+        page,
+    }) => {
+        const logoRequests: string[] = [];
+        page.on('request', (request) => {
+            if (request.url().includes('/icons/skills/')) {
+                logoRequests.push(request.url());
+            }
+        });
+        await page.goto('/');
+        await waitForHydration(page);
+
+        const region = page.locator('#skills [data-skill-icons]');
+        await expect(region).toHaveAttribute('data-skill-icons', 'pending');
+        expect(logoRequests).toEqual([]);
+
+        await page.locator('#skills').scrollIntoViewIfNeeded();
+        await expect(region).toHaveAttribute('data-skill-icons', 'ready');
+        await expect(
+            page.locator('#skills [data-skill-icon="claude"]')
+        ).toHaveCSS('mask-image', /icons\/skills\/claude\.svg/);
+        await expect.poll(() => logoRequests.length).toBeGreaterThan(0);
+    });
+
+    test('blooms a skill chip logo to its brand colour on hover', async ({
+        page,
+    }, testInfo) => {
+        test.skip(
+            testInfo.project.name === 'mobile' ||
+                testInfo.project.name === 'tablet',
+            'touch devices have no hover'
+        );
+        const chip = page
+            .locator('#skills')
+            .getByRole('listitem')
+            .filter({ hasText: /^Claude$/ });
+        const logo = chip.locator('[data-skill-icon]');
+
+        await chip.scrollIntoViewIfNeeded();
+        await expect(logo).not.toHaveCSS('color', 'rgb(217, 119, 87)');
+        await chip.hover();
+        await expect(logo).toHaveCSS('color', 'rgb(217, 119, 87)');
+    });
+
+    test('lights a skill chip border near the cursor on hover', async ({
+        page,
+    }, testInfo) => {
+        test.skip(
+            testInfo.project.name === 'mobile' ||
+                testInfo.project.name === 'tablet',
+            'touch devices have no hover'
+        );
+        const chip = page
+            .locator('#skills')
+            .getByRole('listitem')
+            .filter({ hasText: /^Vector Search$/ });
+        const litEdge = chip.locator('span[aria-hidden]').last();
+
+        await chip.scrollIntoViewIfNeeded();
+        await expect(chip).toHaveCSS('border-top-color', 'rgba(0, 0, 0, 0)');
+        await expect(litEdge).toHaveCSS('opacity', '0');
+        await chip.hover();
+        await expect(chip).not.toHaveCSS(
+            'border-top-color',
+            'rgba(0, 0, 0, 0)'
+        );
+        await expect(litEdge).toHaveCSS('opacity', '1');
+        await expect(chip).toHaveCSS('cursor', 'pointer');
     });
 
     for (const group of projectGroups) {

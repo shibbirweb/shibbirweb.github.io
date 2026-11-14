@@ -1,0 +1,27 @@
+@reference "tailwindcss";
+
+/* The "Core focus" pill next to the AI title: a violet fill (no outline, so it
+   adds no extra border to the panel), matching the panel's violet bloom. The
+   fill and text step up in dark mode with the paired theme selectors. */
+.focusBadge {
+    --focus-badge-tint: 14%;
+    --focus-badge-text: var(--color-violet-700);
+
+    color: var(--focus-badge-text);
+    background-color: color-mix(
+        in oklab,
+        var(--color-violet-500) var(--focus-badge-tint),
+        transparent
+    );
+}
+
+@media (prefers-color-scheme: dark) {
+    :global(html:not([data-theme])) .focusBadge {
+        --focus-badge-tint: 22%;
+        --focus-badge-text: var(--color-violet-300);
+    }
+}
+:global(html[data-theme='dark']) .focusBadge {
+    --focus-badge-tint: 22%;
+    --focus-badge-text: var(--color-violet-300);
+}

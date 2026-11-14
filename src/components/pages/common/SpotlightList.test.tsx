@@ -15,4 +15,20 @@ describe('SpotlightList', () => {
         expect(list).toHaveClass('grid', 'gap-6');
         expect(screen.getAllByRole('listitem')).toHaveLength(2);
     });
+
+    it('takes its accessible name from a heading when given one', () => {
+        render(
+            <>
+                <h4 id="toolkit-heading">Toolkit</h4>
+                <SpotlightList
+                    className="flex"
+                    labelledBy="toolkit-heading"
+                >
+                    <li>Claude</li>
+                </SpotlightList>
+            </>
+        );
+
+        expect(screen.getByRole('list', { name: 'Toolkit' })).toBeVisible();
+    });
 });

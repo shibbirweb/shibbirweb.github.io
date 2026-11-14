@@ -2,22 +2,22 @@ import { cn } from '@/utils/cn';
 import SpotlightBorder from '@/components/pages/common/SpotlightBorder';
 import { spotlightSurfaceProps } from '@/components/pages/common/spotlightSurface';
 import styles from '@/components/pages/home/SkillsArea/SkillCard/SkillCard.module.css';
-import type { Skill } from '@/components/pages/home/SkillsArea/contents';
+import SkillIcon from '@/components/pages/home/SkillsArea/SkillIcon';
+import type { FeaturedSkill } from '@/components/pages/home/SkillsArea/contents';
 import type { CSSProperties } from 'react';
 
 /**
- * A single skill rendered as a square tile: icon stacked above its name. The
- * icon is muted at rest so the grid reads as one cohesive set, then blooms to
- * its brand colour on hover (or to the theme foreground for monochrome brand
- * logos), while a very soft brand-tinted glow fades in behind it (the `.tile`
- * ::before in SkillCard.module.css). On top of that ambient bloom the tile is lit
- * by the cursor, matching the project cards: a faint wash on ::after plus a lit
- * edge on SpotlightBorder, both centred on the pointer. Fixed width so the tiles
- * stay compact and the flex-wrap row (and the orphan last row) can centre.
- * Rendered as an <li> inside the <ul>.
+ * A featured AI skill as a bordered card: a brand-tinted icon tile, the skill
+ * name and a one-line summary. Its hover matches the project cards: the border
+ * brightens, a soft brand-tinted glow rests dim and blooms (`.card::before`), a
+ * faint wash follows the cursor (`.card::after`), and a brand-coloured arc
+ * lights the stretch of border nearest the pointer (SpotlightBorder), all in
+ * SkillCard.module.css. The icon wears its brand colour at rest (or the theme
+ * foreground for monochrome logos) because these cards lead the section.
+ * Rendered as an <li> inside a SpotlightList.
  */
-export default function SkillCard({ skill }: { skill: Skill }) {
-    const { name, Icon, color } = skill;
+export default function SkillCard({ skill }: { skill: FeaturedSkill }) {
+    const { name, icon, color, summary } = skill;
 
     return (
         <li
@@ -28,25 +28,31 @@ export default function SkillCard({ skill }: { skill: Skill }) {
                     : undefined
             }
             className={cn(
-                styles.tile,
-                'group border-foreground/10 hover:border-foreground/25 relative isolate flex aspect-square w-20 cursor-pointer flex-col items-center justify-center gap-2.5 rounded-xl border p-2 text-center transition-all duration-300 hover:shadow-sm sm:w-24 lg:w-28'
+                styles.card,
+                'border-foreground/10 hover:border-foreground/30 relative isolate flex cursor-pointer items-start gap-4 rounded-2xl border p-5 transition-all duration-300 hover:shadow-lg sm:flex-col sm:p-6'
             )}
         >
-            <Icon
+            <span
                 className={cn(
-                    'text-foreground/70 size-7 shrink-0 transition-colors duration-300',
-                    color
-                        ? 'group-hover:[color:var(--brand-color)]'
-                        : 'group-hover:text-foreground'
+                    styles.iconBadge,
+                    'flex size-11 shrink-0 items-center justify-center rounded-xl'
                 )}
-            />
-            <span className="text-foreground/75 group-hover:text-foreground text-xs leading-tight font-medium transition-colors duration-300">
-                {name}
+            >
+                <SkillIcon
+                    icon={icon}
+                    className="size-6 [color:var(--brand-color,var(--foreground))]"
+                />
             </span>
+            <div className="space-y-2 sm:space-y-3">
+                <h4 className="text-base font-bold sm:mt-1 sm:text-lg">
+                    {name}
+                </h4>
+                <p className="text-foreground/70 text-sm leading-relaxed">
+                    {summary}
+                </p>
+            </div>
 
-            <SpotlightBorder
-                className={styles.spotlightBorder}
-            />
+            <SpotlightBorder className={styles.spotlightBorder} />
         </li>
     );
 }

@@ -6,21 +6,21 @@
 
 All paths are under `src/components/pages/articles/`.
 
-| File                                            | What it does                                                           |
-| ----------------------------------------------- | ---------------------------------------------------------------------- |
-| `src/lib/markdown.ts`                           | Emits `<pre class="mermaid">` with the escaped source.                 |
-| `MermaidRenderer/index.tsx`                     | Portals one `MermaidDiagram` into each block.                          |
-| `MermaidRenderer/hooks/useMermaidIslands.ts`    | Finds the blocks and makes a host `<div>` after each.                  |
-| `MermaidRenderer/MermaidDiagram.tsx`            | Frame, stage, tools, and the full view modal.                          |
-| `MermaidRenderer/hooks/useMermaidSvg.ts`        | Lazy loads mermaid and renders the SVG. Re-renders on theme change.    |
-| `MermaidRenderer/hooks/useHasNearedViewport.ts` | Turns true (and stays true) once the diagram is 600px from the screen. |
-| `DiagramSourceFallback.tsx`                     | The source text shown until the SVG is ready. Keyboard reachable.      |
-| `MermaidRenderer/mermaidTheme.ts`               | Colours, fonts, spacing for light and dark.                            |
-| `MermaidRenderer/MermaidStage.tsx`              | The pan and zoom viewport.                                             |
-| `MermaidRenderer/hooks/usePanZoom.ts`           | CSS transform based pan and zoom.                                      |
-| `DiagramTools.tsx`, `DiagramModal.tsx`          | Full view and copy buttons, and the modal. Shared with flow diagrams.  |
-| `hooks/useDiagramViewportKeys.ts`               | Keyboard: arrows pan, `+` `-` zoom, `0` resets.                        |
-| `hooks/useModalChrome.ts`                       | Modal scroll lock, focus trap, Escape to close.                        |
+| File                                         | What it does                                                           |
+| -------------------------------------------- | ---------------------------------------------------------------------- |
+| `src/lib/markdown.ts`                        | Emits `<pre class="mermaid">` with the escaped source.                 |
+| `MermaidRenderer/index.tsx`                  | Portals one `MermaidDiagram` into each block.                          |
+| `MermaidRenderer/hooks/useMermaidIslands.ts` | Finds the blocks and makes a host `<div>` after each.                  |
+| `MermaidRenderer/MermaidDiagram.tsx`         | Frame, stage, tools, and the full view modal.                          |
+| `MermaidRenderer/hooks/useMermaidSvg.ts`     | Lazy loads mermaid and renders the SVG. Re-renders on theme change.    |
+| `pages/common/hooks/useHasNearedViewport.ts` | Turns true (and stays true) once the diagram is 600px from the screen. |
+| `DiagramSourceFallback.tsx`                  | The source text shown until the SVG is ready. Keyboard reachable.      |
+| `MermaidRenderer/mermaidTheme.ts`            | Colours, fonts, spacing for light and dark.                            |
+| `MermaidRenderer/MermaidStage.tsx`           | The pan and zoom viewport.                                             |
+| `MermaidRenderer/hooks/usePanZoom.ts`        | CSS transform based pan and zoom.                                      |
+| `DiagramTools.tsx`, `DiagramModal.tsx`       | Full view and copy buttons, and the modal. Shared with flow diagrams.  |
+| `hooks/useDiagramViewportKeys.ts`            | Keyboard: arrows pan, `+` `-` zoom, `0` resets.                        |
+| `hooks/useModalChrome.ts`                    | Modal scroll lock, focus trap, Escape to close.                        |
 
 ## The islands pattern
 

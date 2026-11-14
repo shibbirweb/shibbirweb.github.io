@@ -1,3 +1,5 @@
+import { existsSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { nowMeta, nowQuote, nowSections } from '@/app/now/contents';
 import {
@@ -29,7 +31,13 @@ import {
     packageProjects,
     personalProjects,
 } from '@/components/pages/home/ProjectsArea/contents';
-import { skills } from '@/components/pages/home/SkillsArea/contents';
+import {
+    aiToolkit,
+    allSkills,
+    featuredAiSkills,
+    skillIconDirectory,
+    stackGroups,
+} from '@/components/pages/home/SkillsArea/contents';
 import type { NowBlockData } from '@/components/pages/now/types';
 import type { ResumeSectionData } from '@/components/pages/resume/types';
 import type { UsesBlockData } from '@/components/pages/uses/types';
@@ -129,22 +137,57 @@ describe('HeroArea social links', () => {
 });
 
 describe('SkillsArea skills', () => {
-    it('uses unique names', () => {
-        expectUnique(skills.map((skill) => skill.name));
+    it('uses unique names across the AI panel and every stack row', () => {
+        expectUnique(allSkills.map((skill) => skill.name));
     });
 
-    it('gives every skill a name and an icon component', () => {
-        for (const skill of skills) {
+    const iconFolder = join(process.cwd(), 'public', skillIconDirectory);
+
+    it('gives every skill a name and a logo file that exists', () => {
+        for (const skill of allSkills) {
             expectFilledText(skill.name);
-            expectComponent(skill.Icon);
+            expect(
+                existsSync(join(iconFolder, `${skill.icon}.svg`)),
+                `${skill.name}: ${skill.icon}.svg`
+            ).toBe(true);
         }
     });
 
+    it('keeps no unused logo files', () => {
+        const usedIcons = new Set(
+            allSkills.map((skill) => `${skill.icon}.svg`)
+        );
+
+        expect(
+            readdirSync(iconFolder).filter((file) => !usedIcons.has(file))
+        ).toEqual([]);
+    });
+
     it('sets a non-empty colour whenever one is given', () => {
-        for (const skill of skills) {
+        for (const skill of allSkills) {
             if (skill.color !== undefined) {
                 expectFilledText(skill.color);
             }
+        }
+    });
+
+    it('gives every featured AI skill a one-line summary', () => {
+        expect(featuredAiSkills.length).toBeGreaterThan(0);
+        for (const skill of featuredAiSkills) {
+            expectFilledText(skill.summary);
+            expect(skill.summary, skill.name).not.toContain('\n');
+        }
+    });
+
+    it('keeps the AI toolkit filled', () => {
+        expect(aiToolkit.length).toBeGreaterThan(0);
+    });
+
+    it('gives every stack row a unique title and at least one skill', () => {
+        expectUnique(stackGroups.map((group) => group.title));
+        for (const group of stackGroups) {
+            expectFilledText(group.title);
+            expect(group.skills.length, group.title).toBeGreaterThan(0);
         }
     });
 });
