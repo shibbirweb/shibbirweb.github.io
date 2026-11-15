@@ -49,6 +49,8 @@ Each card module has three layers:
 
 **Accent colour** comes from context: a skill's brand colour (`--brand-color`), a golden angle hue per card index (projects, now, uses), the cover colours (articles), emerald (contact), or violet (the skills panel).
 
+Small tiles inside a card may bloom from zero instead: the project tech tags (`ProjectCard/ProjectTechLine`) rest neutral and glow in the card's colour only on hover. Their halo is a `drop-shadow` on the outer `<li>`, because the tag's slanted `clip-path` face would clip it.
+
 Reference modules: `SkillsArea/SkillCard`, `SkillsArea/SkillsPanel`, `ProjectsArea/ProjectCard`, `ContactArea/ContactForm.module.css`, `Footer/SignatureSpotlight`.
 
 ## Adding a new card

@@ -2,9 +2,9 @@ import { homeSectionIds } from '@/components/layout/Navbar/contents';
 import { socialLinks } from '@/components/pages/home/HeroArea/contents';
 import {
     collapsedPackageProjectCount,
-    collapsedPersonalProjectCount,
+    collapsedHobbyProjectCount,
     packageProjects,
-    personalProjects,
+    hobbyProjects,
 } from '@/components/pages/home/ProjectsArea/contents';
 import {
     aiShowcaseTitle,
@@ -31,10 +31,10 @@ const projectGroups = [
         revealRegionId: 'more-package-projects',
     },
     {
-        name: 'personal',
-        projects: personalProjects,
-        collapsedCount: collapsedPersonalProjectCount,
-        revealRegionId: 'more-personal-projects',
+        name: 'hobby',
+        projects: hobbyProjects,
+        collapsedCount: collapsedHobbyProjectCount,
+        revealRegionId: 'more-hobby-projects',
     },
 ];
 
@@ -236,6 +236,103 @@ test.describe('home page', () => {
             await expect(revealRegion).toBeVisible();
         });
     }
+
+    test('lays the project cards out in as many columns as the screen fits', async ({
+        page,
+    }, testInfo) => {
+        // Only the desktop and mobile projects run this spec (playwright.config).
+        const columnsByScreen: Record<string, number> = {
+            desktop: 3,
+            mobile: 1,
+        };
+        const expectedColumns = columnsByScreen[testInfo.project.name];
+        test.skip(
+            expectedColumns === undefined,
+            'no column expectation for this screen'
+        );
+        const cards = page.locator('#work li[data-spotlight-surface]');
+
+        await cards.first().scrollIntoViewIfNeeded();
+        const firstRowTop = (await cards.first().boundingBox())?.y;
+        const tops = await Promise.all(
+            Array.from(
+                { length: expectedColumns + 1 },
+                async (_, index) => (await cards.nth(index).boundingBox())?.y
+            )
+        );
+
+        expect(tops.slice(0, expectedColumns)).toEqual(
+            Array(expectedColumns).fill(firstRowTop)
+        );
+        expect(tops[expectedColumns]).toBeGreaterThan(firstRowTop ?? 0);
+    });
+
+    test('tints a project card tech tags and grows its ribbon on card hover', async ({
+        page,
+    }, testInfo) => {
+        test.skip(
+            testInfo.project.name === 'mobile',
+            'touch devices have no hover'
+        );
+        const card = page.locator('#work li[data-spotlight-surface]').first();
+        const tagFace = card
+            .getByRole('list', { name: 'Tech stack' })
+            .getByRole('listitem')
+            .first()
+            .locator('span');
+        // The ribbon is the card's first child; SpotlightBorder is its last.
+        const ribbon = card.locator('xpath=./span[@aria-hidden]').first();
+
+        await card.scrollIntoViewIfNeeded();
+        const restingFill = await tagFace.evaluate(
+            (face) => getComputedStyle(face).backgroundColor
+        );
+        const restingRibbonHeight = (await ribbon.boundingBox())?.height ?? 0;
+        await card.getByRole('heading', { level: 4 }).hover();
+
+        await expect
+            .poll(() =>
+                tagFace.evaluate(
+                    (face) => getComputedStyle(face).backgroundColor
+                )
+            )
+            .not.toBe(restingFill);
+        await expect
+            .poll(async () => (await ribbon.boundingBox())?.height ?? 0)
+            .toBeGreaterThan(restingRibbonHeight * 4);
+    });
+
+    test('blooms a glow around a hovered tech tag without moving it', async ({
+        page,
+    }, testInfo) => {
+        test.skip(
+            testInfo.project.name === 'mobile',
+            'touch devices have no hover'
+        );
+        const tag = page
+            .locator('#work li[data-spotlight-surface]')
+            .first()
+            .getByRole('list', { name: 'Tech stack' })
+            .getByRole('listitem')
+            .first();
+        // The halo is a drop-shadow whose colour is fully transparent at rest.
+        // Chromium reports the colour-mix result as `oklab(L a b / alpha)`.
+        const haloAlpha = () =>
+            tag.evaluate((element) => {
+                const match = getComputedStyle(element).filter.match(
+                    /drop-shadow\(\w+\([^/)]*\/\s*([\d.]+)\)/
+                );
+                return match ? Number(match[1]) : 1;
+            });
+
+        await tag.scrollIntoViewIfNeeded();
+        const restingBox = await tag.boundingBox();
+        expect(await haloAlpha()).toBe(0);
+        await tag.hover();
+
+        await expect.poll(haloAlpha).toBeGreaterThan(0);
+        expect(await tag.boundingBox()).toEqual(restingBox);
+    });
 
     test('teases the newest articles', async ({ page }) => {
         const articles = publishedArticles();

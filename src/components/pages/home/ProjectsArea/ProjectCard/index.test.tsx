@@ -51,9 +51,41 @@ describe('ProjectCard', () => {
         renderCard();
 
         const tags = within(getCard())
-            .getAllByRole('listitem')
-            .map((tag) => tag.textContent);
-        expect(tags).toEqual(['TypeScript', 'VS Code API']);
+            .getByRole('list', { name: 'Tech stack' })
+            .querySelectorAll('li');
+        expect([...tags].map((tag) => tag.textContent)).toEqual([
+            'TypeScript',
+            'VS Code API',
+        ]);
+    });
+
+    it('numbers itself from its position, starting at 01', () => {
+        renderCard(project, 4);
+
+        expect(getCard()).toHaveTextContent(/^05/);
+    });
+
+    it('keeps the full description in the markup while clamping it on screen', () => {
+        renderCard();
+
+        const description = screen.getByText(project.description);
+        expect(description).toHaveTextContent(project.description);
+        expect(description).toHaveClass('line-clamp-3');
+    });
+
+    it('draws its hue ribbon as decoration hidden from assistive tech', () => {
+        renderCard();
+
+        const ribbon = getCard().firstElementChild;
+        expect(ribbon?.tagName).toBe('SPAN');
+        expect(ribbon).toHaveAttribute('aria-hidden', 'true');
+        expect(ribbon).toBeEmptyDOMElement();
+    });
+
+    it('names its hover group so the tech tags can follow the card hover', () => {
+        renderCard();
+
+        expect(getCard()).toHaveClass('group/card');
     });
 
     it('links the source code with a descriptive name', () => {

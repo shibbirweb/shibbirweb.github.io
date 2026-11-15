@@ -3,9 +3,9 @@ import ProjectCard from '@/components/pages/home/ProjectsArea/ProjectCard';
 import { Project } from '@/components/pages/home/ProjectsArea/contents';
 
 /**
- * A responsive project card grid. When the last row holds a single card (odd
- * count), it stays in the left column at normal column width so the row reads
- * as a continuation of the grid. `indexOffset` keeps each card's golden-angle
+ * A responsive project tile grid: one column on phones, two on tablets, three
+ * on wide screens. A short last row stays left-aligned at normal column width
+ * so it reads as a continuation of the grid. `indexOffset` keeps each card's golden-angle
  * glow hue distinct across multiple grids on the page.
  *
  * The list is a SpotlightList, which owns the one delegated pointer listener that
@@ -20,7 +20,7 @@ export default function ProjectGrid({
     indexOffset?: number;
 }) {
     return (
-        <SpotlightList className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <SpotlightList className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
             {projects.map((project, index) => (
                 <ProjectCard
                     key={project.repoURL}

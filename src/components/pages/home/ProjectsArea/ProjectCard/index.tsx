@@ -1,14 +1,20 @@
-import ExternalLinkIcon from '@/components/icons/external-link';
-import GithubIcon from '@/components/icons/github';
-import Tag from '@/components/pages/common/Tag';
 import SpotlightBorder from '@/components/pages/common/SpotlightBorder';
 import { spotlightSurfaceProps } from '@/components/pages/common/spotlightSurface';
-import ProjectLink from '@/components/pages/home/ProjectsArea/ProjectLink';
+import ProjectCardMeta from '@/components/pages/home/ProjectsArea/ProjectCard/ProjectCardMeta';
+import ProjectLinks from '@/components/pages/home/ProjectsArea/ProjectCard/ProjectLinks';
+import ProjectTechLine from '@/components/pages/home/ProjectsArea/ProjectCard/ProjectTechLine';
 import styles from '@/components/pages/home/ProjectsArea/ProjectCard/ProjectCard.module.css';
 import { Project } from '@/components/pages/home/ProjectsArea/contents';
 import { cn } from '@/utils/cn';
 import type { CSSProperties } from 'react';
 
+/**
+ * A compact "package index" tile: a numbered mono header, the name, a
+ * three-line description (the full text stays in the markup, only clipped on
+ * screen), the stack as one slash-separated line, and the links in a hairline
+ * footer. A thin ribbon in the card's own hue marks its left edge and runs the
+ * full height on hover.
+ */
 export default function ProjectCard({
     project,
     index,
@@ -16,10 +22,10 @@ export default function ProjectCard({
     project: Project;
     index: number;
 }) {
-    // Give every card its own multi-hue corner glow, generated from its position
-    // with the golden angle so consecutive cards land far apart on the colour
-    // wheel. Driven only by the index, so any project added to contents.ts gets a
-    // fresh, distinct gradient automatically. The three hues feed the layered
+    // Give every card its own multi-hue accent, generated from its position with
+    // the golden angle so consecutive cards land far apart on the colour wheel.
+    // Driven only by the index, so any project added to contents.ts gets a fresh,
+    // distinct hue automatically. The three hues feed the ribbon and the layered
     // washes in ProjectCard.module.css; softness/theme handling live there.
     const hue = (index * 137.508) % 360;
     const glow = {
@@ -34,51 +40,29 @@ export default function ProjectCard({
             style={glow}
             className={cn(
                 styles.card,
-                'border-foreground/10 hover:border-foreground/30 relative isolate flex flex-col rounded-2xl border p-6 transition-all duration-300 hover:shadow-lg sm:p-8'
+                'group/card border-foreground/10 hover:border-foreground/25 relative isolate flex flex-col rounded-xl border p-5 transition-colors duration-300'
             )}
         >
-            <p className="text-foreground/70 text-xs font-bold tracking-wide uppercase">
-                {project.category}
-            </p>
-            <h4 className="mt-2 text-lg font-bold sm:text-xl">
+            <span
+                aria-hidden
+                className={styles.ribbon}
+            />
+
+            <ProjectCardMeta
+                number={index + 1}
+                category={project.category}
+            />
+            <h4 className="mt-2 text-base leading-snug font-bold sm:text-lg">
                 {project.name}
             </h4>
-            <p className="text-foreground/70 mt-3 grow text-base leading-relaxed">
+            <p className="text-foreground/70 mt-2 line-clamp-3 grow text-sm leading-relaxed">
                 {project.description}
             </p>
 
-            <ul className="mt-5 flex flex-wrap gap-2">
-                {project.tech.map((tech) => (
-                    <Tag
-                        key={tech}
-                        className="text-foreground/70 px-3 py-1 text-sm"
-                    >
-                        {tech}
-                    </Tag>
-                ))}
-            </ul>
+            <ProjectTechLine tech={project.tech} />
+            <ProjectLinks project={project} />
 
-            <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
-                <ProjectLink
-                    href={project.repoURL}
-                    label="Code"
-                    ariaLabel={`${project.name} source on GitHub`}
-                    Icon={GithubIcon}
-                />
-                {project.links?.map((link) => (
-                    <ProjectLink
-                        key={link.url}
-                        href={link.url}
-                        label={link.label}
-                        ariaLabel={`${project.name}, ${link.label}`}
-                        Icon={ExternalLinkIcon}
-                    />
-                ))}
-            </div>
-
-            <SpotlightBorder
-                className={styles.spotlightBorder}
-            />
+            <SpotlightBorder className={styles.spotlightBorder} />
         </li>
     );
 }
