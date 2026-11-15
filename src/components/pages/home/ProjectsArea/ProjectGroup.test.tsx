@@ -7,7 +7,7 @@ import type { Project } from '@/components/pages/home/ProjectsArea/contents';
 function makeProject(name: string): Project {
     return {
         name,
-        category: 'Personal Project',
+        category: 'Hobby Project',
         description: `${name} description.`,
         tech: ['TypeScript'],
         repoURL: `https://github.com/shibbirweb/${name.toLowerCase()}`,
@@ -19,10 +19,10 @@ const projects = ['Alpha', 'Bravo', 'Charlie'].map(makeProject);
 function renderGroup(collapsedCount: number, indexOffset?: number) {
     render(
         <ProjectGroup
-            title="Personal Projects"
+            title="Hobby Projects"
             projects={projects}
             collapsedCount={collapsedCount}
-            revealRegionId="more-personal-projects"
+            revealRegionId="more-hobby-projects"
             indexOffset={indexOffset}
         />
     );
@@ -48,8 +48,23 @@ describe('ProjectGroup', () => {
         renderGroup(2);
 
         expect(
-            screen.getByRole('heading', { name: 'Personal Projects' })
+            screen.getByRole('heading', { name: 'Hobby Projects' })
         ).toBeVisible();
+    });
+
+    it('counts every project in the group, including those behind Show more', () => {
+        renderGroup(2);
+
+        // Split across "03" and a screen reader " projects", so match the
+        // element whose full text is the spoken count, not just "03" (a card
+        // number can read "03" too).
+        expect(
+            screen.getByText(
+                (_, element) =>
+                    element?.textContent === '03 projects' &&
+                    element.children.length === 1
+            )
+        ).toBeInTheDocument();
     });
 
     it('shows the first cards and holds the rest behind Show more', () => {
@@ -60,7 +75,7 @@ describe('ProjectGroup', () => {
         expect(getCardHeading('Charlie')).not.toBeVisible();
         expect(
             screen.getByRole('button', { name: 'Show more' })
-        ).toHaveAttribute('aria-controls', 'more-personal-projects');
+        ).toHaveAttribute('aria-controls', 'more-hobby-projects');
     });
 
     it('reveals the held back cards on Show more', async () => {

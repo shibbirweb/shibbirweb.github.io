@@ -22,10 +22,11 @@ export type Project = {
 
 /**
  * How many projects in each group stay on screen before its "Show more"
- * toggle. Bump one when a project should be visible without a click.
+ * toggle. Keep each a multiple of three (the wide grid's column count) so the
+ * last visible row is full; tests/content/data.test.ts checks this.
  */
-export const collapsedPackageProjectCount = 4;
-export const collapsedPersonalProjectCount = 2;
+export const collapsedPackageProjectCount = 6;
+export const collapsedHobbyProjectCount = 3;
 
 // Reusable tools published for others (VS Code Marketplace, npm). These carry
 // `links` to their distribution page alongside the source repo.
@@ -160,9 +161,9 @@ export const packageProjects: Project[] = [
     },
 ];
 
-// Public repos built for personal use, learning, or practice. Mostly source
-// only; `links` is for the few that also ship releases or docs.
-export const personalProjects: Project[] = [
+// Hobby projects: public repos built for fun, learning, or practice. Mostly
+// source only; `links` is for the few that also ship releases or docs.
+export const hobbyProjects: Project[] = [
     {
         name: 'SendMock',
         category: 'Local Mock Server',

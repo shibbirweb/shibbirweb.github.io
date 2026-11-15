@@ -1,0 +1,93 @@
+@reference "tailwindcss";
+
+/* Tech tokens as slanted tags: a parallelogram cut with clip-path, so a row of
+   them reads like a strip of chevrons. At rest the fill is neutral (mixed from
+   --foreground so it follows the theme). Hovering the card tints every tag with
+   the card's hue (--glow-a, set inline on ProjectCard) in a quick left-to-right
+   wave: each tag delays by its --token-index, which the component sets inline.
+   Hovering one tag deepens its tint and blooms the signature glow, with no
+   delay; tags never move.
+
+   Each tag is two boxes because clip-path also clips filters and shadows: the
+   outer <li> (.token) stays unclipped and carries the glow halo as a
+   drop-shadow, which traces the slanted shape of the clipped face inside it
+   (.tokenFace). The face also gets an inner radial bloom on ::before. Both
+   glows rest at zero and bloom on hover, as tiles may, and step up in dark mode.
+
+   --token-tint is deliberately not declared on .token: the card-hover value
+   comes from a Tailwind group-hover utility, which lives in a cascade layer and
+   would lose to any unlayered declaration here. Reading it through a 0%
+   fallback lets the utility set it, while the unlayered .token:hover below
+   still wins for the tag under the cursor. The text colour is a utility on the
+   <li>, since the theme tokens live in globals.css, out of this module's
+   @reference scope. */
+.token {
+    --token-base: 7%;
+    --token-slant: 6px;
+    --token-halo: 0%;
+    --token-halo-strength: 45%;
+
+    @apply motion-safe:transition-[filter] motion-safe:duration-300 motion-safe:ease-out;
+    filter: drop-shadow(
+        0 0 6px
+            color-mix(
+                in oklab,
+                var(--glow-a, var(--foreground)) var(--token-halo),
+                transparent
+            )
+    );
+}
+
+.token:hover {
+    --token-tint: 32%;
+    --token-halo: var(--token-halo-strength);
+}
+
+.tokenFace {
+    @apply relative isolate block overflow-hidden px-3 py-1 leading-none motion-safe:transition-colors motion-safe:duration-300 motion-safe:ease-out;
+    clip-path: polygon(
+        var(--token-slant) 0,
+        100% 0,
+        calc(100% - var(--token-slant)) 100%,
+        0 100%
+    );
+    background-color: color-mix(
+        in oklab,
+        var(--glow-a, var(--foreground)) var(--token-tint, 0%),
+        color-mix(in oklab, var(--foreground) var(--token-base), transparent)
+    );
+    transition-delay: calc(var(--token-index, 0) * 45ms);
+}
+
+/* Inner bloom: a soft light rising from the bottom edge of the face. */
+.tokenFace::before {
+    @apply pointer-events-none absolute inset-0 z-[-1] opacity-0 content-[''] motion-safe:transition-opacity motion-safe:duration-500 motion-safe:ease-out;
+    background-image: radial-gradient(
+        80% 120% at 50% 110%,
+        color-mix(
+            in oklab,
+            var(--glow-a, var(--foreground)) var(--token-halo-strength),
+            transparent
+        ),
+        transparent
+    );
+}
+
+.token:hover .tokenFace {
+    @apply delay-0;
+}
+
+.token:hover .tokenFace::before {
+    @apply opacity-100;
+}
+
+@media (prefers-color-scheme: dark) {
+    :global(html:not([data-theme])) .token {
+        --token-base: 9%;
+        --token-halo-strength: 60%;
+    }
+}
+:global(html[data-theme='dark']) .token {
+    --token-base: 9%;
+    --token-halo-strength: 60%;
+}

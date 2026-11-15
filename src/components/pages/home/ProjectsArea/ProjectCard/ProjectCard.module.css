@@ -77,6 +77,20 @@
     @apply opacity-100;
 }
 
+/* Hue ribbon: a short tab of the card's own --glow-a on its left edge, like a
+   bookmark marking the entry. It rests as a small tab level with the header line
+   and runs most of the card's height on hover, so each tile carries its colour
+   even before the aurora shows. Pure utilities except the colour, which is the
+   per-card custom property. */
+.ribbon {
+    @apply pointer-events-none absolute top-5 -left-px h-4 w-0.5 rounded-r-full opacity-80 motion-safe:transition-[height,opacity] motion-safe:duration-500 motion-safe:ease-out;
+    background-color: var(--glow-a, var(--foreground));
+}
+
+.card:hover .ribbon {
+    @apply h-[calc(100%-2.5rem)] opacity-100;
+}
+
 /* Cursor spotlight, part one: a soft highlight that tracks the pointer across the
    card surface. It rides ::after, which sits in the same z-[-1] bucket as the
    aurora on ::before but later in tree order, so the moving highlight reads on top

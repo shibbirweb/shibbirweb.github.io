@@ -3,9 +3,9 @@ import ProjectGroup from '@/components/pages/home/ProjectsArea/ProjectGroup';
 import ResumeBridge from '@/components/pages/home/ProjectsArea/ResumeBridge';
 import {
     collapsedPackageProjectCount,
-    collapsedPersonalProjectCount,
+    collapsedHobbyProjectCount,
     packageProjects,
-    personalProjects,
+    hobbyProjects,
 } from '@/components/pages/home/ProjectsArea/contents';
 
 export default function ProjectsArea() {
@@ -30,10 +30,10 @@ export default function ProjectsArea() {
                 />
 
                 <ProjectGroup
-                    title="Personal Projects"
-                    projects={personalProjects}
-                    collapsedCount={collapsedPersonalProjectCount}
-                    revealRegionId="more-personal-projects"
+                    title="Hobby Projects"
+                    projects={hobbyProjects}
+                    collapsedCount={collapsedHobbyProjectCount}
+                    revealRegionId="more-hobby-projects"
                     indexOffset={packageProjects.length}
                 />
 

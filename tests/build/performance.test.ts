@@ -111,6 +111,28 @@ describe('performance budgets', () => {
             expect(preloads.length).toBeLessThanOrEqual(MAX_PRELOADED_FONTS);
         }
     );
+
+    // The projects section sets its numbers, tags and links in mono, but with
+    // the system mono stack (ProjectsArea/monoText.ts), so the home page must
+    // not pick up the JetBrains Mono file the resume opts into.
+    it('keeps the resume mono font off the home page', () => {
+        const fontPreloads = (page: string) =>
+            [
+                ...loadPage(page).querySelectorAll(
+                    'link[rel="preload"][as="font"]'
+                ),
+            ].map((link) => link.getAttribute('href'));
+        const homeFonts = fontPreloads('index.html');
+        const resumeFonts = fontPreloads('resume.html');
+        const resumeOnlyFonts = resumeFonts.filter(
+            (href) => !homeFonts.includes(href)
+        );
+
+        expect(resumeOnlyFonts.length).toBeGreaterThan(0);
+        for (const href of homeFonts) {
+            expect(resumeFonts).toContain(href);
+        }
+    });
 });
 
 describe('image optimization', () => {

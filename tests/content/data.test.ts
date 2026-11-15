@@ -27,9 +27,9 @@ import {
 import { socialLinks } from '@/components/pages/home/HeroArea/contents';
 import {
     collapsedPackageProjectCount,
-    collapsedPersonalProjectCount,
+    collapsedHobbyProjectCount,
     packageProjects,
-    personalProjects,
+    hobbyProjects,
 } from '@/components/pages/home/ProjectsArea/contents';
 import {
     aiToolkit,
@@ -192,8 +192,10 @@ describe('SkillsArea skills', () => {
     });
 });
 
+const WIDE_PROJECT_GRID_COLUMNS = 3;
+
 describe('ProjectsArea projects', () => {
-    const allProjects = [...packageProjects, ...personalProjects];
+    const allProjects = [...packageProjects, ...hobbyProjects];
 
     it('uses unique names across both lists', () => {
         expectUnique(allProjects.map((project) => project.name));
@@ -220,13 +222,29 @@ describe('ProjectsArea projects', () => {
 
     it.each([
         ['package', collapsedPackageProjectCount, packageProjects],
-        ['personal', collapsedPersonalProjectCount, personalProjects],
+        ['hobby', collapsedHobbyProjectCount, hobbyProjects],
     ])(
         'collapses to a count the %s list can fill',
         (_group, collapsedCount, projects) => {
             expect(Number.isInteger(collapsedCount)).toBe(true);
             expect(collapsedCount).toBeGreaterThan(0);
             expect(collapsedCount).toBeLessThanOrEqual(projects.length);
+        }
+    );
+
+    // ProjectGrid is three columns wide on large screens (xl:grid-cols-3), so a
+    // collapsed count that is a multiple of three leaves no half-empty row
+    // above the "Show more" toggle.
+    it.each([
+        ['package', collapsedPackageProjectCount, packageProjects],
+        ['hobby', collapsedHobbyProjectCount, hobbyProjects],
+    ])(
+        'collapses the %s list to whole rows of the wide grid',
+        (_group, collapsedCount, projects) => {
+            if (collapsedCount === projects.length) {
+                return;
+            }
+            expect(collapsedCount % WIDE_PROJECT_GRID_COLUMNS).toBe(0);
         }
     );
 });

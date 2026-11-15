@@ -2,7 +2,7 @@ import { XMLParser } from 'fast-xml-parser';
 import { describe, expect, it } from 'vitest';
 import {
     packageProjects,
-    personalProjects,
+    hobbyProjects,
 } from '@/components/pages/home/ProjectsArea/contents';
 import {
     aiShowcaseTitle,
@@ -118,7 +118,7 @@ describe('home page projects', () => {
             (heading) => heading.textContent?.trim()
         );
 
-        for (const project of [...packageProjects, ...personalProjects]) {
+        for (const project of [...packageProjects, ...hobbyProjects]) {
             expect(cardHeadings).toContain(project.name);
         }
     });
@@ -135,10 +135,54 @@ describe('home page projects', () => {
         );
 
         expect(glowColours).toHaveLength(
-            packageProjects.length + personalProjects.length
+            packageProjects.length + hobbyProjects.length
         );
         expect(glowColours).not.toContain(undefined);
         expect(new Set(glowColours).size).toBe(glowColours.length);
+    });
+
+    it('ships each full description, which is only clamped on screen', () => {
+        const document = loadPage('index.html');
+        const workText = document.getElementById('work')?.textContent ?? '';
+
+        for (const project of [...packageProjects, ...hobbyProjects]) {
+            expect(workText, project.name).toContain(project.description);
+        }
+    });
+
+    it('ships every card with a labelled tech stack list in order', () => {
+        const document = loadPage('index.html');
+        const cards =
+            document
+                .getElementById('work')
+                ?.querySelectorAll('li[data-spotlight-surface]') ?? [];
+        const projects = [...packageProjects, ...hobbyProjects];
+
+        expect(cards).toHaveLength(projects.length);
+        projects.forEach((project, index) => {
+            const techList = cards[index].querySelector(
+                'ul[aria-label="Tech stack"]'
+            );
+            const tags = [...(techList?.querySelectorAll('li') ?? [])].map(
+                (tag) => tag.textContent?.trim()
+            );
+            expect(tags, project.name).toEqual(project.tech);
+        });
+    });
+
+    it('numbers the cards in order across both groups', () => {
+        const document = loadPage('index.html');
+        const cards =
+            document
+                .getElementById('work')
+                ?.querySelectorAll('li[data-spotlight-surface]') ?? [];
+        const numbers = [...cards].map((card) =>
+            card.querySelector('p span[aria-hidden]')?.textContent?.trim()
+        );
+
+        expect(numbers).toEqual(
+            numbers.map((_, index) => String(index + 1).padStart(2, '0'))
+        );
     });
 
     it('holds each "Show more" region hidden in the static HTML', () => {
@@ -146,7 +190,7 @@ describe('home page projects', () => {
 
         for (const regionId of [
             'more-package-projects',
-            'more-personal-projects',
+            'more-hobby-projects',
         ]) {
             const region = document.getElementById(regionId);
             expect(region, regionId).not.toBeNull();
