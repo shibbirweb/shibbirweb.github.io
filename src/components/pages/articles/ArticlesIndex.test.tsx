@@ -53,4 +53,18 @@ describe('ArticlesIndex', () => {
             '/articles?page=2'
         );
     });
+
+    it('counts every article and offers the grid/list toggle, grid first', () => {
+        render(
+            <ArticlesIndex
+                articles={[buildArticle(1), buildArticle(2)]}
+                tags={['AI']}
+            />
+        );
+
+        expect(screen.getByText('2 articles')).toBeInTheDocument();
+        expect(
+            screen.getByRole('button', { name: 'Grid view' })
+        ).toHaveAttribute('aria-pressed', 'true');
+    });
 });

@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import DateTile from '@/components/pages/home/ArticlesArea/ArticleRow/DateTile';
+import DateTile from '@/components/pages/articles/ArticleRow/DateTile';
 
 describe('DateTile', () => {
     it('is a machine-readable time for the authored date', () => {

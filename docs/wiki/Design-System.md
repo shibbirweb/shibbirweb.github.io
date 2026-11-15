@@ -51,7 +51,7 @@ Each card module has three layers:
 
 Small tiles inside a card may bloom from zero instead: the project tech tags (`ProjectCard/ProjectTechLine`) rest neutral and glow in the card's colour only on hover. Their halo is a `drop-shadow` on the outer `<li>`, because the tag's slanted `clip-path` face would clip it.
 
-Reference modules: `SkillsArea/SkillCard`, `SkillsArea/SkillsPanel`, `ProjectsArea/ProjectCard`, `ArticlesArea/ArticleRow`, `ContactArea/ContactForm.module.css`, `Footer/SignatureSpotlight`.
+Reference modules: `SkillsArea/SkillCard`, `SkillsArea/SkillsPanel`, `ProjectsArea/ProjectCard`, `articles/ArticleRow`, `ContactArea/ContactForm.module.css`, `Footer/SignatureSpotlight`.
 
 ## Adding a new card
 

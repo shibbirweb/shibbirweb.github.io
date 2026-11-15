@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { tagHandle } from '@/components/pages/home/ArticlesArea/ArticleRow/tagHandle';
+import { tagHandle } from '@/components/pages/articles/ArticleRow/tagHandle';
 
 describe('tagHandle', () => {
     it('lower-cases a single word tag behind a hash', () => {

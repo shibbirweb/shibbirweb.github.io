@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import SectionHeading from '@/components/pages/common/SectionHeading';
-import SpotlightList from '@/components/pages/common/SpotlightList';
-import ArticleRow from '@/components/pages/home/ArticlesArea/ArticleRow';
+import ArticleRowList from '@/components/pages/articles/ArticleRowList';
 import { buildSeriesTotals } from '@/utils/seriesTotals';
 import { getAllArticles, getLatestArticles } from '@/lib/posts';
 
@@ -22,19 +21,11 @@ export default function ArticlesArea() {
                     Latest Articles
                 </SectionHeading>
 
-                <SpotlightList className="mt-10 flex flex-col gap-3">
-                    {latest.map((article) => (
-                        <ArticleRow
-                            key={article.slug}
-                            article={article}
-                            seriesTotal={
-                                article.series
-                                    ? seriesTotals[article.series.name]
-                                    : undefined
-                            }
-                        />
-                    ))}
-                </SpotlightList>
+                <ArticleRowList
+                    articles={latest}
+                    seriesTotals={seriesTotals}
+                    className="mt-10"
+                />
 
                 <div className="mt-8 text-center">
                     <Link

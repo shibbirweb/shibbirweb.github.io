@@ -40,4 +40,27 @@ describe('ArticleCover', () => {
         expect(image).toHaveAttribute('height', '630');
         expect(image).toHaveClass('w-full', 'object-cover', 'rounded-2xl');
     });
+
+    it('loads lazily by default', () => {
+        const { container } = render(
+            <ArticleCover src="/images/articles/cover.svg" />
+        );
+
+        const image = container.querySelector('img');
+        expect(image).toHaveAttribute('loading', 'lazy');
+        expect(image).not.toHaveAttribute('fetchpriority');
+    });
+
+    it('loads eagerly at high priority when it is the largest paint', () => {
+        const { container } = render(
+            <ArticleCover
+                src="/images/articles/cover.svg"
+                eager
+            />
+        );
+
+        const image = container.querySelector('img');
+        expect(image).toHaveAttribute('loading', 'eager');
+        expect(image).toHaveAttribute('fetchpriority', 'high');
+    });
 });

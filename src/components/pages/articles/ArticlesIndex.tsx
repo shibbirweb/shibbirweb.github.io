@@ -1,12 +1,9 @@
 import { Suspense } from 'react';
 import Breadcrumb from '@/components/layout/Breadcrumb';
 import SectionHeading from '@/components/pages/common/SectionHeading';
-import ArticleGrid from '@/components/pages/articles/ArticleGrid';
 import ArticleSearch from '@/components/pages/articles/ArticleSearch';
+import ArticlesIndexFallback from '@/components/pages/articles/ArticlesIndexFallback';
 import ArticlesList from '@/components/pages/articles/ArticlesList';
-import Pagination from '@/components/pages/articles/Pagination';
-import TagFilter from '@/components/pages/articles/TagFilter';
-import { buildPageHref } from '@/utils/pageHref';
 import { buildSeriesTotals } from '@/utils/seriesTotals';
 import { ARTICLES_PER_PAGE, type ArticleSummary } from '@/lib/posts';
 
@@ -43,27 +40,12 @@ export default function ArticlesIndex({
 
             <Suspense
                 fallback={
-                    <>
-                        <TagFilter
-                            tags={tags}
-                            active={null}
-                        />
-                        <ArticleGrid
-                            articles={articles.slice(0, ARTICLES_PER_PAGE)}
-                            seriesTotals={seriesTotals}
-                        />
-                        <Pagination
-                            current={1}
-                            total={totalPages}
-                            createHref={(page) =>
-                                buildPageHref(
-                                    '/articles',
-                                    new URLSearchParams(),
-                                    page
-                                )
-                            }
-                        />
-                    </>
+                    <ArticlesIndexFallback
+                        articles={articles}
+                        tags={tags}
+                        seriesTotals={seriesTotals}
+                        totalPages={totalPages}
+                    />
                 }
             >
                 <ArticlesList

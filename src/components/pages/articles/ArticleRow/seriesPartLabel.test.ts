@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { seriesPartLabel } from '@/components/pages/home/ArticlesArea/ArticleRow/seriesPartLabel';
+import { seriesPartLabel } from '@/components/pages/articles/ArticleRow/seriesPartLabel';
 
 const series = { name: 'Homelab notes', order: 2 };
 

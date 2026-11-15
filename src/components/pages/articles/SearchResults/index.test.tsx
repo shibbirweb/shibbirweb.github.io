@@ -121,4 +121,22 @@ describe('SearchResults', () => {
             screen.getByText('Nothing matched. Try a different title or tag.')
         ).toBeInTheDocument();
     });
+
+    it('counts series parts across every article, not just the matches', () => {
+        navigation.searchParams = new URLSearchParams('q=docker');
+        const seriesArticles = [
+            { ...articles[0], series: { name: 'Docker', order: 1 } },
+            { ...articles[3], series: { name: 'Docker', order: 2 } },
+        ];
+
+        render(
+            <SearchResults
+                articles={seriesArticles}
+                perPage={2}
+            />
+        );
+
+        expect(cardTitles()).toEqual(['Docker basics']);
+        expect(screen.getByText('Part 1 of 2')).toBeInTheDocument();
+    });
 });

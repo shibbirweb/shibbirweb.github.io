@@ -2,7 +2,9 @@
 
 import { useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
-import ArticleGrid from '@/components/pages/articles/ArticleGrid';
+import ArticlesResults from '@/components/pages/articles/ArticlesResults';
+import ArticleCount from '@/components/pages/articles/ArticleCount';
+import ArticlesToolbar from '@/components/pages/articles/ArticlesToolbar';
 import Pagination from '@/components/pages/articles/Pagination';
 import TagFilter from '@/components/pages/articles/TagFilter';
 import { buildPageHref } from '@/utils/pageHref';
@@ -54,7 +56,10 @@ export default function ArticlesList({
                 </p>
             ) : (
                 <>
-                    <ArticleGrid
+                    <ArticlesToolbar
+                        summary={<ArticleCount count={filtered.length} />}
+                    />
+                    <ArticlesResults
                         articles={filtered.slice(start, start + perPage)}
                         seriesTotals={seriesTotals}
                     />

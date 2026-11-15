@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import ArticleRowTags, {
     teaserTagLimit,
-} from '@/components/pages/home/ArticlesArea/ArticleRow/ArticleRowTags';
+} from '@/components/pages/articles/ArticleRow/ArticleRowTags';
 
 const tags = ['Laravel', 'MySQL', 'Database Collation', 'Debugging', 'Backend'];
 

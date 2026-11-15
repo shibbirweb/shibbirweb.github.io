@@ -13,7 +13,7 @@ import {
     stackOverviewTitle,
 } from '@/components/pages/home/SkillsArea/contents';
 import { siteURL } from '@/config/constants';
-import { teaserTagLimit } from '@/components/pages/home/ArticlesArea/ArticleRow/ArticleRowTags';
+import { teaserTagLimit } from '@/components/pages/articles/ArticleRow/ArticleRowTags';
 import { getAllArticles, getLatestArticles } from '@/lib/posts';
 import {
     jsonLdBlocks,

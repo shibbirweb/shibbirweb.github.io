@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import { monoTextClassName } from '@/components/pages/common/monoText';
-import { tagHandle } from '@/components/pages/home/ArticlesArea/ArticleRow/tagHandle';
+import { tagHandle } from '@/components/pages/articles/ArticleRow/tagHandle';
 import { cn } from '@/utils/cn';
 
-/** How many tags a home teaser row shows; the article page lists them all. */
+/** How many tags a row shows; the article page itself lists them all. */
 export const teaserTagLimit = 3;
 
 /**
