@@ -113,7 +113,7 @@ describe('performance budgets', () => {
     );
 
     // The projects section sets its numbers, tags and links in mono, but with
-    // the system mono stack (ProjectsArea/monoText.ts), so the home page must
+    // the system mono stack (pages/common/monoText.ts), so the home page must
     // not pick up the JetBrains Mono file the resume opts into.
     it('keeps the resume mono font off the home page', () => {
         const fontPreloads = (page: string) =>

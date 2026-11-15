@@ -350,6 +350,88 @@ test.describe('home page', () => {
             teaser.getByRole('link', { name: 'View all articles' })
         ).toHaveAttribute('href', '/articles');
     });
+
+    test('opens an article from anywhere on its row, and a tag opens the filtered list', async ({
+        page,
+    }) => {
+        test.skip(publishedArticles().length === 0, 'no published articles');
+        const row = page
+            .locator('#articles li[data-spotlight-surface]')
+            .first();
+        const articleHref = await row
+            .getByRole('heading', { level: 3 })
+            .locator('xpath=ancestor::a')
+            .getAttribute('href');
+        const tagLink = row
+            .getByRole('list', { name: 'Tags' })
+            .getByRole('link')
+            .first();
+        const tagHref = await tagLink.getAttribute('href');
+
+        // The date tile sits outside the link, under its stretched overlay.
+        await row.scrollIntoViewIfNeeded();
+        const tileBox = await row.locator('time').boundingBox();
+        await page.mouse.click(
+            (tileBox?.x ?? 0) + (tileBox?.width ?? 0) / 2,
+            (tileBox?.y ?? 0) + (tileBox?.height ?? 0) / 2
+        );
+        await expect(page).toHaveURL(new RegExp(`${articleHref}$`));
+
+        await page.goBack();
+        await tagLink.click();
+        await expect(page).toHaveURL(
+            (url) => `${url.pathname}${url.search}` === tagHref
+        );
+    });
+
+    test('blooms an article row glow on hover without moving it', async ({
+        page,
+    }, testInfo) => {
+        test.skip(
+            testInfo.project.name === 'mobile',
+            'touch devices have no hover'
+        );
+        test.skip(publishedArticles().length === 0, 'no published articles');
+        const row = page
+            .locator('#articles li[data-spotlight-surface]')
+            .first();
+        const arrow = row.locator('xpath=./*[local-name()="svg"]');
+        const glowOpacity = () =>
+            row.evaluate(
+                (element) => getComputedStyle(element, '::before').opacity
+            );
+
+        await row.scrollIntoViewIfNeeded();
+        await page.mouse.move(0, 0);
+        const restingBox = await row.boundingBox();
+        expect(Number(await glowOpacity())).toBeLessThan(1);
+        await expect(arrow).toBeVisible();
+        const restingArrowColour = await arrow.evaluate(
+            (element) => getComputedStyle(element).color
+        );
+        await row.hover();
+
+        await expect.poll(glowOpacity).toBe('1');
+        await expect
+            .poll(() =>
+                arrow.evaluate((element) => getComputedStyle(element).color)
+            )
+            .not.toBe(restingArrowColour);
+        expect(await row.boundingBox()).toEqual(restingBox);
+    });
+
+    test('hides the article row arrow on phones', async ({
+        page,
+    }, testInfo) => {
+        test.skip(testInfo.project.name !== 'mobile', 'phone layout only');
+        test.skip(publishedArticles().length === 0, 'no published articles');
+        const row = page
+            .locator('#articles li[data-spotlight-surface]')
+            .first();
+
+        await row.scrollIntoViewIfNeeded();
+        await expect(row.locator('xpath=./*[local-name()="svg"]')).toBeHidden();
+    });
 });
 
 test.describe('hero animations', () => {

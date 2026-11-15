@@ -1,7 +1,7 @@
 import Link from 'next/link';
-import ArticleCard from '@/components/pages/articles/ArticleCard';
 import SectionHeading from '@/components/pages/common/SectionHeading';
 import SpotlightList from '@/components/pages/common/SpotlightList';
+import ArticleRow from '@/components/pages/home/ArticlesArea/ArticleRow';
 import { buildSeriesTotals } from '@/utils/seriesTotals';
 import { getAllArticles, getLatestArticles } from '@/lib/posts';
 
@@ -17,14 +17,14 @@ export default function ArticlesArea() {
             id="articles"
             className="py-20 sm:py-28"
         >
-            <div className="container mx-auto px-4">
+            <div className="container mx-auto max-w-4xl px-4">
                 <SectionHeading className="text-center">
                     Latest Articles
                 </SectionHeading>
 
-                <SpotlightList className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <SpotlightList className="mt-10 flex flex-col gap-3">
                     {latest.map((article) => (
-                        <ArticleCard
+                        <ArticleRow
                             key={article.slug}
                             article={article}
                             seriesTotal={
@@ -36,10 +36,10 @@ export default function ArticlesArea() {
                     ))}
                 </SpotlightList>
 
-                <div className="mt-10">
+                <div className="mt-8 text-center">
                     <Link
                         href="/articles"
-                        className="border-foreground/20 hover:border-foreground/50 inline-block rounded-full border px-6 py-2.5 text-sm transition-[transform,border-color] duration-300 motion-safe:hover:scale-105"
+                        className="border-foreground/20 hover:border-foreground/50 inline-block rounded-full border px-6 py-2.5 text-sm transition-colors duration-300"
                     >
                         View all articles
                     </Link>

@@ -1,0 +1,121 @@
+@reference "tailwindcss";
+
+/* Home "Latest Articles" row. The signature accent bloom spills out from behind
+   the calendar tile on the left, in the article's cover colours (--cover-from /
+   --cover-to, set inline per row), resting faint and blooming on hover. A cursor
+   spotlight (::after plus the SpotlightBorder lit edge) tracks the pointer like
+   the article and project cards. The arrow takes the cover colour on hover; it
+   never moves. Only the gradients and their strength variables are raw CSS. */
+.row {
+    --tint-strength: 9%;
+
+    /* Overwritten per frame by useSpotlightSurfaces on the enclosing list; the
+       defaults are what touch devices and reduced-motion visitors get. */
+    --pointer-x: 50%;
+    --pointer-y: 50%;
+    --spotlight-radius: 18rem;
+    --spotlight-strength: 3%;
+    --spotlight-border-reach: 12rem;
+    --spotlight-border-strength: 50%;
+}
+
+@media (prefers-color-scheme: dark) {
+    :global(html:not([data-theme])) .row {
+        --tint-strength: 16%;
+        --spotlight-strength: 5.5%;
+        --spotlight-border-strength: 68%;
+    }
+}
+:global(html[data-theme='dark']) .row {
+    --tint-strength: 16%;
+    --spotlight-strength: 5.5%;
+    --spotlight-border-strength: 68%;
+}
+
+.row::before {
+    @apply pointer-events-none absolute inset-0 z-[-1] rounded-[inherit] opacity-55 content-[''] motion-safe:transition-opacity motion-safe:duration-700 motion-safe:ease-out;
+    background-image:
+        radial-gradient(
+            40% 140% at 0% 50%,
+            color-mix(
+                in oklab,
+                var(--cover-from, var(--foreground)) var(--tint-strength),
+                transparent
+            ),
+            transparent 75%
+        ),
+        radial-gradient(
+            30% 120% at 12% 100%,
+            color-mix(
+                in oklab,
+                var(--cover-to, var(--foreground))
+                    calc(var(--tint-strength) * 0.6),
+                transparent
+            ),
+            transparent 75%
+        );
+}
+
+.row:hover::before {
+    @apply opacity-100;
+}
+
+.row::after {
+    @apply pointer-events-none absolute inset-0 z-[-1] rounded-[inherit] opacity-0 content-[''] motion-safe:transition-opacity motion-safe:duration-500 motion-safe:ease-out;
+    background-image: radial-gradient(
+        circle var(--spotlight-radius) at var(--pointer-x) var(--pointer-y),
+        color-mix(
+            in oklab,
+            var(--cover-from, var(--foreground)) var(--spotlight-strength),
+            transparent
+        ),
+        color-mix(
+            in oklab,
+            var(--cover-to, var(--foreground))
+                calc(var(--spotlight-strength) * 0.4),
+            transparent
+        ),
+        transparent
+    );
+}
+
+.row:hover::after {
+    @apply opacity-100;
+}
+
+.arrow {
+    @apply opacity-40 motion-safe:transition-[color,opacity] motion-safe:duration-300;
+}
+
+.row:hover .arrow {
+    @apply opacity-100;
+    color: var(--cover-from, currentColor);
+}
+
+/* Lit edge on the shared SpotlightBorder span, masked to the pointer. */
+.spotlightBorder {
+    @apply opacity-0 motion-safe:transition-opacity motion-safe:duration-500 motion-safe:ease-out;
+    border-color: color-mix(
+        in oklab,
+        var(--cover-from, var(--foreground)) var(--spotlight-border-strength),
+        transparent
+    );
+    -webkit-mask-image: radial-gradient(
+        circle var(--spotlight-border-reach) at var(--pointer-x)
+            var(--pointer-y),
+        #000,
+        rgba(0, 0, 0, 0.35),
+        transparent
+    );
+    mask-image: radial-gradient(
+        circle var(--spotlight-border-reach) at var(--pointer-x)
+            var(--pointer-y),
+        #000,
+        rgba(0, 0, 0, 0.35),
+        transparent
+    );
+}
+
+.row:hover .spotlightBorder {
+    @apply opacity-100;
+}

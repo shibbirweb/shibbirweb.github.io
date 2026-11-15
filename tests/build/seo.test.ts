@@ -13,7 +13,8 @@ import {
     stackOverviewTitle,
 } from '@/components/pages/home/SkillsArea/contents';
 import { siteURL } from '@/config/constants';
-import { getAllArticles } from '@/lib/posts';
+import { teaserTagLimit } from '@/components/pages/home/ArticlesArea/ArticleRow/ArticleRowTags';
+import { getAllArticles, getLatestArticles } from '@/lib/posts';
 import {
     jsonLdBlocks,
     listHtmlPages,
@@ -196,6 +197,68 @@ describe('home page projects', () => {
             expect(region, regionId).not.toBeNull();
             expect(region?.hasAttribute('hidden'), regionId).toBe(true);
         }
+    });
+});
+
+describe('home page articles', () => {
+    const latest = getLatestArticles(3);
+
+    function articleRows() {
+        const section = loadPage('index.html').getElementById('articles');
+        return [
+            ...(section?.querySelectorAll('li[data-spotlight-surface]') ?? []),
+        ];
+    }
+
+    it('ships the newest articles as rows, newest first', () => {
+        const titles = articleRows().map((row) =>
+            row.querySelector('h3')?.textContent?.trim()
+        );
+
+        expect(titles).toEqual(latest.map((article) => article.title));
+    });
+
+    it('links each row to its article and ships the full description', () => {
+        articleRows().forEach((row, index) => {
+            const article = latest[index];
+            expect(
+                row.querySelector(`a[href="/articles/${article.slug}"]`),
+                article.slug
+            ).not.toBeNull();
+            expect(row.textContent, article.slug).toContain(
+                article.description
+            );
+        });
+    });
+
+    it('dates each row with a machine-readable time', () => {
+        articleRows().forEach((row, index) => {
+            expect(
+                row.querySelector('time')?.getAttribute('datetime'),
+                latest[index].slug
+            ).toBe(latest[index].date);
+        });
+    });
+
+    it(`links at most ${teaserTagLimit} tags per row to the filtered list`, () => {
+        articleRows().forEach((row, index) => {
+            const tagLinks = [
+                ...row.querySelectorAll('ul[aria-label="Tags"] a'),
+            ].map((link) => link.getAttribute('href'));
+            const expectedTags = latest[index].tags.slice(0, teaserTagLimit);
+
+            expect(tagLinks, latest[index].slug).toEqual(
+                expectedTags.map(
+                    (tag) => `/articles?tag=${encodeURIComponent(tag)}`
+                )
+            );
+        });
+    });
+
+    it('leaves the cover images out of the home teaser', () => {
+        const section = loadPage('index.html').getElementById('articles');
+
+        expect(section?.querySelectorAll('img')).toHaveLength(0);
     });
 });
 
