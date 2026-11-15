@@ -4,15 +4,24 @@ import { cn } from '@/utils/cn';
 import type { SeriesTotals } from '@/utils/seriesTotals';
 import type { ArticleSummary } from '@/lib/posts';
 
+/** Cards in the grid's widest row (lg:grid-cols-3): the covers above the fold. */
+export const firstRowCoverCount = 3;
+
 export default function ArticleGrid({
     articles,
     className,
     compact = false,
+    eagerCoverCount = 0,
     seriesTotals,
 }: {
     articles: ArticleSummary[];
     className?: string;
     compact?: boolean;
+    /**
+     * How many leading cards load their cover eagerly. A page whose grid is
+     * above the fold sets its first row, since that cover is the largest paint.
+     */
+    eagerCoverCount?: number;
     /** Series name to published-part count, for each card's "Part N of M" label. */
     seriesTotals?: SeriesTotals;
 }) {
@@ -23,11 +32,12 @@ export default function ArticleGrid({
                 className
             )}
         >
-            {articles.map((article) => (
+            {articles.map((article, index) => (
                 <ArticleCard
                     key={article.slug}
                     article={article}
                     compact={compact}
+                    eagerCover={index < eagerCoverCount}
                     seriesTotal={
                         article.series
                             ? seriesTotals?.[article.series.name]

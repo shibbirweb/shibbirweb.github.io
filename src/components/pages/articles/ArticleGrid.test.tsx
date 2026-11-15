@@ -1,6 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import ArticleGrid from '@/components/pages/articles/ArticleGrid';
+import ArticleGrid, {
+    firstRowCoverCount,
+} from '@/components/pages/articles/ArticleGrid';
 import type { ArticleSummary } from '@/lib/posts';
 
 function buildArticle(overrides: Partial<ArticleSummary> = {}): ArticleSummary {
@@ -76,5 +78,36 @@ describe('ArticleGrid', () => {
         );
 
         expect(container.querySelector('ul')).toHaveClass('grid', 'mt-10');
+    });
+
+    it('loads every cover lazily unless asked otherwise', () => {
+        const { container } = render(
+            <ArticleGrid
+                articles={[1, 2].map((index) =>
+                    buildArticle({ slug: `post-${index}` })
+                )}
+            />
+        );
+
+        for (const image of container.querySelectorAll('img')) {
+            expect(image).toHaveAttribute('loading', 'lazy');
+        }
+    });
+
+    it('loads the first row of covers eagerly when asked', () => {
+        const { container } = render(
+            <ArticleGrid
+                articles={[1, 2, 3, 4].map((index) =>
+                    buildArticle({ slug: `post-${index}` })
+                )}
+                eagerCoverCount={firstRowCoverCount}
+            />
+        );
+
+        expect(
+            [...container.querySelectorAll('img')].map((image) =>
+                image.getAttribute('loading')
+            )
+        ).toEqual(['eager', 'eager', 'eager', 'lazy']);
     });
 });

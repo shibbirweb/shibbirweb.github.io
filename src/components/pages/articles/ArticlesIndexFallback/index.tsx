@@ -1,5 +1,7 @@
 import ArticleCount from '@/components/pages/articles/ArticleCount';
-import ArticleGrid from '@/components/pages/articles/ArticleGrid';
+import ArticleGrid, {
+    firstRowCoverCount,
+} from '@/components/pages/articles/ArticleGrid';
 import styles from '@/components/pages/articles/ArticlesIndexFallback/ArticlesIndexFallback.module.css';
 import ArticlesToolbar from '@/components/pages/articles/ArticlesToolbar';
 import Pagination from '@/components/pages/articles/Pagination';
@@ -39,6 +41,7 @@ export default function ArticlesIndexFallback({
                     articles={articles.slice(0, ARTICLES_PER_PAGE)}
                     seriesTotals={seriesTotals}
                     className="mt-6"
+                    eagerCoverCount={firstRowCoverCount}
                 />
                 <Pagination
                     current={1}

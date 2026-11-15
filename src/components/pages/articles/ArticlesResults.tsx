@@ -1,6 +1,8 @@
 'use client';
 
-import ArticleGrid from '@/components/pages/articles/ArticleGrid';
+import ArticleGrid, {
+    firstRowCoverCount,
+} from '@/components/pages/articles/ArticleGrid';
 import ArticleRowList from '@/components/pages/articles/ArticleRowList';
 import { useArticlesView } from '@/components/pages/articles/hooks/useArticlesView';
 import type { SeriesTotals } from '@/utils/seriesTotals';
@@ -29,6 +31,7 @@ export default function ArticlesResults({
             articles={articles}
             seriesTotals={seriesTotals}
             className="mt-6"
+            eagerCoverCount={firstRowCoverCount}
         />
     );
 }

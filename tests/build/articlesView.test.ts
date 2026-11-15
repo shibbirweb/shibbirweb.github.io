@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { firstRowCoverCount } from '@/components/pages/articles/ArticleGrid';
 import {
     ARTICLES_VIEW_ATTRIBUTE,
     ARTICLES_VIEW_STORAGE_KEY,
@@ -90,5 +91,21 @@ describe('articles layout toggle in the static export', () => {
         expect(css).toMatch(
             /html\[data-articles-view=['"]?list['"]?\][^{]*\{[^}]*visibility:\s*hidden/
         );
+    });
+
+    // The first row's cover is the page's largest paint, so it must not wait
+    // for the lazy loader; the rest stay lazy.
+    it('loads the first row of covers eagerly and the rest lazily', () => {
+        const images = [
+            ...articlesPage().querySelectorAll(
+                'main li[data-spotlight-surface] img'
+            ),
+        ];
+        const loading = images.map((image) => image.getAttribute('loading'));
+
+        expect(loading.slice(0, firstRowCoverCount)).toEqual(
+            Array(Math.min(firstRowCoverCount, images.length)).fill('eager')
+        );
+        expect(loading.slice(firstRowCoverCount)).not.toContain('eager');
     });
 });

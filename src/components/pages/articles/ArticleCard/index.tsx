@@ -14,10 +14,13 @@ import type { CSSProperties } from 'react';
 export default function ArticleCard({
     article,
     compact = false,
+    eagerCover = false,
     seriesTotal,
 }: {
     article: ArticleSummary;
     compact?: boolean;
+    /** Load the cover eagerly; set for the first row of a grid (largest paint). */
+    eagerCover?: boolean;
     /** Published part count for this article's series, for the "of M" label. */
     seriesTotal?: number;
 }) {
@@ -47,6 +50,7 @@ export default function ArticleCard({
                 radius is the card's less the 1px border it sits inside. */}
             <ArticleCover
                 src={article.cover}
+                eager={eagerCover}
                 className="aspect-video rounded-t-[calc(1rem-1px)]"
             />
             <div
@@ -120,9 +124,7 @@ export default function ArticleCard({
                 </ul>
             </div>
 
-            <SpotlightBorder
-                className={styles.spotlightBorder}
-            />
+            <SpotlightBorder className={styles.spotlightBorder} />
         </li>
     );
 }
