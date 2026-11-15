@@ -1,4 +1,4 @@
-import { monoTextClassName } from '@/components/pages/home/ProjectsArea/monoText';
+import { monoTextClassName } from '@/components/pages/common/monoText';
 import { cn } from '@/utils/cn';
 
 /**

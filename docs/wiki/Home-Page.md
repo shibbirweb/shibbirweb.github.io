@@ -28,7 +28,7 @@ flowchart TD
     A --> A1[SystemDiagram on lg, Bento below lg]
     SK --> SK1[SkillsPanel: AiShowcase + BuiltOnDivider + StackOverview]
     PR --> PR1[ProjectGroup: heading + ProjectGrid of ProjectCard, then ResumeBridge]
-    AR --> AR1[3 x ArticleCard]
+    AR --> AR1[3 x ArticleRow]
     C --> C1[ContactForm + SocialIcons]
 ```
 
@@ -39,8 +39,8 @@ flowchart TD
 - **Skills.** AI comes first. `SkillsPanel` is a borderless backdrop with a soft violet glow at the top. The top half (`AiShowcase`) shows four featured AI skills as bordered `SkillCard`s (icon, name, one-line `summary`) and the rest of the AI toolkit as `SkillChip` pills. A `BuiltOnDivider` ("Built on") joins it to the bottom half (`StackOverview`): the full-stack skills as labelled `StackGroup` rows of chips. Cards and chips share the cards' hover: the border brightens and a brand-coloured arc follows the cursor (chips rest on a soft fill with no visible border). Each skill can set a brand `color`.
 - **Projects** (heading "Open Source"). Two `ProjectGroup`s, each under a `ProjectGroupHeading` (title, a hairline, and the project count). "Packages & Plugins" shows the first 6 cards and "Hobby Projects" the first 3; the rest wait behind each group's "Show more" (`MoreProjects`). The counts are `collapsedPackageProjectCount` and `collapsedHobbyProjectCount` in `contents.ts`. Then a link to `/resume`.
 - **Project cards.** `ProjectGrid` is 1 column on phones, 2 on tablets and 3 on wide screens. Each `ProjectCard` is a compact tile: a mono header with its number and category (`ProjectCardMeta`), the name, a description clamped to 3 lines on screen (the full text stays in the HTML), slanted tech tags (`ProjectTechLine`), and mono links under a hairline (`ProjectLinks`). Each card gets its own colour from its index (golden angle), shown as a small ribbon on its left edge.
-- **Project card hover.** The ribbon runs down the card, the corner glow fades in, and the tech tags fill with the card's colour one after another, left to right. Hovering one tag blooms a glow around and inside it; tags never move. The mono text uses the system mono font (`monoText.ts`), so the home page loads no extra font.
-- **Articles.** The 3 newest posts as cards and a "View all articles" link. The section is hidden when there are no posts.
+- **Project card hover.** The ribbon runs down the card, the corner glow fades in, and the tech tags fill with the card's colour one after another, left to right. Hovering one tag blooms a glow around and inside it; tags never move. The mono text here and in the article rows uses the system mono font (`pages/common/monoText.ts`), so the home page loads no extra font.
+- **Articles.** The 3 newest posts as a compact list of `ArticleRow`s, then a centred "View all articles" link. The section is hidden when there are no posts. Each row is one link to the article: a calendar `DateTile` painted in the cover colours (it replaces the cover image, which only repeated the title), a mono line with the category (or first tag), reading time and series part, the title, a 2-line description, up to 3 `#tag` links to the filtered list (`ArticleRowTags`, above the row link so they stay clickable), and an arrow on wider screens. On hover the cover-colour glow blooms from behind the date tile and the arrow takes the cover colour; nothing moves. The `/articles` page keeps its own `ArticleCard`s.
 - **Contact.** A form with captcha. See [Contact form](Contact-Form.md).
 
 ## Section backgrounds

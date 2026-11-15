@@ -39,7 +39,7 @@ flowchart TD
 
 ## Cover colours
 
-Every article has two cover colours (`coverColors`). They tint the card glow, the page background, the reading bar, and the TOC.
+Every article has two cover colours (`coverColors`). They tint the card glow, the home page date tiles (`ArticleRow`), the page background, the reading bar, and the TOC.
 
 - Generated cover: the gradient pair from the slug.
 - Your own SVG cover: the first two `stop-color` values in the file.

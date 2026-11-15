@@ -2,7 +2,7 @@ import ExternalLinkIcon from '@/components/icons/external-link';
 import GithubIcon from '@/components/icons/github';
 import ProjectLink from '@/components/pages/home/ProjectsArea/ProjectLink';
 import { Project } from '@/components/pages/home/ProjectsArea/contents';
-import { monoTextClassName } from '@/components/pages/home/ProjectsArea/monoText';
+import { monoTextClassName } from '@/components/pages/common/monoText';
 import { cn } from '@/utils/cn';
 
 /**
