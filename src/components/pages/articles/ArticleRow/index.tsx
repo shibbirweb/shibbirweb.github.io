@@ -2,17 +2,17 @@ import Link from 'next/link';
 import ChevronIcon from '@/components/icons/chevron';
 import SpotlightBorder from '@/components/pages/common/SpotlightBorder';
 import { spotlightSurfaceProps } from '@/components/pages/common/spotlightSurface';
-import ArticleRowMeta from '@/components/pages/home/ArticlesArea/ArticleRow/ArticleRowMeta';
-import ArticleRowTags from '@/components/pages/home/ArticlesArea/ArticleRow/ArticleRowTags';
-import DateTile from '@/components/pages/home/ArticlesArea/ArticleRow/DateTile';
-import styles from '@/components/pages/home/ArticlesArea/ArticleRow/ArticleRow.module.css';
-import { seriesPartLabel } from '@/components/pages/home/ArticlesArea/ArticleRow/seriesPartLabel';
+import ArticleRowMeta from '@/components/pages/articles/ArticleRow/ArticleRowMeta';
+import ArticleRowTags from '@/components/pages/articles/ArticleRow/ArticleRowTags';
+import DateTile from '@/components/pages/articles/ArticleRow/DateTile';
+import styles from '@/components/pages/articles/ArticleRow/ArticleRow.module.css';
+import { seriesPartLabel } from '@/components/pages/articles/ArticleRow/seriesPartLabel';
 import { cn } from '@/utils/cn';
 import type { ArticleSummary } from '@/lib/posts';
 import type { CSSProperties } from 'react';
 
 /**
- * One compact "journal index" row in the home Latest Articles teaser: a
+ * One compact "journal index" row (home Latest Articles, articles list view): a
  * calendar tile in the cover colours, a mono kicker, the title, a two-line
  * description, a few `#tag` links, and an arrow on wider screens. The whole row
  * is one stretched link to the article; the tag links sit above it.

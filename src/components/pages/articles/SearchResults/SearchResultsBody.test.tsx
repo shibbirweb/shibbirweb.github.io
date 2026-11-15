@@ -1,5 +1,9 @@
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
+import {
+    ARTICLES_VIEW_ATTRIBUTE,
+    ARTICLES_VIEW_STORAGE_KEY,
+} from '@/components/pages/articles/ArticlesViewToggle/articlesView';
 import SearchResultsBody from '@/components/pages/articles/SearchResults/SearchResultsBody';
 import type { ArticleSummary } from '@/lib/posts';
 
@@ -24,12 +28,38 @@ function cardTitles(): string[] {
         .map((heading) => heading.textContent ?? '');
 }
 
+afterEach(() => {
+    window.localStorage.clear();
+    document.documentElement.removeAttribute(ARTICLES_VIEW_ATTRIBUTE);
+});
+
+function renderMatches(seriesTotals = {}) {
+    return render(
+        <SearchResultsBody
+            query="article"
+            results={[
+                buildArticle(1),
+                {
+                    ...buildArticle(2),
+                    series: { name: 'Home lab', order: 1 },
+                },
+            ]}
+            seriesTotals={seriesTotals}
+            perPage={2}
+            current={1}
+            totalPages={1}
+            createHref={createHref}
+        />
+    );
+}
+
 describe('SearchResultsBody', () => {
     it('prompts to search when the query is empty', () => {
         render(
             <SearchResultsBody
                 query=""
                 results={[buildArticle(1)]}
+                seriesTotals={{}}
                 perPage={2}
                 current={1}
                 totalPages={1}
@@ -50,6 +80,7 @@ describe('SearchResultsBody', () => {
             <SearchResultsBody
                 query="rust"
                 results={[]}
+                seriesTotals={{}}
                 perPage={2}
                 current={1}
                 totalPages={1}
@@ -67,6 +98,7 @@ describe('SearchResultsBody', () => {
             <SearchResultsBody
                 query="article"
                 results={[buildArticle(1), buildArticle(2), buildArticle(3)]}
+                seriesTotals={{}}
                 perPage={2}
                 current={2}
                 totalPages={2}
@@ -86,6 +118,7 @@ describe('SearchResultsBody', () => {
             <SearchResultsBody
                 query="article"
                 results={[buildArticle(1)]}
+                seriesTotals={{}}
                 perPage={2}
                 current={1}
                 totalPages={1}
@@ -96,6 +129,51 @@ describe('SearchResultsBody', () => {
         expect(cardTitles()).toEqual(['Article 1']);
         expect(
             screen.queryByRole('navigation', { name: 'Article pages' })
+        ).not.toBeInTheDocument();
+    });
+
+    it('heads the matches with the found-for label and the layout toggle', () => {
+        renderMatches();
+
+        const toggle = screen.getByRole('group', { name: 'Layout' });
+        expect(toggle.parentElement).toHaveTextContent(
+            '2 articles found for “article”'
+        );
+    });
+
+    it('shows the matches as rows when the list is saved', () => {
+        window.localStorage.setItem(ARTICLES_VIEW_STORAGE_KEY, 'list');
+
+        renderMatches();
+
+        expect(cardTitles()).toEqual(['Article 1', 'Article 2']);
+        expect(
+            document.querySelectorAll('li[data-spotlight-surface] img')
+        ).toHaveLength(0);
+    });
+
+    it('labels series matches with their published total', () => {
+        renderMatches({ 'Home lab': 3 });
+
+        expect(screen.getByText('Part 1 of 3')).toBeInTheDocument();
+    });
+
+    it('labels an empty result without offering the layout toggle', () => {
+        const { container } = render(
+            <SearchResultsBody
+                query="rust"
+                results={[]}
+                seriesTotals={{}}
+                perPage={2}
+                current={1}
+                totalPages={1}
+                createHref={createHref}
+            />
+        );
+
+        expect(container).toHaveTextContent('No articles found for “rust”');
+        expect(
+            screen.queryByRole('group', { name: 'Layout' })
         ).not.toBeInTheDocument();
     });
 });

@@ -21,6 +21,7 @@ import { JsonLdScript } from '@/components/seo/JsonLdScript';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { websiteJsonLd, siteNavigationJsonLd } from '@/utils/siteJsonLd';
 import { ThemeScript } from '@/components/layout/ThemeToggle/ThemeScript';
+import ArticlesViewScript from '@/components/pages/articles/ArticlesViewToggle/ArticlesViewScript';
 import HashScroll from '@/components/layout/HashScroll';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -123,6 +124,11 @@ export default function RootLayout({
                 {/* Applies the saved theme before first paint (no flash). Must be
                     first in <head> and runs in every environment. */}
                 <ThemeScript />
+                {/* Marks <html> with the saved articles grid/list layout before
+                    first paint, so the articles page never flashes the wrong
+                    one. Here rather than on the page so a client-side visit
+                    does not re-render an inline script. */}
+                <ArticlesViewScript />
                 <meta
                     name="apple-mobile-web-app-title"
                     content={siteName}
@@ -153,7 +159,7 @@ export default function RootLayout({
                     fixed nav and jump straight to each page's <main id="main">. */}
                 <a
                     href="#main"
-                    className="focus-ring sr-only focus:not-sr-only focus:bg-background focus:text-foreground focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-lg focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:shadow-lg print:hidden"
+                    className="focus-ring focus:bg-background focus:text-foreground sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-lg focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:shadow-lg print:hidden"
                 >
                     Skip to content
                 </a>

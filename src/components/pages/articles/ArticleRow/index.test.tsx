@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import ArticleRow from '@/components/pages/home/ArticlesArea/ArticleRow';
+import ArticleRow from '@/components/pages/articles/ArticleRow';
 import type { ArticleSummary } from '@/lib/posts';
 
 function buildArticle(overrides: Partial<ArticleSummary> = {}): ArticleSummary {

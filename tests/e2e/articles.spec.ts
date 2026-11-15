@@ -1,5 +1,12 @@
 import { ARTICLES_PER_PAGE } from '@/lib/posts';
-import { expect, publishedArticles, test } from '@tests/e2e/fixtures';
+import { ARTICLES_VIEW_STORAGE_KEY } from '@/components/pages/articles/ArticlesViewToggle/articlesView';
+import {
+    expect,
+    publishedArticles,
+    test,
+    waitForHydration,
+} from '@tests/e2e/fixtures';
+import type { Page } from '@playwright/test';
 
 const articles = publishedArticles();
 
@@ -93,5 +100,124 @@ test.describe('article search', () => {
         await page.goto('/articles/search?q=zzqxwvnothingmatches');
 
         await expect(page.locator(`main a[href^="/articles/"]`)).toHaveCount(0);
+    });
+});
+
+test.describe('articles layout', () => {
+    test.skip(articles.length === 0, 'no published articles');
+
+    // Grid cards carry the cover image; list rows replace it with a date tile.
+    const items = (page: Page) =>
+        page.locator('main li[data-spotlight-surface]');
+    const coverImages = (page: Page) =>
+        page.locator('main li[data-spotlight-surface] img');
+    const layoutButton = (page: Page, name: 'Grid view' | 'List view') =>
+        page
+            .getByRole('group', { name: 'Layout' })
+            .getByRole('button', { name });
+
+    test('opens in the card grid by default', async ({ page }) => {
+        await page.goto('/articles');
+        await waitForHydration(page);
+
+        await expect(layoutButton(page, 'Grid view')).toHaveAttribute(
+            'aria-pressed',
+            'true'
+        );
+        await expect(coverImages(page)).toHaveCount(await items(page).count());
+    });
+
+    test('switches to the list and keeps it across reloads, tags and search', async ({
+        page,
+    }) => {
+        await page.goto('/articles');
+        await waitForHydration(page);
+
+        await layoutButton(page, 'List view').click();
+        await expect(layoutButton(page, 'List view')).toHaveAttribute(
+            'aria-pressed',
+            'true'
+        );
+        await expect(coverImages(page)).toHaveCount(0);
+        await expect(items(page).first().locator('time')).toBeVisible();
+
+        await page.reload();
+        await waitForHydration(page);
+        await expect(layoutButton(page, 'List view')).toHaveAttribute(
+            'aria-pressed',
+            'true'
+        );
+        await expect(coverImages(page)).toHaveCount(0);
+
+        await page
+            .locator('main nav a[href^="/articles?tag="]')
+            .first()
+            .click();
+        await expect(page).toHaveURL(/\?tag=/);
+        await expect(items(page).first()).toBeVisible();
+        await expect(coverImages(page)).toHaveCount(0);
+
+        await page.goto('/articles/search?q=a');
+        await waitForHydration(page);
+        await expect(layoutButton(page, 'List view')).toHaveAttribute(
+            'aria-pressed',
+            'true'
+        );
+        await expect(coverImages(page)).toHaveCount(0);
+    });
+
+    test('switches back to the grid', async ({ page }) => {
+        await page.addInitScript(
+            (key) => window.localStorage.setItem(key, 'list'),
+            ARTICLES_VIEW_STORAGE_KEY
+        );
+        await page.goto('/articles');
+        await waitForHydration(page);
+
+        await layoutButton(page, 'Grid view').click();
+
+        await expect(coverImages(page)).toHaveCount(await items(page).count());
+        expect(
+            await page.evaluate(
+                (key) => window.localStorage.getItem(key),
+                ARTICLES_VIEW_STORAGE_KEY
+            )
+        ).toBe('grid');
+    });
+
+    // The pre-rendered HTML is always the grid. With the app's scripts held
+    // back, this is the moment before React takes over: a saved list must keep
+    // that grid hidden (no flash), while everyone else sees it.
+    test('never flashes the grid at a visitor who saved the list', async ({
+        page,
+    }) => {
+        await page.addInitScript(
+            (key) => window.localStorage.setItem(key, 'list'),
+            ARTICLES_VIEW_STORAGE_KEY
+        );
+        await page.route('**/_next/static/chunks/**', (route) => route.abort());
+        await page.goto('/articles');
+
+        await expect(page.locator('html')).toHaveAttribute(
+            'data-articles-view',
+            'list'
+        );
+        await expect(items(page).first()).toBeHidden();
+        await expect(
+            page.getByRole('navigation', { name: 'Filter articles by tag' })
+        ).toBeVisible();
+    });
+
+    test('shows the pre-rendered grid when nothing is saved', async ({
+        page,
+    }) => {
+        await page.route('**/_next/static/chunks/**', (route) => route.abort());
+        await page.goto('/articles');
+
+        await expect(page.locator('html')).not.toHaveAttribute(
+            'data-articles-view',
+            /.+/
+        );
+        await expect(items(page).first()).toBeVisible();
     });
 });

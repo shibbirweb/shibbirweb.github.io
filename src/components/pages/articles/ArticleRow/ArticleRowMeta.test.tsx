@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import ArticleRowMeta from '@/components/pages/home/ArticlesArea/ArticleRow/ArticleRowMeta';
+import ArticleRowMeta from '@/components/pages/articles/ArticleRow/ArticleRowMeta';
 
 describe('ArticleRowMeta', () => {
     it('shows the label and the reading time with one separator', () => {

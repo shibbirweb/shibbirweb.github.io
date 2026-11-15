@@ -1,6 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import ArticlesList from '@/components/pages/articles/ArticlesList';
+import {
+    ARTICLES_VIEW_ATTRIBUTE,
+    ARTICLES_VIEW_STORAGE_KEY,
+} from '@/components/pages/articles/ArticlesViewToggle/articlesView';
 import { ARTICLES_PER_PAGE, type ArticleSummary } from '@/lib/posts';
 
 const navigation = vi.hoisted(() => ({
@@ -46,6 +50,8 @@ function cardTitles(): string[] {
 
 afterEach(() => {
     navigation.searchParams = new URLSearchParams();
+    window.localStorage.clear();
+    document.documentElement.removeAttribute(ARTICLES_VIEW_ATTRIBUTE);
 });
 
 describe('ArticlesList', () => {
@@ -168,5 +174,43 @@ describe('ArticlesList', () => {
         renderList([partOne, partTwo], ['AI', 'Docker']);
 
         expect(screen.getByText('Part 1 of 2')).toBeInTheDocument();
+    });
+
+    it('counts the filtered articles next to the layout toggle', () => {
+        navigation.searchParams = new URLSearchParams('tag=AI');
+
+        renderList(
+            [buildArticle(1, ['AI']), buildArticle(2, ['AI']), buildArticle(3)],
+            ['AI']
+        );
+
+        const toggle = screen.getByRole('group', { name: 'Layout' });
+        expect(toggle.parentElement).toHaveTextContent('2 articles');
+    });
+
+    it('shows the grid by default and the rows when the list is saved', () => {
+        const { unmount } = renderList(buildArticles(2));
+        expect(
+            document.querySelectorAll('li[data-spotlight-surface] img')
+        ).toHaveLength(2);
+        unmount();
+
+        window.localStorage.setItem(ARTICLES_VIEW_STORAGE_KEY, 'list');
+        renderList(buildArticles(2));
+
+        expect(cardTitles()).toEqual(['Article 1', 'Article 2']);
+        expect(
+            document.querySelectorAll('li[data-spotlight-surface] img')
+        ).toHaveLength(0);
+    });
+
+    it('leaves the toolbar out of the empty state', () => {
+        navigation.searchParams = new URLSearchParams('tag=Nope');
+
+        renderList(buildArticles(2), ['AI']);
+
+        expect(
+            screen.queryByRole('group', { name: 'Layout' })
+        ).not.toBeInTheDocument();
     });
 });

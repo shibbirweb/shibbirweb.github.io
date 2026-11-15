@@ -1,5 +1,5 @@
 import { monoTextClassName } from '@/components/pages/common/monoText';
-import { dateTileParts } from '@/components/pages/home/ArticlesArea/ArticleRow/dateTileParts';
+import { dateTileParts } from '@/components/pages/articles/ArticleRow/dateTileParts';
 import { cn } from '@/utils/cn';
 import { formatDate } from '@/utils/formatDate';
 

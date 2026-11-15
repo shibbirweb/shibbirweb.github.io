@@ -1,16 +1,21 @@
-import ArticleGrid from '@/components/pages/articles/ArticleGrid';
+import ArticlesResults from '@/components/pages/articles/ArticlesResults';
+import ArticlesToolbar from '@/components/pages/articles/ArticlesToolbar';
 import Pagination from '@/components/pages/articles/Pagination';
+import SearchResultsLabel from '@/components/pages/articles/SearchResults/SearchResultsLabel';
+import type { SeriesTotals } from '@/utils/seriesTotals';
 import type { ArticleSummary } from '@/lib/posts';
 
 /**
  * What sits below the search field, in precedence order: a prompt before anything
- * is typed, the paginated grid when the query matched, and an empty-state line when
- * it did not. Separate early returns rather than one expression, so each branch is
+ * is typed, the results (a toolbar with the count and the grid/list toggle, then the
+ * paginated grid or list) when the query matched, and the count with an empty-state
+ * line when it did not. Separate early returns rather than one expression, so each branch is
  * a whole element rather than a limb of a nested ternary.
  */
 export default function SearchResultsBody({
     query,
     results,
+    seriesTotals,
     perPage,
     current,
     totalPages,
@@ -18,6 +23,7 @@ export default function SearchResultsBody({
 }: {
     query: string;
     results: ArticleSummary[];
+    seriesTotals: SeriesTotals;
     perPage: number;
     current: number;
     totalPages: number;
@@ -33,16 +39,35 @@ export default function SearchResultsBody({
 
     if (results.length === 0) {
         return (
-            <p className="text-foreground/70 mt-12 text-base">
-                Nothing matched. Try a different title or tag.
-            </p>
+            <>
+                <div className="mt-8">
+                    <SearchResultsLabel
+                        count={0}
+                        query={query}
+                    />
+                </div>
+                <p className="text-foreground/70 mt-6 text-base">
+                    Nothing matched. Try a different title or tag.
+                </p>
+            </>
         );
     }
 
     const start = (current - 1) * perPage;
     return (
         <>
-            <ArticleGrid articles={results.slice(start, start + perPage)} />
+            <ArticlesToolbar
+                summary={
+                    <SearchResultsLabel
+                        count={results.length}
+                        query={query}
+                    />
+                }
+            />
+            <ArticlesResults
+                articles={results.slice(start, start + perPage)}
+                seriesTotals={seriesTotals}
+            />
             <Pagination
                 current={current}
                 total={totalPages}

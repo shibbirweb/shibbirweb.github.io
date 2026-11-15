@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { dateTileParts } from '@/components/pages/home/ArticlesArea/ArticleRow/dateTileParts';
+import { dateTileParts } from '@/components/pages/articles/ArticleRow/dateTileParts';
 
 describe('dateTileParts', () => {
     it('splits a date into an upper-case month, a padded day and the year', () => {
