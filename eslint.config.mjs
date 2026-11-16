@@ -27,6 +27,8 @@ const eslintConfig = [
             'coverage/**',
             'playwright-report/**',
             'test-results/**',
+            'playwright-report-dev/**',
+            'test-results-dev/**',
             'blob-report/**',
             '.lighthouseci/**',
         ],

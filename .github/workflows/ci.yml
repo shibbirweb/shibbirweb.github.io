@@ -142,6 +142,40 @@ jobs:
                       test-results/
                   retention-days: 7
 
+    e2e-dev:
+        name: Browser tests on the dev server (Turbopack, studio)
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Setup
+              uses: ./.github/actions/setup
+
+            - name: Cache Playwright browsers
+              uses: actions/cache@v4
+              with:
+                  path: ~/.cache/ms-playwright
+                  key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
+
+            - name: Install Chromium
+              run: pnpm test:e2e:install
+
+            # Starts `pnpm dev` itself. Covers what the export never ships: the
+            # dev-only article editor, and every page compiled by Turbopack.
+            - name: Run dev server browser tests
+              run: pnpm test:e2e:dev
+
+            - name: Upload Playwright report
+              if: failure()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: playwright-report-dev
+                  path: |
+                      playwright-report-dev/
+                      test-results-dev/
+                  retention-days: 7
+
     lighthouse:
         name: Lighthouse (performance, a11y, SEO)
         needs: build
