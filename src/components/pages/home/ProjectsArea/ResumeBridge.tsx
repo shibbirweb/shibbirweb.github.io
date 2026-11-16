@@ -1,5 +1,5 @@
-import Link from 'next/link';
 import ChevronIcon from '@/components/icons/chevron';
+import ButtonLink from '@/components/ui/ButtonLink';
 
 /**
  * In-context pointer from the open-source grid to the resume, where the
@@ -12,16 +12,17 @@ export default function ResumeBridge() {
             <p className="text-foreground/70">
                 My professional, client-facing work lives on the resume.
             </p>
-            <Link
+            <ButtonLink
                 href="/resume"
-                className="group text-foreground decoration-foreground/30 hover:decoration-foreground mt-3 inline-flex items-center gap-1.5 font-medium underline underline-offset-4 transition-colors"
+                variant="outline"
+                className="group mt-4 rounded-full"
             >
                 View resume
                 <ChevronIcon
                     aria-hidden="true"
                     className="size-4 rotate-90 transition-transform group-hover:translate-x-0.5"
                 />
-            </Link>
+            </ButtonLink>
         </div>
     );
 }

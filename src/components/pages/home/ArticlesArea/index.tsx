@@ -1,5 +1,5 @@
-import Link from 'next/link';
 import SectionHeading from '@/components/pages/common/SectionHeading';
+import ButtonLink from '@/components/ui/ButtonLink';
 import ArticleRowList from '@/components/pages/articles/ArticleRowList';
 import { buildSeriesTotals } from '@/utils/seriesTotals';
 import { getAllArticles, getLatestArticles } from '@/lib/posts';
@@ -28,12 +28,13 @@ export default function ArticlesArea() {
                 />
 
                 <div className="mt-8 text-center">
-                    <Link
+                    <ButtonLink
                         href="/articles"
-                        className="border-foreground/20 hover:border-foreground/50 inline-block rounded-full border px-6 py-2.5 text-sm transition-colors duration-300"
+                        variant="outline"
+                        className="rounded-full"
                     >
                         View all articles
-                    </Link>
+                    </ButtonLink>
                 </div>
             </div>
         </section>

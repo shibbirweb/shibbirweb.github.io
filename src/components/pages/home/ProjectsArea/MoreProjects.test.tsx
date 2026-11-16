@@ -26,6 +26,8 @@ describe('MoreProjects', () => {
         const toggle = screen.getByRole('button', { name: 'Show more' });
         expect(toggle).toHaveAttribute('aria-expanded', 'false');
         expect(toggle).toHaveAttribute('aria-controls', 'more-test-projects');
+        // The site's outlined button, as a rounded pill.
+        expect(toggle).toHaveClass('border', 'rounded-full');
         expect(document.getElementById('more-test-projects')).toContainElement(
             screen.getByText('Hidden project')
         );

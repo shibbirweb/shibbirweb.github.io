@@ -118,28 +118,6 @@ export const packageProjects: Project[] = [
         ],
     },
     {
-        name: 'Al-Quran Quote',
-        category: 'Rainmeter Skin',
-        description:
-            'A Rainmeter desktop skin for Windows that displays Al-Quran verses with their reference on a customizable panel, working offline from bundled verse data with optional live fetching from the quran.com API.',
-        tech: ['Rainmeter', 'Lua'],
-        repoURL: 'https://github.com/shibbirweb/rainmeter-skin-al-quran-quote',
-        links: [
-            {
-                url: 'https://www.deviantart.com/shibbirweb/art/1360611014',
-                label: 'DeviantArt',
-            },
-            {
-                url: 'https://github.com/shibbirweb/rainmeter-skin-al-quran-quote/releases',
-                label: 'Releases',
-            },
-            {
-                url: 'https://github.com/shibbirweb/rainmeter-skin-al-quran-quote/wiki',
-                label: 'Docs',
-            },
-        ],
-    },
-    {
         name: 'Advanced Laravel Vue Paginate',
         category: 'Vue.js Package',
         description:
@@ -194,6 +172,14 @@ export const hobbyProjects: Project[] = [
                 url: 'https://hub.docker.com/r/shibbirweb/sendmock',
                 label: 'Docker Hub',
             },
+            {
+                url: 'https://github.com/shibbirweb/sendmock/pkgs/container/sendmock',
+                label: 'GHCR',
+            },
+            {
+                url: 'https://github.com/shibbirweb/sendmock/releases',
+                label: 'Releases',
+            },
         ],
     },
     {
@@ -215,6 +201,10 @@ export const hobbyProjects: Project[] = [
             {
                 url: 'https://hub.docker.com/r/shibbirweb/nibtree',
                 label: 'Docker Hub',
+            },
+            {
+                url: 'https://github.com/shibbirweb/nibtree/pkgs/container/nibtree',
+                label: 'GHCR',
             },
             {
                 url: 'https://github.com/shibbirweb/nibtree/wiki',
@@ -244,6 +234,28 @@ export const hobbyProjects: Project[] = [
             },
             {
                 url: 'https://github.com/shibbirweb/on-air-record/wiki',
+                label: 'Docs',
+            },
+        ],
+    },
+    {
+        name: 'Al-Quran Quote',
+        category: 'Rainmeter Skin',
+        description:
+            'A Rainmeter desktop skin for Windows that displays Al-Quran verses with their reference on a customizable panel, working offline from bundled verse data with optional live fetching from the quran.com API.',
+        tech: ['Rainmeter', 'Lua'],
+        repoURL: 'https://github.com/shibbirweb/rainmeter-skin-al-quran-quote',
+        links: [
+            {
+                url: 'https://www.deviantart.com/shibbirweb/art/1360611014',
+                label: 'DeviantArt',
+            },
+            {
+                url: 'https://github.com/shibbirweb/rainmeter-skin-al-quran-quote/releases',
+                label: 'Releases',
+            },
+            {
+                url: 'https://github.com/shibbirweb/rainmeter-skin-al-quran-quote/wiki',
                 label: 'Docs',
             },
         ],
