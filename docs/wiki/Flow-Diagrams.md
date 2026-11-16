@@ -19,6 +19,7 @@ All paths are under `src/components/pages/articles/FlowDiagram/`.
 | `hooks/useFlowHighlight.ts`                                                      | Which nodes and edges are active or dimmed.                             |
 | `hooks/useFlowPlayback.ts`, `hooks/useSmilPlayback.ts`, `hooks/useInViewport.ts` | Playback state and when the animation clock runs.                       |
 | `toMermaid.ts`, `captions.ts`                                                    | Mermaid conversion and caption text.                                    |
+| `returnArc.ts`                                                                   | The curved path for a hop that runs back, right to left.                |
 
 ## The syntax
 
@@ -77,6 +78,8 @@ flowchart TD
 - **The animation only runs when visible.** `useInViewport` and `useSmilPlayback` pause the SVG clock when the diagram is off screen or in the static view.
 - **Reduced motion.** Playback switches to manual steps, the play button hides, and packets stay still.
 - **Touch.** Inline canvases let a thumb scroll the page (`useBlockTouchPan`). The full view allows touch pan.
+- **Hops that come back.** A hop that runs right to left (like a webhook back to the app) is drawn as a curve under the boxes in the interactive view (`returnArc.ts`) and as a dashed arrow in the static view (`toMermaid.ts`). A hop that ends at a box means it arrived there, so show a failed delivery as a hop to its own `{blocked}` box, never as an arrow into the app.
+- **The first scenario is the default** one readers see, and the one reading modes get a picture of.
 - **Copy** always copies mermaid, not the `reactflow` text.
 - **Reading modes get a picture** of the first scenario. `pnpm build` draws it. See [Reading mode](Reading-Mode.md).
 - **Tone colours** in `diagramTones.ts` must be kept in step by hand with the `--tone-*` variables in `FlowDiagram.module.css`.

@@ -68,6 +68,32 @@ describe('toMermaid', () => {
         expect(lines).toContain('    router -->|"all DNS"| pi_hole');
     });
 
+    it('dashes a hop that answers an earlier hop in the opposite direction', () => {
+        const lines = mermaidLines(
+            'Laravel app --> SendMock (SMTP on port 1025)',
+            'SendMock --> Laravel app (signed webhook back)'
+        );
+
+        expect(lines).toContain(
+            '    laravel_app -->|"SMTP on port 1025"| sendmock'
+        );
+        expect(lines).toContain(
+            '    sendmock -.->|"signed webhook back"| laravel_app'
+        );
+    });
+
+    it('dashes an unlabelled return hop too, and leaves one-way hops solid', () => {
+        const lines = mermaidLines(
+            'App --> Server',
+            'Server --> App',
+            'App --> Log'
+        );
+
+        expect(lines).toContain('    app --> server');
+        expect(lines).toContain('    server -.-> app');
+        expect(lines).toContain('    app --> log');
+    });
+
     it('adds one classDef and class line per non-neutral node tone', () => {
         const lines = mermaidLines(
             'Desktop {secure}',

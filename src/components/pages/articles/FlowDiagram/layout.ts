@@ -34,6 +34,28 @@ export const ESTIMATED_NODE_SIZE: NodeSize = { width: 180, height: 68 };
  */
 export const FIT_VIEW_PADDING = 0.18;
 
+/** Hop labels are 0.6rem monospace: about this many CSS px per character. */
+const LABEL_CHARACTER_WIDTH = 6;
+/**
+ * Room around a hop label: its own padding, plus clear line on each side so the
+ * arrow and its head still show past the text on a short hop.
+ */
+const LABEL_CLEARANCE = 48;
+/** One line of label text with its vertical padding. */
+const LABEL_HEIGHT = 18;
+
+/**
+ * The space a hop label takes, for dagre to reserve between the two boxes. Without
+ * it dagre spaces boxes as if hops had no text, and a long label on a short hop
+ * covers its whole arrow and the edges of both boxes.
+ */
+export function estimateLabelSize(label: string): NodeSize {
+    return {
+        width: label.length * LABEL_CHARACTER_WIDTH + LABEL_CLEARANCE,
+        height: LABEL_HEIGHT,
+    };
+}
+
 /**
  * Runs dagre over the whole graph and returns each node's top-left corner.
  * dagre reports node centres, React Flow positions by corner, hence the offset.
@@ -60,6 +82,13 @@ export function layoutFlow(
         graph.setNode(node.id, { width: size.width, height: size.height });
     }
     for (const edge of edges) {
+        if (edge.label) {
+            graph.setEdge(edge.source, edge.target, {
+                ...estimateLabelSize(edge.label),
+                labelpos: 'c',
+            });
+            continue;
+        }
         graph.setEdge(edge.source, edge.target);
     }
 
