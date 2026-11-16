@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import ExportedImage from 'next-image-export-optimizer';
 import { cn } from '@/utils/cn';
 
@@ -11,11 +12,13 @@ export default function ArticleCover({
     src,
     alt = '',
     className,
+    style,
     eager = false,
 }: {
     src: string;
     alt?: string;
     className?: string;
+    style?: CSSProperties;
     eager?: boolean;
 }) {
     return (
@@ -28,6 +31,7 @@ export default function ArticleCover({
             loading={eager ? 'eager' : 'lazy'}
             fetchPriority={eager ? 'high' : undefined}
             className={cn('bg-foreground/5 w-full object-cover', className)}
+            style={style}
         />
     );
 }

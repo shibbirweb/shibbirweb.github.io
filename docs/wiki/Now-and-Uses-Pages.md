@@ -55,7 +55,8 @@ Each card's accent hue is `(index * 137.508) % 360`, the "golden angle". This sp
 ## Good to know
 
 - Types live in the component folder, so `src/components/` never imports from `src/app/`.
-- Both pages use `buildPageMetadata` and show a `Breadcrumb`.
+- Both pages use `buildPageMetadata` and start with `PageTopBar`: the breadcrumb row, with the h1 and intro line kept for screen readers and search engines but hidden (`sr-only`). The intro is `nowMeta.subtitle` on Now and a line in `src/app/uses/page.tsx` on Uses.
+- On `/now`, the "Last updated" badge (`LastUpdatedBadge`) sits on the right of the breadcrumb row.
 
 ## Related pages
 

@@ -81,8 +81,10 @@ describe('ArticlesArea', () => {
         const section = screen
             .getByRole('heading', { name: 'Latest Articles' })
             .closest('section') as HTMLElement;
-        expect(
-            within(section).getByRole('link', { name: 'View all articles' })
-        ).toHaveAttribute('href', '/articles');
+        const viewAll = within(section).getByRole('link', {
+            name: 'View all articles',
+        });
+        expect(viewAll).toHaveAttribute('href', '/articles');
+        expect(viewAll).toHaveClass('border', 'rounded-full');
     });
 });

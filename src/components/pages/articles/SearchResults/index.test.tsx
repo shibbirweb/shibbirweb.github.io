@@ -52,10 +52,11 @@ describe('SearchResults', () => {
         );
 
         expect(
-            screen.getByText(
-                'Open search to find an article by its title or a tag.'
-            )
+            screen.getByText(/Open search to find an article by its title/)
         ).toBeInTheDocument();
+        expect(
+            screen.getByRole('link', { name: 'browse all articles' })
+        ).toHaveAttribute('href', '/articles');
     });
 
     it('labels the result count with the quoted query', () => {

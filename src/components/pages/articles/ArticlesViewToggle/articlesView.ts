@@ -1,16 +1,17 @@
-// The articles page layout preference: grid (the default) or list. A per-
-// visitor convenience kept in localStorage, so every read and write is guarded
-// (SSR, private mode, storage disabled) and a missing or odd value falls back to
-// the grid. Changes are broadcast in-tab with a custom event, and other tabs
+// The articles and series page layout preference: list (the default) or grid. A
+// per-visitor convenience kept in localStorage, so every read and write is
+// guarded (SSR, private mode, storage disabled) and a missing or odd value falls
+// back to the list. Changes are broadcast in-tab with a custom event, and other tabs
 // pick them up from the native storage event. The saved layout is also mirrored
 // onto <html> as data-articles-view (first by the pre-paint ArticlesViewScript,
-// then on every change, including one made in another tab) so CSS can hide the pre-rendered grid from a visitor who
-// chose the list, instead of flashing it before their list renders.
+// then on every change, including one made in another tab) so CSS can hide the
+// pre-rendered list from a visitor who chose the grid, instead of flashing it
+// before their grid renders.
 
 export type ArticlesView = 'grid' | 'list';
 
 export const ARTICLES_VIEW_STORAGE_KEY = 'articles-view';
-export const DEFAULT_ARTICLES_VIEW: ArticlesView = 'grid';
+export const DEFAULT_ARTICLES_VIEW: ArticlesView = 'list';
 export const ARTICLES_VIEW_ATTRIBUTE = 'data-articles-view';
 
 const ARTICLES_VIEW_CHANGE_EVENT = 'articlesviewchange';
@@ -19,7 +20,7 @@ export function isArticlesView(value: unknown): value is ArticlesView {
     return value === 'grid' || value === 'list';
 }
 
-/** The saved layout, or the grid when nothing valid is saved. */
+/** The saved layout, or the list when nothing valid is saved. */
 export function getStoredArticlesView(): ArticlesView {
     if (typeof window === 'undefined') {
         return DEFAULT_ARTICLES_VIEW;

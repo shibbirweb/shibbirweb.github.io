@@ -20,7 +20,12 @@ import {
     siteURL,
 } from '@/config/constants';
 import { teaserTagLimit } from '@/components/pages/articles/ArticleRow/ArticleRowTags';
-import { getAllArticles, getLatestArticles } from '@/lib/posts';
+import {
+    getAllArticles,
+    getAllArticlesWithStack,
+    getLatestArticles,
+} from '@/lib/posts';
+import { buildSeriesShelf } from '@/utils/seriesShelf';
 import {
     jsonLdBlocks,
     listHtmlPages,
@@ -371,6 +376,14 @@ describe('structured data (JSON-LD)', () => {
         }
     );
 
+    it('gives the series page a breadcrumb back to the articles', () => {
+        const breadcrumb = jsonLdBlocks('articles/series.html').find(
+            (block) => block['@type'] === 'BreadcrumbList'
+        );
+
+        expect(JSON.stringify(breadcrumb)).toContain(`${siteURL}/articles`);
+    });
+
     it('marks up the resume as a ProfilePage', () => {
         expect(jsonLdTypes('resume.html')).toContain('ProfilePage');
     });
@@ -418,6 +431,9 @@ describe('sitemap and robots', () => {
                 '/articles',
             ])
         );
+        if (buildSeriesShelf(getAllArticles()).length > 0) {
+            expect(paths).toContain('/articles/series');
+        }
         for (const article of getAllArticles()) {
             expect(paths).toContain(`/articles/${article.slug}`);
         }
@@ -456,5 +472,61 @@ describe('sitemap and robots', () => {
         for (const prefix of blockedPrefixes) {
             expect(sendMockPath.startsWith(prefix), prefix).toBe(false);
         }
+    });
+});
+
+describe('series page', () => {
+    const series = buildSeriesShelf(getAllArticlesWithStack());
+    const document = loadPage('articles/series.html');
+
+    it('ships every series as rows and as cards, for the saved layout to pick', () => {
+        const rows = document.querySelector('ul[class*="listView"]');
+        const cards = document.querySelector('ul[class*="gridView"]');
+        const names = (list: Element | null) =>
+            [...(list?.querySelectorAll('h2') ?? [])].map(
+                (heading) => heading.textContent
+            );
+
+        expect(names(rows)).toEqual(series.map((entry) => entry.name));
+        expect(names(cards)).toEqual(series.map((entry) => entry.name));
+    });
+
+    it('links each series to its first part', () => {
+        for (const entry of series) {
+            expect(
+                document
+                    .querySelector(
+                        `a[aria-label="Start with part 1 of ${entry.name}"]`
+                    )
+                    ?.getAttribute('href')
+            ).toBe(`/articles/${entry.parts[0].slug}`);
+        }
+    });
+
+    it('ships the topic filter folded away', () => {
+        const panel = document.getElementById('topic-filters');
+
+        expect(panel?.hasAttribute('hidden')).toBe(true);
+        expect(
+            panel?.querySelector('nav[aria-label="Filter series by tag"]')
+        ).not.toBeNull();
+    });
+});
+
+describe('section page tops', () => {
+    it.each([
+        'articles.html',
+        'articles/series.html',
+        'articles/search.html',
+        'uses.html',
+        'now.html',
+    ])('%s keeps its h1 and intro for screen readers only', (page) => {
+        const heading = loadPage(page).querySelector('h1');
+
+        expect(heading?.className).toContain('sr-only');
+        expect(heading?.nextElementSibling?.className).toContain('sr-only');
+        expect(
+            heading?.nextElementSibling?.textContent?.length
+        ).toBeGreaterThan(10);
     });
 });

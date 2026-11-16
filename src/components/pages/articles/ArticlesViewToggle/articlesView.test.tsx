@@ -17,8 +17,8 @@ afterEach(() => {
 });
 
 describe('articlesView', () => {
-    it('defaults to the grid', () => {
-        expect(DEFAULT_ARTICLES_VIEW).toBe('grid');
+    it('defaults to the list', () => {
+        expect(DEFAULT_ARTICLES_VIEW).toBe('list');
     });
 
     it.each([
@@ -31,28 +31,28 @@ describe('articlesView', () => {
         expect(isArticlesView(value)).toBe(expected);
     });
 
-    it('reads the grid when nothing is saved', () => {
+    it('reads the list when nothing is saved', () => {
+        expect(getStoredArticlesView()).toBe('list');
+    });
+
+    it('reads a saved grid choice', () => {
+        window.localStorage.setItem(ARTICLES_VIEW_STORAGE_KEY, 'grid');
+
         expect(getStoredArticlesView()).toBe('grid');
     });
 
-    it('reads a saved list choice', () => {
-        window.localStorage.setItem(ARTICLES_VIEW_STORAGE_KEY, 'list');
+    it('falls back to the list for an unknown saved value', () => {
+        window.localStorage.setItem(ARTICLES_VIEW_STORAGE_KEY, 'cards');
 
         expect(getStoredArticlesView()).toBe('list');
     });
 
-    it('falls back to the grid for an unknown saved value', () => {
-        window.localStorage.setItem(ARTICLES_VIEW_STORAGE_KEY, 'cards');
-
-        expect(getStoredArticlesView()).toBe('grid');
-    });
-
-    it('falls back to the grid when storage cannot be read', () => {
+    it('falls back to the list when storage cannot be read', () => {
         vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
             throw new Error('blocked');
         });
 
-        expect(getStoredArticlesView()).toBe('grid');
+        expect(getStoredArticlesView()).toBe('list');
     });
 
     it('saves the choice and mirrors it onto <html>', () => {

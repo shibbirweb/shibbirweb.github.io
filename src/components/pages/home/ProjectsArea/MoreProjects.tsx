@@ -37,7 +37,8 @@ export default function MoreProjects({
 
             <div className="text-center">
                 <Button
-                    variant="text"
+                    variant="outline"
+                    className="rounded-full"
                     onClick={toggle}
                     aria-expanded={open}
                     aria-controls={revealRegionId}

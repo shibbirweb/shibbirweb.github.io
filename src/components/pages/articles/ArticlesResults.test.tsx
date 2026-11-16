@@ -29,21 +29,7 @@ function coverImages() {
 }
 
 describe('ArticlesResults', () => {
-    it('shows the card grid by default', () => {
-        render(
-            <ArticlesResults
-                articles={articles}
-                seriesTotals={{}}
-            />
-        );
-
-        expect(coverImages()).toHaveLength(2);
-        expect(screen.getAllByRole('list')[0]).toHaveClass('grid');
-    });
-
-    it('shows the row list when the list is saved', () => {
-        window.localStorage.setItem(ARTICLES_VIEW_STORAGE_KEY, 'list');
-
+    it('shows the row list by default', () => {
         render(
             <ArticlesResults
                 articles={articles}
@@ -54,5 +40,19 @@ describe('ArticlesResults', () => {
         expect(coverImages()).toHaveLength(0);
         expect(screen.getAllByRole('list')[0]).toHaveClass('flex-col');
         expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(2);
+    });
+
+    it('shows the card grid when the grid is saved', () => {
+        window.localStorage.setItem(ARTICLES_VIEW_STORAGE_KEY, 'grid');
+
+        render(
+            <ArticlesResults
+                articles={articles}
+                seriesTotals={{}}
+            />
+        );
+
+        expect(coverImages()).toHaveLength(2);
+        expect(screen.getAllByRole('list')[0]).toHaveClass('grid');
     });
 });

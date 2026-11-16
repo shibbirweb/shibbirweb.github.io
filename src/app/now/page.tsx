@@ -1,5 +1,5 @@
-import Breadcrumb from '@/components/layout/Breadcrumb';
-import SectionHeading from '@/components/pages/common/SectionHeading';
+import PageTopBar from '@/components/pages/common/PageTopBar';
+import LastUpdatedBadge from '@/components/pages/now/LastUpdatedBadge';
 import NowGrid from '@/components/pages/now/NowGrid';
 import { nowMeta, nowQuote, nowSections } from '@/app/now/contents';
 import { siteName } from '@/config/constants';
@@ -19,27 +19,13 @@ export default function NowPage() {
             id="main"
             className="container mx-auto px-4 py-20 sm:py-28"
         >
-            <Breadcrumb />
-            <SectionHeading as="h1">{nowMeta.title}</SectionHeading>
-            <p className="text-foreground/70 mt-6 max-w-3xl text-lg leading-relaxed">
-                {nowMeta.subtitle}
-            </p>
+            <PageTopBar
+                title={nowMeta.title}
+                description={nowMeta.subtitle}
+                action={<LastUpdatedBadge label={nowMeta.lastUpdated} />}
+            />
 
-            <p className="border-foreground/10 text-foreground/70 mt-6 inline-flex items-center gap-2.5 rounded-full border py-1.5 pr-4 pl-3 text-sm">
-                <span
-                    aria-hidden="true"
-                    className="relative grid size-2 place-items-center"
-                >
-                    <span className="absolute size-2 rounded-full bg-emerald-500 opacity-60 motion-safe:animate-ping" />
-                    <span className="size-2 rounded-full bg-emerald-500" />
-                </span>
-                Last updated{' '}
-                <time className="text-foreground/85 font-semibold">
-                    {nowMeta.lastUpdated}
-                </time>
-            </p>
-
-            <div className="mt-12">
+            <div className="mt-8">
                 <NowGrid sections={nowSections} />
             </div>
 

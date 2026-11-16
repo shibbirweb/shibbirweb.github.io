@@ -4,7 +4,9 @@ import { describe, expect, it, vi } from 'vitest';
 import ArticlesViewButton from '@/components/pages/articles/ArticlesViewToggle/ArticlesViewButton';
 import { articlesViewOptions } from '@/components/pages/articles/ArticlesViewToggle/contents';
 
-const listOption = articlesViewOptions[1];
+const listOption = articlesViewOptions.find(
+    (option) => option.view === 'list'
+) as (typeof articlesViewOptions)[number];
 
 describe('ArticlesViewButton', () => {
     it('is a button named and titled by its layout', () => {

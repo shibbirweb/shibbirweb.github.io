@@ -77,7 +77,13 @@ export const resumeSections: ResumeSectionData[] = [
             },
             {
                 label: 'Databases',
-                values: ['MySQL', 'PostgreSQL', 'SQLite', 'Redis', 'Prisma ORM'],
+                values: [
+                    'MySQL',
+                    'PostgreSQL',
+                    'SQLite',
+                    'Redis',
+                    'Prisma ORM',
+                ],
             },
             {
                 label: 'AI',
@@ -331,15 +337,6 @@ export const resumeSections: ResumeSectionData[] = [
                 ],
                 tech: ['Vue.js', 'JavaScript'],
                 url: 'https://www.npmjs.com/package/advanced-laravel-vue-paginate',
-            },
-            {
-                name: 'Al-Quran Quote',
-                tagline: 'Published Rainmeter skin',
-                highlights: [
-                    'Windows desktop skin that displays Al-Quran verses with their reference, offline by default with optional quran.com API fetching.',
-                ],
-                tech: ['Rainmeter', 'Lua'],
-                url: 'https://github.com/shibbirweb/rainmeter-skin-al-quran-quote',
             },
         ],
     },

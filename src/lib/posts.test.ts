@@ -88,6 +88,22 @@ describe('posts against the real content/articles corpus', () => {
         expect(realPosts.getArticlesForPage(99)).toEqual([]);
     });
 
+    it('adds each article its frontmatter tech stack, newest first', () => {
+        const withStack = realPosts.getAllArticlesWithStack();
+
+        expect(withStack.map((article) => article.slug)).toEqual(
+            realPosts.getAllArticles().map((article) => article.slug)
+        );
+        for (const slug of SENDMOCK_SERIES_SLUGS) {
+            expect(
+                withStack.find((article) => article.slug === slug)?.tech
+            ).toEqual(expect.arrayContaining(['Laravel', 'SendMock']));
+        }
+        for (const article of withStack) {
+            expect(Array.isArray(article.tech)).toBe(true);
+        }
+    });
+
     it('collects every tag once, sorted alphabetically', () => {
         const tags = realPosts.getAllTags();
 

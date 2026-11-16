@@ -30,6 +30,22 @@ describe('TagLink', () => {
         );
     });
 
+    it('filters another page when given a base path', () => {
+        render(
+            <ul>
+                <TagLink
+                    tag="Laravel"
+                    basePath="/articles/series"
+                />
+            </ul>
+        );
+
+        expect(screen.getByRole('link', { name: 'Laravel' })).toHaveAttribute(
+            'href',
+            '/articles/series?tag=Laravel'
+        );
+    });
+
     it('merges extra classes onto the link', () => {
         render(
             <ul>

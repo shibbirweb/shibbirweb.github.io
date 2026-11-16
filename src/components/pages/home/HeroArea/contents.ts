@@ -1,9 +1,11 @@
 import CodepenIcon from '@/components/icons/codepen';
-import DevToIcon from '@/components/icons/dev.to';
+// import DevToIcon from '@/components/icons/dev.to';
 import FacebookIcon from '@/components/icons/facebook';
 import GithubIcon from '@/components/icons/github';
 import LinkedinIcon from '@/components/icons/linkedin';
-import MediumIcon from '@/components/icons/medium';
+import NpmIcon from '@/components/icons/npm';
+import UnsplashIcon from '@/components/icons/unsplash';
+// import MediumIcon from '@/components/icons/medium';
 // import PatreonIcon from '@/components/icons/patreon';
 import XIcon from '@/components/icons/x';
 
@@ -44,6 +46,19 @@ export const socialLinks: {
         socialColorClassNames: 'hover:text-[#000000] dark:hover:text-white',
     },
     {
+        name: 'npm',
+        Icon: NpmIcon,
+        href: 'https://www.npmjs.com/~shibbirweb',
+        socialColorClassNames: 'hover:text-[#CB3837]',
+    },
+    {
+        name: 'Unsplash',
+        Icon: UnsplashIcon,
+        href: 'https://unsplash.com/@shibbirweb',
+        socialColorClassNames: 'hover:text-[#000000] dark:hover:text-white',
+    },
+    // Hidden for now; uncomment (and their imports above) to show them again.
+    /* {
         name: 'Medium',
         Icon: MediumIcon,
         href: 'https://medium.com/@shibbirweb',
@@ -54,7 +69,7 @@ export const socialLinks: {
         Icon: DevToIcon,
         href: 'https://dev.to/shibbirweb',
         socialColorClassNames: 'hover:text-[#000000] dark:hover:text-white',
-    },
+    }, */
     /* {
         Icon: PatreonIcon,
         href: 'https://www.patreon.com/shibbirweb',

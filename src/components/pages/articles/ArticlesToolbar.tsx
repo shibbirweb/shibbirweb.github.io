@@ -10,7 +10,11 @@ export default function ArticlesToolbar({ summary }: { summary: ReactNode }) {
     return (
         <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
             {summary}
-            <ArticlesViewToggle />
+            {/* ml-auto keeps the toggle on the right even when a long summary
+                pushes it onto its own line on a phone. */}
+            <div className="ml-auto">
+                <ArticlesViewToggle />
+            </div>
         </div>
     );
 }

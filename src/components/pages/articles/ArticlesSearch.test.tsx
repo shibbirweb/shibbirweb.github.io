@@ -9,7 +9,7 @@ vi.mock('next/navigation', () => ({
 }));
 
 describe('ArticlesSearch', () => {
-    it('renders the search page heading and the results for ?q=', () => {
+    it('renders the hidden heading, the prefilled search and the results for ?q=', () => {
         render(
             <ArticlesSearch
                 articles={[
@@ -29,6 +29,12 @@ describe('ArticlesSearch', () => {
 
         expect(
             screen.getByRole('heading', { level: 1, name: 'Search articles' })
+        ).toHaveClass('sr-only');
+        expect(
+            screen.getByText('Find an article by its title or a tag.')
+        ).toHaveClass('sr-only');
+        expect(
+            screen.getByRole('button', { name: 'Search articles' })
         ).toBeInTheDocument();
         expect(screen.getByText(/1 article found for/)).toBeInTheDocument();
         expect(

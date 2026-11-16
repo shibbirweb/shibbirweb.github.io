@@ -1,9 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
-import {
-    ARTICLES_VIEW_ATTRIBUTE,
-    ARTICLES_VIEW_STORAGE_KEY,
-} from '@/components/pages/articles/ArticlesViewToggle/articlesView';
+import { ARTICLES_VIEW_ATTRIBUTE } from '@/components/pages/articles/ArticlesViewToggle/articlesView';
 import SearchResultsBody from '@/components/pages/articles/SearchResults/SearchResultsBody';
 import type { ArticleSummary } from '@/lib/posts';
 
@@ -68,10 +65,11 @@ describe('SearchResultsBody', () => {
         );
 
         expect(
-            screen.getByText(
-                'Open search to find an article by its title or a tag.'
-            )
+            screen.getByText(/Open search to find an article by its title/)
         ).toBeInTheDocument();
+        expect(
+            screen.getByRole('link', { name: 'browse all articles' })
+        ).toHaveAttribute('href', '/articles');
         expect(cardTitles()).toEqual([]);
     });
 
@@ -91,6 +89,9 @@ describe('SearchResultsBody', () => {
         expect(
             screen.getByText('Nothing matched. Try a different title or tag.')
         ).toBeInTheDocument();
+        expect(
+            screen.getByRole('link', { name: 'Clear search' })
+        ).toHaveAttribute('href', '/articles');
     });
 
     it('renders only the current page of results with pagination', () => {
@@ -136,14 +137,20 @@ describe('SearchResultsBody', () => {
         renderMatches();
 
         const toggle = screen.getByRole('group', { name: 'Layout' });
-        expect(toggle.parentElement).toHaveTextContent(
+        expect(toggle.parentElement?.parentElement).toHaveTextContent(
             '2 articles found for “article”'
         );
     });
 
-    it('shows the matches as rows when the list is saved', () => {
-        window.localStorage.setItem(ARTICLES_VIEW_STORAGE_KEY, 'list');
+    it('offers a way back to every article beside the count', () => {
+        renderMatches();
 
+        expect(
+            screen.getByRole('link', { name: 'Clear search' })
+        ).toHaveAttribute('href', '/articles');
+    });
+
+    it('shows the matches as rows by default', () => {
         renderMatches();
 
         expect(cardTitles()).toEqual(['Article 1', 'Article 2']);

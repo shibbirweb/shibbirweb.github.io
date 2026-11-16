@@ -21,7 +21,6 @@ function renderFallback() {
     return render(
         <ArticlesIndexFallback
             articles={articles}
-            tags={['AI']}
             seriesTotals={{}}
             totalPages={2}
         />
@@ -29,15 +28,19 @@ function renderFallback() {
 }
 
 describe('ArticlesIndexFallback', () => {
-    it('shows every tag with All active', () => {
+    it('ships the Filters button with the topics folded away', () => {
         renderFallback();
 
-        expect(
-            screen.getByRole('navigation', { name: 'Filter articles by tag' })
-        ).toBeInTheDocument();
-        expect(screen.getByRole('link', { name: 'All' })).toHaveClass(
-            'bg-foreground'
+        expect(screen.getByRole('button', { name: /Filters/ })).toHaveAttribute(
+            'aria-expanded',
+            'false'
         );
+        expect(
+            screen.getByRole('navigation', {
+                name: 'Filter articles by tag',
+                hidden: true,
+            })
+        ).toBeInTheDocument();
     });
 
     it('counts every article and offers the layout toggle', () => {
@@ -51,7 +54,7 @@ describe('ArticlesIndexFallback', () => {
         ).toBeInTheDocument();
     });
 
-    it('renders the first page in the default grid with pagination', () => {
+    it('renders the first page in the default list with pagination', () => {
         renderFallback();
 
         expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(
@@ -59,25 +62,21 @@ describe('ArticlesIndexFallback', () => {
         );
         expect(
             document.querySelectorAll('li[data-spotlight-surface] img')
-        ).toHaveLength(ARTICLES_PER_PAGE);
+        ).toHaveLength(0);
         expect(screen.getByRole('link', { name: 'Next' })).toHaveAttribute(
             'href',
             '/articles?page=2'
         );
     });
 
-    it('wraps the results, but not the tag filter, so a saved list can hide them', () => {
+    it('wraps the results, but not the browse bar, so a saved grid can hide them', () => {
         renderFallback();
 
         const toggle = screen.getByRole('group', { name: 'Layout' });
-        const wrapper = toggle.parentElement?.parentElement;
-        expect(wrapper?.className).toMatch(/pendingResults/);
+        const wrapper = toggle.closest('[class*="pendingResults"]');
+        expect(wrapper).not.toBeNull();
         expect(
-            wrapper?.contains(
-                screen.getByRole('navigation', {
-                    name: 'Filter articles by tag',
-                })
-            )
+            wrapper?.contains(screen.getByRole('button', { name: /Filters/ }))
         ).toBe(false);
     });
 });

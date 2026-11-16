@@ -30,6 +30,7 @@ function newestArticlePath() {
 const paths = [
     '/',
     '/articles',
+    '/articles/series',
     newestArticlePath(),
     '/resume',
     '/uses',

@@ -56,6 +56,40 @@ test.describe('now and uses', () => {
     });
 });
 
+test.describe('section page tops', () => {
+    // The breadcrumb names these pages, so the h1 and intro stay for screen
+    // readers and search engines but are not shown.
+    for (const [path, heading] of [
+        ['/articles', 'Articles'],
+        ['/articles/series', 'Series'],
+        ['/articles/search?q=git', 'Search articles'],
+        ['/uses', 'Uses'],
+        ['/now', "What I'm Doing Now"],
+    ]) {
+        test(`${path} keeps its h1 for screen readers only`, async ({
+            page,
+        }) => {
+            await page.goto(path);
+            const h1 = page.getByRole('heading', { level: 1, name: heading });
+
+            await expect(h1).toBeAttached();
+            await expect(h1).toHaveClass(/sr-only/);
+            await expect(h1.locator('+ p')).toHaveClass(/sr-only/);
+            await expect(
+                page.getByRole('navigation', { name: 'Breadcrumb' })
+            ).toBeVisible();
+        });
+    }
+
+    test('/now shows when it was last updated beside the breadcrumb', async ({
+        page,
+    }) => {
+        await page.goto('/now');
+
+        await expect(page.getByText(/^Last updated/)).toBeVisible();
+    });
+});
+
 test.describe('error and status pages', () => {
     test('answers an unknown URL with the 404 page', async ({ page }) => {
         const response = await page.goto('/this-page-does-not-exist');

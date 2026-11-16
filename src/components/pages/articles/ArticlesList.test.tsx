@@ -32,11 +32,10 @@ function buildArticles(count: number): ArticleSummary[] {
     return Array.from({ length: count }, (_, index) => buildArticle(index + 1));
 }
 
-function renderList(articles: ArticleSummary[], tags: string[] = []) {
+function renderList(articles: ArticleSummary[]) {
     return render(
         <ArticlesList
             articles={articles}
-            tags={tags}
             perPage={ARTICLES_PER_PAGE}
         />
     );
@@ -107,14 +106,11 @@ describe('ArticlesList', () => {
     it('filters to articles carrying the ?tag= tag', () => {
         navigation.searchParams = new URLSearchParams('tag=Docker');
 
-        renderList(
-            [
-                buildArticle(1, ['Docker']),
-                buildArticle(2, ['AI']),
-                buildArticle(3, ['Docker', 'AI']),
-            ],
-            ['AI', 'Docker']
-        );
+        renderList([
+            buildArticle(1, ['Docker']),
+            buildArticle(2, ['AI']),
+            buildArticle(3, ['Docker', 'AI']),
+        ]);
 
         expect(cardTitles()).toEqual(['Article 1', 'Article 3']);
         const filter = screen.getByRole('navigation', {
@@ -123,21 +119,24 @@ describe('ArticlesList', () => {
         expect(filter).toBeInTheDocument();
     });
 
-    it('marks the active tag in the filter bar', () => {
+    it('opens the topics with the active tag marked', () => {
         navigation.searchParams = new URLSearchParams('tag=AI');
 
-        renderList([buildArticle(1, ['AI'])], ['AI', 'Docker']);
+        renderList([buildArticle(1, ['AI']), buildArticle(2, ['Docker'])]);
 
-        const aiLinks = screen.getAllByRole('link', { name: 'AI' });
+        expect(screen.getByRole('button', { name: /Filters/ })).toHaveAttribute(
+            'aria-expanded',
+            'true'
+        );
         expect(
-            aiLinks.some((link) => link.getAttribute('aria-current') === 'page')
-        ).toBe(true);
+            screen.getByRole('link', { name: /^AI/, current: 'page' })
+        ).toHaveAttribute('href', '/articles');
     });
 
     it('shows an empty state when no article has the tag', () => {
         navigation.searchParams = new URLSearchParams('tag=Rust');
 
-        renderList([buildArticle(1, ['AI'])], ['AI']);
+        renderList([buildArticle(1, ['AI'])]);
 
         expect(
             screen.getByText('No articles found for this tag.')
@@ -152,7 +151,7 @@ describe('ArticlesList', () => {
             (_, index) => buildArticle(index + 1, ['AI'])
         );
 
-        renderList(tagged, ['AI']);
+        renderList(tagged);
 
         expect(screen.getByRole('link', { name: 'Next' })).toHaveAttribute(
             'href',
@@ -171,7 +170,7 @@ describe('ArticlesList', () => {
             series: { name: 'Home lab', order: 2 },
         };
 
-        renderList([partOne, partTwo], ['AI', 'Docker']);
+        renderList([partOne, partTwo]);
 
         expect(screen.getByText('Part 1 of 2')).toBeInTheDocument();
     });
@@ -179,35 +178,38 @@ describe('ArticlesList', () => {
     it('counts the filtered articles next to the layout toggle', () => {
         navigation.searchParams = new URLSearchParams('tag=AI');
 
-        renderList(
-            [buildArticle(1, ['AI']), buildArticle(2, ['AI']), buildArticle(3)],
-            ['AI']
-        );
+        renderList([
+            buildArticle(1, ['AI']),
+            buildArticle(2, ['AI']),
+            buildArticle(3),
+        ]);
 
         const toggle = screen.getByRole('group', { name: 'Layout' });
-        expect(toggle.parentElement).toHaveTextContent('2 articles');
+        expect(toggle.parentElement?.parentElement).toHaveTextContent(
+            '2 articles'
+        );
     });
 
-    it('shows the grid by default and the rows when the list is saved', () => {
+    it('shows the rows by default and the grid when the grid is saved', () => {
         const { unmount } = renderList(buildArticles(2));
-        expect(
-            document.querySelectorAll('li[data-spotlight-surface] img')
-        ).toHaveLength(2);
-        unmount();
-
-        window.localStorage.setItem(ARTICLES_VIEW_STORAGE_KEY, 'list');
-        renderList(buildArticles(2));
-
         expect(cardTitles()).toEqual(['Article 1', 'Article 2']);
         expect(
             document.querySelectorAll('li[data-spotlight-surface] img')
         ).toHaveLength(0);
+        unmount();
+
+        window.localStorage.setItem(ARTICLES_VIEW_STORAGE_KEY, 'grid');
+        renderList(buildArticles(2));
+
+        expect(
+            document.querySelectorAll('li[data-spotlight-surface] img')
+        ).toHaveLength(2);
     });
 
     it('leaves the toolbar out of the empty state', () => {
         navigation.searchParams = new URLSearchParams('tag=Nope');
 
-        renderList(buildArticles(2), ['AI']);
+        renderList(buildArticles(2));
 
         expect(
             screen.queryByRole('group', { name: 'Layout' })

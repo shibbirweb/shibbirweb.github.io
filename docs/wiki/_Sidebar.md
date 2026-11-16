@@ -32,6 +32,7 @@
 - [Article markdown](Article-Markdown.md)
 - [Article page](Article-Page.md)
 - [Listing and search](Article-Listing-and-Search.md)
+- [Series page](Series-Page.md)
 - [Mermaid diagrams](Mermaid-Diagrams.md)
 - [Flow diagrams](Flow-Diagrams.md)
 - [Reading mode](Reading-Mode.md)

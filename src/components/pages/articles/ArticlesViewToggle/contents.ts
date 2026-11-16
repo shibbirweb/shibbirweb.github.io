@@ -12,13 +12,13 @@ export type ArticlesViewOption = {
 /** The layouts the toggle offers, in order; the first is the default. */
 export const articlesViewOptions: ArticlesViewOption[] = [
     {
-        view: 'grid',
-        label: 'Grid view',
-        Icon: LayoutGrid,
-    },
-    {
         view: 'list',
         label: 'List view',
         Icon: LayoutList,
+    },
+    {
+        view: 'grid',
+        label: 'Grid view',
+        Icon: LayoutGrid,
     },
 ];

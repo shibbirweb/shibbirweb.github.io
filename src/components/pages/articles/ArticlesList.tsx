@@ -6,22 +6,17 @@ import ArticlesResults from '@/components/pages/articles/ArticlesResults';
 import ArticleCount from '@/components/pages/articles/ArticleCount';
 import ArticlesToolbar from '@/components/pages/articles/ArticlesToolbar';
 import Pagination from '@/components/pages/articles/Pagination';
-import TagFilter from '@/components/pages/articles/TagFilter';
+import ArticlesBrowse from '@/components/pages/articles/ArticlesBrowse';
 import { buildPageHref } from '@/utils/pageHref';
 import { buildSeriesTotals } from '@/utils/seriesTotals';
 import type { ArticleSummary } from '@/lib/posts';
 
 interface ArticlesListProps {
     articles: ArticleSummary[];
-    tags: string[];
     perPage: number;
 }
 
-export default function ArticlesList({
-    articles,
-    tags,
-    perPage,
-}: ArticlesListProps) {
+export default function ArticlesList({ articles, perPage }: ArticlesListProps) {
     const searchParams = useSearchParams();
     const activeTag = searchParams.get('tag');
     const filtered = activeTag
@@ -46,9 +41,9 @@ export default function ArticlesList({
 
     return (
         <>
-            <TagFilter
-                tags={tags}
-                active={activeTag}
+            <ArticlesBrowse
+                articles={articles}
+                activeTag={activeTag}
             />
             {filtered.length === 0 ? (
                 <p className="text-foreground/70 mt-12 text-base">
@@ -56,6 +51,7 @@ export default function ArticlesList({
                 </p>
             ) : (
                 <>
+                    <h2 className="sr-only">Article list</h2>
                     <ArticlesToolbar
                         summary={<ArticleCount count={filtered.length} />}
                     />

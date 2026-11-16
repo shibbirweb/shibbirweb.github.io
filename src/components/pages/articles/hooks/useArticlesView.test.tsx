@@ -12,28 +12,28 @@ afterEach(() => {
 });
 
 describe('useArticlesView', () => {
-    it('starts on the grid when nothing is saved', () => {
+    it('starts on the list when nothing is saved', () => {
+        const { result } = renderHook(() => useArticlesView());
+
+        expect(result.current.view).toBe('list');
+    });
+
+    it('starts on the saved layout', () => {
+        window.localStorage.setItem(ARTICLES_VIEW_STORAGE_KEY, 'grid');
+
         const { result } = renderHook(() => useArticlesView());
 
         expect(result.current.view).toBe('grid');
     });
 
-    it('starts on the saved layout', () => {
-        window.localStorage.setItem(ARTICLES_VIEW_STORAGE_KEY, 'list');
-
-        const { result } = renderHook(() => useArticlesView());
-
-        expect(result.current.view).toBe('list');
-    });
-
     it('switches and saves the layout', () => {
         const { result } = renderHook(() => useArticlesView());
 
-        act(() => result.current.setView('list'));
+        act(() => result.current.setView('grid'));
 
-        expect(result.current.view).toBe('list');
+        expect(result.current.view).toBe('grid');
         expect(window.localStorage.getItem(ARTICLES_VIEW_STORAGE_KEY)).toBe(
-            'list'
+            'grid'
         );
     });
 
@@ -41,8 +41,8 @@ describe('useArticlesView', () => {
         const toggle = renderHook(() => useArticlesView());
         const results = renderHook(() => useArticlesView());
 
-        act(() => toggle.result.current.setView('list'));
+        act(() => toggle.result.current.setView('grid'));
 
-        expect(results.result.current.view).toBe('list');
+        expect(results.result.current.view).toBe('grid');
     });
 });

@@ -10,10 +10,10 @@ import {
 } from '@/components/pages/articles/ArticlesViewToggle/articlesView';
 
 /**
- * The articles page layout (grid or list) and a setter that saves it. Every
+ * The articles page layout (list or grid) and a setter that saves it. Every
  * mounted reader (the toggle and the list it controls) stays in sync through
- * the shared store. The server snapshot is the grid, so pre-rendered markup
- * always shows the default layout.
+ * the shared store. The server snapshot is the default list, so pre-rendered
+ * markup always shows the default layout.
  */
 export function useArticlesView(): {
     view: ArticlesView;

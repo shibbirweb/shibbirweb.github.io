@@ -1,11 +1,10 @@
 @reference "tailwindcss";
 
-/* The pre-rendered results are always the default grid, because the saved
-   layout can only be read in the browser. For a visitor who chose the list, the
-   pre-paint ArticlesViewScript has already marked <html>, so the stand-in grid
-   stays invisible (keeping its space, so nothing jumps) until ArticlesList
-   replaces it with their list. Without JavaScript the mark is never set and the
-   grid shows as normal. */
-:global(html[data-articles-view='list']) .pendingResults {
+/* The pre-rendered results are always the default list, because the saved
+   layout can only be read in the browser. For a visitor who chose the grid, the
+   pre-paint ArticlesViewScript has already marked <html>, so the stand-in list
+   stays invisible (keeping its space) until ArticlesList replaces it with their
+   grid. Without JavaScript the mark is never set and the list shows as normal. */
+:global(html[data-articles-view='grid']) .pendingResults {
     @apply invisible;
 }

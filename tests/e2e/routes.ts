@@ -7,6 +7,7 @@ import { publishedArticles } from '@tests/e2e/fixtures';
 export const STATIC_PAGES = [
     '/',
     '/articles',
+    '/articles/series',
     '/articles/search?q=git',
     '/resume',
     '/now',

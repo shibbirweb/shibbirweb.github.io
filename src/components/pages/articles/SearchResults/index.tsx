@@ -2,7 +2,6 @@
 
 import { useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
-import ArticleSearch from '@/components/pages/articles/ArticleSearch';
 import SearchResultsBody from '@/components/pages/articles/SearchResults/SearchResultsBody';
 import { searchArticles } from '@/utils/searchArticles';
 import { buildPageHref } from '@/utils/pageHref';
@@ -11,10 +10,9 @@ import type { ArticleSummary } from '@/lib/posts';
 
 /**
  * Reads the `?q=` query string client-side (the page itself is statically
- * exported) and renders the matching articles, paginated like the index. The
- * search trigger stays available, pre-filled with the active query, so the
- * search can be refined. Results honour the grid/list choice from the articles
- * page.
+ * exported) and renders the matching articles, paginated like the index.
+ * Results honour the list/grid choice from the articles page. The search button
+ * that refines the query sits in the page's top bar (QueryArticleSearch).
  */
 export default function SearchResults({
     articles,
@@ -45,12 +43,7 @@ export default function SearchResults({
         buildPageHref('/articles/search', searchParams, page);
 
     return (
-        <div className="mt-10">
-            <ArticleSearch
-                articles={articles}
-                initialQuery={query}
-            />
-
+        <div className="mt-8">
             <SearchResultsBody
                 query={query}
                 results={results}

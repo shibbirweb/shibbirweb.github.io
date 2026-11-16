@@ -1,11 +1,9 @@
 import ArticlesIndex from '@/components/pages/articles/ArticlesIndex';
-import { getAllArticles, getAllTags } from '@/lib/posts';
+import { getAllArticles } from '@/lib/posts';
 import { siteName } from '@/config/constants';
 import { buildPageMetadata } from '@/utils/pageMetadata';
 
-const description =
-    'Notes on backend engineering, AI, and self-hosted infrastructure by ' +
-    `${siteName}.`;
+const description = `Real problems from ${siteName}'s work as a developer, and how they were solved.`;
 
 export const metadata = buildPageMetadata({
     title: 'Articles',
@@ -14,10 +12,5 @@ export const metadata = buildPageMetadata({
 });
 
 export default function ArticlesPage() {
-    return (
-        <ArticlesIndex
-            articles={getAllArticles()}
-            tags={getAllTags()}
-        />
-    );
+    return <ArticlesIndex articles={getAllArticles()} />;
 }
