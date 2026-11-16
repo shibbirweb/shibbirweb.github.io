@@ -4,8 +4,8 @@ import {
 } from '@/components/pages/articles/ArticlesViewToggle/articlesView';
 
 // Marks <html> with the saved articles layout before the first paint, so the
-// pre-rendered grid can stay hidden for a visitor who chose the list (see
-// ArticlesIndexFallback). Mirrors getStoredArticlesView/applyArticlesView in
+// pre-rendered list can stay hidden for a visitor who chose the grid (see
+// ArticlesIndexFallback and SeriesIndex.module.css). Mirrors getStoredArticlesView/applyArticlesView in
 // articlesView.ts and must stay in sync with them. Tiny, dependency-free and
 // wrapped in try/catch, like ThemeScript, since it is inlined and blocking. It
 // renders in the root layout's <head>, next to ThemeScript.

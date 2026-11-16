@@ -1,5 +1,4 @@
-import Breadcrumb from '@/components/layout/Breadcrumb';
-import SectionHeading from '@/components/pages/common/SectionHeading';
+import PageTopBar from '@/components/pages/common/PageTopBar';
 import UsesGrid from '@/components/pages/uses/UsesGrid';
 import { usesSections } from '@/app/uses/contents';
 import { siteName } from '@/config/constants';
@@ -19,14 +18,12 @@ export default function UsesPage() {
             id="main"
             className="container mx-auto px-4 py-20 sm:py-28"
         >
-            <Breadcrumb />
-            <SectionHeading as="h1">Uses</SectionHeading>
-            <p className="text-foreground/70 mt-6 max-w-3xl text-lg leading-relaxed">
-                A field guide to my setup: the gear on my desk, the machines that
-                run quietly in the rack, and the software I reach for every day.
-            </p>
+            <PageTopBar
+                title="Uses"
+                description="A field guide to my setup: the gear on my desk, the machines that run quietly in the rack, and the software I reach for every day."
+            />
 
-            <div className="mt-12">
+            <div className="mt-8">
                 <UsesGrid sections={usesSections} />
             </div>
         </main>

@@ -4,6 +4,7 @@ import { requireArticleDate } from '@/utils/articleDate';
 import { articleOgImagePath } from '@/utils/generateArticleCover';
 import { getAllArticles } from '@/lib/posts';
 import { getBuiltAt } from '@/lib/version';
+import { buildSeriesShelf } from '@/utils/seriesShelf';
 
 export const dynamic = 'force-static';
 
@@ -50,6 +51,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
         changeFrequency: 'weekly',
         priority: 0.8,
     });
+
+    // The series page only earns a place once there is a series to list.
+    if (buildSeriesShelf(articles).length > 0) {
+        entries.push({
+            url: `${siteURL}/articles/series`,
+            lastModified: now,
+            changeFrequency: 'weekly',
+            priority: 0.7,
+        });
+    }
 
     for (const article of articles) {
         // A crawlable raster (the OG PNG for SVG covers, else the cover itself)

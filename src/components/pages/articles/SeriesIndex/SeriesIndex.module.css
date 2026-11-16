@@ -1,0 +1,18 @@
+@reference "tailwindcss";
+
+/* Both layouts ship in the static HTML and the saved choice picks one with CSS:
+   the pre-paint ArticlesViewScript marks <html> with data-articles-view before
+   the first paint, and the toggle keeps it in step. So a visitor who chose the
+   grid never sees the list flash first, and the page needs no client JavaScript
+   to lay itself out. Without JavaScript the default list shows. */
+.gridView {
+    @apply hidden;
+}
+
+:global(html[data-articles-view='grid']) .gridView {
+    @apply grid;
+}
+
+:global(html[data-articles-view='grid']) .listView {
+    @apply hidden;
+}

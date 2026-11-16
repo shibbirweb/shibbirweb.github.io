@@ -63,4 +63,15 @@ describe('ArticleCover', () => {
         expect(image).toHaveAttribute('loading', 'eager');
         expect(image).toHaveAttribute('fetchpriority', 'high');
     });
+
+    it('passes an inline style through, e.g. a stack depth', () => {
+        const { container } = render(
+            <ArticleCover
+                src="/images/articles/cover.svg"
+                style={{ opacity: 0.5 }}
+            />
+        );
+
+        expect(container.querySelector('img')).toHaveStyle({ opacity: '0.5' });
+    });
 });

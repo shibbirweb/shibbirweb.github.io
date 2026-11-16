@@ -10,7 +10,7 @@ import type { ArticleSummary } from '@/lib/posts';
 
 /**
  * One page of articles in the layout the visitor picked with the toolbar
- * toggle: the card grid (default) or the compact row list.
+ * toggle: the compact row list (default) or the card grid.
  */
 export default function ArticlesResults({
     articles,

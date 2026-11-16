@@ -14,7 +14,7 @@ afterEach(() => {
 });
 
 describe('ArticlesViewToggle', () => {
-    it('is a labelled group offering grid then list', () => {
+    it('is a labelled group offering list then grid', () => {
         render(<ArticlesViewToggle />);
 
         expect(
@@ -24,42 +24,42 @@ describe('ArticlesViewToggle', () => {
             screen
                 .getAllByRole('button')
                 .map((button) => button.getAttribute('aria-label'))
-        ).toEqual(['Grid view', 'List view']);
-        expect(articlesViewOptions[0].view).toBe('grid');
+        ).toEqual(['List view', 'Grid view']);
+        expect(articlesViewOptions[0].view).toBe('list');
     });
 
-    it('presses the grid by default', () => {
+    it('presses the list by default', () => {
+        render(<ArticlesViewToggle />);
+
+        expect(
+            screen.getByRole('button', { name: 'List view' })
+        ).toHaveAttribute('aria-pressed', 'true');
+        expect(
+            screen.getByRole('button', { name: 'Grid view' })
+        ).toHaveAttribute('aria-pressed', 'false');
+    });
+
+    it('presses the saved layout', () => {
+        window.localStorage.setItem(ARTICLES_VIEW_STORAGE_KEY, 'grid');
+
         render(<ArticlesViewToggle />);
 
         expect(
             screen.getByRole('button', { name: 'Grid view' })
         ).toHaveAttribute('aria-pressed', 'true');
-        expect(
-            screen.getByRole('button', { name: 'List view' })
-        ).toHaveAttribute('aria-pressed', 'false');
     });
 
-    it('presses the saved layout', () => {
-        window.localStorage.setItem(ARTICLES_VIEW_STORAGE_KEY, 'list');
-
-        render(<ArticlesViewToggle />);
-
-        expect(
-            screen.getByRole('button', { name: 'List view' })
-        ).toHaveAttribute('aria-pressed', 'true');
-    });
-
-    it('switches to the list and remembers it', async () => {
+    it('switches to the grid and remembers it', async () => {
         const user = userEvent.setup();
         render(<ArticlesViewToggle />);
 
-        await user.click(screen.getByRole('button', { name: 'List view' }));
+        await user.click(screen.getByRole('button', { name: 'Grid view' }));
 
         expect(
-            screen.getByRole('button', { name: 'List view' })
+            screen.getByRole('button', { name: 'Grid view' })
         ).toHaveAttribute('aria-pressed', 'true');
         expect(window.localStorage.getItem(ARTICLES_VIEW_STORAGE_KEY)).toBe(
-            'list'
+            'grid'
         );
     });
 });

@@ -47,6 +47,7 @@ flowchart LR
 | -------------------------------------- | ------------------------------------------------ | ----------------------------------------------------------- |
 | `/`                                    | Hero, about, skills, projects, articles, contact | [Home page](Home-Page.md)                                   |
 | `/articles`                            | Article list with tags, pages, and search        | [Article listing and search](Article-Listing-and-Search.md) |
+| `/articles/series`                     | Every multi-part series, filterable by topic     | [Series page](Series-Page.md)                               |
 | `/articles/<slug>`                     | One article                                      | [Article page](Article-Page.md)                             |
 | `/resume`                              | Printable resume                                 | [Resume page](Resume-Page.md)                               |
 | `/now`, `/uses`                        | Now and gear pages                               | [Now and uses pages](Now-and-Uses-Pages.md)                 |
@@ -80,7 +81,7 @@ flowchart LR
 **Articles**
 
 - [Articles overview](Articles-Overview.md) · [Article markdown](Article-Markdown.md) · [Article page](Article-Page.md)
-- [Article listing and search](Article-Listing-and-Search.md)
+- [Article listing and search](Article-Listing-and-Search.md) · [Series page](Series-Page.md)
 - [Mermaid diagrams](Mermaid-Diagrams.md) · [Flow diagrams](Flow-Diagrams.md) · [Reading mode](Reading-Mode.md)
 - [Comments](Comments.md) · [Feeds](Feeds.md) · [Covers and OG images](Covers-and-OG-Images.md)
 - [Article editor studio](Article-Editor-Studio.md)

@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import { firstRowCoverCount } from '@/components/pages/articles/ArticleGrid';
 import {
     ARTICLES_VIEW_ATTRIBUTE,
     ARTICLES_VIEW_STORAGE_KEY,
@@ -11,17 +10,17 @@ import {
     stylesheetUrls,
 } from '@tests/build/helpers';
 
-// The articles grid/list choice lives in the visitor's browser, so the static
-// HTML must always ship the default grid, plus what lets a saved list apply
+// The articles list/grid choice lives in the visitor's browser, so the static
+// HTML must always ship the default list, plus what lets a saved grid apply
 // before first paint: the inline script in <head> and the CSS rule that hides
-// the pre-rendered grid while the list loads.
+// the pre-rendered list while the grid loads.
 
 function articlesPage() {
     return loadPage('articles.html');
 }
 
 describe('articles layout toggle in the static export', () => {
-    it('ships the layout toggle with the grid pressed', () => {
+    it('ships the layout toggle with the list pressed, list first', () => {
         const document = articlesPage();
         const toggle = document.querySelector(
             '[role="group"][aria-label="Layout"]'
@@ -34,23 +33,24 @@ describe('articles layout toggle in the static export', () => {
         );
 
         expect(pressed).toEqual([
-            ['Grid view', 'true'],
-            ['List view', 'false'],
+            ['List view', 'true'],
+            ['Grid view', 'false'],
         ]);
     });
 
-    it('pre-renders the first page as the card grid inside the hideable wrapper', () => {
+    it('pre-renders the first page as rows inside the hideable wrapper', () => {
         const document = articlesPage();
         const toggle = document.querySelector(
             '[role="group"][aria-label="Layout"]'
         );
-        const wrapper = toggle?.parentElement?.parentElement;
-        const cards =
+        const wrapper = toggle?.closest('[class*="pendingResults"]');
+        const rows =
             wrapper?.querySelectorAll('li[data-spotlight-surface]') ?? [];
 
-        expect(cards.length).toBeGreaterThan(0);
-        for (const card of cards) {
-            expect(card.querySelector('img')).not.toBeNull();
+        expect(rows.length).toBeGreaterThan(0);
+        for (const row of rows) {
+            expect(row.querySelector('img')).toBeNull();
+            expect(row.querySelector('time')).not.toBeNull();
         }
         expect(
             wrapper?.querySelector('nav[aria-label="Filter articles by tag"]')
@@ -63,7 +63,9 @@ describe('articles layout toggle in the static export', () => {
             '[role="group"][aria-label="Layout"]'
         );
 
-        expect(toggle?.parentElement?.textContent).toMatch(/\d+ articles?/);
+        expect(toggle?.parentElement?.parentElement?.textContent).toMatch(
+            /\d+ articles?/
+        );
     });
 
     it.each(listHtmlPages().filter((page) => page !== 'offline-fallback.html'))(
@@ -83,29 +85,46 @@ describe('articles layout toggle in the static export', () => {
         }
     );
 
-    it('ships the rule that hides the pre-rendered grid for a saved list', () => {
+    it('ships the rule that hides the pre-rendered list for a saved grid', () => {
         const css = stylesheetUrls('articles.html')
             .map((url) => readAssetByUrl(url).toString('utf8'))
             .join('\n');
 
         expect(css).toMatch(
-            /html\[data-articles-view=['"]?list['"]?\][^{]*\{[^}]*visibility:\s*hidden/
+            /html\[data-articles-view=['"]?grid['"]?\][^{]*\{[^}]*visibility:\s*hidden/
         );
     });
 
-    // The first row's cover is the page's largest paint, so it must not wait
-    // for the lazy loader; the rest stay lazy.
-    it('loads the first row of covers eagerly and the rest lazily', () => {
-        const images = [
-            ...articlesPage().querySelectorAll(
+    // The default list has no cover images, so nothing on the index waits for a
+    // large image before the first paint.
+    it('ships no cover images in the default list', () => {
+        expect(
+            articlesPage().querySelectorAll(
                 'main li[data-spotlight-surface] img'
-            ),
-        ];
-        const loading = images.map((image) => image.getAttribute('loading'));
+            )
+        ).toHaveLength(0);
+    });
 
-        expect(loading.slice(0, firstRowCoverCount)).toEqual(
-            Array(Math.min(firstRowCoverCount, images.length)).fill('eager')
+    it('ships the series page rules that show the saved layout', () => {
+        const css = stylesheetUrls('articles/series.html')
+            .map((url) => readAssetByUrl(url).toString('utf8'))
+            .join('\n');
+
+        expect(css).toMatch(/html\[data-articles-view=['"]?grid['"]?\]/);
+    });
+
+    // In the series grid the front cover of each first-row deck is the largest
+    // paint, so it loads eagerly; the covers behind it stay lazy.
+    it('loads only the front cover of each first-row series deck eagerly', () => {
+        const decks = loadPage('articles/series.html').querySelectorAll(
+            'ul[class*="gridView"] li[data-spotlight-surface] [aria-hidden="true"]:has(img)'
         );
-        expect(loading.slice(firstRowCoverCount)).not.toContain('eager');
+        const [firstDeck] = [...decks];
+        const loading = [...(firstDeck?.querySelectorAll('img') ?? [])].map(
+            (image) => image.getAttribute('loading')
+        );
+
+        expect(loading[0]).toBe('eager');
+        expect(loading.slice(1)).not.toContain('eager');
     });
 });

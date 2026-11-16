@@ -1,0 +1,29 @@
+@reference "tailwindcss";
+
+/* A deck of part covers. Every cover fills the same box; each one further back
+   (--depth 1, 2) is shrunk a little towards its top right corner and nudged up
+   and right, so its top and right edges peek out behind part 1. The box keeps room for those edges (--layers deep), so the
+   deck never spills out of its card. The surface around it sets --fan to 1 on
+   hover, which spreads the deck a little further; motion-safe only. */
+.stack {
+    --step-x: 0.75rem;
+    --step-y: 0.6rem;
+    --fan: 0;
+
+    @apply relative isolate;
+    margin-top: calc(var(--layers) * var(--step-y) * 1.6);
+    margin-right: calc(var(--layers) * var(--step-x) * 1.6);
+    aspect-ratio: 1200 / 630;
+}
+
+.cover {
+    @apply absolute inset-0 h-full rounded-xl shadow-md ring-1 ring-black/10 motion-safe:transition-transform motion-safe:duration-500 motion-safe:ease-out;
+    z-index: calc(10 - var(--depth));
+    transform: translate(
+            calc(var(--depth) * var(--step-x) * (1 + var(--fan) * 0.6)),
+            calc(var(--depth) * var(--step-y) * -1 * (1 + var(--fan) * 0.6))
+        )
+        scale(calc(1 - var(--depth) * 0.05));
+    transform-origin: top right;
+    filter: brightness(calc(1 - var(--depth) * 0.12));
+}

@@ -52,16 +52,17 @@ flowchart TD
 
 ## Helpers in `posts.ts`
 
-| Function                | Used by                                                               |
-| ----------------------- | --------------------------------------------------------------------- |
-| `getAllArticles()`      | Listing, search, feeds, sitemap, home teaser, scripts.                |
-| `getArticle(slug)`      | Article page, feeds. Returns `null` for drafts.                       |
-| `getLatestArticles(n)`  | Home "Latest Articles".                                               |
-| `getAllTags()`          | Tag filter.                                                           |
-| `getRelatedArticles()`  | Related list. Score: shared tag x3, same category +4, same series +5. |
-| `getSeriesForArticle()` | Series tracker (needs 2 or more published parts).                     |
-| `getAdjacentArticles()` | Previous and next links.                                              |
-| `hasArticles()`         | Navbar hides "Articles" when there are none.                          |
+| Function                    | Used by                                                               |
+| --------------------------- | --------------------------------------------------------------------- |
+| `getAllArticles()`          | Listing, search, feeds, sitemap, home teaser, scripts.                |
+| `getArticle(slug)`          | Article page, feeds. Returns `null` for drafts.                       |
+| `getLatestArticles(n)`      | Home "Latest Articles".                                               |
+| `getAllArticlesWithStack()` | Series page: summaries plus each article's `tech` stack.              |
+| `getAllTags()`              | Not used by the site; the topic filter counts tags itself.            |
+| `getRelatedArticles()`      | Related list. Score: shared tag x3, same category +4, same series +5. |
+| `getSeriesForArticle()`     | Series tracker (needs 2 or more published parts).                     |
+| `getAdjacentArticles()`     | Previous and next links.                                              |
+| `hasArticles()`             | Navbar hides "Articles" when there are none.                          |
 
 ## Adding an article
 

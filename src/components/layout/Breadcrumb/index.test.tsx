@@ -84,4 +84,16 @@ describe('Breadcrumb', () => {
             container.querySelector('script[type="application/ld+json"]')
         ).toBeNull();
     });
+
+    it('drops its bottom margin when it shares a row', () => {
+        mockedUsePathname.mockReturnValue('/articles');
+
+        render(<Breadcrumb className="mb-0" />);
+
+        const breadcrumb = screen.getByRole('navigation', {
+            name: 'Breadcrumb',
+        });
+        expect(breadcrumb).toHaveClass('mb-0');
+        expect(breadcrumb).not.toHaveClass('mb-6');
+    });
 });

@@ -1,12 +1,15 @@
 import { Suspense } from 'react';
-import Breadcrumb from '@/components/layout/Breadcrumb';
-import SectionHeading from '@/components/pages/common/SectionHeading';
+import PageTopBar from '@/components/pages/common/PageTopBar';
+import ArticleSearch from '@/components/pages/articles/ArticleSearch';
+import QueryArticleSearch from '@/components/pages/articles/SearchResults/QueryArticleSearch';
 import SearchResults from '@/components/pages/articles/SearchResults';
 import { ARTICLES_PER_PAGE, type ArticleSummary } from '@/lib/posts';
 
 /**
- * Layout for the /articles/search results page. The query lives in the URL and
- * is read client-side, so the searchable results sit inside a Suspense boundary
+ * Layout for the /articles/search results page: the same top as the articles
+ * index (breadcrumb with the search button beside it, the heading and intro kept
+ * for screen readers), then the results. The query lives in the URL and is read
+ * client-side, so the parts that read it sit inside Suspense boundaries
  * (required for useSearchParams under static export).
  */
 export default function ArticlesSearch({
@@ -19,11 +22,25 @@ export default function ArticlesSearch({
             id="main"
             className="container mx-auto px-4 py-20 sm:py-28"
         >
-            <Breadcrumb />
-            <SectionHeading as="h1">Search articles</SectionHeading>
-            <p className="text-foreground/70 mt-6 max-w-3xl text-lg leading-relaxed">
-                Find an article by its title or a tag.
-            </p>
+            <PageTopBar
+                title="Search articles"
+                description="Find an article by its title or a tag."
+                action={
+                    <Suspense
+                        fallback={
+                            <ArticleSearch
+                                articles={articles}
+                                className="shrink-0"
+                            />
+                        }
+                    >
+                        <QueryArticleSearch
+                            articles={articles}
+                            className="shrink-0"
+                        />
+                    </Suspense>
+                }
+            />
 
             <Suspense fallback={null}>
                 <SearchResults

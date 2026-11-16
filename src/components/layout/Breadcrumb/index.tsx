@@ -25,6 +25,8 @@ interface BreadcrumbProps {
      * still shows the slug to keep the terminal-path look.
      */
     currentName?: string;
+    /** Extra classes, e.g. to drop the bottom margin when it shares a row. */
+    className?: string;
 }
 
 /**
@@ -34,7 +36,10 @@ interface BreadcrumbProps {
  * Rendered in JetBrains Mono with chevrons instead of slashes, and emits
  * BreadcrumbList JSON-LD in production.
  */
-export default function Breadcrumb({ currentName }: BreadcrumbProps) {
+export default function Breadcrumb({
+    currentName,
+    className,
+}: BreadcrumbProps) {
     const pathname = usePathname();
     const segments = pathname.split('/').filter(Boolean);
 
@@ -57,7 +62,8 @@ export default function Breadcrumb({ currentName }: BreadcrumbProps) {
             aria-label="Breadcrumb"
             className={cn(
                 jetBrainsMono.variable,
-                'text-foreground/70 mb-6 font-mono text-sm sm:text-base'
+                'text-foreground/70 mb-6 font-mono text-sm sm:text-base',
+                className
             )}
         >
             <ol className="flex flex-wrap items-center gap-x-2 gap-y-1">

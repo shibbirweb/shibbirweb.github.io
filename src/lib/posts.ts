@@ -212,6 +212,30 @@ export function getAllArticles(): ArticleSummary[] {
         .sort((a, b) => (a.date < b.date ? 1 : -1));
 }
 
+/** A published article's summary plus the tools it builds on (frontmatter `tech`). */
+export interface ArticleWithStack extends ArticleSummary {
+    tech: string[];
+}
+
+/**
+ * Published articles with their tech stacks, newest first. The stack is read
+ * straight from the frontmatter, so nothing is rendered; the series page uses it
+ * to show what each series builds with.
+ */
+export function getAllArticlesWithStack(): ArticleWithStack[] {
+    const techBySlug = new Map(
+        readArticleFiles().map((article) => [
+            article.slug,
+            stringList(article.data.tech),
+        ])
+    );
+
+    return getAllArticles().map((article) => ({
+        ...article,
+        tech: techBySlug.get(article.slug) ?? [],
+    }));
+}
+
 export function hasArticles(): boolean {
     return getAllArticles().length > 0;
 }

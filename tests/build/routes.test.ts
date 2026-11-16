@@ -11,6 +11,7 @@ const STATIC_PAGES = [
     'index.html',
     '404.html',
     'articles.html',
+    'articles/series.html',
     'articles/search.html',
     'resume.html',
     'now.html',
@@ -54,7 +55,7 @@ describe('static export routes', () => {
         const exportedSlugs = listOutFiles('articles')
             .filter((file) => /^articles\/[^/]+\.html$/.test(file))
             .map((file) => file.replace(/^articles\/|\.html$/g, ''))
-            .filter((slug) => slug !== 'search')
+            .filter((slug) => slug !== 'search' && slug !== 'series')
             .sort();
 
         expect(publishedSlugs.length).toBeGreaterThan(0);
