@@ -3,8 +3,11 @@ import { cn } from '@/utils/cn';
 import Breadcrumb from '@/components/layout/Breadcrumb';
 import DownloadPdfButton from '@/components/pages/resume/DownloadPdfButton';
 import ResumeDocument from '@/components/pages/resume/ResumeDocument';
+import ResumePrint from '@/components/pages/resume/ResumePrint';
 import {
     resumeContacts,
+    resumeHeadline,
+    resumeLanguages,
     resumeLocation,
     resumeName,
     resumeSections,
@@ -75,9 +78,25 @@ export default function ResumePage() {
             <div className="mx-auto mb-8 flex max-w-4xl justify-end print:hidden">
                 <DownloadPdfButton />
             </div>
-            <ResumeDocument
+            {/* Screen and print each get their own layout from the same data. */}
+            <div
+                data-testid="resume-screen"
+                className="print:hidden"
+            >
+                <ResumeDocument
+                    name={resumeName}
+                    headline={resumeHeadline}
+                    location={resumeLocation}
+                    languages={resumeLanguages}
+                    contacts={resumeContacts}
+                    sections={resumeSections}
+                />
+            </div>
+            <ResumePrint
                 name={resumeName}
+                headline={resumeHeadline}
                 location={resumeLocation}
+                languages={resumeLanguages}
                 contacts={resumeContacts}
                 sections={resumeSections}
             />

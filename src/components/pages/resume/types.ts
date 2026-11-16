@@ -10,6 +10,11 @@ export type ContactLink = {
 export type ExperiencePosition = {
     role: string;
     /**
+     * Optional one-line context for readers outside the domain, e.g. the
+     * product worked on. Leads the line under the role.
+     */
+    context?: string;
+    /**
      * Earlier titles at the same company, oldest first, shown as a
      * "(promoted from ...)" note after the current role (arrows on screen,
      * commas in print).
@@ -77,9 +82,18 @@ export type AwardEntry = {
  */
 export type ResumeSectionData =
     | { kind: 'experience'; label: string; entries: ExperienceEntry[] }
-    | { kind: 'projects'; label: string; entries: ProjectEntry[] }
+    | {
+          kind: 'projects';
+          label: string;
+          entries: ProjectEntry[];
+          /**
+           * Print layout: `detailed` (default) gives each project its own
+           * heading and bullets; `compact` prints one bullet per project.
+           */
+          layout?: 'detailed' | 'compact';
+      }
     | { kind: 'skills'; label: string; groups: SkillGroup[] }
     | { kind: 'bullets'; label: string; items: string[] }
     | { kind: 'education'; label: string; entries: EducationEntry[] }
     | { kind: 'awards'; label: string; entries: AwardEntry[] }
-    | { kind: 'text'; label: string; text: string };
+    | { kind: 'text'; label: string; paragraphs: string[] };

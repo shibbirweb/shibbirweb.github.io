@@ -3,6 +3,7 @@ import type {
     ResumeSectionData,
 } from '@/components/pages/resume/types';
 import {
+    careerExperience,
     currentWorkplace,
     currentWorkplaceURL,
     educationURL,
@@ -16,8 +17,15 @@ import {
 // `siteName` used for branding/SEO).
 export const resumeName = 'Md. Shibbir Ahmed';
 
+// Headline under the name, on the page and in the printed PDF.
+export const resumeHeadline =
+    'Senior Full-Stack Software Engineer · Laravel, Vue.js, React · Claude API and MCP';
+
 // Location + availability line under the contacts.
 export const resumeLocation = 'Dhaka, Bangladesh (GMT+6)';
+
+// Spoken languages, shown in the header under the location.
+export const resumeLanguages = 'Bengali (native), English (professional)';
 
 // Contact row under the name. Labels are the display text; hrefs are the real
 // targets (mailto for email, canonical URLs for the rest).
@@ -35,89 +43,14 @@ export const resumeSections: ResumeSectionData[] = [
     {
         kind: 'text',
         label: 'Summary',
-        text: 'Senior Full-Stack Software Engineer with 6+ years shipping scalable, high-performance web applications in PHP/Laravel and modern JavaScript (Vue, Nuxt, React, Node/TypeScript). Leads engineering teams, owns products end to end, and designs REST APIs, queue-based pipelines, and event-driven backends. Currently building AI products on the Anthropic Claude API and MCP: in-app assistants, custom MCP servers, and tool/function calling. Focused on system design, performance, and reliable delivery.',
-    },
-    {
-        kind: 'skills',
-        label: 'Technical Skills',
-        groups: [
-            {
-                label: 'Languages',
-                values: ['PHP', 'JavaScript', 'TypeScript', 'SQL'],
-            },
-            {
-                label: 'Backend',
-                values: [
-                    'Laravel',
-                    'Livewire',
-                    'Inertia.js',
-                    'Node.js',
-                    'Express',
-                    'REST APIs',
-                    'Queue Processing (Horizon)',
-                    'Sanctum',
-                    'OAuth2',
-                    'JWT',
-                    'Socket.io',
-                ],
-            },
-            {
-                label: 'Frontend',
-                values: [
-                    'Vue.js',
-                    'Nuxt.js',
-                    'React',
-                    'Next.js',
-                    'Vuex',
-                    'Pinia',
-                    'Alpine.js',
-                    'jQuery',
-                    'Tailwind CSS',
-                ],
-            },
-            {
-                label: 'Databases',
-                values: [
-                    'MySQL',
-                    'PostgreSQL',
-                    'SQLite',
-                    'Redis',
-                    'Prisma ORM',
-                ],
-            },
-            {
-                label: 'AI',
-                values: [
-                    'Anthropic Claude API',
-                    'MCP (Model Context Protocol)',
-                    'LLM Integration',
-                    'Prompt Engineering',
-                    'Tool / Function Calling',
-                ],
-            },
-            {
-                label: 'DevOps & Cloud',
-                values: ['Docker', 'AWS S3', 'CI/CD'],
-            },
-            {
-                label: 'Tools',
-                values: [
-                    'Git',
-                    'GitHub',
-                    'Jira',
-                    'Agile',
-                    'Sentry',
-                    'Mailgun',
-                    'Twilio',
-                    'reCAPTCHA',
-                    'WordPress',
-                ],
-            },
+        paragraphs: [
+            `Senior full-stack engineer with ${careerExperience}+ years shipping web products in PHP/Laravel and modern JavaScript (Vue.js, Nuxt.js, React, Node.js, TypeScript). I own products end to end, from REST APIs and queue-based backends to the admin UI, and I lead a two-person engineering team.`,
+            "I build AI products on the Anthropic Claude API and MCP (in-app assistants, custom MCP servers, tool calling) and brought Claude Code into my team's engineering workflow.",
         ],
     },
     {
         kind: 'experience',
-        label: 'Work Experience',
+        label: 'Experience',
         entries: [
             {
                 company: currentWorkplace, // RoBenDevs
@@ -126,35 +59,17 @@ export const resumeSections: ResumeSectionData[] = [
                 positions: [
                     {
                         role: 'Senior Software Engineer',
+                        context:
+                            'KP Dashboard, a US political advocacy platform · Leading a two-person team',
                         period: 'Oct 2024 - Present',
                         highlights: [
-                            'Integrated 2 US Communicating-With-Congress delivery systems (federal and state) to route constituent advocacy messages directly to legislator offices.',
-                            'Built AI features on the Anthropic Claude API: an in-app assistant backed by a custom MCP server exposing 7 legislator-data tools, plus 4 internal MCP developer tools.',
-                            'Resolved 300+ production bugs via Sentry monitoring, including congressional delivery failures fixed across 3 services.',
-                            'Hardened public-facing flows with Twilio SMS OTP, OAuth2, reCAPTCHA v3/v2, and SQL-injection remediation.',
-                            'Launched the platform iOS app with Capacitor 8 and drove App Store submission readiness.',
-                        ],
-                        tech: [
-                            'PHP (Laravel)',
-                            'MySQL',
-                            'Redis',
-                            'Node.js (Express, TypeScript, TypeORM)',
-                            'Vue 2 (Vuex, Vuetify)',
-                            'React 18 (Redux Toolkit, RTK Query, Tailwind)',
-                            'REST APIs',
-                            'OAuth2',
-                            'JWT',
-                            'Socket.io',
-                            'Capacitor (iOS)',
-                            'Anthropic Claude API',
-                            'MCP',
-                            'AWS S3',
-                            'Mailgun',
-                            'Twilio',
-                            'reCAPTCHA',
-                            'Sentry',
-                            'Git',
-                            'Jira',
+                            'Integrated 2 US congressional delivery systems (federal and state) routing constituent messages to legislators.',
+                            'Built an in-app Claude assistant on a custom MCP server (7 legislator-data tools), plus 4 MCP developer tools.',
+                            'Designed the Action Center subsystem end to end: 13 database tables, REST APIs and the full admin UI.',
+                            'Sped up mass email 8x with a queue-based pipeline that recovers automatically.',
+                            'Resolved 300+ production bugs from Sentry, including congressional delivery failures across 3 services.',
+                            'Hardened public flows with Twilio SMS OTP, OAuth2, reCAPTCHA and SQL-injection fixes.',
+                            'Named Top Performer twice (Feb 2025, Jul 2025).',
                         ],
                     },
                 ],
@@ -169,18 +84,10 @@ export const resumeSections: ResumeSectionData[] = [
                         promotedFrom: ['Full Stack Developer'],
                         period: 'Mar 2023 - Oct 2024',
                         highlights: [
-                            'Promoted to Senior within 11 months after delivering client-facing features across the product.',
-                            'Shipped client-facing Nuxt.js/Vue applications serving healthcare users in emerging markets, including a telehealth PWA and a prescription-writing platform.',
-                            'Refactored legacy frontend code and established UI development standards adopted across the team, reducing regression bugs in client deliveries.',
-                            'Built internal tooling and reusable component libraries that cut feature build time for the team.',
-                        ],
-                        tech: [
-                            'Nuxt.js',
-                            'Vue.js',
-                            'PHP',
-                            'Laravel',
-                            'JavaScript',
-                            'MySQL',
+                            'Promoted to Senior within 11 months; named Best Web Engineer (Aug 2023).',
+                            'Shipped Nuxt.js apps for healthcare users: DocTime (telehealth PWA) and Doctor PRO (prescription writing).',
+                            'Built RateHammer, a buy-now, pay-later gateway with WooCommerce integration and JavaScript SDKs.',
+                            'Set team UI standards and built reusable component libraries, cutting regression bugs and build time.',
                         ],
                     },
                 ],
@@ -199,23 +106,8 @@ export const resumeSections: ResumeSectionData[] = [
                         ],
                         period: 'Oct 2018 - Feb 2023',
                         highlights: [
-                            'Progressed from intern to Senior Software Engineer over 4+ years through three promotions.',
-                            'Built and shipped PHP/Laravel and Vue.js applications from requirements through production delivery, including Oporajito, an online exam platform (web and Android) with SSLCommerz payment integration.',
-                            'Established and monitored UI design and development standards for the team.',
-                        ],
-                        tech: [
-                            'PHP',
-                            'Laravel',
-                            'Vue.js',
-                            'Nuxt.js',
-                            'React',
-                            'Next.js',
-                            'JavaScript',
-                            'jQuery',
-                            'MySQL',
-                            'TypeORM',
-                            'Prisma',
-                            'Git',
+                            'Shipped Laravel and Vue.js apps end to end, from requirements to production.',
+                            'Built Oporajito, an exam platform, owning its frontend, REST API, Android app and SSLCommerz payments.',
                         ],
                     },
                 ],
@@ -223,103 +115,19 @@ export const resumeSections: ResumeSectionData[] = [
         ],
     },
     {
-        kind: 'bullets',
-        label: 'AI Experience',
-        items: [
-            'Designed the tool schema and data-access layer for a custom MCP server (7 legislator-data tools plus 4 internal developer tools), covering tool and function calling end to end.',
-            'Built prompt pipelines and LLM integration surfacing domain data through natural-language queries, including structured output handling and error recovery.',
-            "Integrated AI-assisted developer tooling (Claude Code) into the team's engineering workflow.",
-        ],
-    },
-    {
         kind: 'projects',
-        label: 'Projects',
+        label: 'Selected Open Source',
+        layout: 'compact',
         entries: [
             {
-                name: 'KP Dashboard',
-                tagline: 'Political influence and advocacy platform',
-                company: 'RoBenDevs',
+                name: 'MCP DB Read-Only',
+                tagline: 'Published npm package',
                 highlights: [
-                    'Designed the Action Center engagement subsystem end to end: 13 database tables, REST APIs, and the full admin UI.',
-                    'Increased email sending throughput 8x with a queue-based mass-message pipeline (automatic recovery), significantly cutting delivery time.',
-                    'Built background big-data pipelines (Laravel queues, Horizon): batch xlsx imports backed by S3 and streamed chunked exports for the largest client datasets.',
-                    'Eliminated N+1 query patterns firing 100s of extra database queries per request and removed render-blocking JavaScript from the login page.',
+                    'MCP server giving AI assistants safe, read-only access to 9 databases.',
                 ],
-                tech: [
-                    'Laravel',
-                    'MySQL',
-                    'Redis',
-                    'Vue 2',
-                    'React 18',
-                    'Node.js (Express)',
-                    'AWS S3',
-                    'REST APIs',
-                ],
+                tech: ['TypeScript', 'MCP'],
+                url: 'https://www.npmjs.com/package/@shibbirweb/mcp-db-read-only',
             },
-            {
-                name: 'DocTime',
-                tagline: 'Telehealth consultation PWA',
-                company: 'Media365 Limited',
-                highlights: [
-                    'Built a performant Progressive Web App (PWA) for cross-platform telehealth consultations in emerging markets.',
-                    'Optimized frontend performance and responsiveness and implemented anti-spam and platform-integrity safeguards.',
-                ],
-                tech: ['Nuxt.js', 'Firebase Cloud Functions', 'Vuex', 'PWA'],
-                url: 'https://doctime.com.bd',
-            },
-            {
-                name: 'Doctor PRO',
-                tagline: 'Prescription writing solution',
-                company: 'Media365 Limited',
-                highlights: [
-                    'Engineered a prescription-writing interface with RESTful API integration and frontend caching.',
-                    'Designed a smart medicine-suggestion system and optimized search for faster clinician workflows.',
-                ],
-                tech: ['Laravel', 'Nuxt.js', 'Pinia'],
-                url: 'https://www.doctorpro.doctime.com.bd/',
-            },
-            {
-                name: 'RateHammer (Baskefy)',
-                tagline: 'Buy-now, pay-later payment gateway',
-                company: 'Media365 Limited',
-                highlights: [
-                    'Built a buy-now, pay-later payment gateway with seamless WordPress WooCommerce integration.',
-                    'Developed JavaScript SDKs enabling third-party platforms to embed the gateway.',
-                ],
-                tech: [
-                    'TypeScript',
-                    'Nuxt.js',
-                    'Pinia',
-                    'Tailwind CSS',
-                    'PHP',
-                    'WordPress',
-                ],
-            },
-            {
-                name: 'Oporajito',
-                tagline: 'Online exam and practice platform (Web + Android)',
-                company: 'MAXSOP',
-                highlights: [
-                    'Delivered an online exam and practice platform (web and Android) for students and job seekers.',
-                    'Owned the frontend, the REST API backend, and the native Android app, with SSLCommerz payment integration.',
-                ],
-                tech: [
-                    'PHP',
-                    'Laravel',
-                    'Sanctum',
-                    'Vue.js',
-                    'Livewire',
-                    'Alpine.js',
-                    'MySQL',
-                    'SSLCommerz',
-                ],
-            },
-        ],
-    },
-    {
-        kind: 'projects',
-        label: 'Open Source',
-        entries: [
             {
                 name: 'CKEditor 5 Image Remove Event Callback Plugin',
                 tagline: 'Published npm package',
@@ -341,18 +149,83 @@ export const resumeSections: ResumeSectionData[] = [
         ],
     },
     {
-        kind: 'awards',
-        label: 'Honors & Awards',
-        entries: [
+        kind: 'skills',
+        label: 'Skills',
+        groups: [
             {
-                title: 'Top Performer',
-                issuer: 'RoBenDevs',
-                date: 'Feb 2025, Jul 2025',
+                label: 'Languages',
+                values: ['PHP', 'JavaScript', 'TypeScript', 'SQL'],
             },
             {
-                title: 'Best Web Engineer',
-                issuer: 'Media365 Limited',
-                date: 'Aug 2023',
+                label: 'Backend',
+                values: [
+                    'Laravel',
+                    'Livewire',
+                    'Inertia.js',
+                    'Node.js',
+                    'Express',
+                    'REST APIs',
+                    'Queues (Horizon)',
+                    'OAuth2',
+                    'JWT',
+                    'Socket.io',
+                ],
+            },
+            {
+                label: 'Frontend',
+                values: [
+                    'Vue.js',
+                    'Nuxt.js',
+                    'React',
+                    'Next.js',
+                    'Pinia',
+                    'Vuex',
+                    'Alpine.js',
+                    'Tailwind CSS',
+                ],
+            },
+            {
+                label: 'Databases',
+                values: [
+                    'MySQL',
+                    'PostgreSQL',
+                    'SQLite',
+                    'Redis',
+                    'Prisma ORM',
+                ],
+            },
+            {
+                label: 'AI Engineering',
+                values: [
+                    'Claude API',
+                    'MCP servers',
+                    'Tool calling',
+                    'LLM integration',
+                    'Prompt engineering',
+                    'Claude Code',
+                ],
+            },
+            {
+                label: 'Cloud and Tools',
+                values: [
+                    'Docker',
+                    'AWS S3',
+                    'CI/CD',
+                    'Sentry',
+                    'Git',
+                    'GitHub',
+                    'Jira',
+                    'Mailgun',
+                    'Twilio',
+                ],
+            },
+            {
+                label: 'Leadership',
+                values: [
+                    'Team leadership',
+                    'End-to-end product ownership',
+                    'UI development standards',
+                ],
             },
         ],
     },
@@ -366,21 +239,6 @@ export const resumeSections: ResumeSectionData[] = [
                 degree: 'B.Sc. (Honours) in Mathematics',
                 year: '2019',
             },
-            {
-                institution: 'Altaf Golandaz College',
-                degree: 'Higher Secondary Certificate (HSC)',
-                year: '2014',
-            },
-            {
-                institution: 'Islamia Government High School',
-                degree: 'Secondary School Certificate (SSC)',
-                year: '2012',
-            },
         ],
-    },
-    {
-        kind: 'text',
-        label: 'Languages',
-        text: 'Bengali (Native), English (Professional)',
     },
 ];

@@ -115,9 +115,13 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
+        // Print is always a white page: with "Background graphics" on, Chrome
+        // fills the page margins from <html>, whose inline dark color-scheme
+        // (set by the theme switcher) would otherwise paint them dark. The `!`
+        // is needed to beat that inline style.
         <html
             lang="en"
-            className="scroll-smooth"
+            className="scroll-smooth print:bg-white! print:scheme-light!"
             suppressHydrationWarning
         >
             <head>

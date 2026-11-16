@@ -4,6 +4,8 @@ import { describe, expect, it } from 'vitest';
 import { nowMeta, nowQuote, nowSections } from '@/app/now/contents';
 import {
     resumeContacts,
+    resumeHeadline,
+    resumeLanguages,
     resumeLocation,
     resumeName,
     resumeSections,
@@ -402,7 +404,7 @@ const RESUME_KINDS: ResumeSectionData['kind'][] = [
 /** Checks the body of one resume section for the fields its kind renders. */
 function expectResumeSectionFilled(section: ResumeSectionData) {
     if (section.kind === 'text') {
-        expectFilledText(section.text);
+        expectFilledList(section.paragraphs);
         return;
     }
     if (section.kind === 'bullets') {
@@ -456,9 +458,15 @@ function expectResumeSectionFilled(section: ResumeSectionData) {
 }
 
 describe('/resume contents', () => {
-    it('has a name and location', () => {
+    it('has a name, a printed headline, a location and languages', () => {
         expectFilledText(resumeName);
+        expectFilledText(resumeHeadline);
         expectFilledText(resumeLocation);
+        expectFilledText(resumeLanguages);
+    });
+
+    it('keeps the printed headline to a single line', () => {
+        expect(resumeHeadline.length).toBeLessThanOrEqual(100);
     });
 
     it('links each contact by mailto or https', () => {

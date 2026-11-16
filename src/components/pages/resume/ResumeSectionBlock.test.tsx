@@ -27,11 +27,10 @@ describe('ResumeSectionBlock', () => {
             />
         );
 
-        expect(
-            screen.getByRole('heading', { level: 3, name: 'Acme' })
-        ).toBeInTheDocument();
+        expect(screen.getByRole('heading', { level: 3 })).toHaveTextContent(
+            'Engineer, Acme'
+        );
         expect(screen.getByText('Remote')).toBeInTheDocument();
-        expect(screen.getByText('Engineer')).toBeInTheDocument();
         expect(screen.getByText('2024 - Present')).toBeInTheDocument();
         expect(screen.getByText('Shipped the thing')).toBeInTheDocument();
         expect(screen.getByText('Technologies:')).toBeInTheDocument();
@@ -164,17 +163,18 @@ describe('ResumeSectionBlock', () => {
         expect(screen.getByText('Jul 2025')).toBeInTheDocument();
     });
 
-    it('renders a text section as a paragraph', () => {
+    it('renders a text section as one paragraph per entry', () => {
         render(
             <ResumeSectionBlock
                 section={{
                     kind: 'text',
-                    label: 'Languages',
-                    text: 'English, Bengali',
+                    label: 'Summary',
+                    paragraphs: ['First paragraph.', 'Second paragraph.'],
                 }}
             />
         );
 
-        expect(screen.getByText('English, Bengali').tagName).toBe('P');
+        expect(screen.getByText('First paragraph.').tagName).toBe('P');
+        expect(screen.getByText('Second paragraph.').tagName).toBe('P');
     });
 });

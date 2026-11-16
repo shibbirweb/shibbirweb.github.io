@@ -6,8 +6,8 @@ import TechLine from '@/components/pages/resume/TechLine';
 /** One project: name + tagline, optional bullets, optional tech line. */
 export default function ProjectItem({ entry }: { entry: ProjectEntry }) {
     return (
-        <div className="print:break-inside-avoid">
-            <h3 className="text-[14px] font-bold print:text-[11pt]">
+        <div>
+            <h3 className="text-[14px] font-bold">
                 {entry.url ? (
                     <ExternalLink
                         href={entry.url}
@@ -34,7 +34,7 @@ export default function ProjectItem({ entry }: { entry: ProjectEntry }) {
             </h3>
 
             {entry.company && (
-                <p className="text-foreground/70 mt-0.5 text-[12px] font-medium print:text-[9pt]">
+                <p className="text-foreground/70 mt-0.5 text-[12px] font-medium">
                     {entry.company}
                 </p>
             )}

@@ -3,7 +3,7 @@ import { cn } from '@/utils/cn';
 
 /**
  * Right-aligned secondary text (location, dates, year). Monospace on screen to
- * match the site's terminal accents; switches to the document's sans in print.
+ * match the site's terminal accents.
  */
 export default function MetaText({
     children,
@@ -15,7 +15,7 @@ export default function MetaText({
     return (
         <span
             className={cn(
-                'text-foreground/70 font-mono text-[11px] print:font-[Helvetica,Arial,sans-serif] print:text-[9pt] print:text-black/70',
+                'text-foreground/70 font-mono text-[11px]',
                 className
             )}
         >

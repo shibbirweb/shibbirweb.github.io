@@ -3,13 +3,9 @@ import ExternalLink from '@/components/pages/resume/ExternalLink';
 import MetaText from '@/components/pages/resume/MetaText';
 
 /** One institution: name + year, degree underneath. */
-export default function EducationItem({
-    entry,
-}: {
-    entry: EducationEntry;
-}) {
+export default function EducationItem({ entry }: { entry: EducationEntry }) {
     return (
-        <div className="print:break-inside-avoid">
+        <div>
             <div className="flex flex-wrap items-baseline justify-between gap-x-3">
                 <h3 className="font-semibold">
                     {entry.institutionURL ? (

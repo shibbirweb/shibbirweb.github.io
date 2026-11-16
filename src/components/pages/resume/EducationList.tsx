@@ -8,7 +8,7 @@ export default function EducationList({
     entries: EducationEntry[];
 }) {
     return (
-        <div className="flex flex-col gap-4 print:gap-2">
+        <div className="flex flex-col gap-4">
             {entries.map((entry) => (
                 <EducationItem
                     key={`${entry.institution}-${entry.degree}`}

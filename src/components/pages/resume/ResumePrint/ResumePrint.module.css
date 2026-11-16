@@ -1,0 +1,16 @@
+@reference "tailwindcss";
+
+/* The printed CV is laid out for one A4 page. Fixing the paper size and margins
+   here (instead of leaving them to each browser's defaults) keeps the page
+   count the same in every print dialog; tests/e2e/pages.spec.ts fails if the
+   resume ever spills onto a second page. This module only loads on /resume. */
+@page {
+    size: A4;
+    margin: 11mm 13mm;
+}
+
+/* Keep the dark rules and text exactly as designed, rather than letting the
+   browser lighten them to save ink. */
+.document {
+    @apply [print-color-adjust:exact];
+}

@@ -14,9 +14,8 @@
    it reads heavier at the same mix, so both strengths sit lower than the accented
    cards' 50%/68%.
 
-   Every layer here is print:hidden, and nothing in this file touches layout or the
-   box model: the printed CV must come out exactly as it did before this effect
-   existed. See ResumeDocument for the print: resets on the card itself. */
+   Nothing in this file touches layout or the box model. The card is screen only:
+   the printed CV is the separate ResumePrint layout. */
 .card {
     --bloom-strength: 5%;
 
@@ -44,12 +43,16 @@
 /* The ambient bloom, resting dim and blooming to full on hover, so a surface this
    large is never flat at rest. Neutral like the layers below it, and pitched lower
    again than the accented panels' 9%/16% because --foreground reads heavier than a
-   hue at the same mix. print:hidden with everything else in this file. */
+   hue at the same mix. */
 .card::before {
-    @apply pointer-events-none absolute inset-0 z-[-1] rounded-[inherit] opacity-55 content-[''] motion-safe:transition-opacity motion-safe:duration-700 motion-safe:ease-out print:hidden;
+    @apply pointer-events-none absolute inset-0 z-[-1] rounded-[inherit] opacity-55 content-[''] motion-safe:transition-opacity motion-safe:duration-700 motion-safe:ease-out;
     background-image: radial-gradient(
         120% 90% at 50% 0%,
-        color-mix(in oklab, var(--foreground) var(--bloom-strength), transparent),
+        color-mix(
+            in oklab,
+            var(--foreground) var(--bloom-strength),
+            transparent
+        ),
         transparent 72%
     );
 }
@@ -62,7 +65,7 @@
    so the negative z-index keeps it under the text and above the card's own faint
    background). */
 .card::after {
-    @apply pointer-events-none absolute inset-0 z-[-1] rounded-[inherit] opacity-0 content-[''] motion-safe:transition-opacity motion-safe:duration-500 motion-safe:ease-out print:hidden;
+    @apply pointer-events-none absolute inset-0 z-[-1] rounded-[inherit] opacity-0 content-[''] motion-safe:transition-opacity motion-safe:duration-500 motion-safe:ease-out;
     background-image: radial-gradient(
         circle var(--spotlight-radius) at var(--pointer-x) var(--pointer-y),
         color-mix(
