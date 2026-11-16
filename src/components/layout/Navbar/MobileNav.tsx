@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import MobileMenuButton from '@/components/layout/Navbar/MobileMenuButton';
 import MobileMenuPanel from '@/components/layout/Navbar/MobileMenuPanel';
 import MobileWordmark from '@/components/layout/Navbar/MobileWordmark';
@@ -28,8 +28,13 @@ export default function MobileNav({
 }: MobileNavProps) {
     const { open, toggle, close } = useDisclosure();
     const menuRef = useRef<HTMLDivElement>(null);
+    const wordmarkRef = useRef<HTMLDivElement>(null);
+    // The wordmark lives outside the menu container but is part of the open
+    // menu (it is the panel's logo row), so a tap on it must not count as
+    // outside: closing on its press would slide it away before the click lands.
+    const menuPartRefs = useMemo(() => [menuRef, wordmarkRef], []);
     useCloseOnEscape(open, close);
-    useCloseOnClickOutside(menuRef, open, close);
+    useCloseOnClickOutside(menuPartRefs, open, close);
     useCloseOnRouteChange(close);
 
     return (
@@ -61,6 +66,7 @@ export default function MobileNav({
              */}
             {!isHome && (
                 <MobileWordmark
+                    ref={wordmarkRef}
                     open={open}
                     onNavigate={close}
                 />

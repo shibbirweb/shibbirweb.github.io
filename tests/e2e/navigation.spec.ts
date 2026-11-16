@@ -1,4 +1,4 @@
-import { expect, test } from '@tests/e2e/fixtures';
+import { expect, test, waitForHydration } from '@tests/e2e/fixtures';
 
 test.describe('desktop navigation', () => {
     test.skip(({ isMobile }) => isMobile, 'desktop navbar only');
@@ -95,5 +95,33 @@ test.describe('mobile navigation', () => {
         await expect(
             page.getByRole('button', { name: 'Open menu' })
         ).toHaveAttribute('aria-expanded', 'false');
+    });
+
+    test('goes home from the wordmark in the open menu on an inner page', async ({
+        page,
+    }) => {
+        await page.goto('/uses');
+        await waitForHydration(page);
+        await page.getByRole('button', { name: 'Open menu' }).click();
+        // On inner pages the visible Home link is the travelling wordmark,
+        // which settles into the panel's logo row once the menu is open.
+        const wordmark = page.getByRole('link', { name: 'Home' }).first();
+        await expect(wordmark).toBeInViewport();
+        await page.waitForTimeout(600);
+        const box = await wordmark.boundingBox();
+        expect(box).not.toBeNull();
+
+        // Hold the press like a finger does: closing the menu on the press
+        // used to slide the wordmark away before the release, so no click
+        // ever reached the link.
+        await page.mouse.move(
+            (box?.x ?? 0) + (box?.width ?? 0) / 2,
+            (box?.y ?? 0) + (box?.height ?? 0) / 2
+        );
+        await page.mouse.down();
+        await page.waitForTimeout(150);
+        await page.mouse.up();
+
+        await expect(page).toHaveURL(/\/$/);
     });
 });

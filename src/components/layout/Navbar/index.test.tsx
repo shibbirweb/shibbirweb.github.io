@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { usePathname } from 'next/navigation';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import Navbar from '@/components/layout/Navbar';
@@ -95,5 +95,23 @@ describe('Navbar', () => {
 
         // Desktop wordmark plus the shared mobile wordmark (not in the panel).
         expect(screen.getAllByRole('link', { name: 'Home' })).toHaveLength(2);
+    });
+
+    it('keeps the mobile menu open when the travelling wordmark is pressed', () => {
+        render(<Navbar />);
+        fireEvent.click(screen.getByRole('button', { name: 'Open menu' }));
+        // The wordmark is the Home link outside both Primary navs.
+        const wordmark = screen
+            .getAllByRole('link', { name: 'Home', hidden: true })
+            .find((link) => link.closest('nav') === null);
+
+        expect(wordmark).toBeDefined();
+        fireEvent.pointerDown(wordmark as HTMLElement);
+
+        // Closing on the press would slide the wordmark away before its click
+        // landed, so tapping it would never reach the home page.
+        expect(
+            screen.getByRole('button', { name: 'Close menu' })
+        ).toHaveAttribute('aria-expanded', 'true');
     });
 });
