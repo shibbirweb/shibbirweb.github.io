@@ -17,12 +17,13 @@ const project: Project = {
     ],
 };
 
-function renderCard(cardProject: Project = project, index = 0) {
+function renderCard(cardProject: Project = project, index = 0, number = 1) {
     return render(
         <ul>
             <ProjectCard
                 project={cardProject}
                 index={index}
+                number={number}
             />
         </ul>
     );
@@ -59,10 +60,10 @@ describe('ProjectCard', () => {
         ]);
     });
 
-    it('numbers itself from its position, starting at 01', () => {
-        renderCard(project, 4);
+    it('shows its number zero-padded, apart from the index that sets its hue', () => {
+        renderCard(project, 9, 2);
 
-        expect(getCard()).toHaveTextContent(/^05/);
+        expect(getCard()).toHaveTextContent(/^02/);
     });
 
     it('keeps the full description in the markup while clamping it on screen', () => {

@@ -2,7 +2,7 @@ import { monoTextClassName } from '@/components/pages/common/monoText';
 import { cn } from '@/utils/cn';
 
 /**
- * The tile's mono header line: its running number across the whole section
+ * The tile's mono header line: its number within its own project group
  * (zero-padded, decorative) and its category.
  */
 export default function ProjectCardMeta({

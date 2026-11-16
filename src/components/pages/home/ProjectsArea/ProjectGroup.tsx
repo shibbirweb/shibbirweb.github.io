@@ -7,7 +7,8 @@ import { Project } from '@/components/pages/home/ProjectsArea/contents';
  * One titled group of project cards (e.g. "Hobby Projects"). The first
  * `collapsedCount` cards always show; the rest wait behind a "Show more"
  * toggle, which is left out entirely when every card already fits.
- * `indexOffset` is passed on so card glow hues stay distinct across groups.
+ * `indexOffset` is passed on so card glow hues stay distinct across groups;
+ * the card numbers restart at 01 in every group.
  */
 export default function ProjectGroup({
     title,
@@ -40,6 +41,7 @@ export default function ProjectGroup({
                     <ProjectGrid
                         projects={hiddenProjects}
                         indexOffset={indexOffset + visibleProjects.length}
+                        numberOffset={visibleProjects.length}
                     />
                 </MoreProjects>
             )}
