@@ -65,6 +65,32 @@ describe('useCloseOnClickOutside', () => {
         expect(onClose).not.toHaveBeenCalled();
     });
 
+    it('treats a press inside any of several elements as inside', () => {
+        const wordmark = document.createElement('div');
+        document.body.append(wordmark);
+        const onClose = vi.fn();
+        const refs = [{ current: menu }, { current: wordmark }];
+        renderHook(() => useCloseOnClickOutside(refs, true, onClose));
+
+        fireEvent.pointerDown(menuChild);
+        fireEvent.pointerDown(wordmark);
+        expect(onClose).not.toHaveBeenCalled();
+
+        fireEvent.pointerDown(outside);
+        expect(onClose).toHaveBeenCalledTimes(1);
+        wordmark.remove();
+    });
+
+    it('does nothing when none of several refs is attached', () => {
+        const onClose = vi.fn();
+        const refs = [{ current: null }, { current: null }];
+        renderHook(() => useCloseOnClickOutside(refs, true, onClose));
+
+        fireEvent.pointerDown(outside);
+
+        expect(onClose).not.toHaveBeenCalled();
+    });
+
     it('stops listening once it becomes inactive', () => {
         const onClose = vi.fn();
         const ref = { current: menu };

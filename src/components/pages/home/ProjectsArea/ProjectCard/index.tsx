@@ -14,13 +14,19 @@ import type { CSSProperties } from 'react';
  * screen), the stack as one slash-separated line, and the links in a hairline
  * footer. A thin ribbon in the card's own hue marks its left edge and runs the
  * full height on hover.
+ *
+ * `index` is the card's page-wide position and only drives its hue, so colours
+ * stay distinct across groups; `number` is the 1-based position shown in the
+ * header, counted within the card's own group.
  */
 export default function ProjectCard({
     project,
     index,
+    number,
 }: {
     project: Project;
     index: number;
+    number: number;
 }) {
     // Give every card its own multi-hue accent, generated from its position with
     // the golden angle so consecutive cards land far apart on the colour wheel.
@@ -49,7 +55,7 @@ export default function ProjectCard({
             />
 
             <ProjectCardMeta
-                number={index + 1}
+                number={number}
                 category={project.category}
             />
             <h4 className="mt-2 text-base leading-snug font-bold sm:text-lg">

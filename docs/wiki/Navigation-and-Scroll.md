@@ -48,16 +48,16 @@ sequenceDiagram
 
 ## Hooks in `Navbar/hooks/`
 
-| Hook                     | Job                                                          |
-| ------------------------ | ------------------------------------------------------------ |
-| `useDisclosure`          | Open, close, toggle state.                                   |
-| `useCloseOnEscape`       | Close on Escape.                                             |
-| `useCloseOnClickOutside` | Close on a click outside.                                    |
-| `useCloseOnRouteChange`  | Close when the page changes.                                 |
-| `useHeroPassed`          | True once the hero is half out of view. Shows the nav logo.  |
-| `useScrollSpy`           | Which section is active.                                     |
-| `useScrollY`             | Current scroll position (throttled).                         |
-| `useRecentlyChanged`     | True for a short time after a value flips (for transitions). |
+| Hook                     | Job                                                                                                       |
+| ------------------------ | --------------------------------------------------------------------------------------------------------- |
+| `useDisclosure`          | Open, close, toggle state.                                                                                |
+| `useCloseOnEscape`       | Close on Escape.                                                                                          |
+| `useCloseOnClickOutside` | Close on a click outside one or more elements (the mobile menu counts its travelling wordmark as inside). |
+| `useCloseOnRouteChange`  | Close when the page changes.                                                                              |
+| `useHeroPassed`          | True once the hero is half out of view. Shows the nav logo.                                               |
+| `useScrollSpy`           | Which section is active.                                                                                  |
+| `useScrollY`             | Current scroll position (throttled).                                                                      |
+| `useRecentlyChanged`     | True for a short time after a value flips (for transitions).                                              |
 
 These hooks are reused by the share menu, theme menu, and studio editor.
 

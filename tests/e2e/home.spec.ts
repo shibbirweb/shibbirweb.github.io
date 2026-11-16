@@ -237,6 +237,43 @@ test.describe('home page', () => {
         });
     }
 
+    for (const group of projectGroups) {
+        test(`numbers the ${group.name} project cards from 01`, async ({
+            page,
+        }) => {
+            const toggle = page.locator(
+                `#work button[aria-controls="${group.revealRegionId}"]`
+            );
+            const cardNumber = (projectName: string) =>
+                page
+                    .locator('#work li[data-spotlight-surface]')
+                    .filter({
+                        has: page.getByRole('heading', {
+                            level: 4,
+                            name: projectName,
+                            exact: true,
+                        }),
+                    })
+                    .locator('p')
+                    .first()
+                    .locator('span')
+                    .first();
+
+            // Open the group so the cards behind "Show more" are counted too.
+            if ((await toggle.count()) > 0) {
+                await waitForHydration(page);
+                await toggle.scrollIntoViewIfNeeded();
+                await toggle.click();
+            }
+
+            for (const [index, project] of group.projects.entries()) {
+                await expect(cardNumber(project.name), project.name).toHaveText(
+                    String(index + 1).padStart(2, '0')
+                );
+            }
+        });
+    }
+
     test('lays the project cards out in as many columns as the screen fits', async ({
         page,
     }, testInfo) => {

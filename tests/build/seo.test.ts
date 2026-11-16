@@ -171,7 +171,7 @@ describe('home page projects', () => {
         });
     });
 
-    it('numbers the cards in order across both groups', () => {
+    it('numbers the cards from 01 within each group', () => {
         const document = loadPage('index.html');
         const cards =
             document
@@ -180,10 +180,15 @@ describe('home page projects', () => {
         const numbers = [...cards].map((card) =>
             card.querySelector('p span[aria-hidden]')?.textContent?.trim()
         );
+        const groupNumbers = (count: number) =>
+            Array.from({ length: count }, (_, index) =>
+                String(index + 1).padStart(2, '0')
+            );
 
-        expect(numbers).toEqual(
-            numbers.map((_, index) => String(index + 1).padStart(2, '0'))
-        );
+        expect(numbers).toEqual([
+            ...groupNumbers(packageProjects.length),
+            ...groupNumbers(hobbyProjects.length),
+        ]);
     });
 
     it('holds each "Show more" region hidden in the static HTML', () => {

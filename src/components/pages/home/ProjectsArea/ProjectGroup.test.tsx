@@ -32,6 +32,10 @@ function getCardHeading(name: string) {
     return screen.getByRole('heading', { name, hidden: true });
 }
 
+function numberOf(name: string) {
+    return getCardHeading(name).closest('li')?.textContent?.slice(0, 2);
+}
+
 function glowOf(name: string) {
     return getCardHeading(name)
         .closest('li')
@@ -93,6 +97,14 @@ describe('ProjectGroup', () => {
         expect(glowOf('Alpha')).toBe(expectedGlow(6));
         expect(glowOf('Bravo')).toBe(expectedGlow(7));
         expect(glowOf('Charlie')).toBe(expectedGlow(8));
+    });
+
+    it('numbers its cards from 01 whatever its offset, carrying on behind Show more', () => {
+        renderGroup(2, 6);
+
+        expect(numberOf('Alpha')).toBe('01');
+        expect(numberOf('Bravo')).toBe('02');
+        expect(numberOf('Charlie')).toBe('03');
     });
 
     it('leaves the toggle out when every card fits', () => {

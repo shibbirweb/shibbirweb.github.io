@@ -1,9 +1,12 @@
+import type { Ref } from 'react';
 import { cn } from '@/utils/cn';
 import NavLogo from '@/components/layout/Navbar/NavLogo';
 import { useRecentlyChanged } from '@/components/layout/Navbar/hooks/useRecentlyChanged';
 import { useScrollY } from '@/components/layout/Navbar/hooks/useScrollY';
 
 interface MobileWordmarkProps {
+    /** Lets MobileNav treat a tap on the wordmark as inside the menu. */
+    ref?: Ref<HTMLDivElement>;
     /** Menu open: travel into the panel's logo slot. Closed: rest at / ride away from the top. */
     open: boolean;
     onNavigate: () => void;
@@ -44,6 +47,7 @@ const TRAVEL_MS = 540;
  * vw-based centering and slot maths.
  */
 export default function MobileWordmark({
+    ref,
     open,
     onNavigate,
 }: MobileWordmarkProps) {
@@ -57,6 +61,7 @@ export default function MobileWordmark({
 
     return (
         <div
+            ref={ref}
             className={cn(
                 'fixed top-4 left-1/2 z-50 h-11 md:hidden',
                 animating
