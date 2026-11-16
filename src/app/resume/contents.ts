@@ -59,8 +59,7 @@ export const resumeSections: ResumeSectionData[] = [
                 positions: [
                     {
                         role: 'Senior Software Engineer',
-                        context:
-                            'KP Dashboard, a US political advocacy platform · Leading a two-person team',
+                        context: 'Leading a two-person team',
                         period: 'Oct 2024 - Present',
                         highlights: [
                             'Integrated 2 US congressional delivery systems (federal and state) routing constituent messages to legislators.',
