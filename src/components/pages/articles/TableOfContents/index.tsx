@@ -1,15 +1,18 @@
 'use client';
 
 import { useMemo, useRef } from 'react';
-import TocList from '@/components/pages/articles/TableOfContents/TocList';
+import TocRail from '@/components/pages/articles/TableOfContents/TocRail';
 import { useScrollSpy } from '@/components/layout/Navbar/hooks/useScrollSpy';
 import { useScrollActiveIntoView } from '@/components/pages/articles/TableOfContents/hooks/useScrollActiveIntoView';
+import { useScrollDirection } from '@/components/pages/articles/TableOfContents/hooks/useScrollDirection';
+import { useVisibleSections } from '@/components/pages/articles/TableOfContents/hooks/useVisibleSections';
 import { accentStyle } from '@/utils/accentStyle';
 import type { TocItem } from '@/lib/posts';
 
 /**
- * Desktop "On this page" navigator that sticks beside the article and highlights
- * the heading currently in view. Hidden below `lg`, where
+ * Desktop "On this page" navigator that sticks beside the article. A rail down
+ * its left edge highlights every section on screen and follows the reader as
+ * they scroll. Hidden below `lg`, where
  * MobileTableOfContents takes over. Tinted with the article's cover accent.
  */
 export default function TableOfContents({
@@ -21,6 +24,8 @@ export default function TableOfContents({
 }) {
     const ids = useMemo(() => toc.map((item) => item.id), [toc]);
     const activeId = useScrollSpy(ids);
+    const visibleIds = useVisibleSections(ids);
+    const scrollDirection = useScrollDirection();
     const navRef = useRef<HTMLElement>(null);
     useScrollActiveIntoView(navRef, activeId);
 
@@ -36,9 +41,11 @@ export default function TableOfContents({
             <p className="text-foreground/70 mb-3 text-xs font-semibold tracking-[0.12em] uppercase">
                 On this page
             </p>
-            <TocList
+            <TocRail
                 toc={toc}
-                activeId={activeId}
+                currentId={activeId}
+                visibleIds={visibleIds}
+                direction={scrollDirection}
             />
         </nav>
     );

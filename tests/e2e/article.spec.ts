@@ -71,6 +71,73 @@ for (const article of articles) {
             await expect(page.locator(target)).toBeInViewport();
         });
 
+        test('moves the TOC rail with the scroll, head first', async ({
+            page,
+            isMobile,
+        }) => {
+            test.skip(isMobile, 'the sidebar TOC is desktop only');
+            const toc = page.getByRole('navigation', {
+                name: 'Table of contents',
+            });
+            test.skip(
+                (await toc.getByRole('link').count()) < 3,
+                'too few headings to scroll through'
+            );
+            const thumb = toc.getByTestId('toc-rail-thumb');
+            const head = toc.getByTestId('toc-rail-head');
+            // The highlight's top inset and the head dot's y, from the inline
+            // styles the rail writes (the dot is 6px, centred on its point).
+            const readRail = () =>
+                page.evaluate(() => {
+                    const thumbStyle = document.querySelector<HTMLElement>(
+                        '[data-testid="toc-rail-thumb"]'
+                    )!.style.clipPath;
+                    const headStyle = document.querySelector<HTMLElement>(
+                        '[data-testid="toc-rail-head"]'
+                    )!.style.transform;
+                    return {
+                        top: Number(
+                            /inset\((-?[\d.]+)px/.exec(thumbStyle)?.[1]
+                        ),
+                        headY:
+                            Number(
+                                /translate\([^,]+,\s*(-?[\d.]+)px/.exec(
+                                    headStyle
+                                )?.[1]
+                            ) + 3,
+                    };
+                });
+
+            await page.mouse.move(400, 400);
+            await page
+                .getByRole('heading', { level: 2 })
+                .nth(1)
+                .scrollIntoViewIfNeeded();
+            for (let step = 0; step < 4; step++) {
+                await page.mouse.wheel(0, 300);
+            }
+            await expect(thumb).toHaveClass(/opacity-100/);
+            await expect(head).toHaveClass(/opacity-100/);
+            await expect
+                .poll(async () => {
+                    const rail = await readRail();
+                    return rail.headY > rail.top;
+                })
+                .toBe(true);
+            const scrolledDown = await readRail();
+
+            await page.mouse.wheel(0, -1200);
+            await expect
+                .poll(async () => {
+                    const rail = await readRail();
+                    return rail.headY === rail.top;
+                })
+                .toBe(true);
+            expect((await readRail()).top).toBeLessThanOrEqual(
+                scrolledDown.top
+            );
+        });
+
         test('copies a code block to the clipboard', async ({
             page,
             context,
