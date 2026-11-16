@@ -9,9 +9,12 @@
    background/border mix var(--foreground), so they adapt to light/dark on
    their own. The crimson is theme-aware: a deeper rose in light and a lighter
    rose in dark, so the small chip text clears WCAG AA (4.5:1) against the chip
-   background in both themes (a single crimson landed near 3:1 in dark). */
+   background in both themes (a single crimson landed near 3:1 in dark). A long
+   unbroken value (a URL, an env line) may wrap anywhere, so it never pushes a
+   phone screen wider; box-decoration-clone keeps the chip's border and padding
+   on each wrapped line. */
 .content :where(code):not(:where(pre *)) {
-    @apply rounded border px-[0.35em] py-[0.15em] text-[0.85em] font-medium text-[#be123c];
+    @apply rounded border box-decoration-clone px-[0.35em] py-[0.15em] text-[0.85em] font-medium [overflow-wrap:anywhere] text-[#be123c];
     font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
     background-color: color-mix(in srgb, var(--foreground) 4%, transparent);
     border-color: color-mix(in srgb, var(--foreground) 13%, transparent);
