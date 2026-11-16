@@ -14,7 +14,8 @@ const isDev = process.env.NODE_ENV !== 'production';
 // no part, so it works identically locally and in CI regardless of clone depth.
 // An explicit NEXT_PUBLIC_BUILD_TIME wins, so a build can be pinned to compare
 // two runs byte for byte.
-const buildTime = process.env.NEXT_PUBLIC_BUILD_TIME ?? new Date().toISOString();
+const buildTime =
+    process.env.NEXT_PUBLIC_BUILD_TIME ?? new Date().toISOString();
 
 const nextConfig: NextConfig = {
     output: isDev ? undefined : 'export',
@@ -76,6 +77,12 @@ const withSerwist = withSerwistInit({
             warnings: [],
         }),
     ],
+    // Every public/ file is precached (the default is '**/*') except
+    // public/diagrams/: those PNGs are hidden images only browser reading modes
+    // show (see src/lib/diagramImages.ts), so precaching them would make every
+    // install download pictures nobody sees. Public files join the precache
+    // after manifestTransforms run, so they cannot be filtered out there.
+    globPublicPatterns: ['*', '!(diagrams)/**/*'],
 });
 
 export default withSerwist(nextConfig);

@@ -96,4 +96,20 @@ describe('ArticlePager', () => {
         const link = screen.getByRole('link', { name: /Previous/ });
         expect(link.style.getPropertyValue('--accent-from')).toBe('#123456');
     });
+
+    it('hides the decorative chevrons, which reading modes draw full width', () => {
+        render(
+            <ArticlePager
+                previous={older}
+                next={newer}
+            />
+        );
+
+        const nav = screen.getByRole('navigation', { name: 'More articles' });
+        const icons = nav.querySelectorAll('svg');
+        expect(icons).toHaveLength(2);
+        for (const icon of icons) {
+            expect(icon).toHaveAttribute('aria-hidden', 'true');
+        }
+    });
 });

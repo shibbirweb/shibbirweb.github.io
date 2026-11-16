@@ -34,6 +34,7 @@
 - [Listing and search](Article-Listing-and-Search.md)
 - [Mermaid diagrams](Mermaid-Diagrams.md)
 - [Flow diagrams](Flow-Diagrams.md)
+- [Reading mode](Reading-Mode.md)
 - [Comments](Comments.md)
 - [Feeds](Feeds.md)
 - [Covers and OG images](Covers-and-OG-Images.md)

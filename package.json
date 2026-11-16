@@ -30,7 +30,8 @@
         "test:e2e": "playwright test",
         "test:e2e:install": "playwright install --with-deps chromium",
         "test:lighthouse": "lhci autorun",
-        "test:ci": "pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm test:build && pnpm test:e2e && pnpm test:lighthouse"
+        "test:ci": "pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm test:build && pnpm test:e2e && pnpm test:lighthouse",
+        "gen:diagrams": "tsx scripts/generate-diagram-images.ts"
     },
     "dependencies": {
         "@dagrejs/dagre": "^3.0.0",
@@ -58,6 +59,7 @@
         "@axe-core/playwright": "^4.13.0",
         "@eslint/eslintrc": "^3",
         "@lhci/cli": "^0.15.1",
+        "@mozilla/readability": "^0.6.0",
         "@playwright/test": "^1.63.0",
         "@resvg/resvg-js": "^2.6.2",
         "@tailwindcss/postcss": "^4",

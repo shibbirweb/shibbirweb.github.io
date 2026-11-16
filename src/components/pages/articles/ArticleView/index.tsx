@@ -22,11 +22,7 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import { buildArticleJsonLd } from '@/utils/articleJsonLd';
 import { jetBrainsMono } from '@/config/monoFont';
 import { cn } from '@/utils/cn';
-import type {
-    Article,
-    ArticleSeries,
-    ArticleSummary,
-} from '@/lib/posts';
+import type { Article, ArticleSeries, ArticleSummary } from '@/lib/posts';
 
 /**
  * The full article page body: cover/header, series nav, "what you'll learn", the
@@ -133,23 +129,29 @@ export default function ArticleView({
                         <CodeBlockCopy />
                         <ImageLightbox />
 
-                        <div className="border-foreground/10 mt-12 flex flex-wrap items-center gap-x-4 gap-y-3 border-t pt-8">
-                            <span className="text-foreground/70 text-sm font-medium">
-                                Share this article
-                            </span>
-                            <ShareMenu
-                                title={article.title}
-                                description={article.description}
-                                accentColors={article.coverColors}
+                        {/* Sharing, the pager and comments are about the article,
+                            not part of it, so they sit in the article's <footer>.
+                            Browser reading modes drop an article footer, which
+                            keeps their view down to the text itself. */}
+                        <footer>
+                            <div className="border-foreground/10 mt-12 flex flex-wrap items-center gap-x-4 gap-y-3 border-t pt-8">
+                                <span className="text-foreground/70 text-sm font-medium">
+                                    Share this article
+                                </span>
+                                <ShareMenu
+                                    title={article.title}
+                                    description={article.description}
+                                    accentColors={article.coverColors}
+                                />
+                            </div>
+
+                            <ArticlePager
+                                previous={previous}
+                                next={next}
                             />
-                        </div>
 
-                        <ArticlePager
-                            previous={previous}
-                            next={next}
-                        />
-
-                        <Comments />
+                            <Comments />
+                        </footer>
                     </div>
 
                     <aside className="hidden lg:block">

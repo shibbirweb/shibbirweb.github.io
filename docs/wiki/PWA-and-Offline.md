@@ -41,7 +41,7 @@ flowchart TD
 ## What is precached
 
 - All `/_next/static/` files (the JavaScript and CSS app shell).
-- Everything in `public/` (images, icons, OG images, `giscus-*.css`, `offline-fallback.html`).
+- Everything in `public/` (images, icons, OG images, `giscus-*.css`, `offline-fallback.html`), except `public/diagrams/`. Those PNGs only show in reading modes, so `globPublicPatterns` in `next.config.ts` leaves them out. See [Reading mode](Reading-Mode.md).
 - The home page `/`. It is added with a `manifestTransforms` step in `next.config.ts`, with the build time as its revision, so it refreshes on each deploy.
 
 Other HTML pages are **not** precached. They are saved when you visit them.

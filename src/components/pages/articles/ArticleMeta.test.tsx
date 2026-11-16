@@ -1,8 +1,23 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import ArticleMeta from '@/components/pages/articles/ArticleMeta';
+import { siteAuthor } from '@/config/constants';
 
 describe('ArticleMeta', () => {
+    it('names the author with a rel="author" link, for reading modes', () => {
+        render(
+            <ArticleMeta
+                date="2026-03-14"
+                readingMinutes={6}
+            />
+        );
+
+        const author = screen.getByRole('link', { name: siteAuthor });
+        expect(author).toHaveAttribute('rel', 'author');
+        expect(author).toHaveAttribute('href', '/#about');
+        expect(author.parentElement).toHaveTextContent(`By ${siteAuthor}`);
+    });
+
     it('shows the formatted publish date and the reading time', () => {
         const { container } = render(
             <ArticleMeta

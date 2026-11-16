@@ -68,7 +68,7 @@ flowchart TD
 1. Create `content/articles/NN-my-slug.md` with the next number.
 2. Fill in the frontmatter. See [Article markdown](Article-Markdown.md).
 3. Or use the dev only editor at `/studio/article-editor`. See [Article editor studio](Article-Editor-Studio.md).
-4. Run `pnpm gen:covers` and `pnpm build`.
+4. Run `pnpm gen:covers`, `pnpm gen:diagrams` (if it has diagrams), and `pnpm build`.
 5. Read the writing rules in `CLAUDE.md`: articles are true first person stories with story specific headings.
 
 ## Good to know

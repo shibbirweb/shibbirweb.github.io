@@ -18,7 +18,7 @@ import type {
     EditorActions,
     EditorSuggestions,
 } from '@/components/pages/article-editor/ArticleEditor/types';
-import { slugifyHeading } from '@/lib/markdown';
+import { slugifyHeading } from '@/utils/slugifyHeading';
 import { cn } from '@/utils/cn';
 
 /** The URL slug a file maps to: extension and `NN-` ordering prefix stripped. */
@@ -53,7 +53,8 @@ export default function ArticleEditor({
         (body) => setDraft((current) => ({ ...current, body }))
     );
 
-    const autoSlug = slugifyHeading(draft.frontmatter.title) || 'untitled-article';
+    const autoSlug =
+        slugifyHeading(draft.frontmatter.title) || 'untitled-article';
     const slug = slugOverride ?? autoSlug;
 
     // The saved file backing the current slug, if any; delete acts on this.
@@ -173,9 +174,10 @@ export default function ArticleEditor({
                 </h1>
                 <p className="text-foreground/65 mt-3 max-w-3xl">
                     Shape structured frontmatter and Markdown side by side, then
-                    save straight to the content folder. Reads and writes the real
-                    article files through the dev server, with a live preview
-                    rendered by the same components the published site uses.
+                    save straight to the content folder. Reads and writes the
+                    real article files through the dev server, with a live
+                    preview rendered by the same components the published site
+                    uses.
                 </p>
             </header>
 

@@ -11,7 +11,7 @@ All component paths are under `src/components/pages/articles/`.
 | `src/app/articles/[slug]/page.tsx`                        | Static params, metadata, loads data, renders `ArticleView`. |
 | `ArticleView/index.tsx`                                   | The page layout.                                            |
 | `ArticleContent/`                                         | Injects the HTML inside `prose` styles.                     |
-| `ArticleMeta.tsx`, `DifficultyBadge.tsx`, `TechStack.tsx` | Header details.                                             |
+| `ArticleMeta.tsx`, `DifficultyBadge.tsx`, `TechStack.tsx` | Header details, including the author byline.                |
 | `ReadingProgress/`                                        | The 3px bar at the top.                                     |
 | `TableOfContents/`                                        | Desktop sidebar TOC and mobile `<details>` TOC.             |
 | `SeriesNav/`, `WhatYoullLearn/`                           | Series tracker and takeaways card.                          |
@@ -53,10 +53,11 @@ Dotted lines are **enhancers**: client components that find elements inside the 
 - **TOC.** Built from `##` and `###`. Uses `useScrollSpy` (active line at 30% of the screen). The desktop TOC scrolls itself to keep the active item in view. The mobile one closes after a click.
 - **Series.** Shown when 2 or more published posts share `series.name`. Parts are sorted by `series.order`.
 - **Code copy.** The markdown step leaves an empty `[data-code-copy]` slot in each code block. `useCodeCopySlots` finds them and portals a Copy button in.
-- **Image lightbox.** Makes every body image clickable and keyboard focusable. Arrow keys move between images, Escape closes.
+- **Image lightbox.** Makes every body image clickable and keyboard focusable (except gist images and the hidden diagram images for reading modes). Arrow keys move between images, Escape closes.
 - **Share menu.** Builds the URL after mount. Shows "Share via..." only if `navigator.share` exists. Flips up when there is no room below.
 - **Pager.** Previous is the older post, next is the newer one.
 - **Related.** Up to 3 posts with a score above zero.
+- **Reading mode.** The byline links the author with `rel="author"`, and sharing, the pager and comments sit in the article's `<footer>`, which reading modes leave out. Diagrams get a hidden picture for them. See [Reading mode](Reading-Mode.md).
 
 ## Metadata and SEO
 
@@ -78,3 +79,4 @@ See [SEO and structured data](SEO-and-Structured-Data.md).
 - [Mermaid diagrams](Mermaid-Diagrams.md)
 - [Flow diagrams](Flow-Diagrams.md)
 - [Comments](Comments.md)
+- [Reading mode](Reading-Mode.md)

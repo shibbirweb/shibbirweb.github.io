@@ -18,11 +18,12 @@ export const guideGroups: GuideGroup[] = [
             {
                 label: 'description',
                 note: 'string, recommended. Subtitle, card text, and the SEO/OG description. Description field.',
-                snippet: "description: 'Design a writing workflow with structured metadata and an exact production preview.'",
+                snippet:
+                    "description: 'Design a writing workflow with structured metadata and an exact production preview.'",
             },
             {
                 label: 'date',
-                note: "YYYY-MM-DD string, required. Sort key (newest first) and JSON-LD datePublished. Publish date field.",
+                note: 'YYYY-MM-DD string, required. Sort key (newest first) and JSON-LD datePublished. Publish date field.',
                 snippet: "date: '2026-07-04'",
             },
             {
@@ -38,7 +39,8 @@ export const guideGroups: GuideGroup[] = [
             {
                 label: 'cover',
                 note: 'path string, optional. Card thumbnail and article cover; an SVG is auto-generated per slug when omitted. Cover path field.',
-                snippet: "cover: '/images/articles/github-actions-static-deploy.svg'",
+                snippet:
+                    "cover: '/images/articles/github-actions-static-deploy.svg'",
             },
             {
                 label: 'category',
@@ -57,7 +59,7 @@ export const guideGroups: GuideGroup[] = [
             },
             {
                 label: 'learn',
-                note: "string list, optional. The \"What you'll learn\" card. What readers will learn field.",
+                note: 'string list, optional. The "What you\'ll learn" card. What readers will learn field.',
                 snippet: `learn:
     - 'Model article metadata without hand-editing YAML'
     - 'Preview code, diagrams, gists, and images safely'`,
@@ -82,7 +84,8 @@ export const guideGroups: GuideGroup[] = [
             {
                 label: 'Intro paragraph (no H1)',
                 note: 'The title comes from frontmatter, so the body has no H1. Open with an intro paragraph above the first heading.',
-                snippet: 'A good writing tool removes formatting chores without hiding the Markdown that ultimately ships.',
+                snippet:
+                    'A good writing tool removes formatting chores without hiding the Markdown that ultimately ships.',
                 insert: 'A good writing tool removes formatting chores without hiding the Markdown that ultimately ships.\n',
             },
             {
@@ -111,7 +114,8 @@ export const guideGroups: GuideGroup[] = [
             {
                 label: 'Inline code',
                 note: 'Wrap short code in backticks for inline styling.',
-                snippet: 'The editor keeps metadata structured while leaving the body as plain `Markdown`.',
+                snippet:
+                    'The editor keeps metadata structured while leaving the body as plain `Markdown`.',
                 insert: 'The editor keeps metadata structured while leaving the body as plain `Markdown`.\n',
             },
             {
@@ -153,7 +157,7 @@ export const article = { title: 'A reliable workflow' };
             },
             {
                 label: 'Mermaid diagram',
-                note: 'A mermaid fence renders client-side to an interactive (pan/zoom/full-screen) SVG, with a plain-text fallback.',
+                note: 'A mermaid fence renders client-side to an interactive (pan/zoom/full-screen) SVG, with a plain-text fallback. Run pnpm gen:diagrams after adding one, so browser reading modes get a picture of it.',
                 snippet: `\`\`\`mermaid
 flowchart LR
     Form --> Markdown
@@ -177,19 +181,22 @@ flowchart LR
             {
                 label: 'Image',
                 note: 'Standard Markdown image; article images get a lightbox. Keep the alt text meaningful.',
-                snippet: '![Cache-aside read path used as a sample article image.](/images/articles/inline/redis-cache-aside.svg)',
+                snippet:
+                    '![Cache-aside read path used as a sample article image.](/images/articles/inline/redis-cache-aside.svg)',
                 insert: '![Cache-aside read path used as a sample article image.](/images/articles/inline/redis-cache-aside.svg)\n',
             },
             {
                 label: 'Link',
                 note: 'A standard Markdown link.',
-                snippet: 'The final preview should match the [published articles](/articles), including every interactive enhancement.',
+                snippet:
+                    'The final preview should match the [published articles](/articles), including every interactive enhancement.',
                 insert: 'The final preview should match the [published articles](/articles), including every interactive enhancement.\n',
             },
             {
                 label: 'Blockquote',
                 note: 'Quote a source or call something out with a leading >.',
-                snippet: '> A blockquote for quoting a source or setting a passage apart.',
+                snippet:
+                    '> A blockquote for quoting a source or setting a passage apart.',
                 insert: '> A blockquote for quoting a source or setting a passage apart.\n',
             },
             {
@@ -228,7 +235,8 @@ flowchart LR
             {
                 label: 'Strikethrough',
                 note: 'Wrap text in ~~ to strike it through.',
-                snippet: 'This idea is ~~deprecated~~ and replaced by a better one.',
+                snippet:
+                    'This idea is ~~deprecated~~ and replaced by a better one.',
                 insert: 'This idea is ~~deprecated~~ and replaced by a better one.\n',
             },
             {

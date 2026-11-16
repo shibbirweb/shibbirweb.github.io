@@ -775,3 +775,13 @@
     border-radius: 0.35rem;
     background-color: color-mix(in srgb, var(--foreground) 6%, transparent);
 }
+
+/* Pre-rendered diagram images (src/lib/diagramImages.ts) exist only for browser
+   reading modes, which drop the live diagram's SVG. The page already shows the
+   interactive diagram, so the image never renders here. This must stay a
+   stylesheet rule, not an inline style or the `hidden` attribute: Readability
+   skips elements hidden those ways, but it cannot see stylesheet rules. With
+   display: none the lazy image is also never downloaded on a normal visit. */
+.content :global(.diagram-fallback-image) {
+    @apply hidden;
+}

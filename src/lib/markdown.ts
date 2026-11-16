@@ -10,6 +10,8 @@ import markedAlert from 'marked-alert';
 import { markedEmoji } from 'marked-emoji';
 import { nameToEmoji } from 'gemoji';
 import { spotlightSurfaceAttribute } from '@/components/pages/common/spotlightSurface';
+import { slugifyHeading } from '@/utils/slugifyHeading';
+import { diagramImageFor, diagramImageTag } from '@/lib/diagramImages';
 
 /** A heading in the article body, used to build the table of contents. */
 export interface TocItem {
@@ -235,7 +237,10 @@ function parseCodeMeta(token: CodeToken): CodeMeta {
     const [lang, ...rest] = info.split(/\s+/);
     const titled = info.match(/title="([^"]+)"/);
     const remainder = rest.join(' ').trim();
-    return { lang: lang || 'text', filePath: resolveFilePath(titled, remainder) };
+    return {
+        lang: lang || 'text',
+        filePath: resolveFilePath(titled, remainder),
+    };
 }
 
 /** Header label: the file extension when a path is given, else the language. */
@@ -291,6 +296,19 @@ async function highlightCode(code: string, lang: string): Promise<string> {
     }
 }
 
+/**
+ * The hidden pre-rendered image of a diagram, placed before its block so a
+ * browser reading mode (which drops the live SVG) shows the picture ahead of the
+ * caption. Empty until `pnpm gen:diagrams` has drawn it; see diagramImages.ts.
+ */
+function diagramFallbackImage(lang: string, body: string): string {
+    const image = diagramImageFor(lang, body);
+    if (!image) {
+        return '';
+    }
+    return diagramImageTag(image);
+}
+
 marked.use({
     async: true,
     extensions: [
@@ -325,17 +343,23 @@ marked.use({
             const codeToken = token as CodeToken;
             const { lang, filePath } = parseCodeMeta(codeToken);
             if (lang === 'mermaid') {
-                return `<pre class="mermaid not-prose">${escapeHtml(
-                    codeToken.text
-                )}</pre>`;
+                return (
+                    diagramFallbackImage(lang, codeToken.text) +
+                    `<pre class="mermaid not-prose">${escapeHtml(
+                        codeToken.text
+                    )}</pre>`
+                );
             }
             if (lang === 'reactflow') {
                 // The source is kept verbatim: the client parses it into a
                 // diagram, and anyone without JavaScript reads the description
                 // itself, which is legible on its own.
-                return `<pre class="reactflow not-prose">${escapeHtml(
-                    codeToken.text
-                )}</pre>`;
+                return (
+                    diagramFallbackImage(lang, codeToken.text) +
+                    `<pre class="reactflow not-prose">${escapeHtml(
+                        codeToken.text
+                    )}</pre>`
+                );
             }
             const highlighted =
                 codeToken.highlighted ??
@@ -366,13 +390,9 @@ marked.use(
 // untrusted input. If third-party Markdown is ever ingested, add sanitization
 // (rehype-sanitize / DOMPurify) at that boundary.
 
-/** Turn heading text into a URL-safe anchor slug (`Cache-aside` -> `cache-aside`). */
-export function slugifyHeading(text: string): string {
-    return text
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '');
-}
+// Re-exported so existing `@/lib/markdown` importers keep working; it lives in
+// utils so client code can import it without pulling in this server pipeline.
+export { slugifyHeading };
 
 const HTML_ENTITIES: Record<string, string> = {
     '&amp;': '&',
@@ -440,7 +460,9 @@ function addHeadingIdsAndExtractToc(html: string): {
                 : inner;
             const text = headingPlainText(displayInner);
             if (!text) return match;
-            const id = claimId(explicit ? explicit[1] : slugifyHeading(text) || 'section');
+            const id = claimId(
+                explicit ? explicit[1] : slugifyHeading(text) || 'section'
+            );
             toc.push({ id, text, level: Number(level) });
             return `<h${level} id="${id}">${displayInner}</h${level}>`;
         }

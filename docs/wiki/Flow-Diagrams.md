@@ -78,6 +78,7 @@ flowchart TD
 - **Reduced motion.** Playback switches to manual steps, the play button hides, and packets stay still.
 - **Touch.** Inline canvases let a thumb scroll the page (`useBlockTouchPan`). The full view allows touch pan.
 - **Copy** always copies mermaid, not the `reactflow` text.
+- **Reading modes get a picture** of the first scenario. Run `pnpm gen:diagrams` after a change. See [Reading mode](Reading-Mode.md).
 - **Tone colours** in `diagramTones.ts` must be kept in step by hand with the `--tone-*` variables in `FlowDiagram.module.css`.
 - **No build check.** Syntax errors are only visible in the browser console. Always look at the rendered page.
 
@@ -85,3 +86,4 @@ flowchart TD
 
 - [Mermaid diagrams](Mermaid-Diagrams.md)
 - [Article markdown](Article-Markdown.md)
+- [Reading mode](Reading-Mode.md)

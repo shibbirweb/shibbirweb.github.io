@@ -75,6 +75,10 @@ describe('service worker precache', () => {
     it('does not precache the dev-only studio', () => {
         expect(serviceWorker).not.toContain('/studio');
     });
+
+    it('does not precache the diagram images only reading modes show', () => {
+        expect(serviceWorker).not.toContain('/diagrams/');
+    });
 });
 
 describe('offline fallback page', () => {

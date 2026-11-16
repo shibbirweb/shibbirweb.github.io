@@ -129,7 +129,7 @@ describe('ArticleView', () => {
     });
 
     it('places the share menu, pager, and comments after the body', () => {
-        render(
+        const { container } = render(
             <ArticleView
                 article={buildArticle()}
                 related={[]}
@@ -149,6 +149,21 @@ describe('ArticleView', () => {
         expect(
             screen.getByRole('region', { name: 'Comments' })
         ).toBeInTheDocument();
+
+        // In the article's own <footer>, which browser reading modes leave out.
+        const footer = container.querySelector('article footer');
+        expect(footer).not.toBeNull();
+        const inFooter = within(footer as HTMLElement);
+        expect(
+            inFooter.getByRole('button', { name: 'Share this article' })
+        ).toBeInTheDocument();
+        expect(
+            inFooter.getByRole('navigation', { name: 'More articles' })
+        ).toBeInTheDocument();
+        expect(
+            inFooter.getByRole('region', { name: 'Comments' })
+        ).toBeInTheDocument();
+        expect(footer).not.toHaveTextContent('Because ads.');
     });
 
     it('lists related articles only when there are some', () => {

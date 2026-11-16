@@ -56,6 +56,7 @@ flowchart LR
 | `pnpm gen:og`         | Only regenerate article OpenGraph PNGs.                               |
 | `pnpm gen:resume`     | Only copy the resume PDF.                                             |
 | `pnpm gen:giscus`     | Only regenerate comment theme CSS.                                    |
+| `pnpm gen:diagrams`   | Draw article diagrams to PNGs for reading modes (needs Playwright).   |
 
 ## Dev mode vs production
 

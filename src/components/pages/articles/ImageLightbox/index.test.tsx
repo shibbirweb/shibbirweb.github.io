@@ -67,6 +67,25 @@ describe('ImageLightbox', () => {
         expect(gistImage).not.toHaveAttribute('tabindex');
     });
 
+    it('leaves the hidden diagram images for reading modes out of the gallery', async () => {
+        const user = userEvent.setup();
+        const article = addArticleImages();
+        const fallback = document.createElement('img');
+        fallback.className = 'diagram-fallback-image';
+        fallback.src = '/diagrams/0123456789abcdef.png';
+        fallback.alt = 'Diagram: Phone to router';
+        fallback.setAttribute('aria-hidden', 'true');
+        article.querySelector('.prose')!.prepend(fallback);
+
+        render(<ImageLightbox />);
+
+        expect(fallback).not.toHaveAttribute('role');
+        expect(fallback).not.toHaveAttribute('tabindex');
+        expect(fallback).not.toHaveAttribute('title');
+        await user.click(contentImage('The router rack'));
+        expect(within(viewer()).getByText('1 / 3')).toBeInTheDocument();
+    });
+
     it('opens the viewer on click with the image, its alt as caption, and a counter', async () => {
         const user = userEvent.setup();
         addArticleImages();
