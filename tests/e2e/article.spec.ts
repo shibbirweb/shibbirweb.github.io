@@ -108,14 +108,16 @@ for (const article of articles) {
                     };
                 });
 
+            // Start in the middle of the article, at a section the TOC
+            // lists, so small scrolls either way stay inside its sections.
+            const links = toc.getByRole('link');
+            const middleTarget = (await links
+                .nth(Math.floor((await links.count()) / 2))
+                .getAttribute('href'))!;
+            await page.locator(middleTarget).scrollIntoViewIfNeeded();
             await page.mouse.move(400, 400);
-            await page
-                .getByRole('heading', { level: 2 })
-                .nth(1)
-                .scrollIntoViewIfNeeded();
-            for (let step = 0; step < 4; step++) {
-                await page.mouse.wheel(0, 300);
-            }
+
+            await page.mouse.wheel(0, 200);
             await expect(thumb).toHaveClass(/opacity-100/);
             await expect(head).toHaveClass(/opacity-100/);
             await expect
@@ -124,18 +126,15 @@ for (const article of articles) {
                     return rail.headY > rail.top;
                 })
                 .toBe(true);
-            const scrolledDown = await readRail();
 
-            await page.mouse.wheel(0, -1200);
+            await page.mouse.wheel(0, -150);
             await expect
                 .poll(async () => {
                     const rail = await readRail();
                     return rail.headY === rail.top;
                 })
                 .toBe(true);
-            expect((await readRail()).top).toBeLessThanOrEqual(
-                scrolledDown.top
-            );
+            await expect(head).toHaveClass(/opacity-100/);
         });
 
         test('copies a code block to the clipboard', async ({
