@@ -10,8 +10,8 @@
 | `src/components/pages/articles/ArticleView/index.tsx`                    | Puts sharing, the pager and comments in the article's `<footer>`.        |
 | `src/lib/diagramImages.ts`                                               | Diagram image keys, alt text, and the hidden `<img>` tag.                |
 | `src/lib/markdown.ts`                                                    | Puts that `<img>` right before each `mermaid` and `reactflow` block.     |
-| `scripts/generate-diagram-images.ts`                                     | `pnpm gen:diagrams`: draws every article diagram to a PNG.               |
-| `public/diagrams/<key>.png`                                              | The drawn PNGs. Committed to git.                                        |
+| `scripts/generate-diagram-images.ts`                                     | `pnpm gen:diagrams`: draws every article diagram to a PNG. Run by build. |
+| `public/diagrams/<key>.png`                                              | The drawn PNGs. Build output, git ignored.                               |
 | `src/components/pages/articles/diagramFallbackImage.ts`                  | The `diagram-fallback-image` class name.                                 |
 | `src/components/pages/articles/ArticleContent/ArticleContent.module.css` | Hides those images on the page with `display: none`.                     |
 | `next.config.ts`                                                         | `globPublicPatterns` keeps `public/diagrams/` out of the service worker. |
@@ -20,7 +20,7 @@
 
 ```mermaid
 flowchart TD
-    A[Article markdown] --> B[pnpm gen:diagrams]
+    A[Article markdown] --> B[gen:diagrams in pnpm build]
     B --> C[public/diagrams/key.png]
     A --> D[markdown.ts at build]
     C --> D
@@ -44,14 +44,15 @@ Other small fixes for reading modes:
 
 ## How to change it
 
-- **Added or edited a diagram?** Run `pnpm gen:diagrams` and commit the new PNGs. It also deletes PNGs no article uses.
-- **Changed the Mermaid theme or how images are drawn?** Bump `RENDER_VERSION` in `diagramImages.ts` (theme changes already change every key), then run `pnpm gen:diagrams --force`.
+- **Added or edited a diagram?** Nothing to do. `pnpm build` draws any diagram that has no PNG yet and deletes PNGs no article uses.
+- **Changed how images are drawn?** Bump `RENDER_VERSION` in `diagramImages.ts` so every key changes (theme changes already do). To redraw by hand, run `pnpm gen:diagrams --force`.
 - **See what a reader gets:** in Chrome, right-click the page and pick "Open in reading mode". In Firefox, press the reader icon in the address bar.
 
 ## Good to know
 
-- **Not part of `pnpm build`.** Drawing Mermaid needs a real browser (it measures text), and the deploy job has none. A missing PNG just means no `<img>` is written, so the page never points at a 404.
-- **The content test catches a forgotten run.** `tests/content/diagramImages.test.ts` fails when a diagram has no PNG, or a PNG is left over.
+- **Needs Chromium to build.** Drawing Mermaid needs a real browser (it measures text). The CI and deploy jobs install Playwright's Chromium before `pnpm build`; locally, run `pnpm test:e2e:install` once. The browser only starts when a diagram has no PNG yet.
+- **Not in `pnpm dev`.** A missing PNG just means no `<img>` is written, so the page never points at a 404.
+- **A build check catches a missing image.** `tests/build/readerMode.test.ts` fails when a diagram ships without its PNG, or the PNG is wider than the article.
 - **Keep `fallback-image` in the class name.** Without it Readability drops the image.
 - **Hide it with CSS only.** An inline `style` or the `hidden` attribute would make Readability drop it too.
 - **Chrome's address bar icon is not ours to show.** Chrome asks a Google server whether a page is "reader mode eligible" before it shows the icon. The markup passes Chrome's own Readability check, and the menu entry always works.

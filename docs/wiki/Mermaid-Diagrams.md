@@ -70,7 +70,7 @@ flowchart TD
 - **Why diagrams wait.** Drawing every diagram at load cost the long articles about 300ms of blocked main thread and failed the Lighthouse floor. Waiting cut that to about 20ms.
 - **The placeholder can scroll sideways**, so it is focusable and labelled "Diagram source" for keyboard users.
 - **Readers without JavaScript** see the source in the `<pre>`.
-- **Reading modes get a picture.** After adding or editing a diagram, run `pnpm gen:diagrams` and commit the PNG. See [Reading mode](Reading-Mode.md).
+- **Reading modes get a picture.** `pnpm build` draws each diagram to a PNG for them. See [Reading mode](Reading-Mode.md).
 - The frame uses the site's accent bloom, tinted by the article's cover colours.
 
 ## Related pages

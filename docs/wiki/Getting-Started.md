@@ -4,11 +4,12 @@
 
 ## What you need
 
-| Tool    | Version | Why                                                                               |
-| ------- | ------- | --------------------------------------------------------------------------------- |
-| Node.js | 22+     | CI builds with Node 22. `.nvmrc` pins 24 for local work, which also works.        |
-| pnpm    | 10      | The only package manager used. The lock file is `pnpm-lock.yaml`.                 |
-| Docker  | any     | Optional. Only for `pnpm preview:docker` (see [Local preview](Local-Preview.md)). |
+| Tool     | Version      | Why                                                                                    |
+| -------- | ------------ | -------------------------------------------------------------------------------------- |
+| Node.js  | 22+          | CI builds with Node 22. `.nvmrc` pins 24 for local work, which also works.             |
+| pnpm     | 10           | The only package manager used. The lock file is `pnpm-lock.yaml`.                      |
+| Chromium | Playwright's | For `pnpm build` (draws diagrams) and browser tests. Run `pnpm test:e2e:install` once. |
+| Docker   | any          | Optional. Only for `pnpm preview:docker` (see [Local preview](Local-Preview.md)).      |
 
 ## First run
 
@@ -56,7 +57,7 @@ flowchart LR
 | `pnpm gen:og`         | Only regenerate article OpenGraph PNGs.                               |
 | `pnpm gen:resume`     | Only copy the resume PDF.                                             |
 | `pnpm gen:giscus`     | Only regenerate comment theme CSS.                                    |
-| `pnpm gen:diagrams`   | Draw article diagrams to PNGs for reading modes (needs Playwright).   |
+| `pnpm gen:diagrams`   | Only redraw article diagram PNGs for reading modes (needs Chromium).  |
 
 ## Dev mode vs production
 

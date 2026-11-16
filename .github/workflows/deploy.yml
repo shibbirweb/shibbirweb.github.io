@@ -58,6 +58,16 @@ jobs:
                   restore-keys: |
                       ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
 
+            # pnpm build draws article diagrams to PNGs (gen:diagrams) in Chromium.
+            - name: Cache Playwright browsers
+              uses: actions/cache@v4
+              with:
+                  path: ~/.cache/ms-playwright
+                  key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
+
+            - name: Install Chromium
+              run: pnpm test:e2e:install
+
             - name: Build with Next.js
               run: pnpm run build
               env:
