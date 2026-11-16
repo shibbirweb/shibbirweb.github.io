@@ -157,7 +157,7 @@ export const article = { title: 'A reliable workflow' };
             },
             {
                 label: 'Mermaid diagram',
-                note: 'A mermaid fence renders client-side to an interactive (pan/zoom/full-screen) SVG, with a plain-text fallback. Run pnpm gen:diagrams after adding one, so browser reading modes get a picture of it.',
+                note: 'A mermaid fence renders client-side to an interactive (pan/zoom/full-screen) SVG, with a plain-text fallback. pnpm build also draws it to a PNG that browser reading modes show in its place.',
                 snippet: `\`\`\`mermaid
 flowchart LR
     Form --> Markdown

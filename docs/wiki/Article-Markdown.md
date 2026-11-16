@@ -47,7 +47,7 @@ flowchart LR
 
 - **Code fences.** Shiki colours them at build with `github-light` and `github-dark`. Add a file name like ` ```ts src/app/page.tsx ` or ` ```ts title="path" `. Each block gets a language badge and a copy button slot.
 - **Mermaid.** ` ```mermaid ` blocks are left as source for the browser. See [Mermaid diagrams](Mermaid-Diagrams.md).
-- **Diagram pictures.** Before each `mermaid` and `reactflow` block goes a hidden `<img>` of the diagram for reading modes, once `pnpm gen:diagrams` has drawn it. See [Reading mode](Reading-Mode.md).
+- **Diagram pictures.** Before each `mermaid` and `reactflow` block goes a hidden `<img>` of the diagram for reading modes, drawn by `pnpm build`. See [Reading mode](Reading-Mode.md).
 - **Flow diagrams.** ` ```reactflow ` blocks use a custom syntax. See [Flow diagrams](Flow-Diagrams.md).
 - **Callouts.** House style is `> **Note:**` and `> **Warning:**`. GitHub alerts (`> [!NOTE]`) also work.
 - **Footnotes.** `text[^1]` and `[^1]: note`.

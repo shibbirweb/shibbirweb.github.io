@@ -11,7 +11,7 @@
         "gen:assets": "pnpm gen:covers && pnpm gen:resume && pnpm gen:giscus",
         "dev": "pnpm gen:assets && next-image-export-optimizer && next dev --turbopack",
         "dev:https": "pnpm gen:assets && next-image-export-optimizer && next dev --turbopack --experimental-https",
-        "build": "pnpm gen:assets && pnpm gen:og && next build --webpack && next-image-export-optimizer && pnpm gen:offline-fallback",
+        "build": "pnpm gen:assets && pnpm gen:og && pnpm gen:diagrams && next build --webpack && next-image-export-optimizer && pnpm gen:offline-fallback",
         "start": "next start",
         "preview": "tsx scripts/serve-out.ts",
         "preview:https": "tsx scripts/serve-out.ts --https",

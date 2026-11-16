@@ -13,11 +13,11 @@ import { DIAGRAM_FALLBACK_IMAGE_CLASS } from '@/components/pages/articles/diagra
 // Mermaid static view), as an SVG inside interactive controls. Reading modes
 // (Chrome Reading mode, Firefox Reader View) run Readability over the page and
 // throw that SVG and its controls away, so a diagram used to vanish from them.
-// `pnpm gen:diagrams` renders each diagram once to a PNG in public/diagrams/, and
-// the Markdown pipeline puts it beside the diagram as a hidden fallback image
-// that those readers keep (see diagramImageTag). The PNGs are committed, because
-// the deploy build has no browser to draw them with; a content test fails when
-// one is missing or stale.
+// `pnpm gen:diagrams` (run by `pnpm build`) renders each diagram once to a PNG in
+// public/diagrams/, and the Markdown pipeline puts it beside the diagram as a
+// hidden fallback image that those readers keep (see diagramImageTag). The PNGs
+// are git-ignored build artifacts; a build check fails when a diagram ships
+// without one.
 
 /** Bumped when the way images are drawn changes, so every key changes with it. */
 const RENDER_VERSION = 1;
@@ -103,7 +103,8 @@ export function readPngSize(
 
 /**
  * The hidden `<img>` for a diagram, or '' when its PNG has not been generated
- * (a new diagram before `pnpm gen:diagrams`, so the page never points at a 404).
+ * (e.g. under `pnpm dev`, which skips gen:diagrams), so the page never points at
+ * a 404.
  *
  * Hidden from everyone on the page: `aria-hidden` keeps it away from screen
  * readers, which already get the live diagram, and the article stylesheet sets

@@ -27,7 +27,7 @@ pnpm test:ci         # everything, in CI order
 pnpm start           # Serve a non-exported build (rarely used here)
 ```
 
-`gen:assets` runs `gen:covers` (article cover SVGs), `gen:resume` (copies a private resume PDF if present) and `gen:giscus` (comment theme CSS from `globals.css`); `gen:og` rasterizes article OG PNGs and runs in `build` only. `gen:diagrams` (article diagrams to PNGs in `public/diagrams/` for browser reading modes) needs a Playwright browser, so it runs by hand and its output is committed. `build` uses webpack because the Serwist service worker plugin needs it.
+`gen:assets` runs `gen:covers` (article cover SVGs), `gen:resume` (copies a private resume PDF if present) and `gen:giscus` (comment theme CSS from `globals.css`); `gen:og` rasterizes article OG PNGs and `gen:diagrams` draws every article mermaid/reactflow diagram to a PNG in `public/diagrams/` for browser reading modes; both run in `build` only and their output is git ignored. `gen:diagrams` needs Playwright's Chromium (`pnpm test:e2e:install` once locally; the CI and deploy workflows install it), but only launches it when a diagram has no PNG yet. `build` uses webpack because the Serwist service worker plugin needs it.
 
 ## Testing
 
@@ -109,7 +109,7 @@ These posts are **first-person accounts of things that actually happened to the 
 - **No roadmap paragraph.** Do not open with "This article covers X, then Y, then Z"; that is a template tell. Get into the story.
 - **Body conventions**: no H1 (the frontmatter `title` supplies it), `##` and `###` only (H4+ gets no anchor and no TOC entry), sentence-case headings with no trailing punctuation or emoji, `*` bullets with a bold lead-in phrase, `> **Note:**` / `> **Warning:**` callouts (the house style, in preference to the `> [!NOTE]` alert syntax), and code fences carrying a bare language.
 - **Verify mermaid diagrams actually render.** A parse or validation error degrades silently to a plain `<pre>` fallback (see `MermaidRenderer/hooks/useMermaidSvg.ts`), so a diagram that "looks fine" in the source may be broken on the page. Render it and look, do not assume.
-- After adding an article, run `pnpm gen:covers` (auto-generates the cover SVG when `cover` is omitted), `pnpm gen:diagrams` when it adds or edits a ` ```mermaid ` or ` ```reactflow ` block (draws the hidden PNG browser reading modes show in place of the diagram; commit it, see `docs/wiki/Reading-Mode.md`), `pnpm test` (the content suite validates the frontmatter, parses every diagram, and fails on a missing or stale diagram PNG), and `pnpm build`.
+- After adding an article, run `pnpm gen:covers` (auto-generates the cover SVG when `cover` is omitted), `pnpm test` (the content suite validates the frontmatter and parses every diagram), `pnpm build` (also draws the hidden PNG browser reading modes show in place of each ` ```mermaid ` or ` ```reactflow ` block, see `docs/wiki/Reading-Mode.md`), and `pnpm test:build` (fails when a diagram shipped without its PNG).
 
 ### Commit conventions
 

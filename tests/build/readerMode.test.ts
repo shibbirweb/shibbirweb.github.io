@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { siteAuthor } from '@/config/constants';
 import { DIAGRAM_FALLBACK_IMAGE_CLASS } from '@/components/pages/articles/diagramFallbackImage';
-import { DIAGRAM_IMAGE_SCALE, readPngSize } from '@/lib/diagramImages';
+import {
+    DIAGRAM_IMAGE_MAX_WIDTH,
+    DIAGRAM_IMAGE_SCALE,
+    readPngSize,
+} from '@/lib/diagramImages';
 import {
     articleSlugs,
     loadPage,
@@ -15,7 +19,11 @@ import {
 // rebuild an article from its markup, so the static HTML must carry what they
 // look for: a rel="author" byline, the extras in an article <footer> they drop,
 // and a pre-rendered image beside each diagram, since they throw the live SVG
-// away. The images must stay hidden on the page itself.
+// away. The images must stay hidden on the page itself. `pnpm build` draws the
+// images (gen:diagrams), so a diagram without one means that step broke.
+
+/** Room the generator leaves around a diagram, plus rounding, in CSS px. */
+const FRAME_ALLOWANCE = 2 * 24 + 2;
 
 const articlePages = articleSlugs().map((slug) => ({
     slug,
@@ -69,7 +77,7 @@ describe('article markup for browser reading modes', () => {
             }
         });
 
-        it(`${slug} points each diagram image at a PNG of its stated size`, () => {
+        it(`${slug} points each diagram image at a PNG of its stated size, no wider than the article`, () => {
             const images = loadPage(file).querySelectorAll(
                 `img.${DIAGRAM_FALLBACK_IMAGE_CLASS}`
             );
@@ -79,6 +87,10 @@ describe('article markup for browser reading modes', () => {
                 expect(source).toMatch(/^\/diagrams\/[0-9a-f]{16}\.png$/);
                 expect(outExists(source.slice(1)), source).toBe(true);
                 const size = readPngSize(readOutBuffer(source.slice(1)));
+                expect(size, `${source} is not a PNG`).not.toBeNull();
+                expect(size!.width / DIAGRAM_IMAGE_SCALE).toBeLessThanOrEqual(
+                    DIAGRAM_IMAGE_MAX_WIDTH + FRAME_ALLOWANCE
+                );
                 expect(Number(image.getAttribute('width'))).toBe(
                     Math.round(size!.width / DIAGRAM_IMAGE_SCALE)
                 );

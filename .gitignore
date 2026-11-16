@@ -55,6 +55,9 @@ certificates
 # auto-generated article OpenGraph raster images (build artifacts)
 /public/og/
 
+# article diagrams drawn to PNGs for browser reading modes (build artifacts)
+/public/diagrams/
+
 # resume PDF copied from content/resume (build artifact)
 /public/resume-shibbir-ahmed.pdf
 

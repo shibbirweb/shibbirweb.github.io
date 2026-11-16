@@ -2,12 +2,13 @@
 // modes (see src/lib/diagramImages.ts for why they exist and how the page uses
 // them).
 //
-// Run `pnpm gen:diagrams` after adding or editing a ```mermaid or ```reactflow
-// block, or after changing the Mermaid theme, and commit the result. It is not
-// part of `pnpm build` because drawing Mermaid needs a real browser (it measures
-// text to lay boxes out), and the deploy workflow does not install one. The
-// content suite (tests/content/diagramImages.test.ts) fails when an image is
-// missing or stale, so a forgotten run is caught in CI rather than shipped.
+// Runs as part of `pnpm build`, before `next build`, so every ```mermaid and
+// ```reactflow block in an article gets its PNG automatically. The PNGs are build
+// artifacts (git ignored), like the covers and OG images. Drawing Mermaid needs a
+// real browser (it measures text to lay boxes out), so the CI and deploy
+// workflows install Playwright's Chromium before building; locally, run
+// `pnpm test:e2e:install` once. The browser is only started when a diagram has
+// no PNG yet, so a build with nothing new to draw never needs it.
 //
 // Images are drawn with the site's own light Mermaid theme and bundled Noto Sans,
 // on the light page background, at 2x for HiDPI screens. A PNG whose key already
