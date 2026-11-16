@@ -80,6 +80,17 @@ export const githubURL: string = `https://github.com/${githubUsername}`;
 export const facebookURL: string = 'https://www.facebook.com/shibbirweb';
 export const twitterURL: string = 'https://x.com/shibbirweb';
 
+// SendMock: an open source project with its own repository and deploy, served
+// from this domain under /sendmock/. Only its canonical addresses live here; the
+// project card keeps its own links.
+export const sendMockURL: string = `${siteURL}/sendmock/`;
+export const sendMockSoftwareId: string = `${sendMockURL}#software`;
+export const sendMockSitemapURL: string = `${sendMockURL}sitemap.xml`;
+export const sendMockRepoURL: string = `${githubURL}/sendmock`;
+export const sendMockDescription: string =
+    'A single binary that catches email, SMS and payments from any app, shows them in a web UI and calls your webhooks.';
+export const sendMockProgrammingLanguages: string[] = ['Rust', 'TypeScript'];
+
 // contact form (public keys; the site is statically exported, so these ship to the client)
 export const web3formsAccessKey: string =
     '91a6de0d-ce19-4432-bf0d-da3a9f3a84eb';

@@ -5,6 +5,8 @@ import HeroArea from '@/components/pages/home/HeroArea';
 import ProjectsArea from '@/components/pages/home/ProjectsArea';
 import SkillsArea from '@/components/pages/home/SkillsArea';
 import SectionUrlSync from '@/components/layout/SectionUrlSync';
+import { JsonLd } from '@/components/seo/JsonLd';
+import { sendMockJsonLd } from '@/utils/sendMockJsonLd';
 
 export default function Home() {
     return (
@@ -12,6 +14,9 @@ export default function Home() {
             id="main"
             className="home-sections"
         >
+            {process.env.NODE_ENV === 'production' && (
+                <JsonLd data={sendMockJsonLd} />
+            )}
             <SectionUrlSync />
 
             <HeroArea />

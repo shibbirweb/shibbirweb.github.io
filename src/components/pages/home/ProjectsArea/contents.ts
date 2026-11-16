@@ -1,3 +1,5 @@
+import { sendMockRepoURL } from '@/config/constants';
+
 /**
  * Selected work, curated from real public repositories.
  *
@@ -170,7 +172,7 @@ export const hobbyProjects: Project[] = [
         description:
             'A local stand-in for the email, SMS, push notification and payment services an app talks to while you build and test it: the app sends over SMTP or the same Twilio, SendGrid, Stripe or FCM APIs it already uses, and SendMock keeps every message in a web UI, pulls out codes and links for tests, and sends realistic webhooks back, with a REST API, CLI and MCP server for AI agents.',
         tech: ['Rust', 'TypeScript', 'SMTP', 'MCP', 'Docker'],
-        repoURL: 'https://github.com/shibbirweb/sendmock',
+        repoURL: sendMockRepoURL,
         links: [
             {
                 url: 'https://shibbirweb.github.io/sendmock/',

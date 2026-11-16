@@ -12,7 +12,13 @@ import {
     skillIconUrl,
     stackOverviewTitle,
 } from '@/components/pages/home/SkillsArea/contents';
-import { siteURL } from '@/config/constants';
+import {
+    sendMockSoftwareId,
+    sendMockRepoURL,
+    sendMockSitemapURL,
+    sendMockURL,
+    siteURL,
+} from '@/config/constants';
 import { teaserTagLimit } from '@/components/pages/articles/ArticleRow/ArticleRowTags';
 import { getAllArticles, getLatestArticles } from '@/lib/posts';
 import {
@@ -368,6 +374,18 @@ describe('structured data (JSON-LD)', () => {
     it('marks up the resume as a ProfilePage', () => {
         expect(jsonLdTypes('resume.html')).toContain('ProfilePage');
     });
+
+    it('credits SendMock to the site owner on the home page', () => {
+        const sourceCode = jsonLdBlocks('index.html').find(
+            (block) => block['@type'] === 'SoftwareSourceCode'
+        );
+
+        expect(sourceCode?.['@id']).toBe(sendMockRepoURL);
+        expect(sourceCode?.author).toEqual({ '@id': `${siteURL}#person` });
+        expect(sourceCode?.targetProduct).toEqual({
+            '@id': sendMockSoftwareId,
+        });
+    });
 });
 
 describe('sitemap and robots', () => {
@@ -419,5 +437,24 @@ describe('sitemap and robots', () => {
         expect(robots).toMatch(/User-Agent: \*/i);
         expect(robots).toMatch(/Allow: \//);
         expect(robots).toContain(`Sitemap: ${siteURL}/sitemap.xml`);
+    });
+
+    it('points robots.txt at the SendMock sitemap as well', () => {
+        expect(readOut('robots.txt')).toContain(
+            `Sitemap: ${sendMockSitemapURL}`
+        );
+    });
+
+    it('never blocks SendMock, which shares this domain and its robots.txt', () => {
+        const sendMockPath = new URL(sendMockURL).pathname;
+        const blockedPrefixes = readOut('robots.txt')
+            .split('\n')
+            .filter((line) => /^Disallow:/i.test(line))
+            .map((line) => line.replace(/^Disallow:/i, '').trim())
+            .filter(Boolean);
+
+        for (const prefix of blockedPrefixes) {
+            expect(sendMockPath.startsWith(prefix), prefix).toBe(false);
+        }
     });
 });
