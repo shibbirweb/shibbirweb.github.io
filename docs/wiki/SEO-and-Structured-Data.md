@@ -13,6 +13,7 @@
 | `src/utils/breadcrumbJsonLd.ts`                     | `BreadcrumbList`, used by `Breadcrumb`.             |
 | `src/utils/articleJsonLd.ts`                        | `BlogPosting` for each article.                     |
 | `src/utils/resumeJsonLd.ts`                         | `ProfilePage` for the resume.                       |
+| `src/utils/sendMockJsonLd.ts`                       | `SoftwareSourceCode` crediting SendMock to you.     |
 | `src/components/seo/JsonLdScript.tsx`, `JsonLd.tsx` | Render JSON-LD `<script>` tags safely.              |
 | `src/app/sitemap.ts`, `src/app/robots.ts`           | Sitemap and robots, both `force-static`.            |
 
@@ -47,9 +48,11 @@ It exists because Next.js does **not** deep merge a page's `openGraph` with the 
 | `buildBreadcrumbJsonLd` | `BreadcrumbList`                        | Pages with a breadcrumb. |
 | `buildArticleJsonLd`    | `BlogPosting`                           | Each article.            |
 | `resumeJsonLd`          | `ProfilePage`                           | `/resume`.               |
+| `sendMockJsonLd`        | `SoftwareSourceCode` (SendMock repo)    | Home page.               |
 
 - All are typed with `schema-dts`.
 - They link together by `@id`: articles and the resume point to `#person`.
+- `sendMockJsonLd` points to `#person` as author and to `https://shibbir.me/sendmock/#software`, the id the SendMock site gives its own app markup. It only references that app, so the two sites never describe it differently.
 - They only render when `process.env.NODE_ENV === 'production'`, so you will not see them in `pnpm dev`.
 - The script renderers escape `<` so content cannot break out of the tag.
 
@@ -57,7 +60,8 @@ It exists because Next.js does **not** deep merge a page's `openGraph` with the 
 
 - **Sitemap** lists `/`, `/uses`, `/now`, `/resume`, and when there are posts, `/articles` and each article (with its date and image). `lastModified` comes from the build time, so it stays the same for unchanged content.
 - **Not in the sitemap:** `/articles/search`, `/network-status`, the studio, and the feeds.
-- **Robots** allows everything and points to `/sitemap.xml`.
+- **Robots** allows everything and points to `/sitemap.xml` and to SendMock's `/sendmock/sitemap.xml`.
+- **SendMock shares this file.** SendMock is a separate repo and deploy, served under `/sendmock/` on this domain. Search engines only read `robots.txt` at the domain root, so the rules here apply to it too. A build check fails if a `Disallow` ever covers `/sendmock/`. Its page metadata and its sitemap are built in the SendMock repo; this site only lists that sitemap.
 
 ## How to change it
 
