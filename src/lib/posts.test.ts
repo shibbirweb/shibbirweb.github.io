@@ -23,6 +23,14 @@ const REAL_SLUGS = [
     'the-hidden-firstorcreate-case-sensitivity-trap-in-laravel',
     'how-git-cherry-pick-rescued-a-hotfix-branched-from-the-wrong-place',
     'using-pi-hole-without-pinning-my-whole-network-to-one-dns-server',
+    'debugging-mailgun-webhooks-locally-with-sendmock',
+    'debugging-twilio-sms-webhooks-locally-with-sendmock',
+];
+
+/** The two-part "Local Webhooks with SendMock" series, in reading order. */
+const SENDMOCK_SERIES_SLUGS = [
+    'debugging-mailgun-webhooks-locally-with-sendmock',
+    'debugging-twilio-sms-webhooks-locally-with-sendmock',
 ];
 
 describe('posts against the real content/articles corpus', () => {
@@ -114,9 +122,26 @@ describe('posts against the real content/articles corpus', () => {
     });
 
     it('returns no series for standalone articles', () => {
-        for (const slug of REAL_SLUGS) {
+        const standaloneSlugs = REAL_SLUGS.filter(
+            (slug) => !SENDMOCK_SERIES_SLUGS.includes(slug)
+        );
+
+        for (const slug of standaloneSlugs) {
             expect(realPosts.getSeriesForArticle(slug)).toBeNull();
         }
+    });
+
+    it('links the two SendMock webhook articles as one series, in order', () => {
+        const series = realPosts.getSeriesForArticle(SENDMOCK_SERIES_SLUGS[1]);
+
+        expect(series?.name).toBe('Local Webhooks with SendMock');
+        expect(series?.parts.map((part) => part.slug)).toEqual(
+            SENDMOCK_SERIES_SLUGS
+        );
+        expect(series?.parts.map((part) => part.isCurrent)).toEqual([
+            false,
+            true,
+        ]);
     });
 
     it('renders a full article with HTML, a TOC, and frontmatter lists', async () => {
