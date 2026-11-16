@@ -1,7 +1,12 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import matter from 'gray-matter';
-import { renderMarkdown, type TocItem } from '@/lib/markdown';
+import { diagramFallbackImage } from '@/lib/diagramImages';
+import {
+    renderMarkdown,
+    setDiagramFallbackImageRenderer,
+    type TocItem,
+} from '@/lib/markdown';
 import type {
     ArticleDifficulty,
     ArticleSeries as SeriesFrontmatter,
@@ -17,6 +22,10 @@ import {
 // `@/lib/articleSchema`.
 export type { TocItem } from '@/lib/markdown';
 export type { ArticleDifficulty } from '@/lib/articleSchema';
+
+// Articles rendered here (the site and the dev preview route) carry the hidden
+// reading-mode diagram images; the editor's in-browser preview does not.
+setDiagramFallbackImageRenderer(diagramFallbackImage);
 
 const ARTICLES_DIRECTORY = path.join(process.cwd(), 'content/articles');
 const PUBLIC_DIRECTORY = path.join(process.cwd(), 'public');
@@ -166,7 +175,10 @@ function toSummary(article: ParsedArticle): ArticleSummary {
         difficulty: data.difficulty,
         series:
             data.series && typeof data.series.name === 'string'
-                ? { name: data.series.name, order: Number(data.series.order) || 0 }
+                ? {
+                      name: data.series.name,
+                      order: Number(data.series.order) || 0,
+                  }
                 : undefined,
     };
 }
@@ -289,9 +301,7 @@ export function getRelatedArticles(slug: string, limit = 3): ArticleSummary[] {
             const sameSeries =
                 current.series && article.series?.name === current.series.name;
             const score =
-                sharedTags * 3 +
-                (sameCategory ? 4 : 0) +
-                (sameSeries ? 5 : 0);
+                sharedTags * 3 + (sameCategory ? 4 : 0) + (sameSeries ? 5 : 0);
             return { article, score };
         })
         .filter((entry) => entry.score > 0)

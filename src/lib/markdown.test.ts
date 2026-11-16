@@ -1,7 +1,15 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import fs from 'node:fs';
-import { renderMarkdown, slugifyHeading } from '@/lib/markdown';
-import { diagramImageFor, diagramImageFilePath } from '@/lib/diagramImages';
+import {
+    renderMarkdown,
+    setDiagramFallbackImageRenderer,
+    slugifyHeading,
+} from '@/lib/markdown';
+import {
+    diagramFallbackImage,
+    diagramImageFor,
+    diagramImageFilePath,
+} from '@/lib/diagramImages';
 import { slugifyHeading as slugifyFromUtils } from '@/utils/slugifyHeading';
 import { fakeFileOnDisk, pngHeader } from '@tests/helpers/fakeDiagramImage';
 
@@ -178,9 +186,8 @@ describe('renderMarkdown code fences', () => {
         );
     });
 
-    it("puts a diagram's hidden pre-rendered image before its block", async () => {
-        const source =
-            'flowchart LR\n    accTitle: Phone to router\n    A --> B';
+    it('renders no diagram image until server code plugs one in', async () => {
+        const source = 'flowchart LR\n    A --> B';
         const image = diagramImageFor('mermaid', source);
         if (!image) {
             throw new Error('expected a diagram image');
@@ -191,25 +198,56 @@ describe('renderMarkdown code fences', () => {
             `\`\`\`mermaid\n${source}\n\`\`\``
         );
 
-        expect(html).toMatch(
-            new RegExp(
-                `^<img class="diagram-fallback-image" src="/diagrams/${image.key}\\.png" alt="Diagram: Phone to router"[^>]*>` +
-                    '<pre class="mermaid not-prose">'
-            )
+        expect(html).toBe(
+            '<pre class="mermaid not-prose">flowchart LR\n    A --&gt; B</pre>'
         );
     });
 
-    it('leaves the image out of a reactflow block that does not parse', async () => {
-        const existsSync = vi.spyOn(fs, 'existsSync');
+    describe('with the reading-mode image renderer set', () => {
+        beforeEach(() => {
+            setDiagramFallbackImageRenderer(diagramFallbackImage);
+        });
 
-        const { html } = await renderMarkdown(
-            '```reactflow\n> prose with nothing to describe\n```'
-        );
+        afterEach(() => {
+            setDiagramFallbackImageRenderer(() => '');
+        });
 
-        expect(html).not.toContain('<img');
-        expect(existsSync).not.toHaveBeenCalledWith(
-            expect.stringContaining('public/diagrams')
-        );
+        it("puts a diagram's hidden pre-rendered image before its block", async () => {
+            const source =
+                'flowchart LR\n    accTitle: Phone to router\n    A --> B';
+            const image = diagramImageFor('mermaid', source);
+            if (!image) {
+                throw new Error('expected a diagram image');
+            }
+            fakeFileOnDisk(
+                diagramImageFilePath(image.key),
+                pngHeader(800, 400)
+            );
+
+            const { html } = await renderMarkdown(
+                `\`\`\`mermaid\n${source}\n\`\`\``
+            );
+
+            expect(html).toMatch(
+                new RegExp(
+                    `^<img class="diagram-fallback-image" src="/diagrams/${image.key}\\.png" alt="Diagram: Phone to router"[^>]*>` +
+                        '<pre class="mermaid not-prose">'
+                )
+            );
+        });
+
+        it('leaves the image out of a reactflow block that does not parse', async () => {
+            const existsSync = vi.spyOn(fs, 'existsSync');
+
+            const { html } = await renderMarkdown(
+                '```reactflow\n> prose with nothing to describe\n```'
+            );
+
+            expect(html).not.toContain('<img');
+            expect(existsSync).not.toHaveBeenCalledWith(
+                expect.stringContaining('public/diagrams')
+            );
+        });
     });
 });
 
