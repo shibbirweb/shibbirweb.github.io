@@ -3,9 +3,9 @@
 import Button from '@/components/ui/Button';
 
 /**
- * Opens the browser print dialog (Save as PDF). The print stylesheet on the
- * resume page restyles the document into a clean light single column, so the
- * saved PDF matches the on-page content minus the site chrome. Built on the
+ * Opens the browser print dialog (Save as PDF). In print the page swaps the
+ * framed screen card for `ResumePrint`, a classic one-column CV built from the
+ * same data, so the saved PDF has the resume content without the site chrome. Built on the
  * shared Button so it inherits the site's 44px target, focus ring, and styling.
  */
 export default function DownloadPdfButton({

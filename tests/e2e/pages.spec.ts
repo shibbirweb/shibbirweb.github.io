@@ -1,7 +1,11 @@
 import { nowSections } from '@/app/now/contents';
-import { resumeName, resumeSections } from '@/app/resume/contents';
+import {
+    resumeHeadline,
+    resumeName,
+    resumeSections,
+} from '@/app/resume/contents';
 import { usesSections } from '@/app/uses/contents';
-import { expect, test } from '@tests/e2e/fixtures';
+import { expect, test, waitForHydration } from '@tests/e2e/fixtures';
 
 test.describe('resume', () => {
     test('shows the resume with every section', async ({ page }) => {
@@ -16,6 +20,78 @@ test.describe('resume', () => {
                 main.getByRole('heading', { name: section.label, exact: true })
             ).toBeAttached();
         }
+    });
+
+    test('swaps the screen card for the printed CV layout in print', async ({
+        page,
+    }) => {
+        await page.goto('/resume');
+        const screenCard = page.getByTestId('resume-screen');
+        const printLayout = page.getByTestId('resume-print');
+
+        await expect(screenCard).toBeVisible();
+        await expect(printLayout).toBeHidden();
+
+        await page.emulateMedia({ media: 'print' });
+
+        await expect(screenCard).toBeHidden();
+        await expect(printLayout).toBeVisible();
+        await expect(
+            printLayout.locator('header').getByText(resumeName, { exact: true })
+        ).toBeVisible();
+        await expect(printLayout.getByText(resumeHeadline)).toBeVisible();
+        for (const section of resumeSections) {
+            await expect(
+                printLayout.getByRole('heading', {
+                    level: 2,
+                    name: section.label,
+                    exact: true,
+                })
+            ).toBeVisible();
+        }
+    });
+
+    test('prints a white page even in dark mode', async ({ page }) => {
+        await page.emulateMedia({ colorScheme: 'dark' });
+        await page.goto('/resume');
+        await waitForHydration(page);
+        await expect(page.locator('html')).toHaveAttribute(
+            'data-theme',
+            'dark'
+        );
+
+        await page.emulateMedia({ media: 'print', colorScheme: 'dark' });
+
+        // With "Background graphics" on, Chrome paints the page margins from
+        // <html>, so both it and <body> must be white and light-scheme.
+        for (const selector of ['html', 'body']) {
+            await expect(page.locator(selector)).toHaveCSS(
+                'background-color',
+                'rgb(255, 255, 255)'
+            );
+        }
+        await expect(page.locator('html')).toHaveCSS('color-scheme', 'light');
+    });
+
+    test('prints the resume on a single A4 page', async ({
+        page,
+    }, testInfo) => {
+        // The PDF does not depend on the viewport, so one project is enough.
+        test.skip(
+            testInfo.project.name !== 'desktop',
+            'The printed page is the same at every viewport'
+        );
+        await page.goto('/resume');
+        await waitForHydration(page);
+
+        // preferCSSPageSize applies the @page size and margins from
+        // ResumePrint.module.css, as a browser print dialog does.
+        const pdf = await page.pdf({ preferCSSPageSize: true });
+        const pageCount = pdf
+            .toString('latin1')
+            .match(/\/Type\s*\/Page(?!s)/g)?.length;
+
+        expect(pageCount).toBe(1);
     });
 
     test('prints the page when "Download PDF" is clicked', async ({ page }) => {

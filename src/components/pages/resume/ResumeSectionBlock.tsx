@@ -31,6 +31,6 @@ export default function ResumeSectionBlock({
         case 'awards':
             return <AwardsList entries={section.entries} />;
         case 'text':
-            return <TextBlock text={section.text} />;
+            return <TextBlock paragraphs={section.paragraphs} />;
     }
 }

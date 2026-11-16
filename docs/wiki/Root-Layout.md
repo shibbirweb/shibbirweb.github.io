@@ -66,7 +66,7 @@ flowchart TD
 
 ## Good to know
 
-- **Print mode.** The navbar, footer, and skip link have `print:hidden`, and the body turns white, so `/resume` prints as a clean document.
+- **Print mode.** The navbar, footer, and skip link have `print:hidden`, and both `<html>` and `<body>` turn white with a light color scheme (`print:scheme-light!` beats the switcher's inline `color-scheme`), so `/resume` prints as a clean white document even in dark mode with "Background graphics" on.
 - **`suppressHydrationWarning`** on `<html>` is needed because `ThemeScript` changes `data-theme` before React loads.
 - **Every page needs `<main id="main">`** for the skip link to work.
 

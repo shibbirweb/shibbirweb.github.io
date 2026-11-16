@@ -4,7 +4,7 @@ import SkillRow from '@/components/pages/resume/SkillRow';
 /** Body for the `skills` section: label/value rows as a definition list. */
 export default function SkillsTable({ groups }: { groups: SkillGroup[] }) {
     return (
-        <dl className="flex flex-col gap-2 print:gap-1">
+        <dl className="flex flex-col gap-2">
             {groups.map((group) => (
                 <SkillRow
                     key={group.label}
