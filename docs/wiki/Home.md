@@ -81,7 +81,7 @@ flowchart LR
 
 - [Articles overview](Articles-Overview.md) · [Article markdown](Article-Markdown.md) · [Article page](Article-Page.md)
 - [Article listing and search](Article-Listing-and-Search.md)
-- [Mermaid diagrams](Mermaid-Diagrams.md) · [Flow diagrams](Flow-Diagrams.md)
+- [Mermaid diagrams](Mermaid-Diagrams.md) · [Flow diagrams](Flow-Diagrams.md) · [Reading mode](Reading-Mode.md)
 - [Comments](Comments.md) · [Feeds](Feeds.md) · [Covers and OG images](Covers-and-OG-Images.md)
 - [Article editor studio](Article-Editor-Studio.md)
 

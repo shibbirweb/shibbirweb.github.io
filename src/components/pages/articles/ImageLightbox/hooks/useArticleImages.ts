@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { DIAGRAM_FALLBACK_IMAGE_CLASS } from '@/components/pages/articles/diagramFallbackImage';
 
 export interface ArticleImage {
     src: string;
@@ -22,7 +23,13 @@ export function useArticleImages(
     useEffect(() => {
         const elements = Array.from(
             document.querySelectorAll<HTMLImageElement>('article .prose img')
-        ).filter((img) => !img.closest('.gist-embed'));
+        ).filter(
+            (img) =>
+                !img.closest('.gist-embed') &&
+                // Diagram fallbacks are hidden images for reading modes only;
+                // the live diagram has its own full-view control.
+                !img.classList.contains(DIAGRAM_FALLBACK_IMAGE_CLASS)
+        );
         if (elements.length === 0) return;
 
         const cleanups = elements.map((img, index) => {

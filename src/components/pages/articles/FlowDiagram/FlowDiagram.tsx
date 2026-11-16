@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { cn } from '@/utils/cn';
 import SpotlightBorder from '@/components/pages/common/SpotlightBorder';
 import { spotlightSurfaceProps } from '@/components/pages/common/spotlightSurface';
@@ -34,6 +34,7 @@ export default function FlowDiagram({
     definition: FlowDiagramDefinition;
 }) {
     const frameRef = useRef<HTMLElement | null>(null);
+    const hintId = useId();
     const stageRef = useRef<HTMLDivElement | null>(null);
     const prefersReducedMotion = usePrefersReducedMotion();
 
@@ -124,6 +125,7 @@ export default function FlowDiagram({
         // is picked up with nothing to register.
         <figure
             ref={frameRef}
+            aria-describedby={hintId}
             {...spotlightSurfaceProps}
             className={cn('not-prose', styles.tones, styles.frame)}
         >
@@ -181,7 +183,17 @@ export default function FlowDiagram({
                         text={caption.text}
                     />
                 )}
-                <span className={styles.hint}>{hint}</span>
+                {/* How to work the controls, which a browser reading mode strips,
+                    so its view would show the instructions with nothing to press.
+                    Hidden there, and kept for screen readers as the figure's
+                    description (aria-describedby still reads hidden text). */}
+                <span
+                    id={hintId}
+                    aria-hidden
+                    className={styles.hint}
+                >
+                    {hint}
+                </span>
             </figcaption>
             <SpotlightBorder className={styles.spotlightBorder} />
         </figure>

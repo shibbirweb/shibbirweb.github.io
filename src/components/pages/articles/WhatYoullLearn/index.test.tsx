@@ -49,4 +49,19 @@ describe('WhatYoullLearn', () => {
         expect(section.style.getPropertyValue('--accent-from')).toBe('#0ea5e9');
         expect(section.style.getPropertyValue('--accent-to')).toBe('#10b981');
     });
+
+    it('hides the decorative check marks, which reading modes draw full width', () => {
+        render(
+            <WhatYoullLearn
+                items={['One thing', 'Another thing']}
+                accentColors={accentColors}
+            />
+        );
+
+        const icons = screen.getByRole('region').querySelectorAll('li svg');
+        expect(icons).toHaveLength(2);
+        for (const icon of icons) {
+            expect(icon).toHaveAttribute('aria-hidden', 'true');
+        }
+    });
 });

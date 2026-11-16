@@ -1,5 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
+import fs from 'node:fs';
 import { renderMarkdown, slugifyHeading } from '@/lib/markdown';
+import { diagramImageFor, diagramImageFilePath } from '@/lib/diagramImages';
+import { slugifyHeading as slugifyFromUtils } from '@/utils/slugifyHeading';
+import { fakeFileOnDisk, pngHeader } from '@tests/helpers/fakeDiagramImage';
 
 const GIST_URL = 'https://gist.github.com/shibbirweb/0a1b2c3d4e5f';
 
@@ -12,21 +16,9 @@ function gistResponse(ok: boolean, body: unknown): Response {
     } as Response;
 }
 
-describe('slugifyHeading', () => {
-    it('lowercases and joins words with single hyphens', () => {
-        expect(slugifyHeading('Cache-aside Pattern')).toBe(
-            'cache-aside-pattern'
-        );
-    });
-
-    it('collapses runs of punctuation and trims leading/trailing hyphens', () => {
-        expect(slugifyHeading('  What is `firstOrCreate()`?!  ')).toBe(
-            'what-is-firstorcreate'
-        );
-    });
-
-    it('returns an empty string when nothing slug-worthy remains', () => {
-        expect(slugifyHeading('!!!')).toBe('');
+describe('slugifyHeading re-export', () => {
+    it('is the same helper as @/utils/slugifyHeading', () => {
+        expect(slugifyHeading).toBe(slugifyFromUtils);
     });
 });
 
@@ -183,6 +175,40 @@ describe('renderMarkdown code fences', () => {
 
         expect(html).toBe(
             '<pre class="reactflow not-prose">nodes: a &lt;b&gt; &amp; c</pre>'
+        );
+    });
+
+    it("puts a diagram's hidden pre-rendered image before its block", async () => {
+        const source =
+            'flowchart LR\n    accTitle: Phone to router\n    A --> B';
+        const image = diagramImageFor('mermaid', source);
+        if (!image) {
+            throw new Error('expected a diagram image');
+        }
+        fakeFileOnDisk(diagramImageFilePath(image.key), pngHeader(800, 400));
+
+        const { html } = await renderMarkdown(
+            `\`\`\`mermaid\n${source}\n\`\`\``
+        );
+
+        expect(html).toMatch(
+            new RegExp(
+                `^<img class="diagram-fallback-image" src="/diagrams/${image.key}\\.png" alt="Diagram: Phone to router"[^>]*>` +
+                    '<pre class="mermaid not-prose">'
+            )
+        );
+    });
+
+    it('leaves the image out of a reactflow block that does not parse', async () => {
+        const existsSync = vi.spyOn(fs, 'existsSync');
+
+        const { html } = await renderMarkdown(
+            '```reactflow\n> prose with nothing to describe\n```'
+        );
+
+        expect(html).not.toContain('<img');
+        expect(existsSync).not.toHaveBeenCalledWith(
+            expect.stringContaining('public/diagrams')
         );
     });
 });

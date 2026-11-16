@@ -38,11 +38,17 @@ export default function PagerLink({
         >
             <span className="text-foreground/70 flex items-center gap-1.5 text-xs font-semibold tracking-[0.08em] uppercase">
                 {!isNext && (
-                    <ChevronIcon className="size-3.5 -rotate-90 transition-transform group-hover:-translate-x-0.5" />
+                    <ChevronIcon
+                        aria-hidden
+                        className="size-3.5 -rotate-90 transition-transform group-hover:-translate-x-0.5"
+                    />
                 )}
                 {isNext ? 'Next' : 'Previous'}
                 {isNext && (
-                    <ChevronIcon className="size-3.5 rotate-90 transition-transform group-hover:translate-x-0.5" />
+                    <ChevronIcon
+                        aria-hidden
+                        className="size-3.5 rotate-90 transition-transform group-hover:translate-x-0.5"
+                    />
                 )}
             </span>
             <span className="group-hover:text-foreground font-semibold transition-colors">

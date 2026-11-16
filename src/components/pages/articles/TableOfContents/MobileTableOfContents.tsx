@@ -35,13 +35,18 @@ export default function MobileTableOfContents({
                 <span className="text-foreground/70 text-xs tracking-[0.12em] uppercase">
                     On this page
                 </span>
-                <ChevronIcon className="text-foreground/70 size-4 transition-transform group-open:rotate-180" />
+                <ChevronIcon
+                    aria-hidden
+                    className="text-foreground/70 size-4 transition-transform group-open:rotate-180"
+                />
             </summary>
             <div className="px-3 pb-3">
                 <TocList
                     toc={toc}
                     activeId={activeId}
-                    onNavigate={() => detailsRef.current?.removeAttribute('open')}
+                    onNavigate={() =>
+                        detailsRef.current?.removeAttribute('open')
+                    }
                 />
             </div>
         </details>

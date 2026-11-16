@@ -52,4 +52,18 @@ describe('MobileTableOfContents', () => {
         await user.click(screen.getByRole('link', { name: 'Setup steps' }));
         expect(details).not.toHaveAttribute('open');
     });
+
+    it('hides the decorative chevron, which reading modes draw full width', () => {
+        const { container } = render(
+            <MobileTableOfContents
+                toc={toc}
+                accentColors={['#000000', '#ffffff']}
+            />
+        );
+
+        expect(container.querySelector('summary svg')).toHaveAttribute(
+            'aria-hidden',
+            'true'
+        );
+    });
 });

@@ -66,7 +66,13 @@ export default function WhatYoullLearn({
                             key={item}
                             className="flex items-start gap-3"
                         >
-                            <CheckIcon className="mt-0.5 size-4 flex-none text-[var(--accent-to)]" />
+                            {/* Decorative, and hidden so reading modes (which
+                                ignore the size classes) skip it rather than
+                                drawing it full width. */}
+                            <CheckIcon
+                                aria-hidden
+                                className="mt-0.5 size-4 flex-none text-[var(--accent-to)]"
+                            />
                             <span className="text-foreground/80 text-sm leading-relaxed">
                                 {item}
                             </span>
@@ -74,9 +80,7 @@ export default function WhatYoullLearn({
                     ))}
                 </ul>
 
-                <SpotlightBorder
-                    className={styles.spotlightBorder}
-                />
+                <SpotlightBorder className={styles.spotlightBorder} />
             </section>
         </SpotlightGroup>
     );
