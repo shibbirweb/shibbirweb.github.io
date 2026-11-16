@@ -29,8 +29,9 @@
         "test:build": "vitest run --project build",
         "test:e2e": "playwright test",
         "test:e2e:install": "playwright install --with-deps chromium",
+        "test:e2e:dev": "playwright test --config playwright.dev.config.ts",
         "test:lighthouse": "lhci autorun",
-        "test:ci": "pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm test:build && pnpm test:e2e && pnpm test:lighthouse",
+        "test:ci": "pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm test:build && pnpm test:e2e && pnpm test:e2e:dev && pnpm test:lighthouse",
         "gen:diagrams": "tsx scripts/generate-diagram-images.ts"
     },
     "dependencies": {

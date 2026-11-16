@@ -81,5 +81,7 @@ certificates
 # test output (vitest coverage, Playwright, Lighthouse CI)
 /playwright-report/
 /test-results/
+/playwright-report-dev/
+/test-results-dev/
 /blob-report/
 /.lighthouseci/

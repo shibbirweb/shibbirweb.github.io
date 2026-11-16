@@ -8,6 +8,10 @@ import {
     type EdgeProps,
 } from '@xyflow/react';
 import styles from '@/components/pages/articles/FlowDiagram/FlowDiagram.module.css';
+import {
+    isReturnHop,
+    returnArcPath,
+} from '@/components/pages/articles/FlowDiagram/returnArc';
 import type { FlowTone } from '@/components/pages/articles/FlowDiagram/types';
 
 /** One full trip along a hop, in seconds. */
@@ -55,15 +59,17 @@ export default function FlowPacketEdge({
     markerEnd,
     data,
 }: EdgeProps<FlowDiagramEdge>) {
-    const [path, labelX, labelY] = getSmoothStepPath({
-        sourceX,
-        sourceY,
-        sourcePosition,
-        targetX,
-        targetY,
-        targetPosition,
-        borderRadius: 18,
-    });
+    // A hop running right to left (a webhook coming back) arcs under the boxes
+    // instead of squeezing around them; see returnArc.ts.
+    const ends = { sourceX, sourceY, targetX, targetY };
+    const [path, labelX, labelY] = isReturnHop(ends)
+        ? returnArcPath(ends)
+        : getSmoothStepPath({
+              ...ends,
+              sourcePosition,
+              targetPosition,
+              borderRadius: 18,
+          });
 
     const tone = data?.tone ?? 'neutral';
     const motion = data?.motion ?? 'still';

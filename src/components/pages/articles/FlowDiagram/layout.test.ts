@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
     ESTIMATED_NODE_SIZE,
+    estimateLabelSize,
     layoutFlow,
     type NodeSize,
 } from '@/components/pages/articles/FlowDiagram/layout';
@@ -59,6 +60,29 @@ describe('layoutFlow', () => {
         const c = positions.get('c')!;
         expect(b.x).toBeGreaterThan(a.x + ESTIMATED_NODE_SIZE.width);
         expect(c.x).toBeGreaterThan(b.x + ESTIMATED_NODE_SIZE.width);
+    });
+
+    it('leaves a labelled hop enough room for its text between the boxes', () => {
+        const label = 'webhook to localhost, never delivered';
+        const positions = layoutFlow(
+            nodesNamed('mailgun', 'laptop'),
+            [{ ...hop('mailgun', 'laptop'), label }],
+            new Map()
+        );
+
+        const gap =
+            positions.get('laptop')!.x -
+            (positions.get('mailgun')!.x + ESTIMATED_NODE_SIZE.width);
+        expect(gap).toBeGreaterThanOrEqual(estimateLabelSize(label).width);
+    });
+
+    it('sizes a label from its length, with room left for the arrow', () => {
+        const short = estimateLabelSize('sent');
+        const long = estimateLabelSize('signed Mailgun webhook back');
+
+        expect(long.width).toBeGreaterThan(short.width);
+        expect(short.width).toBeGreaterThan('sent'.length * 6);
+        expect(short.height).toBe(long.height);
     });
 
     it('stacks siblings in one rank without overlapping them', () => {

@@ -31,6 +31,22 @@ function label(text: string): string {
 }
 
 /**
+ * The arrow between two boxes. A return hop (one that answers an earlier hop in
+ * the opposite direction, such as a webhook coming back to the app) is dashed,
+ * so the reply reads differently from the request it answers.
+ */
+function mermaidArrow(
+    edgeLabel: string | undefined,
+    isReturn: boolean
+): string {
+    const line = isReturn ? '-.->' : '-->';
+    if (!edgeLabel) {
+        return line;
+    }
+    return `${line}|"${label(edgeLabel)}"|`;
+}
+
+/**
  * Build mermaid source for one scenario. Only that scenario's hops are drawn, so
  * the scenario switch keeps working in the static view exactly as it does in the
  * interactive one, and nodes it does not route are left out entirely rather than
@@ -59,11 +75,14 @@ export function toMermaid(
         lines.push(`    ${mermaidId(node.id)}["${text}"]`);
     }
 
+    const drawnEdgeIds = new Set<string>();
     for (const edge of routedEdges) {
-        const arrow = edge.label ? `-->|"${label(edge.label)}"|` : '-->';
+        const isReturn = drawnEdgeIds.has(`${edge.target}--${edge.source}`);
+        const arrow = mermaidArrow(edge.label, isReturn);
         lines.push(
             `    ${mermaidId(edge.source)} ${arrow} ${mermaidId(edge.target)}`
         );
+        drawnEdgeIds.add(edge.id);
     }
 
     // Colour the boxes by tone, matching the interactive view's palette.

@@ -11,7 +11,6 @@ import { markedEmoji } from 'marked-emoji';
 import { nameToEmoji } from 'gemoji';
 import { spotlightSurfaceAttribute } from '@/components/pages/common/spotlightSurface';
 import { slugifyHeading } from '@/utils/slugifyHeading';
-import { diagramImageFor, diagramImageTag } from '@/lib/diagramImages';
 
 /** A heading in the article body, used to build the table of contents. */
 export interface TocItem {
@@ -296,17 +295,25 @@ async function highlightCode(code: string, lang: string): Promise<string> {
     }
 }
 
+/** Builds the hidden reading-mode image placed before a diagram block, or ''. */
+export type DiagramFallbackImageRenderer = (
+    lang: string,
+    body: string
+) => string;
+
+let diagramFallbackImage: DiagramFallbackImageRenderer = () => '';
+
 /**
- * The hidden pre-rendered image of a diagram, placed before its block so a
- * browser reading mode (which drops the live SVG) shows the picture ahead of the
- * caption. Empty until `pnpm gen:diagrams` has drawn it; see diagramImages.ts.
+ * Turns on the hidden pre-rendered diagram images (see diagramImages.ts), which a
+ * browser reading mode shows in place of the live SVG. They are plugged in by
+ * server code instead of imported here because they read the PNGs from disk with
+ * node:fs, and this module also runs in the browser for the article editor's
+ * live preview, where node:fs cannot be bundled.
  */
-function diagramFallbackImage(lang: string, body: string): string {
-    const image = diagramImageFor(lang, body);
-    if (!image) {
-        return '';
-    }
-    return diagramImageTag(image);
+export function setDiagramFallbackImageRenderer(
+    renderer: DiagramFallbackImageRenderer
+): void {
+    diagramFallbackImage = renderer;
 }
 
 marked.use({

@@ -133,6 +133,21 @@ export function diagramImageTag(image: DiagramImage): string {
 }
 
 /**
+ * The hidden pre-rendered image of a diagram block, placed before it so a browser
+ * reading mode (which drops the live SVG) shows the picture ahead of the caption.
+ * Empty for a block that is not a diagram, and until `pnpm gen:diagrams` has
+ * drawn it. Registered with the Markdown pipeline by server code (see
+ * setDiagramFallbackImageRenderer in markdown.ts).
+ */
+export function diagramFallbackImage(language: string, body: string): string {
+    const image = diagramImageFor(language, body);
+    if (!image) {
+        return '';
+    }
+    return diagramImageTag(image);
+}
+
+/**
  * The key covers the source, the light-theme Mermaid configuration and the render
  * version, so a theme tweak marks every image stale just as an edit to the
  * diagram does.
